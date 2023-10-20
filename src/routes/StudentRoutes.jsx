@@ -1,15 +1,14 @@
 import Student from "../Layouts/Student";
-import { HomePage } from "../pages/Student/HomePage";
+import { SDashboard } from "../pages/Student/SDashboard";
 
-
-export const StudentRoutes =  {
-    path: "s/",
-    element:<Student />,
-    // errorElement: <ErrorPage/>,
-    children:[
-        {
-            path:'dashboard',
-            element:<HomePage/>
-        },
-    ]
-}
+export const StudentRoutes = {
+  path: "s/",
+  element: <Student />,
+  // errorElement: <ErrorPage/>,
+  children: [
+    {
+      path: "dashboard",
+      element: <SDashboard />,
+    },
+  ],
+};

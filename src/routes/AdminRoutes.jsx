@@ -1,5 +1,5 @@
 import Admin from "../Layouts/Admin";
-import Dashboard from "../pages/Admin/Dashboard";
+import ADashboard from "../pages/Admin/ADashboard";
 
 export const AdminRoutes =  {
     path: "a/",
@@ -8,7 +8,7 @@ export const AdminRoutes =  {
     children:[
         {
             path:'dashboard',
-            element:<Dashboard/>
+            element:<ADashboard/>
         },
     ]
 }
