@@ -1,14 +1,12 @@
 // import React, { useState } from 'react'
 import './App.css'
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-
 import { ToastContainer } from 'react-toastify';
 import { StudentRoutes } from './routes/StudentRoutes';
 import { TeacherRoutes } from './routes/TeacherRoutes';
 import { AdminRoutes } from './routes/AdminRoutes';
-import { HomePage } from './pages/HomePage';
 import { SDashboard } from './pages/Student/SDashboard';
-
+import { HomePage } from './pages/HomePage';
 
 const router = createBrowserRouter([
   // global routes
@@ -31,14 +29,12 @@ const router = createBrowserRouter([
 ]);
 
 function App() {
-
   return (
     <>
-    <RouterProvider router={router}/>
-    <ToastContainer />
-    
+      <RouterProvider router={router} />
+      <ToastContainer />
     </>
-  )
+  );
 }
 
 export default App

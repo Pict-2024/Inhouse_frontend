@@ -12,8 +12,10 @@
   "dependencies": {
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
-    "@mui/icons-material": "^5.14.13",
-    "@mui/material": "^5.14.13",
+    "@heroicons/react": "^2.0.18",
+    "@material-tailwind/react": "^2.1.4",
+    "@mui/icons-material": "^5.14.12",
+    "@mui/material": "^5.14.12",
     "@reduxjs/toolkit": "^1.9.7",
     "axios": "^1.5.1",
     "dotenv": "^16.3.1",
