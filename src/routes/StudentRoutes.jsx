@@ -1,5 +1,5 @@
 import Student from "../Layouts/Student";
-import { HomePage } from "../pages/Student/HomePage";
+import { SDashboard } from "../pages/Student/SDashboard";
 
 
 export const StudentRoutes =  {
@@ -9,7 +9,7 @@ export const StudentRoutes =  {
     children:[
         {
             path:'dashboard',
-            element:<HomePage/>
+            element:<SDashboard/>
         },
     ]
 }

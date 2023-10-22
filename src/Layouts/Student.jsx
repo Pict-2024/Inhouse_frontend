@@ -1,12 +1,17 @@
 import { Outlet } from "react-router-dom";
+import Sidebar from "../components/Sidebar";
+import Navbar from "../components/Navbar";
 
 export default function Student ()  {
     return (
-      <div className="min-h-full  font-poppins ">
+      <div className="h-full w-full bg-red-100 font-poppins ">
 
-          {/* something */}
+      {/*
+        <Sidebar/>
+           something */}
         <div className="w-full h-full  font-poppins ">
-            <Outlet/>
+          <Navbar/>
+          <Outlet/>
         </div>
     </div>
     )

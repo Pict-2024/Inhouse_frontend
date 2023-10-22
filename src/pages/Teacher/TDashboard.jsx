@@ -1,6 +1,6 @@
 // import React from 'react'
 
-export const HomePage = () => {
+export const TDashboard = () => {
   return (
     <div>HomePage Teacher</div>
   )

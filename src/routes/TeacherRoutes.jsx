@@ -1,5 +1,5 @@
 import Teacher from "../Layouts/Teacher";
-import { HomePage } from "../pages/Teacher/HomePage";
+import { TDashboard } from "../pages/Teacher/TDashboard";
 
 
 
@@ -10,7 +10,7 @@ export const TeacherRoutes =  {
     children:[
         {
             path:'dashboard',
-            element:<HomePage/>
+            element:<TDashboard/>
         },
     ]
 }

@@ -1,6 +1,6 @@
 // import React from 'react'
 
-export const Dashboard = () => {
+export const SDashboard = () => {
   return (
     <div>Dashboard of student</div>
   )
