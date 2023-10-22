@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Badge, Button } from "@material-tailwind/react";
+// import { Badge, Button } from "@material-tailwind/react";
 
 export const SDashboard = () => {
   const [formData, setFormData] = useState({
@@ -19,12 +19,12 @@ export const SDashboard = () => {
     email: "john@example.com",
   };
 
-  const handleOnChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.id]: e.target.value,
-    });
-  };
+  // const handleOnChange = (e) => {
+  //   setFormData({
+  //     ...formData,
+  //     [e.target.id]: e.target.value,
+  //   });
+  // };
 
   const initializeFormData = () => {
     setFormData({
@@ -40,10 +40,10 @@ export const SDashboard = () => {
   }, []);
 
   // Function to handle form submission
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    // Handle form submission here
-  };
+  // const handleSubmit = (e) => {
+  //   e.preventDefault();
+  //   // Handle form submission here
+  // };
 
   return (
     <>
