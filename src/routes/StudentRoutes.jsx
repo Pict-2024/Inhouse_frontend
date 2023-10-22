@@ -1,5 +1,8 @@
 import Student from "../Layouts/Student";
-import { HomePage } from "../pages/Student/HomePage";
+import Achievements from "../pages/Student/Achievements";
+import CoCurricular from "../pages/Student/CoCurricular";
+import InternShip from "../pages/Student/InternShip";
+import { SDashboard } from '../pages/Student/SDashboard';
 
 
 export const StudentRoutes =  {
@@ -9,7 +12,19 @@ export const StudentRoutes =  {
     children:[
         {
             path:'dashboard',
-            element:<HomePage/>
+            element:<SDashboard/>
+        },
+        {
+            path:'internship',
+            element:<InternShip/>
+        },
+        {
+            path:'achievements',
+            element:<Achievements/>
+        },
+        {
+            path:'co-curricular',
+            element:<CoCurricular/>
         },
     ]
 }
