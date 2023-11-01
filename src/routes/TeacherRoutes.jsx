@@ -1,6 +1,6 @@
 import Teacher from "../Layouts/Teacher";
+import General from "../pages/Teacher/General";
 import TDashboard from "../pages/Teacher/TDashboard";
-import Research from './../components/TModule/Research';
 
 export const TeacherRoutes = {
   path: "t/",
@@ -12,8 +12,8 @@ export const TeacherRoutes = {
       element: <TDashboard />,
     },
     {
-      path: "research",
-      element: <Research />,
+      path: "general",
+      element: <General />,
     },
   ],
 };

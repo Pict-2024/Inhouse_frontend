@@ -1,3 +1,4 @@
+import { useState } from "react";
 import {
   Card,
   Select,
@@ -8,6 +9,29 @@ import {
 } from "@material-tailwind/react";
 
 export default function FacultyAchievements() {
+  const [formData, setFormData] = useState({
+    facultyName: "",
+    department: "",
+    achievementDetails: "",
+    eventName: "",
+    organiserName: "",
+    achievementLevel: "",
+    awardType: "",
+    awardMoney: "",
+  });
+
+  const handleInputChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+    });
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    // Handle form submission here
+  };
+
   return (
     <>
       <Card
@@ -23,7 +47,7 @@ export default function FacultyAchievements() {
           Faculty Achievement
         </Typography>
 
-        <form className="mt-8 mb-2">
+        <form className="mt-8 mb-2" onSubmit={handleSubmit}>
           <div className="mb-4 flex flex-wrap -mx-4">
             <div className="w-full md:w-1/2 px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
@@ -31,8 +55,11 @@ export default function FacultyAchievements() {
               </Typography>
               <Input
                 size="lg"
+                name="facultyName"
+                value={formData.facultyName}
                 placeholder="Name of the faculty"
                 className="border-t-blue-gray-200 focus-border-t-gray-900"
+                onChange={handleInputChange}
               />
             </div>
             <div className="w-full md:w-1/2 px-4 mb-4">
@@ -41,8 +68,11 @@ export default function FacultyAchievements() {
               </Typography>
               <Input
                 size="lg"
+                name="department"
+                value={formData.department}
                 placeholder="Department"
                 className="border-t-blue-gray-200 focus-border-t-gray-900"
+                onChange={handleInputChange}
               />
             </div>
           </div>
@@ -54,8 +84,11 @@ export default function FacultyAchievements() {
               </Typography>
               <Input
                 size="lg"
+                name="achievementDetails"
+                value={formData.achievementDetails}
                 placeholder="Achievement / Awards Details"
                 className="border-t-blue-gray-200 focus-border-t-gray-900"
+                onChange={handleInputChange}
               />
             </div>
             <div className="w-full md:w-1/2 px-4 mb-4">
@@ -64,8 +97,11 @@ export default function FacultyAchievements() {
               </Typography>
               <Input
                 size="lg"
+                name="eventName"
+                value={formData.eventName}
                 placeholder="Name of Event"
                 className="border-t-blue-gray-200 focus-border-t-gray-900"
+                onChange={handleInputChange}
               />
             </div>
           </div>
@@ -77,8 +113,11 @@ export default function FacultyAchievements() {
               </Typography>
               <Input
                 size="lg"
+                name="organiserName"
+                value={formData.organiserName}
                 placeholder="Name of Organiser"
                 className="border-t-blue-gray-200 focus-border-t-gray-900"
+                onChange={handleInputChange}
               />
             </div>
             <div className="w-full md:w-1/2 px-4 mb-4">
@@ -87,8 +126,11 @@ export default function FacultyAchievements() {
               </Typography>
               <Select
                 size="lg"
+                name="achievementLevel"
+                value={formData.achievementLevel}
                 placeholder="Select Level"
                 className="border-t-blue-gray-200 focus-border-t-gray-900"
+                onChange={handleInputChange}
               >
                 <Option value="International">International</Option>
                 <Option value="National">National</Option>
@@ -107,8 +149,11 @@ export default function FacultyAchievements() {
               </Typography>
               <Select
                 size="lg"
+                name="awardType"
+                value={formData.awardType}
                 placeholder="Select Award Type"
                 className="border-t-blue-gray-200 focus-border-t-gray-900"
+                onChange={handleInputChange}
               >
                 <Option value="Winner">Winner</Option>
                 <Option value="Runner">Runner</Option>
@@ -122,8 +167,11 @@ export default function FacultyAchievements() {
               </Typography>
               <Input
                 size="lg"
+                name="awardMoney"
+                value={formData.awardMoney}
                 placeholder="Award/Prize Money"
                 className="border-t-blue-gray-200 focus-border-t-gray-900"
+                onChange={handleInputChange}
               />
             </div>
           </div>

@@ -1,46 +1,86 @@
-import { Select, Option } from "@material-tailwind/react";
-import { Link } from "react-router-dom";
-import Grants  from "../../components/TModule/Grants"
+import { useState } from "react";
+import { Card, Input, Button, Typography } from "@material-tailwind/react";
+import Login from "../Auth/login";
+
 export default function TDashboard() {
+  const [formData, setFormData] = useState({
+    userProfile: {
+      username: "Abhi",
+      email: "abhi@gmail.com",
+    },
+  });
+
+  const handleUserProfileChange = (e) => {
+    setFormData({
+      ...formData,
+      userProfile: {
+        ...formData.userProfile,
+        [e.target.name]: e.target.value,
+      },
+    });
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    // Handle form submission here
+  };
+
   return (
     <>
-      <div className="w-4/5 mx-auto mt-4">
-        <Select label="Select your Department">
-          <Link>
-            <Option>Research</Option>
-          </Link>
-          <Link>
-            <Option>Book Publication</Option>
-          </Link>
-          <Option>Faculty Conference Publication</Option>
-          <Option>Grants</Option>
-          <Option>Consultancy Report</Option>
-          <Option>Patent Publication</Option>
-          <Option>
-            Conferences, Seminars, Workshops, FDP, STTP Organized /conducted
-          </Option>
-          <Option>STTP/FDP/Workshop/Conference Attended</Option>
-          <Option>
-            Webinar/Guest-Expert Lecture / Video conference /Invited talks
-            organized /conducted
-          </Option>
-          <Option>
-            Number of MoUs, collaborations / linkages for Faculty exchange
-          </Option>
-          <Option>Certificate Courses</Option>
-          <Option>Professional Affiliations</Option>
-          <Option>Faculty as Resource Person you</Option>
-          <Option>Extension Activity</Option>
-          <Option>
-            Technical Competitions / Tech Fest Organized/Extra & Co-curricular
-            activities Organized
-          </Option>
-          <Option>Faculty Achievement</Option>
-          <Option>Industrial Visits / Tours / Field Trip</Option>
-          <Option>Contribution to BoS</Option>
-        </Select>
-      </div>
-      <Grants/>
+      <Card
+        color="transparent"
+        shadow={false}
+        className="border border-gray-300 w-85 mx-auto p-2 my-2 rounded-md"
+      >
+        <Typography
+          variant="h4"
+          color="blue-gray"
+          className="mx-auto underline underline-offset-2"
+        >
+          User Profile
+        </Typography>
+
+        <form className="mt-8 mb-2" onSubmit={handleSubmit}>
+          <div className="mb-4 flex flex-wrap -mx-4">
+            <div className="w-full px-4">
+              <div className="mb-2 flex flex-wrap -mx-2">
+                <div className="w-1/2 px-2">
+                  <Typography variant="h6" color="blue-gray" className="mb-3">
+                    UserName
+                  </Typography>
+                  <Input
+                    size="lg"
+                    name="username"
+                    value={formData.userProfile.username}
+                    placeholder="Username"
+                    className="border-t-blue-gray-200 focus-border-t-gray-900"
+                    onChange={handleUserProfileChange}
+                  />
+                </div>
+                <div className="w-1/2 px-2">
+                  <Typography variant="h6" color="blue-gray" className="mb-3">
+                    Email
+                  </Typography>
+                  <Input
+                    size="lg"
+                    name="email"
+                    value={formData.userProfile.email}
+                    placeholder="Email"
+                    className="border-t-blue-gray-200 focus-border-t-gray-900"
+                    onChange={handleUserProfileChange}
+                  />
+                </div>
+              </div>
+              {/* Add more profile fields here */}
+            </div>
+          </div>
+
+          <Button type="submit" className="mt-4" fullWidth>
+            Add Changes
+          </Button>
+        </form>
+      </Card>
+      <Login />
     </>
   );
 }

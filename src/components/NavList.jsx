@@ -1,3 +1,4 @@
+import {Link} from 'react-router-dom'
 export default function NavList() {
   return (
     <nav className="bg-eeeee shadow-md p-4">
@@ -7,14 +8,7 @@ export default function NavList() {
         </a>
         <ul className="flex space-x-4">
           <li>
-            <a href="#" className="text-black">
-              User
-            </a>
-          </li>
-          <li>
-            <a href="#" className="text-black">
-              Logout
-            </a>
+            <Link to={'/auth/login'}>Login</Link>
           </li>
         </ul>
       </div>

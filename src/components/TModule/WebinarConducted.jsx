@@ -6,11 +6,7 @@ import {
 } from "@material-tailwind/react";
 
 export default function WebinarConducted() {
-//   const currentYear = new Date().getFullYear();
-//   const years = Array.from(
-//     { length: currentYear - 1999 },
-//     (_, index) => currentYear - index
-//   );
+
 
   return (
     <>
