@@ -26,7 +26,7 @@ export default function FacultyConferencePublication() {
           color="blue-gray"
           className="mx-auto underline underline-offset-2"
         >
-         Faculty Conference Publication
+          Faculty Conference Publication
         </Typography>
 
         <form className="mt-8 mb-2">

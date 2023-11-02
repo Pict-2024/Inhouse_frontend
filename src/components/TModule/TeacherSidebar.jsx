@@ -1,3 +1,4 @@
+import {Link} from 'react-router-dom';
 import {
   Card,
   Typography,
@@ -7,6 +8,7 @@ import {
 } from "@material-tailwind/react";
 import {
   PresentationChartBarIcon,
+  DocumentTextIcon
  
 } from "@heroicons/react/24/solid";
 
@@ -23,7 +25,13 @@ export default function TeacherSidebar() {
           <ListItemPrefix>
             <PresentationChartBarIcon className="h-5 w-5" />
           </ListItemPrefix>
-          Dashboard
+          <Link to={'/t/dashboard'}>Dashboard</Link>
+        </ListItem>
+        <ListItem>
+          <ListItemPrefix>
+            <DocumentTextIcon className="h-5 w-5" />
+          </ListItemPrefix>
+         <Link to={'/t/general'}>General</Link>
         </ListItem>
       </List>
     </Card>

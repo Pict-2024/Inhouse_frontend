@@ -1,6 +1,29 @@
+import { useState } from "react";
 import { Card, Input, Button, Typography } from "@material-tailwind/react";
 
 export default function Contribution() {
+  const [formData, setFormData] = useState({
+    teacherName: "",
+    department: "",
+    academicYear: "",
+    teacherParticipated: "",
+    role: "",
+    university: "",
+    bodyName: "",
+  });
+
+  const handleOnChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+    });
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    // Handle form submission here
+  };
+
   return (
     <>
       <Card
@@ -16,7 +39,7 @@ export default function Contribution() {
           Contribution to BoS
         </Typography>
 
-        <form className="mt-8 mb-2">
+        <form className="mt-8 mb-2" onSubmit={handleSubmit}>
           <div className="mb-4 flex flex-wrap -mx-4">
             <div className="w-full md:w-1/2 px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
@@ -24,8 +47,11 @@ export default function Contribution() {
               </Typography>
               <Input
                 size="lg"
+                name="teacherName"
+                value={formData.teacherName}
                 placeholder="Name of Teacher"
                 className="border-t-blue-gray-200 focus-border-t-gray-900"
+                onChange={handleOnChange}
               />
             </div>
             <div className="w-full md:w-1/2 px-4 mb-4">
@@ -34,8 +60,11 @@ export default function Contribution() {
               </Typography>
               <Input
                 size="lg"
+                name="department"
+                value={formData.department}
                 placeholder="Department"
                 className="border-t-blue-gray-200 focus-border-t-gray-900"
+                onChange={handleOnChange}
               />
             </div>
           </div>
@@ -47,8 +76,11 @@ export default function Contribution() {
               </Typography>
               <Input
                 size="lg"
+                name="academicYear"
+                value={formData.academicYear}
                 placeholder="Academic Year"
                 className="border-t-blue-gray-200 focus-border-t-gray-900"
+                onChange={handleOnChange}
               />
             </div>
             <div className="w-full md:w-1/2 px-4 mb-4">
@@ -57,8 +89,11 @@ export default function Contribution() {
               </Typography>
               <Input
                 size="lg"
+                name="teacherParticipated"
+                value={formData.teacherParticipated}
                 placeholder="Name of teacher participated"
                 className="border-t-blue-gray-200 focus-border-t-gray-900"
+                onChange={handleOnChange}
               />
             </div>
           </div>
@@ -70,8 +105,11 @@ export default function Contribution() {
               </Typography>
               <Input
                 size="lg"
+                name="role"
+                value={formData.role}
                 placeholder="Role"
                 className="border-t-blue-gray-200 focus-border-t-gray-900"
+                onChange={handleOnChange}
               />
             </div>
             <div className="w-full md:w-1/2 px-4 mb-4">
@@ -80,8 +118,11 @@ export default function Contribution() {
               </Typography>
               <Input
                 size="lg"
+                name="university"
+                value={formData.university}
                 placeholder="University/Institution"
                 className="border-t-blue-gray-200 focus-border-t-gray-900"
+                onChange={handleOnChange}
               />
             </div>
           </div>
@@ -92,12 +133,15 @@ export default function Contribution() {
             </Typography>
             <Input
               size="lg"
+              name="bodyName"
+              value={formData.bodyName}
               placeholder="Name of the body"
               className="border-t-blue-gray-200 focus-border-t-gray-900"
+              onChange={handleOnChange}
             />
           </div>
 
-          <Button className="mt-4" fullWidth>
+          <Button type="submit" className="mt-4" fullWidth>
             Add Changes
           </Button>
         </form>

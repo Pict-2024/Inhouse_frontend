@@ -1,3 +1,4 @@
+import { useState } from "react";
 import {
   Card,
   Select,
@@ -8,6 +9,37 @@ import {
 } from "@material-tailwind/react";
 
 export default function ConsultancyReport() {
+  const [formData, setFormData] = useState({
+    facultyName: "",
+    departmentName: "",
+    role: "",
+    clientOrganisation: "",
+    chiefConsultant: "",
+    workTitle: "",
+    type: "",
+    amount: "",
+    startDate: "",
+    endDate: "",
+    amountDeposited: "",
+    transactionDate: "",
+    evidenceLink: "",
+    status: "",
+    outcome: "",
+  });
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    // Handle form submission here, you can access form data in the formData object
+  };
+
   return (
     <>
       <Card
@@ -23,7 +55,7 @@ export default function ConsultancyReport() {
           Consultancy Report
         </Typography>
 
-        <form className="mt-8 mb-2">
+        <form className="mt-8 mb-2" onSubmit={handleSubmit}>
           <div className="mb-4 flex flex-wrap -mx-4">
             <div className="w-full md:w-1/2 px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
@@ -31,8 +63,11 @@ export default function ConsultancyReport() {
               </Typography>
               <Input
                 size="lg"
+                name="facultyName"
+                value={formData.facultyName}
                 placeholder="Faculty Name"
-                className="border-t-blue-gray-200 focus:border-t-gray-900"
+                className="border-t-blue-gray-200 focus-border-t-gray-900"
+                onChange={handleChange}
               />
             </div>
             <div className="w-full md:w-1/2 px-4 mb-4">
@@ -41,8 +76,11 @@ export default function ConsultancyReport() {
               </Typography>
               <Input
                 size="lg"
+                name="departmentName"
+                value={formData.departmentName}
                 placeholder="Name of Department"
                 className="border-t-blue-gray-200 focus-border-t-gray-900"
+                onChange={handleChange}
               />
             </div>
           </div>
@@ -53,8 +91,11 @@ export default function ConsultancyReport() {
               </Typography>
               <Input
                 size="lg"
+                name="role"
+                value={formData.role}
                 placeholder="Role"
                 className="border-t-blue-gray-200 focus-border-t-gray-900"
+                onChange={handleChange}
               />
             </div>
             <div className="w-full md:w-1/2 px-4 mb-4">
@@ -63,8 +104,11 @@ export default function ConsultancyReport() {
               </Typography>
               <Input
                 size="lg"
+                name="clientOrganisation"
+                value={formData.clientOrganisation}
                 placeholder="Client Organisation"
                 className="border-t-blue-gray-200 focus-border-t-gray-900"
+                onChange={handleChange}
               />
             </div>
           </div>
@@ -75,8 +119,11 @@ export default function ConsultancyReport() {
               </Typography>
               <Input
                 size="lg"
+                name="chiefConsultant"
+                value={formData.chiefConsultant}
                 placeholder="Chief Consultant"
                 className="border-t-blue-gray-200 focus-border-t-gray-900"
+                onChange={handleChange}
               />
             </div>
             <div className="w-full md:w-1/2 px-4 mb-4">
@@ -85,8 +132,11 @@ export default function ConsultancyReport() {
               </Typography>
               <Input
                 size="lg"
+                name="workTitle"
+                value={formData.workTitle}
                 placeholder="Title of Work domain"
                 className="border-t-blue-gray-200 focus-border-t-gray-900"
+                onChange={handleChange}
               />
             </div>
           </div>
@@ -97,8 +147,11 @@ export default function ConsultancyReport() {
               </Typography>
               <Select
                 size="lg"
+                name="type"
+                value={formData.type}
                 placeholder="Select Type"
                 className="border-t-blue-gray-200 focus-border-t-gray-900"
+                onChange={handleChange}
               >
                 <Option value="Paid">Paid</Option>
                 <Option value="Unpaid">Unpaid</Option>
@@ -110,8 +163,11 @@ export default function ConsultancyReport() {
               </Typography>
               <Input
                 size="lg"
+                name="amount"
+                value={formData.amount}
                 placeholder="Amount"
                 className="border-t-blue-gray-200 focus-border-t-gray-900"
+                onChange={handleChange}
               />
             </div>
           </div>
@@ -122,9 +178,12 @@ export default function ConsultancyReport() {
               </Typography>
               <Input
                 size="lg"
+                name="startDate"
+                value={formData.startDate}
                 type="date"
                 placeholder="Start Date"
                 className="border-t-blue-gray-200 focus-border-t-gray-900"
+                onChange={handleChange}
               />
             </div>
             <div className="w-full md:w-1/2 px-4 mb-4">
@@ -133,9 +192,12 @@ export default function ConsultancyReport() {
               </Typography>
               <Input
                 size="lg"
+                name="endDate"
+                value={formData.endDate}
                 type="date"
                 placeholder="End Date"
                 className="border-t-blue-gray-200 focus-border-t-gray-900"
+                onChange={handleChange}
               />
             </div>
           </div>
@@ -146,8 +208,11 @@ export default function ConsultancyReport() {
               </Typography>
               <Input
                 size="lg"
+                name="amountDeposited"
+                value={formData.amountDeposited}
                 placeholder="Amount Deposited to college account"
                 className="border-t-blue-gray-200 focus-border-t-gray-900"
+                onChange={handleChange}
               />
             </div>
             <div className="w-full md:w-1/2 px-4 mb-4">
@@ -156,9 +221,12 @@ export default function ConsultancyReport() {
               </Typography>
               <Input
                 size="lg"
+                name="transactionDate"
+                value={formData.transactionDate}
                 type="date"
                 placeholder="Date of Transaction"
                 className="border-t-blue-gray-200 focus-border-t-gray-900"
+                onChange={handleChange}
               />
             </div>
           </div>
@@ -169,8 +237,11 @@ export default function ConsultancyReport() {
               </Typography>
               <Input
                 size="lg"
+                name="evidenceLink"
+                value={formData.evidenceLink}
                 placeholder="Link to evidence"
                 className="border-t-blue-gray-200 focus-border-t-gray-900"
+                onChange={handleChange}
               />
             </div>
             <div className="w-full md:w-1/2 px-4 mb-4">
@@ -179,8 +250,11 @@ export default function ConsultancyReport() {
               </Typography>
               <Select
                 size="lg"
+                name="status"
+                value={formData.status}
                 placeholder="Select Status"
                 className="border-t-blue-gray-200 focus-border-t-gray-900"
+                onChange={handleChange}
               >
                 <Option value="Completed">Completed</Option>
                 <Option value="Ongoing">Ongoing</Option>
@@ -194,8 +268,11 @@ export default function ConsultancyReport() {
               </Typography>
               <Input
                 size="lg"
+                name="outcome"
+                value={formData.outcome}
                 placeholder="Outcome"
                 className="border-t-blue-gray-200 focus-border-t-gray-900"
+                onChange={handleChange}
               />
             </div>
             <div className="w-full md:w-1/2 px-4 mb-4">
@@ -210,8 +287,7 @@ export default function ConsultancyReport() {
               />
             </div>
           </div>
-
-          <Button className="mt-4" fullWidth>
+          <Button className="mt-4" fullWidth type="submit">
             Add Changes
           </Button>
         </form>

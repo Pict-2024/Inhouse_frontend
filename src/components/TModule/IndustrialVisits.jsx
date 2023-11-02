@@ -1,6 +1,32 @@
+import { useState } from "react";
 import { Card, Input, Button, Typography } from "@material-tailwind/react";
 
 export default function IndustrialVisit() {
+  const [formData, setFormData] = useState({
+    staffName: "",
+    department: "",
+    companyAddress: "",
+    purposeOfVisit: "",
+    numberOfStudents: "",
+    dateOfVisit: "",
+    coordinators: "",
+    financialSupport: "",
+    reportApproval: "",
+  });
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    // Handle form submission here, you can access form data in the formData object
+  };
+
   return (
     <>
       <Card
@@ -16,7 +42,7 @@ export default function IndustrialVisit() {
           Industrial Visits / Tours / Field Trip
         </Typography>
 
-        <form className="mt-8 mb-2">
+        <form className="mt-8 mb-2" onSubmit={handleSubmit}>
           <div className="mb-4 flex flex-wrap -mx-4">
             <div className="w-full md:w-1/2 px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
@@ -24,8 +50,11 @@ export default function IndustrialVisit() {
               </Typography>
               <Input
                 size="lg"
+                name="staffName"
+                value={formData.staffName}
                 placeholder="Name of the staff"
                 className="border-t-blue-gray-200 focus-border-t-gray-900"
+                onChange={handleChange}
               />
             </div>
             <div className="w-full md:w-1/2 px-4 mb-4">
@@ -34,8 +63,11 @@ export default function IndustrialVisit() {
               </Typography>
               <Input
                 size="lg"
+                name="department"
+                value={formData.department}
                 placeholder="Department"
                 className="border-t-blue-gray-200 focus-border-t-gray-900"
+                onChange={handleChange}
               />
             </div>
           </div>
@@ -47,8 +79,11 @@ export default function IndustrialVisit() {
               </Typography>
               <Input
                 size="lg"
+                name="companyAddress"
+                value={formData.companyAddress}
                 placeholder="Name and address of the Company / Industry visited"
                 className="border-t-blue-gray-200 focus-border-t-gray-900"
+                onChange={handleChange}
               />
             </div>
             <div className="w-full md:w-1/2 px-4 mb-4">
@@ -57,8 +92,11 @@ export default function IndustrialVisit() {
               </Typography>
               <Input
                 size="lg"
+                name="purposeOfVisit"
+                value={formData.purposeOfVisit}
                 placeholder="Purpose of the visit"
                 className="border-t-blue-gray-200 focus-border-t-gray-900"
+                onChange={handleChange}
               />
             </div>
           </div>
@@ -70,9 +108,12 @@ export default function IndustrialVisit() {
               </Typography>
               <Input
                 size="lg"
+                name="numberOfStudents"
+                value={formData.numberOfStudents}
                 placeholder="No. of Students"
                 type="number"
                 className="border-t-blue-gray-200 focus-border-t-gray-900"
+                onChange={handleChange}
               />
             </div>
             <div className="w-full md:w-1/2 px-4 mb-4">
@@ -81,9 +122,12 @@ export default function IndustrialVisit() {
               </Typography>
               <Input
                 size="lg"
+                name="dateOfVisit"
+                value={formData.dateOfVisit}
                 placeholder="Date of visit"
                 type="date"
                 className="border-t-blue-gray-200 focus-border-t-gray-900"
+                onChange={handleChange}
               />
             </div>
           </div>
@@ -95,8 +139,11 @@ export default function IndustrialVisit() {
               </Typography>
               <Input
                 size="lg"
+                name="coordinators"
+                value={formData.coordinators}
                 placeholder="Coordinator(s)"
                 className="border-t-blue-gray-200 focus-border-t-gray-900"
+                onChange={handleChange}
               />
             </div>
             <div className="w-full md:w-1/2 px-4 mb-4">
@@ -105,8 +152,11 @@ export default function IndustrialVisit() {
               </Typography>
               <Input
                 size="lg"
+                name="financialSupport"
+                value={formData.financialSupport}
                 placeholder="Financial support from PICT"
                 className="border-t-blue-gray-200 focus-border-t-gray-900"
+                onChange={handleChange}
               />
             </div>
           </div>
@@ -117,12 +167,15 @@ export default function IndustrialVisit() {
             </Typography>
             <Input
               size="lg"
+              name="reportApproval"
+              value={formData.reportApproval}
               placeholder="Report with approval application"
               className="border-t-blue-gray-200 focus-border-t-gray-900"
+              onChange={handleChange}
             />
           </div>
 
-          <Button className="mt-4" fullWidth>
+          <Button className="mt-4" fullWidth type="submit">
             Add Changes
           </Button>
         </form>
