@@ -1,12 +1,11 @@
 import { useState } from "react";
 import { Card, Input, Button, Typography } from "@material-tailwind/react";
-import Login from "../Auth/login";
 
 export default function TDashboard() {
   const [formData, setFormData] = useState({
     userProfile: {
-      username: "Abhi",
-      email: "abhi@gmail.com",
+      username: "pict",
+      email: "pict@ms.pict.edu",
     },
   });
 
@@ -46,7 +45,7 @@ export default function TDashboard() {
               <div className="mb-2 flex flex-wrap -mx-2">
                 <div className="w-1/2 px-2">
                   <Typography variant="h6" color="blue-gray" className="mb-3">
-                    UserName
+                    Username
                   </Typography>
                   <Input
                     size="lg"
@@ -80,7 +79,6 @@ export default function TDashboard() {
           </Button>
         </form>
       </Card>
-      <Login />
     </>
   );
 }

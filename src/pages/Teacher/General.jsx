@@ -1,49 +1,137 @@
-import { Select, Option } from "@material-tailwind/react";
-import { Link } from "react-router-dom";
-import TechnicalCompetitions from "../../components/TModule/TechnicalCompetitions";
+import React, { useState } from "react";
+import Select from "react-select";
 
+import {
+  Attended,
+  BookPublication,
+  CertificateCourses,
+  ConfeSeminar,
+  ConsultancyReport,
+  Contribution,
+  ExtensionActivity,
+  FacultyAchievements,
+  FacultyConferencePublication,
+  FacultyExchange,
+  FacultyResource,
+  Grants,
+  IndustrialVisits,
+  PatentPublication,
+  ProfessionalAffiliations,
+  Research,
+  TechnicalCompetitions,
+  WebinarConducted,
+} from "../../components/TModule";
 
 export default function General() {
+  const [selectedOption, setSelectedOption] = useState("Faculty Achievement");
+
+  const options = [
+    { value: "Research", label: "Research" },
+    { value: "Book Publication", label: "Book Publication" },
+    {
+      value: "Faculty Conference Publication",
+      label: "Faculty Conference Publication",
+    },
+    { value: "Grants", label: "Grants" },
+    { value: "Consultancy Report", label: "Consultancy Report" },
+    { value: "Patent Publication", label: "Patent Publication" },
+    {
+      value: "Conferences, Seminars, Workshops, FDP, STTP Organized /conducted",
+      label: "Conferences, Seminars, Workshops, FDP, STTP Organized /conducted",
+    },
+    {
+      value: "STTP/FDP/Workshop/Conference Attended",
+      label: "STTP/FDP/Workshop/Conference Attended",
+    },
+    {
+      value:
+        "Webinar/Guest-Expert Lecture / Video conference /Invited talks organized /conducted",
+      label:
+        "Webinar/Guest-Expert Lecture / Video conference /Invited talks organized /conducted",
+    },
+    {
+      value: "Number of MoUs, collaborations / linkages for Faculty exchange",
+      label: "Number of MoUs, collaborations / linkages for Faculty exchange",
+    },
+    { value: "Certificate Courses", label: "Certificate Courses" },
+    { value: "Professional Affiliations", label: "Professional Affiliations" },
+    {
+      value: "Faculty as Resource Person you",
+      label: "Faculty as Resource Person you",
+    },
+    { value: "Extension Activity", label: "Extension Activity" },
+    {
+      value:
+        "Technical Competitions / Tech Fest Organized/Extra & Co-curricular activities Organized",
+      label:
+        "Technical Competitions / Tech Fest Organized/Extra & Co-curricular activities Organized",
+    },
+    { value: "Faculty Achievement", label: "Faculty Achievement" },
+    {
+      value: "Industrial Visits / Tours / Field Trip",
+      label: "Industrial Visits / Tours / Field Trip",
+    },
+    { value: "Contribution to BoS", label: "Contribution to BoS" },
+  ];
+
+  // A mapping of option values to their corresponding components
+  const optionComponents = {
+    Research: Research,
+    "Book Publication": BookPublication,
+    "Faculty Conference Publication": FacultyConferencePublication,
+    Grants: Grants,
+    "Consultancy Report": ConsultancyReport,
+    "Patent Publication": PatentPublication,
+    "Conferences, Seminars, Workshops, FDP, STTP Organized /conducted":
+      ConfeSeminar,
+    "STTP/FDP/Workshop/Conference Attended": Attended,
+    "Webinar/Guest-Expert Lecture / Video conference /Invited talks organized /conducted":
+      WebinarConducted,
+    "Number of MoUs, collaborations / linkages for Faculty exchange":
+      FacultyExchange,
+
+    "Certificate Courses": CertificateCourses,
+    "Professional Affiliations": ProfessionalAffiliations,
+    "Faculty as Resource Person you": FacultyResource,
+    "Extension Activity": ExtensionActivity,
+    "Technical Competitions / Tech Fest Organized/Extra & Co-curricular activities Organized":
+      TechnicalCompetitions,
+    "Faculty Achievement": FacultyAchievements,
+    "Industrial Visits / Tours / Field Trip": IndustrialVisits,
+    "Contribution to BoS": Contribution,
+  };
+
+  // Function to handle the option selection
+  const handleOptionChange = (event) => {
+    // console.log(event.target.option);
+    console.log("selected hit");
+    setSelectedOption(event.value);
+    console.log(selectedOption);
+    console.log(selectedOption);
+  };
+
   return (
     <>
-      <div className="w-4/5 mx-auto mt-4">
-        <Select label="Select your Department">
-          <Link>
-            <Option>Research</Option>
-          </Link>
-          <Link>
-            <Option>Book Publication</Option>
-          </Link>
-          <Option>Faculty Conference Publication</Option>
-          <Option>Grants</Option>
-          <Option>Consultancy Report</Option>
-          <Option>Patent Publication</Option>
-          <Option>
-            Conferences, Seminars, Workshops, FDP, STTP Organized /conducted
-          </Option>
-          <Option>STTP/FDP/Workshop/Conference Attended</Option>
-          <Option>
-            Webinar/Guest-Expert Lecture / Video conference /Invited talks
-            organized /conducted
-          </Option>
-          <Option>
-            Number of MoUs, collaborations / linkages for Faculty exchange
-          </Option>
-          <Option>Certificate Courses</Option>
-          <Option>Professional Affiliations</Option>
-          <Option>Faculty as Resource Person you</Option>
-          <Option>Extension Activity</Option>
-          <Option>
-            Technical Competitions / Tech Fest Organized/Extra & Co-curricular
-            activities Organized
-          </Option>
-          <Option>Faculty Achievement</Option>
-          <Option>Industrial Visits / Tours / Field Trip</Option>
-          <Option>Contribution to BoS</Option>
-        </Select>
+      <div className="w-full mt-4 flex flex-col items-center justify-center gap-2">
+        <h2 className="text-slate-900 text-xl font-bold">
+          Select your choice :
+        </h2>
+        <Select
+          value={options.find((option) => option.value === selectedOption)}
+          onChange={handleOptionChange}
+          options={options}
+          className="w-2/3 "
+        />
       </div>
-      {/* <Grants/> */}
-      <TechnicalCompetitions />
+      {selectedOption ? (
+        // Render the selected component if an option is selected
+        <div className="w-full mt-4">
+          {React.createElement(optionComponents[selectedOption])}
+        </div>
+      ) : (
+        // Render the Faculty Achievement component by default
+        <FacultyAchievements />
+      )}
     </>
   );
 }
