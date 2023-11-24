@@ -1,25 +1,39 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
+// import { Link } from "react-router-dom";
 import { Card, Input, Button, Typography } from "@material-tailwind/react";
+import axios from "axios";
 
-export default function LoginPage() {
+export default function Login() {
   const [formData, setFormData] = useState({
     email: "",
     password: "",
-    verifyEmail: false,
   });
 
+  const [error, setError] = useState(null);
+  const [login, setLogin] = useState(false);
+
   const handleInputChange = (e) => {
-    const value =
-      e.target.type === "checkbox" ? e.target.checked : e.target.value;
     setFormData({
       ...formData,
-      [e.target.name]: value,
+      [e.target.name]: e.target.value,
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Handle form submission here
+
+    try {
+      const response = await axios.post(
+        "http://localhost:5000/login",
+        formData
+      );
+      console.log(response.data);
+      setLogin(true);
+    } catch (error) {
+      setError("Invalid credentials");
+      console.error(error.response.data);
+    }
   };
 
   return (
@@ -29,7 +43,11 @@ export default function LoginPage() {
         shadow={true}
         className="border border-gray-300 w-85 p-6 rounded-md"
       >
-        <Typography variant="h4" color="blue-gray" className="mb-4 text-center">
+        <Typography
+          variant="h4"
+          color="blue-gray"
+          className="mb-4 text-center text-bold"
+        >
           Login
         </Typography>
 
@@ -40,18 +58,6 @@ export default function LoginPage() {
                 <Typography variant="h6" color="blue-gray">
                   Email
                 </Typography>
-                <div>
-                  <label className="flex">
-                    <input
-                      type="checkbox"
-                      name="verifyEmail"
-                      checked={formData.verifyEmail}
-                      onChange={handleInputChange}
-                      className="form-checkbox text-blue-gray-500"
-                    />
-                    <span className="ml-2 text-blue-gray-500">Verify</span>
-                  </label>
-                </div>
               </div>
               <Input
                 size="lg"
@@ -79,9 +85,21 @@ export default function LoginPage() {
             />
           </div>
 
-          <Button type="submit" className="mt-4" fullWidth>
-            Login
+          <Button type="submit" className="mt-4 mb-2" fullWidth>
+            Log In
           </Button>
+
+          {error && <p className="error">{error}</p>}
+          {login && <p className="success">Login successful!</p>}
+
+          <div className="text-center">
+            <span className="text-gray-700 mt-2 text-sm">
+              New user ?
+              <Link to={"/auth/register"} className="text-blue-500 mx-2">
+                register
+              </Link>
+            </span>
+          </div>
         </form>
       </Card>
     </div>

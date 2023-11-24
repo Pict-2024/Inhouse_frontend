@@ -7,6 +7,7 @@ import { TeacherRoutes } from './routes/TeacherRoutes';
 import { AdminRoutes } from './routes/AdminRoutes';
 import { SDashboard } from './pages/Student/SDashboard';
 import { HomePage } from './pages/HomePage';
+import { AuthRoutes } from './routes/AuthRoutes';
 
 const router = createBrowserRouter([
   // global routes
@@ -26,6 +27,7 @@ const router = createBrowserRouter([
   StudentRoutes,
   TeacherRoutes,
   AdminRoutes,
+  AuthRoutes
 ]);
 
 function App() {
