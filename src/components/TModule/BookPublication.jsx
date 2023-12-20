@@ -7,8 +7,13 @@ import {
   Button,
   Typography,
 } from "@material-tailwind/react";
+import { useSelector } from 'react-redux';
 
 export default function BookPublication() {
+
+  //
+  const { Username } = useSelector((state) => state.teacher);
+
   const currentYear = new Date().getFullYear();
   const years = Array.from(
     { length: currentYear - 1999 },
@@ -16,15 +21,16 @@ export default function BookPublication() {
   );
 
   const [formData, setFormData] = useState({
-    facultyName: "",
-    department: "",
-    bookTitle: "",
-    chapter: "",
-    level: "",
-    publisher: "",
-    year: "",
-    otherInfo: "",
-    proof: null,
+    UserName: Username,
+    Facultyname: "",
+    Department: "",
+    BookTitle: "",
+    Chapter: "",
+    Level: "",
+    Publisher: "",
+    Year: "",
+    OtherInfo: "",
+    Proof: null,
   });
 
   const handleOnChange = (e) => {
@@ -38,6 +44,7 @@ export default function BookPublication() {
   const handleSubmit = (e) => {
     e.preventDefault();
     // Handle form submission here
+    console.log(formData);
   };
 
   return (
@@ -62,11 +69,11 @@ export default function BookPublication() {
                 Faculty Name
               </Typography>
               <Input
-                id="facultyName"
+                id="Facultyname"
                 size="lg"
                 placeholder="Name of Faculty"
                 className="border-t-blue-gray-200 focus-border-t-gray-900"
-                value={formData.facultyName}
+                value={formData.FacultyName}
                 onChange={handleOnChange}
               />
             </div>
@@ -75,11 +82,11 @@ export default function BookPublication() {
                 Department
               </Typography>
               <Input
-                id="department"
+                id="Department"
                 size="lg"
                 placeholder="Department"
                 className="border-t-blue-gray-200 focus-border-t-gray-900"
-                value={formData.department}
+                value={formData.Department}
                 onChange={handleOnChange}
               />
             </div>
@@ -90,11 +97,11 @@ export default function BookPublication() {
                 Book Title
               </Typography>
               <Input
-                id="bookTitle"
+                id="BookTitle"
                 size="lg"
                 placeholder="Title of book"
                 className="border-t-blue-gray-200 focus-border-t-gray-900"
-                value={formData.bookTitle}
+                value={formData.BookTitle}
                 onChange={handleOnChange}
               />
             </div>
@@ -103,11 +110,11 @@ export default function BookPublication() {
                 Chapter (if any)
               </Typography>
               <Input
-                id="chapter"
+                id="Chapter"
                 size="lg"
                 placeholder="Chapter"
                 className="border-t-blue-gray-200 focus-border-t-gray-900"
-                value={formData.chapter}
+                value={formData.Chapter}
                 onChange={handleOnChange}
               />
             </div>
@@ -118,11 +125,11 @@ export default function BookPublication() {
                 Level
               </Typography>
               <Select
-                id="level"
+                id="Level"
                 size="lg"
                 placeholder="Select Level"
                 className="border-t-blue-gray-200 focus-border-t-gray-900"
-                value={formData.level}
+                value={formData.Level}
                 onChange={handleOnChange}
               >
                 <Option value="International">International</Option>
@@ -134,11 +141,11 @@ export default function BookPublication() {
                 Publisher
               </Typography>
               <Input
-                id="publisher"
+                id="Publisher"
                 size="lg"
                 placeholder="Publisher"
                 className="border-t-blue-gray-200 focus-border-t-gray-900"
-                value={formData.publisher}
+                value={formData.Publisher}
                 onChange={handleOnChange}
               />
             </div>
@@ -149,12 +156,12 @@ export default function BookPublication() {
                 Year
               </Typography>
               <Select
-                id="year"
+                id="Year"
                 size="lg"
                 placeholder="Select Year"
                 color="light-gray"
                 className="border-t-blue-gray-200 focus-border-t-gray-900"
-                value={formData.year}
+                value={formData.Year}
                 onChange={handleOnChange}
               >
                 {years.map((year) => (
@@ -169,11 +176,11 @@ export default function BookPublication() {
                 ISBN/ISSN/DOI/any other
               </Typography>
               <Input
-                id="otherInfo"
+                id="OtherInfo"
                 size="lg"
                 placeholder="Author"
                 className="border-t-blue-gray-200 focus-border-t-gray-900"
-                value={formData.otherInfo}
+                value={formData.OtherInfo}
                 onChange={handleOnChange}
               />
             </div>
@@ -184,7 +191,7 @@ export default function BookPublication() {
                 Proof
               </Typography>
               <Input
-                id="proof"
+                id="Proof"
                 size="lg"
                 type="file"
                 placeholder="Financial support from institute in INR"

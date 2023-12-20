@@ -1,7 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-    currentUser: null,
+    Username: null,
     error: null,
     loading: false
 };
@@ -15,7 +15,7 @@ const teacherSlice = createSlice({
         },
 
         signInTeacherSuccess: (state, action) => {
-            state.currentUser = action.payload,
+            state.Username = action.payload,
             state.loading = false,
             state.error = null;
         },
@@ -27,7 +27,7 @@ const teacherSlice = createSlice({
             state.loading = true;
         },
         updateTeacherSuccess: (state, action) => {
-            state.currentUser = action.payload,
+            state.Username = action.payload,
             state.loading = false,
             state.error = null;
         },
@@ -40,7 +40,7 @@ const teacherSlice = createSlice({
             state.loading = true;
         },
         signOutTeacherSuccess: (state) => {
-            state.currentUser = null,
+            state.Username = null,
             state.loading = false,
             state.error = null;
         },

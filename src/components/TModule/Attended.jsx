@@ -33,8 +33,10 @@ export default function Attended() {
   };
 
   const handleSubmit = (e) => {
+
     e.preventDefault();
     // Handle form submission here
+    
   };
 
   return (
