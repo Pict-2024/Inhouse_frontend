@@ -3,12 +3,16 @@ import { Card, Input, Button, Typography } from "@material-tailwind/react";
 import axios from "axios";
 
 export default function Register() {
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    password: "",
-  });
-
+  // const [formData, setFormData] = useState({
+  //   name: "",
+  //   gmail: "",
+  //   password: "",
+  //   newPassword: "",
+  // });
+  const [name, setName] = useState("");
+  const [gmail, setGmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
   const [verified, setVerified] = useState(false);
   const [error, setError] = useState(null);
   const [register, setRegister] = useState(false);
@@ -17,50 +21,47 @@ export default function Register() {
     try {
       const response = await axios.post("http://localhost:5000/verify", {
         // eslint-disable-next-line no-undef
-        email,
+        gmail,
+        password,
       });
 
-      if (response.data === "Email verified") {
+      if (response.data === "Email and Password verified") {
         setVerified(true);
         setError(null);
       } else {
-        setError("Invalid email");
+        setError("Invalid Credentials");
       }
 
       console.log(response.data);
     } catch (error) {
-      setError("Invalid email");
+      setError("Invalid Credentials");
       console.error(error.response.data);
     }
   };
 
-  const handleInputChange = (e) => {
-    const value = e.target.value;
-    setFormData({
-      ...formData,
-      [e.target.name]: value,
-    });
-  };
+  // const handleInputChange = (e) => {
+  //   const value = e.target.value;
+  //   setFormData({
+  //     ...formData,
+  //     [e.target.name]: value,
+  //   });
+  // };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      // Check if the user is already registered
-      const response = await axios.get(
-        `http://localhost:5000/checkRegistration/${formData.email}`
-      );
-
-      if (response.data && response.data.registered) {
-        setError("User already registered");
-      } else {
+      // Check if the user is already registered and verified
+      if (verified) {
         // Proceed with registration
         const registerResponse = await axios.post(
           "http://localhost:5000/register",
-          formData
+          { name, gmail, password: newPassword }
         );
         console.log(registerResponse.data);
-        setError(null); // Clear any previous errors
+        setError(null);
         setRegister(true);
+      } else {
+        setError("Please verify your email and password first.");
       }
     } catch (error) {
       setError("Registration failed");
@@ -73,7 +74,7 @@ export default function Register() {
       <Card
         color="transparent"
         shadow={true}
-        className="border border-gray-300 w-85 p-6 rounded-md"
+        className="border border-gray-300 w-100 p-6 rounded-md"
       >
         <Typography
           variant="h4"
@@ -91,41 +92,63 @@ export default function Register() {
             <Input
               size="lg"
               name="name"
-              value={formData.name}
+              value={name}
               placeholder="Name"
               className="border-t-blue-gray-200 focus-border-t-gray-900"
-              onChange={handleInputChange}
+              onChange={(e) => setName(e.target.value)}
             />
           </div>
 
           <div className="mb-4">
             <Typography variant="h6" color="blue-gray">
-              Email
+              Gmail
             </Typography>
             <Input
               size="lg"
-              name="email"
-              value={formData.email}
-              placeholder="Email"
+              name="gmail"
+              value={gmail}
+              placeholder="gmail"
               className="border-t-blue-gray-200 focus-border-t-gray-900"
-              onChange={handleInputChange}
+              onChange={(e) => setGmail(e.target.value)}
             />
           </div>
+          <div className="mb-4">
+            <Typography variant="h6" color="blue-gray">
+              Password
+            </Typography>
+            <Input
+              size="lg"
+              name="password"
+              value={password}
+              type="password"
+              placeholder="Password"
+              className="border-t-blue-gray-200 focus-border-t-gray-900"
+              onChange={(e) => setPassword(e.target.value)}
+            />
+          </div>
+          <Button
+            type="button"
+            className="mt-4"
+            fullWidth
+            onClick={handleVerify}
+          >
+            Verify
+          </Button>
 
           {verified && (
             <>
               <div className="mb-4">
                 <Typography variant="h6" color="blue-gray">
-                  Password
+                  New Password
                 </Typography>
                 <Input
                   size="lg"
                   name="password"
-                  value={formData.password}
+                  value={newPassword}
                   type="password"
-                  placeholder="Password"
+                  placeholder="New Password"
                   className="border-t-blue-gray-200 focus-border-t-gray-900"
-                  onChange={handleInputChange}
+                  onChange={(e) => setNewPassword(e.target.value)}
                 />
               </div>
               <Button type="submit" className="mt-4" fullWidth>
@@ -133,22 +156,11 @@ export default function Register() {
               </Button>
             </>
           )}
-
-          {!verified && (
-            <Button
-              type="button"
-              onClick={handleVerify}
-              className="mt-4"
-              fullWidth
-            >
-              Verify Email
-            </Button>
-          )}
         </form>
 
         {verified && (
           <p className="text-green-500 mt-2">
-            Email verified! You can now set your password.
+            Email and Password verified! You can now set your new password.
           </p>
         )}
         {error && <p className="text-red-500 mt-2">{error}</p>}

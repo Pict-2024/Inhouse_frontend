@@ -16,7 +16,7 @@ export default function TechnicalCompetitions() {
   );
 
   const [formData, setFormData] = useState({
-    nameOfTeacher: "",
+    // nameOfTeacher: "",
     department: "",
     principalInvestigator: "",
     projectTitle: "",
@@ -69,7 +69,7 @@ export default function TechnicalCompetitions() {
 
         <form className="mt-8 mb-2" onSubmit={handleSubmit}>
           <div className="mb-4 flex flex-wrap -mx-4">
-            <div className="w-full md:w-1/2 px-4 mb-4">
+            {/* <div className="w-full md:w-1/2 px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
                 Name of Teacher
               </Typography>
@@ -81,7 +81,7 @@ export default function TechnicalCompetitions() {
                 value={formData.nameOfTeacher}
                 onChange={handleChange}
               />
-            </div>
+            </div> */}
 
             <div className="w-full md:w-1/2 px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">

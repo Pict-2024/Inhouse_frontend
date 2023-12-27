@@ -10,7 +10,7 @@ import {
 
 export default function FacultyAchievements() {
   const [formData, setFormData] = useState({
-    facultyName: "",
+    // facultyName: "",
     department: "",
     achievementDetails: "",
     eventName: "",
@@ -49,7 +49,7 @@ export default function FacultyAchievements() {
 
         <form className="mt-8 mb-2" onSubmit={handleSubmit}>
           <div className="mb-4 flex flex-wrap -mx-4">
-            <div className="w-full md:w-1/2 px-4 mb-4">
+            {/* <div className="w-full md:w-1/2 px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
                 Name of the faculty
               </Typography>
@@ -61,7 +61,7 @@ export default function FacultyAchievements() {
                 className="border-t-blue-gray-200 focus-border-t-gray-900"
                 onChange={handleInputChange}
               />
-            </div>
+            </div> */}
             <div className="w-full md:w-1/2 px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
                 Department

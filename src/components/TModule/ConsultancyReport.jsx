@@ -10,7 +10,7 @@ import {
 
 export default function ConsultancyReport() {
   const [formData, setFormData] = useState({
-    facultyName: "",
+    // facultyName: "",
     departmentName: "",
     role: "",
     clientOrganisation: "",
@@ -57,7 +57,7 @@ export default function ConsultancyReport() {
 
         <form className="mt-8 mb-2" onSubmit={handleSubmit}>
           <div className="mb-4 flex flex-wrap -mx-4">
-            <div className="w-full md:w-1/2 px-4 mb-4">
+            {/* <div className="w-full md:w-1/2 px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
                 Faculty Name
               </Typography>
@@ -69,7 +69,7 @@ export default function ConsultancyReport() {
                 className="border-t-blue-gray-200 focus-border-t-gray-900"
                 onChange={handleChange}
               />
-            </div>
+            </div> */}
             <div className="w-full md:w-1/2 px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
                 Name of Department
@@ -281,8 +281,8 @@ export default function ConsultancyReport() {
               </Typography>
               <Input
                 size="lg"
-                type="file"
-                placeholder="Upload PDF Documents"
+                type="text"
+                placeholder="Upload PDF Documents(Add drive link)"
                 className="border-t-blue-gray-200 focus-border-t-gray-900"
               />
             </div>

@@ -4,7 +4,7 @@ import { useState } from "react";
 export default function ExtensionActivity() {
   const [formData, setFormData] = useState({
     deptName: "",
-    facultyName: "",
+    // facultyName: "",
     title: "",
     startDate: "",
     endDate: "",
@@ -62,7 +62,7 @@ export default function ExtensionActivity() {
                 className="border-t-blue-gray-200 focus-border-t-gray-900"
               />
             </div>
-            <div className="w-full md:w-1/2 px-4 mb-4">
+            {/* <div className="w-full md:w-1/2 px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
                 Name of the faculty
               </Typography>
@@ -74,7 +74,7 @@ export default function ExtensionActivity() {
                 onChange={handleChange}
                 className="border-t-blue-gray-200 focus-border-t-gray-900"
               />
-            </div>
+            </div> */}
           </div>
 
           <div className="mb-4 flex flex-wrap -mx-4">

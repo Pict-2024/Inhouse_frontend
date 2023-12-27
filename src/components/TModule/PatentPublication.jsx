@@ -4,7 +4,7 @@ import { Card, Input, Button, Typography } from "@material-tailwind/react";
 export default function PatentPublication() {
   // Define state variables for form fields
   const [formData, setFormData] = useState({
-    staffName: "",
+    // staffName: "",
     departmentName: "",
     patentApplicationNo: "",
     patentStatus: "",
@@ -56,7 +56,7 @@ export default function PatentPublication() {
 
         <form className="mt-8 mb-2" onSubmit={handleSubmit}>
           <div className="mb-4 flex flex-wrap -mx-4">
-            <div className="w-full md:w-1/2 px-4 mb-4">
+            {/* <div className="w-full md:w-1/2 px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
                 Name of Staff
               </Typography>
@@ -68,7 +68,7 @@ export default function PatentPublication() {
                 placeholder="Name of Staff"
                 className="border-t-blue-gray-200 focus-border-t-gray-900"
               />
-            </div>
+            </div> */}
             <div className="w-full md:w-1/2 px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
                 Name of Department
@@ -267,13 +267,13 @@ export default function PatentPublication() {
             </div>
             <div className="w-full md:w-1/2 px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
-                Upload Patent Document
+                Upload Patent Document(Add drive link)
               </Typography>
               <Input
                 size="lg"
                 name="patentDocument"
                 onChange={handleChange}
-                type="file"
+                type="text"
                 placeholder="Upload Patent Document"
                 className="border-t-blue-gray-200 focus-border-t-gray-900"
               />

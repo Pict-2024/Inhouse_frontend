@@ -214,12 +214,12 @@ export default function FacultyExchange() {
             </div>
             <div className="w-full md:w-1/2 px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
-                Report
+                Report (Add drive link)
               </Typography>
               <Input
                 size="lg"
                 name="reportFile"
-                type="file"
+                type="text"
                 onChange={handleChange}
                 className="border-t-blue-gray-200 focus-border-t-gray-900"
               />

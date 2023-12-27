@@ -6,7 +6,7 @@ import axios from "axios";
 
 export default function Login() {
   const [formData, setFormData] = useState({
-    email: "",
+    gmail: "",
     password: "",
   });
 
@@ -56,14 +56,14 @@ export default function Login() {
             <div>
               <div className="flex justify-between">
                 <Typography variant="h6" color="blue-gray">
-                  Email
+                  Gmail
                 </Typography>
               </div>
               <Input
                 size="lg"
-                name="email"
-                value={formData.email}
-                placeholder="Email"
+                name="gmail"
+                value={formData.gmail}
+                placeholder="gmail"
                 className="border-t-blue-gray-200 focus-border-t-gray-900"
                 onChange={handleInputChange}
               />
