@@ -16,7 +16,7 @@ export default function Research() {
   );
 
   const [formData, setFormData] = useState({
-    nameOfFaculty: "",
+    // nameOfFaculty: "",
     department: "",
     titleOfResearchArticle: "",
     type: "",
@@ -73,7 +73,7 @@ export default function Research() {
 
         <form className="mt-8 mb-2" onSubmit={handleSubmit}>
           <div className="mb-4 flex flex-wrap -mx-4">
-            <div className="w-full md:w-1/2 px-4 mb-4">
+            {/* <div className="w-full md:w-1/2 px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
                 Name of Faculty
               </Typography>
@@ -85,7 +85,7 @@ export default function Research() {
                 value={formData.nameOfFaculty}
                 onChange={handleChange}
               />
-            </div>
+            </div> */}
             <div className="w-full md:w-1/2 px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
                 Department
@@ -405,7 +405,7 @@ export default function Research() {
               </Typography>
               <Input
                 size="lg"
-                type="file"
+                type="text"
                 placeholder="Financial support from institute in INR "
                 className="border-t-blue-gray-200 focus:border-t-gray-900"
                 name="paper"
@@ -434,7 +434,7 @@ export default function Research() {
               </Typography>
               <Input
                 size="lg"
-                type="file"
+                type="text"
                 placeholder="Financial support from institute in INR "
                 className="border-t-blue-gray-200 focus:border-t-gray-900"
                 name="achievementPaper"

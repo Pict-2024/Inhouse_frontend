@@ -11,7 +11,6 @@ import { useSelector } from 'react-redux';
 
 export default function BookPublication() {
 
-  //
   const { Username } = useSelector((state) => state.teacher);
 
   const currentYear = new Date().getFullYear();
@@ -22,7 +21,7 @@ export default function BookPublication() {
 
   const [formData, setFormData] = useState({
     UserName: Username,
-    Facultyname: "",
+    // Facultyname: "",
     Department: "",
     BookTitle: "",
     Chapter: "",
@@ -64,7 +63,7 @@ export default function BookPublication() {
 
         <form className="mt-8 mb-2" onSubmit={handleSubmit}>
           <div className="mb-4 flex flex-wrap -mx-4">
-            <div className="w-full md:w-1/2 px-4 mb-4">
+            {/* <div className="w-full md:w-1/2 px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
                 Faculty Name
               </Typography>
@@ -76,7 +75,7 @@ export default function BookPublication() {
                 value={formData.FacultyName}
                 onChange={handleOnChange}
               />
-            </div>
+            </div> */}
             <div className="w-full md:w-1/2 px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
                 Department
@@ -188,12 +187,12 @@ export default function BookPublication() {
           <div className="mb-4 flex flex-wrap -mx-4">
             <div className="w-full md:w-1/2 px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
-                Proof
+                Proof (Add drive link)
               </Typography>
               <Input
                 id="Proof"
                 size="lg"
-                type="file"
+                type="text"
                 placeholder="Financial support from institute in INR"
                 className="border-t-blue-gray-200 focus-border-t-gray-900"
                 onChange={handleOnChange}

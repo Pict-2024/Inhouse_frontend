@@ -3,7 +3,7 @@ import { Card, Input, Button, Typography } from "@material-tailwind/react";
 
 export default function FacultyResource() {
   const [formData, setFormData] = useState({
-    staffName: "",
+    // staffName: "",
     department: "",
     achievementDetails: "",
     eventName: "",
@@ -43,7 +43,7 @@ export default function FacultyResource() {
 
         <form className="mt-8 mb-2" onSubmit={handleSubmit}>
           <div className="mb-4 flex flex-wrap -mx-4">
-            <div className="w-full md:w-1/2 px-4 mb-4">
+            {/* <div className="w-full md:w-1/2 px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
                 Name of the Staff
               </Typography>
@@ -55,7 +55,7 @@ export default function FacultyResource() {
                 className="border-t-blue-gray-200 focus-border-t-gray-900"
                 onChange={handleChange}
               />
-            </div>
+            </div> */}
             <div className="w-full md:w-1/2 px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
                 Name Of the department
