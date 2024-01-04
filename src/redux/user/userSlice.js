@@ -6,45 +6,45 @@ const initialState = {
     loading: false
 };
 
-const adminSlice = createSlice({
-    name: 'admin',
+const userSlice = createSlice({
+    name: 'user',
     initialState,
     reducers: {
-        signInAdminStart: (state) => {
+        signInUserStart: (state) => {
             state.loading = true;
         },
 
-        signInAdminSuccess: (state, action) => {
+        signInUserSuccess: (state, action) => {
             state.currentUser = action.payload,
             state.loading = false,
             state.error = null;
         },
-        signInAdminFailure: (state, action) => {
+        signInUserFailure: (state, action) => {
             state.error = action.payload,
             state.loading = false;
         },
-        updateAdminStart: (state) => {
+        updateUserStart: (state) => {
             state.loading = true;
         },
-        updateAdminSuccess: (state, action) => {
+        updateUserSuccess: (state, action) => {
             state.currentUser = action.payload,
             state.loading = false,
             state.error = null;
         },
-        updateAdminFailure: (state, action) => {
+        updateUserFailure: (state, action) => {
 
             state.error = action.payload,
             state.loading = false;
         },
-        signOutAdminStart: (state) => {
+        signOutUserStart: (state) => {
             state.loading = true;
         },
-        signOutAdminSuccess: (state) => {
+        signOutUserSuccess: (state) => {
             state.currentUser = null,
             state.loading = false,
             state.error = null;
         },
-        signOutAdminFailure: (state, action) => {
+        signOutUserFailure: (state, action) => {
             state.error = action.payload,
             state.loading = false;
         },
@@ -52,15 +52,15 @@ const adminSlice = createSlice({
 });
 
 export const { 
-    signInAdminStart,
-    signInAdminSuccess,
-    signInAdminFailure,
-    updateAdminStart,
-    updateAdminSuccess,
-    updateAdminFailure,
-    signOutAdminStart,
-    signOutAdminSuccess,
-    signOutAdminFailure
-} = adminSlice.actions;
+    signInUserStart,
+    signInUserSuccess,
+    signInUserFailure,
+    updateUserStart,
+    updateUserSuccess,
+    updateUserFailure,
+    signOutUserStart,
+    signOutUserSuccess,
+    signOutUserFailure
+} = userSlice.actions;
 
-export default adminSlice.reducer;
+export default userSlice.reducer;

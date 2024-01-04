@@ -1,10 +1,10 @@
 import { combineReducers, configureStore } from '@reduxjs/toolkit'
 // import { configureStore, getDefaultMiddleware } from '@reduxjs/toolkit'
-import teacherReducer from './teacher/teacherSlice';
 import { persistReducer, persistStore } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
+import userReducer from './user/userSlice';
 
-const rootReducer = combineReducers({teacher: teacherReducer})
+const rootReducer = combineReducers({user: userReducer})
 const persistConfig = {
     key: 'root',
     storage,
