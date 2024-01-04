@@ -2,15 +2,32 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Card, Input, Button, Typography } from "@material-tailwind/react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
+
+import { 
+  useDispatch,
+  useSelector 
+} from "react-redux";
+import { 
+  signInUserStart, 
+  signInUserSuccess, 
+  signInUserFailure 
+} from "../../redux/user/userSlice";
 
 export default function Login() {
+
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+
   const [formData, setFormData] = useState({
     gmail: "",
     password: "",
   });
 
-  const [error, setError] = useState(null);
-  const [login, setLogin] = useState(false);
+  const {error, loading} = useSelector((state) => state.user);
+
+  // console.log(state);
+  // const [login, setLogin] = useState(false);
 
   const handleInputChange = (e) => {
     setFormData({
@@ -22,16 +39,31 @@ export default function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    // console.log("formdata is : ", formData);
+
     try {
+      dispatch(signInUserStart());
       const response = await axios.post(
-        "http://localhost:5000/login",
+        "http://localhost:5000/api/v1/auth/login",
         formData
       );
-      console.log(response.data);
-      setLogin(true);
+
+      console.log("RESPONSE IS : ",response.data.data);
+      // setFormData(response?.data);
+
+      if (response.success === false) {
+        dispatch(signInUserFailure(response.message));
+        return;
+      }
+      dispatch(signInUserSuccess(response.data.data));
+      navigate('/');
+
+      // setLogin(true);
+
     } catch (error) {
-      setError("Invalid credentials");
-      console.error(error.response.data);
+      // setError("Invalid credentials");
+      dispatch(signInUserFailure(error?.message));
+      // console.error(error.response.data);
     }
   };
 
@@ -50,7 +82,8 @@ export default function Login() {
           Login
         </Typography>
 
-        <form className="mt-2" onSubmit={handleSubmit}>
+        <form className="mt-2" 
+        onSubmit={handleSubmit}  >
           <div className="mb-4 flex justify-between items-center">
             <div>
               <div className="flex justify-between">
@@ -84,12 +117,15 @@ export default function Login() {
             />
           </div>
 
-          <Button type="submit" className="mt-4 mb-2" fullWidth>
-            Log In
+          <Button 
+          disabled={false} 
+          type="submit" className="mt-4 mb-2" fullWidth>
+          { loading ? "loading" :
+             "login" }
           </Button>
 
           {error && <p className="error">{error}</p>}
-          {login && <p className="success">Login successful!</p>}
+          {/**  && <p className="success">Login successful!</p> */}
 
           <div className="text-center">
             <span className="text-gray-700 mt-2 text-sm">

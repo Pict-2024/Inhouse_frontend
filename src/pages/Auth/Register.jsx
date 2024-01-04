@@ -3,26 +3,30 @@ import { Card, Input, Button, Typography } from "@material-tailwind/react";
 import axios from "axios";
 
 export default function Register() {
-  // const [formData, setFormData] = useState({
-  //   name: "",
-  //   gmail: "",
-  //   password: "",
-  //   newPassword: "",
-  // });
-  const [name, setName] = useState("");
-  const [gmail, setGmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [newPassword, setNewPassword] = useState("");
+  const [formData, setFormData] = useState({
+    name: "",
+    gmail: "",
+    password: "",
+    newPassword: "",
+  });
+  // const [name, setName] = useState("");
+  // const [gmail, setGmail] = useState("");
+  // const [password, setPassword] = useState("");
+  // const [newPassword, setNewPassword] = useState("");
   const [verified, setVerified] = useState(false);
   const [error, setError] = useState(null);
   const [register, setRegister] = useState(false);
 
   const handleVerify = async () => {
     try {
-      const response = await axios.post("http://localhost:5000/verify", {
+      const response = await axios.post("http://localhost:5000/api/v1/auth/verify", {
         // eslint-disable-next-line no-undef
-        gmail,
-        password,
+        // gmail,
+        // password
+        gmail: formData.gmail,
+        password: formData.password
+
+
       });
 
       if (response.data === "Email and Password verified") {
@@ -39,13 +43,13 @@ export default function Register() {
     }
   };
 
-  // const handleInputChange = (e) => {
-  //   const value = e.target.value;
-  //   setFormData({
-  //     ...formData,
-  //     [e.target.name]: value,
-  //   });
-  // };
+  const handleInputChange = (e) => {
+    const value = e.target.value;
+    setFormData({
+      ...formData,
+      [e.target.name]: value,
+    });
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -54,10 +58,14 @@ export default function Register() {
       if (verified) {
         // Proceed with registration
         const registerResponse = await axios.post(
-          "http://localhost:5000/register",
-          { name, gmail, password: newPassword }
+          "http://localhost:5000/api/v1/auth/register",
+          { name: formData.name, 
+            gmail: formData.gmail, 
+            password: formData.newPassword 
+          }
         );
-        console.log(registerResponse.data);
+        console.log(registerResponse?.data);
+
         setError(null);
         setRegister(true);
       } else {
@@ -92,10 +100,11 @@ export default function Register() {
             <Input
               size="lg"
               name="name"
-              value={name}
+              value={formData.name}
               placeholder="Name"
               className="border-t-blue-gray-200 focus-border-t-gray-900"
-              onChange={(e) => setName(e.target.value)}
+              // onChange={(e) => setName(e.target.value)}
+              onChange={handleInputChange}
             />
           </div>
 
@@ -106,10 +115,11 @@ export default function Register() {
             <Input
               size="lg"
               name="gmail"
-              value={gmail}
+              value={formData.gmail}
               placeholder="gmail"
               className="border-t-blue-gray-200 focus-border-t-gray-900"
-              onChange={(e) => setGmail(e.target.value)}
+              // onChange={(e) => setGmail(e.target.value)}
+              onChange={handleInputChange}
             />
           </div>
           <div className="mb-4">
@@ -119,11 +129,12 @@ export default function Register() {
             <Input
               size="lg"
               name="password"
-              value={password}
+              value={formData.password}
               type="password"
               placeholder="Password"
               className="border-t-blue-gray-200 focus-border-t-gray-900"
-              onChange={(e) => setPassword(e.target.value)}
+              // onChange={(e) => setPassword(e.target.value)}
+              onChange={handleInputChange}
             />
           </div>
           <Button
@@ -143,12 +154,13 @@ export default function Register() {
                 </Typography>
                 <Input
                   size="lg"
-                  name="password"
-                  value={newPassword}
+                  name="newPassword"
+                  value={formData.newPassword}
                   type="password"
                   placeholder="New Password"
                   className="border-t-blue-gray-200 focus-border-t-gray-900"
-                  onChange={(e) => setNewPassword(e.target.value)}
+                  // onChange={(e) => setNewPassword(e.target.value)}
+                  onChange={handleInputChange}
                 />
               </div>
               <Button type="submit" className="mt-4" fullWidth>
