@@ -19,7 +19,7 @@ export default function Register() {
 
   const handleVerify = async () => {
     try {
-      const response = await axios.post("http://localhost:5000/verify", {
+      const response = await axios.post("http://localhost:5000/api/v1/auth/verify", {
         // eslint-disable-next-line no-undef
         gmail,
         password,
@@ -54,10 +54,11 @@ export default function Register() {
       if (verified) {
         // Proceed with registration
         const registerResponse = await axios.post(
-          "http://localhost:5000/register",
+          "http://localhost:5000/api/v1/auth/register",
           { name, gmail, password: newPassword }
         );
-        console.log(registerResponse.data);
+        console.log(registerResponse?.data);
+
         setError(null);
         setRegister(true);
       } else {
@@ -96,6 +97,7 @@ export default function Register() {
               placeholder="Name"
               className="border-t-blue-gray-200 focus-border-t-gray-900"
               onChange={(e) => setName(e.target.value)}
+              // onChange={handleInputChange}
             />
           </div>
 
@@ -110,6 +112,7 @@ export default function Register() {
               placeholder="gmail"
               className="border-t-blue-gray-200 focus-border-t-gray-900"
               onChange={(e) => setGmail(e.target.value)}
+              // onChange={handleInputChange}
             />
           </div>
           <div className="mb-4">
@@ -124,6 +127,7 @@ export default function Register() {
               placeholder="Password"
               className="border-t-blue-gray-200 focus-border-t-gray-900"
               onChange={(e) => setPassword(e.target.value)}
+              // onChange={handleInputChange}
             />
           </div>
           <Button
@@ -149,6 +153,7 @@ export default function Register() {
                   placeholder="New Password"
                   className="border-t-blue-gray-200 focus-border-t-gray-900"
                   onChange={(e) => setNewPassword(e.target.value)}
+                  // onChange={handleInputChange}
                 />
               </div>
               <Button type="submit" className="mt-4" fullWidth>
