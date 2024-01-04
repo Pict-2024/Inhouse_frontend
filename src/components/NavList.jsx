@@ -1,6 +1,6 @@
 import { Link, useLocation } from "react-router-dom";
 export default function NavList() {
-  var user = '123';
+  var user = null;
 
   const location = useLocation();
   const isTeacherDashboard = location.pathname === "/t/dashboard";
