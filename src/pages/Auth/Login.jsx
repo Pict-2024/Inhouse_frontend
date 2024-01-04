@@ -25,11 +25,12 @@ export default function Login() {
 
     try {
       const response = await axios.post(
-        "http://localhost:5000/login",
+        "http://localhost:5000/api/v1/auth/login",
         formData
       );
-      console.log(response.data);
+      console.log(response?.data);
       setLogin(true);
+      setFormData(response?.data);
     } catch (error) {
       setError("Invalid credentials");
       console.error(error.response.data);
