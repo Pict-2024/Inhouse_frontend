@@ -8,10 +8,11 @@ import {
   Typography,
 } from "@material-tailwind/react";
 import { useSelector } from 'react-redux';
+import axios from  'axios';
 
 export default function BookPublication() {
 
-  const { Username } = useSelector((state) => state.teacher);
+  const { currentUser } = useSelector((state) => state.user);
 
   const currentYear = new Date().getFullYear();
   const years = Array.from(
@@ -20,15 +21,17 @@ export default function BookPublication() {
   );
 
   const [formData, setFormData] = useState({
-    UserName: Username,
+
+    // T_ID: 50,
+    UserName: currentUser.Email,
     // Facultyname: "",
     Department: "",
-    BookTitle: "",
-    Chapter: "",
-    Level: "",
+    Book_Title: "",
+    Chapter_if_any: "",
+    Level_International_National: "",
     Publisher: "",
-    Year: "",
-    OtherInfo: "",
+    Year_of_Publication: "",
+    ISBN_ISSN_DOI_any_other: "",
     Proof: null,
   });
 
@@ -40,10 +43,14 @@ export default function BookPublication() {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Handle form submission here
-    console.log(formData);
+
+    console.log("formdata is : ", formData);
+    const response = await axios.post('http://localhost:5000/api/v1/teacher/book-pb/create-new',
+    formData);
+
+    console.log("Response is : ", response);
   };
 
   return (
@@ -96,24 +103,24 @@ export default function BookPublication() {
                 Book Title
               </Typography>
               <Input
-                id="BookTitle"
+                id="Book_Title"
                 size="lg"
                 placeholder="Title of book"
                 className="border-t-blue-gray-200 focus-border-t-gray-900"
-                value={formData.BookTitle}
+                value={formData.Book_Title}
                 onChange={handleOnChange}
               />
             </div>
             <div className="w-full md:w-1/2 px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
-                Chapter (if any)
+                Chapter_if_any (if any)
               </Typography>
               <Input
-                id="Chapter"
+                id="Chapter_if_any"
                 size="lg"
-                placeholder="Chapter"
+                placeholder="Chapter_if_any"
                 className="border-t-blue-gray-200 focus-border-t-gray-900"
-                value={formData.Chapter}
+                value={formData.Chapter_if_any}
                 onChange={handleOnChange}
               />
             </div>
@@ -121,15 +128,16 @@ export default function BookPublication() {
           <div className="mb-4 flex flex-wrap -mx-4">
             <div className="w-full md:w-1/2 px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
-                Level
+                Level_International_National
               </Typography>
               <Select
-                id="Level"
+                id="Level_International_National"
                 size="lg"
-                placeholder="Select Level"
+                placeholder="Select Level_International_National"
                 className="border-t-blue-gray-200 focus-border-t-gray-900"
-                value={formData.Level}
-                onChange={handleOnChange}
+                value={formData.Level_International_National}
+                onChange={(value) => handleOnChange({ target: { id: "Level_International_National", value } })}
+                // onChange={handleOnChange}
               >
                 <Option value="International">International</Option>
                 <Option value="National">National</Option>
@@ -152,16 +160,17 @@ export default function BookPublication() {
           <div className="mb-4 flex flex-wrap -mx-4">
             <div className="w-full md:w-1/2 px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
-                Year
+                Year_of_Publication
               </Typography>
               <Select
-                id="Year"
+                id="Year_of_Publication"
                 size="lg"
-                placeholder="Select Year"
+                placeholder="Select Year_of_Publication"
                 color="light-gray"
                 className="border-t-blue-gray-200 focus-border-t-gray-900"
-                value={formData.Year}
-                onChange={handleOnChange}
+                value={formData.Year_of_Publication}
+                onChange={(value) => handleOnChange({ target: { id: "Year_of_Publication", value } })}
+                // onChange={handleOnChange}
               >
                 {years.map((year) => (
                   <Option key={year} value={year}>
@@ -175,11 +184,11 @@ export default function BookPublication() {
                 ISBN/ISSN/DOI/any other
               </Typography>
               <Input
-                id="OtherInfo"
+                id="ISBN_ISSN_DOI_any_other"
                 size="lg"
                 placeholder="Author"
                 className="border-t-blue-gray-200 focus-border-t-gray-900"
-                value={formData.OtherInfo}
+                value={formData.ISBN_ISSN_DOI_any_other}
                 onChange={handleOnChange}
               />
             </div>
