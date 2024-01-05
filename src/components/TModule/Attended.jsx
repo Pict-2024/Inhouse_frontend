@@ -7,10 +7,15 @@ import {
   Button,
   Typography,
 } from "@material-tailwind/react";
+// import axios from 'axios';
+import {useSelector} from 'react-redux';
 
 export default function Attended() {
+
+  const { currentUser } = useSelector((state) => state.user);
+  
   const [formData, setFormData] = useState({
-    // name: "",
+    // userName: "",
     department: "",
     eventTitle: "",
     eventType: "",
@@ -32,10 +37,11 @@ export default function Attended() {
     });
   };
 
-  const handleSubmit = (e) => {
-
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Handle form submission here
+    console.log(currentUser.Email);
+    // const data = await axios.post('http://localhost:5000/')
+   
     
   };
 
@@ -182,7 +188,8 @@ export default function Attended() {
                 placeholder="Select Mode"
                 className="border-t-blue-gray-200 focus-border-t-gray-900"
                 value={formData.mode}
-                onChange={handleOnChange}
+                onChange={(value) => handleOnChange({ target: { id: "mode", value } })}
+                // onChange={handleOnChange}
               >
                 <Option value="Online">Online</Option>
                 <Option value="Physical">Physical</Option>
