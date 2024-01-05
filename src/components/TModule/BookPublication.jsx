@@ -22,9 +22,8 @@ export default function BookPublication() {
 
   const [formData, setFormData] = useState({
 
-    // T_ID: 50,
+    T_ID: null,
     UserName: currentUser.Email,
-    // Facultyname: "",
     Department: "",
     Book_Title: "",
     Chapter_if_any: "",
