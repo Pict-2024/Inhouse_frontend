@@ -1,3 +1,4 @@
+import { useState } from "react";
 import {
   Card,
   Select,
@@ -6,9 +7,12 @@ import {
   Button,
   Typography,
 } from "@material-tailwind/react";
-import { useState } from "react";
+import { addRecordsFaculty } from "./API_Routes";
+import axios from "axios";
+import { useSelector } from "react-redux";
 
 export default function FacultyConferencePublication() {
+  const { currentUser } = useSelector((state) => state.user);
   const currentYear = new Date().getFullYear();
   const years = Array.from(
     { length: currentYear - 1999 },
@@ -16,23 +20,25 @@ export default function FacultyConferencePublication() {
   );
 
   const [formData, setFormData] = useState({
-    department: "",
-    titleOfThePaper: "",
-    titleOfTheProceedings: "",
-    nameOfTheConference: "",
-    nationalOrInternational: "",
-    dateOfConference: "",
-    conferenceVenueAndOrganizer: "",
-    yearOfPublication: "",
-    issnIsbnNumber: "",
-    affiliatingInstitute: "",
-    linkToPaper: "",
-    uploadPaper: null,
-    financialSupportByInstitute: "",
-    doi: "",
-    presented: "",
-    anyAchievements: "",
-    uploadAchievementDocument: "",
+    T_ID: null,
+    Username: currentUser?.Email,
+    Department: "",
+    Title_of_the_Paper: "",
+    Title_of_the_proceedings_of_the_conference: "",
+    Name_of_the_conference: "",
+    National_International: "",
+    Date_of_conference: "",
+    Conference_Venue_and_Organizer: "",
+    Year_of_publication: "",
+    ISSN_ISBN_number_of_the_proceeding: "",
+    Affiliating_Institute_at_the_time_of_publication: "",
+    Link_to_paper: "",
+    Upload_Paper: null,
+    Financial_support_given_by_institute_in_INR: "",
+    DOI: "",
+    Presented_Yes_No: "",
+    Any_Achievements: "",
+    Upload_Achievement_Document: "",
   });
 
   const handleInputChange = (e) => {
@@ -44,11 +50,15 @@ export default function FacultyConferencePublication() {
     }));
   };
 
-  const handleSubmit = (e) => {
+  //Add records
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Handle form submission here
-    console.log("Form submitted:", formData);
+    console.log("FormData: ", formData);
+    const response = await axios.post(addRecordsFaculty, formData);
+    console.log("Response is : ", response.data);
   };
+
+
 
   return (
     <>
@@ -67,26 +77,16 @@ export default function FacultyConferencePublication() {
 
         <form className="mt-8 mb-2" onSubmit={handleSubmit}>
           <div className="mb-4 flex flex-wrap -mx-4">
-            {/* <div className="w-full md:w-1/2 px-4 mb-4">
-              <Typography variant="h6" color="blue-gray" className="mb-3">
-                Name the Teacher
-              </Typography>
-              <Input
-                size="lg"
-                placeholder="Name the Teacher"
-                className="border-t-blue-gray-200 focus:border-t-gray-900"
-              />
-            </div> */}
-            <div className="w-full md:w-1/2 px-4 mb-4">
+            <div className="w-full px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
                 Department
               </Typography>
               <Input
                 size="lg"
-                placeholder="Department"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
+                label="Department"
                 onChange={handleInputChange}
-                value={formData.department}
+                name="Department"
+                value={formData.Department}
               />
             </div>
           </div>
@@ -97,10 +97,10 @@ export default function FacultyConferencePublication() {
               </Typography>
               <Input
                 size="lg"
-                placeholder="Title of the Paper"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
+                label="Title of the Paper"
                 onChange={handleInputChange}
-                value={formData.titleOfThePaper}
+                name="Title_of_the_Paper"
+                value={formData.Title_of_the_Paper}
               />
             </div>
             <div className="w-full md:w-1/2 px-4 mb-4">
@@ -109,10 +109,10 @@ export default function FacultyConferencePublication() {
               </Typography>
               <Input
                 size="lg"
-                placeholder="Title of the proceedings of the conference"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
+                label="Title of the proceedings of the conference"
                 onChange={handleInputChange}
-                value={formData.titleOfTheProceedings}
+                name="Title_of_the_proceedings_of_the_conference"
+                value={formData.Title_of_the_proceedings_of_the_conference}
               />
             </div>
           </div>
@@ -123,10 +123,10 @@ export default function FacultyConferencePublication() {
               </Typography>
               <Input
                 size="lg"
-                placeholder="Name of the conference"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
+                label="Name of the conference"
                 onChange={handleInputChange}
-                value={formData.nameOfTheConference}
+                name="Name_of_the_conference"
+                value={formData.Name_of_the_conference}
               />
             </div>
             <div className="w-full md:w-1/2 px-4 mb-4">
@@ -135,10 +135,15 @@ export default function FacultyConferencePublication() {
               </Typography>
               <Select
                 size="lg"
-                placeholder="Select National/International"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
-                onChange={handleInputChange}
-                value={formData.nationalOrInternational}
+                label="Select National/International"
+                // onChange={handleInputChange}
+                onChange={(value) =>
+                  handleInputChange({
+                    target: { name: "National_International", value },
+                  })
+                }
+                name="National_International"
+                value={formData.National_International}
               >
                 <Option value="National">National</Option>
                 <Option value="International">International</Option>
@@ -153,9 +158,9 @@ export default function FacultyConferencePublication() {
               <Input
                 size="lg"
                 type="date"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
                 onChange={handleInputChange}
-                value={formData.dateOfConference}
+                name="Date_of_conference"
+                value={formData.Date_of_conference}
               />
             </div>
             <div className="w-full md:w-1/2 px-4 mb-4">
@@ -164,10 +169,10 @@ export default function FacultyConferencePublication() {
               </Typography>
               <Input
                 size="lg"
-                placeholder="Conference Venue and Organizer"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
+                label="Conference Venue and Organizer"
                 onChange={handleInputChange}
-                value={formData.conferenceVenueAndOrganizer}
+                name="Conference_Venue_and_Organizer"
+                value={formData.Conference_Venue_and_Organizer}
               />
             </div>
           </div>
@@ -178,11 +183,16 @@ export default function FacultyConferencePublication() {
               </Typography>
               <Select
                 size="lg"
-                placeholder="Select Year"
+                label="Select Year"
                 color="light-gray"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
-                onChange={handleInputChange}
-                value={formData.yearOfPublication}
+                // onChange={handleInputChange}
+                onChange={(value) =>
+                  handleInputChange({
+                    target: { name: "Year_of_publication", value },
+                  })
+                }
+                name="Year_of_publication"
+                value={formData.Year_of_publication}
               >
                 {years.map((year) => (
                   <Option key={year} value={year}>
@@ -197,10 +207,10 @@ export default function FacultyConferencePublication() {
               </Typography>
               <Input
                 size="lg"
-                placeholder="ISSN/ISBN number of the proceeding"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
+                label="ISSN/ISBN number of the proceeding"
                 onChange={handleInputChange}
-                value={formData.issnIsbnNumber}
+                name="ISSN_ISBN_number_of_the_proceeding"
+                value={formData.ISSN_ISBN_number_of_the_proceeding}
               />
             </div>
           </div>
@@ -211,10 +221,12 @@ export default function FacultyConferencePublication() {
               </Typography>
               <Input
                 size="lg"
-                placeholder="Affiliating Institute at the time of publication"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
+                label="Affiliating Institute at the time of publication"
                 onChange={handleInputChange}
-                value={formData.affiliatingInstitute}
+                name="Affiliating_Institute_at_the_time_of_publication"
+                value={
+                  formData.Affiliating_Institute_at_the_time_of_publication
+                }
               />
             </div>
             <div className="w-full md:w-1/2 px-4 mb-4">
@@ -223,10 +235,10 @@ export default function FacultyConferencePublication() {
               </Typography>
               <Input
                 size="lg"
-                placeholder="Link to paper"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
+                label="Link to paper"
                 onChange={handleInputChange}
-                value={formData.linkToPaper}
+                name="Link_to_paper"
+                value={formData.Link_to_paper}
               />
             </div>
           </div>
@@ -238,10 +250,10 @@ export default function FacultyConferencePublication() {
               <Input
                 size="lg"
                 type="text"
-                placeholder="Upload Paper"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
+                label="Upload Paper"
                 onChange={handleInputChange}
-                value={formData.uploadPaper}
+                name="Upload_Paper"
+                value={formData.Upload_Paper}
               />
             </div>
             <div className="w-full md:w-1/2 px-4 mb-4">
@@ -250,10 +262,10 @@ export default function FacultyConferencePublication() {
               </Typography>
               <Input
                 size="lg"
-                placeholder="Financial support given by institute in INR"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
+                label="Financial support given by institute in INR"
                 onChange={handleInputChange}
-                value={formData.financialSupportByInstitute}
+                name="Financial_support_given_by_institute_in_INR"
+                value={formData.Financial_support_given_by_institute_in_INR}
               />
             </div>
           </div>
@@ -264,10 +276,10 @@ export default function FacultyConferencePublication() {
               </Typography>
               <Input
                 size="lg"
-                placeholder="DOI"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
+                label="DOI"
                 onChange={handleInputChange}
-                value={formData.doi}
+                name="DOI"
+                value={formData.DOI}
               />
             </div>
             <div className="w-full md:w-1/2 px-4 mb-4">
@@ -276,11 +288,16 @@ export default function FacultyConferencePublication() {
               </Typography>
               <Select
                 size="lg"
-                placeholder="Select Yes/No"
+                label="Select Yes/No"
                 color="light-gray"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
-                onChange={handleInputChange}
-                value={formData.presented}
+                // onChange={handleInputChange}
+                onChange={(value) =>
+                  handleInputChange({
+                    target: { name: "Presented_Yes_No", value },
+                  })
+                }
+                name="Presented_Yes_No"
+                value={formData.Presented_Yes_No}
               >
                 <Option value="Yes">Yes</Option>
                 <Option value="No">No</Option>
@@ -294,10 +311,10 @@ export default function FacultyConferencePublication() {
               </Typography>
               <Input
                 size="lg"
-                placeholder="Any Achievements"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
+                label="Any Achievements"
                 onChange={handleInputChange}
-                value={formData.anyAchievements}
+                name="Any_Achievements"
+                value={formData.Any_Achievements}
               />
             </div>
             <div className="w-full md:w-1/2 px-4 mb-4">
@@ -307,15 +324,15 @@ export default function FacultyConferencePublication() {
               <Input
                 size="lg"
                 type="text"
-                placeholder="Upload Achievement Document"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
+                label="Upload Achievement Document"
                 onChange={handleInputChange}
-                value={formData.uploadAchievementDocument}
+                name="Upload_Achievement_Document"
+                value={formData.Upload_Achievement_Document}
               />
             </div>
           </div>
 
-          <Button className="mt-4" fullWidth>
+          <Button type="submit" className="mt-4" fullWidth>
             Add Changes
           </Button>
         </form>

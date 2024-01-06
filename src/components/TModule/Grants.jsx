@@ -7,6 +7,7 @@ import {
   Button,
   Typography,
 } from "@material-tailwind/react";
+// import axios from 'axios';
 
 export default function Grants() {
   const currentYear = new Date().getFullYear();
@@ -18,41 +19,44 @@ export default function Grants() {
   // Define state variables for form fields
   const [formData, setFormData] = useState({
     // teacherName: "",
-    department: "",
-    principalInvestigatorName: "",
-    projectTitle: "",
-    facultyDepartment: "",
-    coPiNames: "",
-    coPiDepartment: "",
-    projectType: "",
-    fundingAgency: "",
-    schemeName: "",
-    amountSanctioned: "",
-    yearOfGrant: "",
-    startDate: "",
-    endDate: "",
-    amountDeposited: "",
-    transactionDate: "",
-    status: "",
-    duration: "",
-    outcome: "",
+    Department: "",
+    Principal_Investigator_Faculty_Name: "",
+    Project_Title: "",
+    Faculty_Department: "",
+    Names_of_CO_PI: "",
+    Department_of_CO_PI: "",
+    Project_Type_Government_Non_Government: "",
+    Name_of_Funding_Agency: "",
+    Name_of_the_Scheme: "",
+    Amount_Sanctioned: "",
+    Year_of_grant_received: "",
+    Start_Date: "",
+    End_Date: "",
+    Amount_deposited_to_PICT_account: "",
+    Transaction_date: "",
+    Status_Ongoing_Completed: "",
+    Duration: "",
+    Outcome: "",
   });
 
-  // Handle form field changes
   const handleChange = (e) => {
-    const { name, value, type } = e.target;
     setFormData({
       ...formData,
-      [name]: type === "number" ? parseFloat(value) : value,
+      [e.target.name]: e.target.value,
     });
   };
 
-  // Handle form submission
-  const handleSubmit = (e) => {
+  //fetch all entries
+  // const getAllEntries = async ()=>{
+  //   const response = await axios.get(`{process.env.BASE_URL}/teacher/grants/all`);
+  // }
+
+  // add new entry
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // You can access the form data in the `formData` object
+    // const response = await axios.post(`${process.env.BASE_URL}/teacher/grants/create-new`,
+    // formData);
     console.log(formData);
-    // Add your submission logic here
   };
 
   return (
@@ -72,30 +76,16 @@ export default function Grants() {
 
         <form className="mt-8 mb-2" onSubmit={handleSubmit}>
           <div className="mb-4 flex flex-wrap -mx-4">
-            {/* <div className="w-full md:w-1/2 px-4 mb-4">
-              <Typography variant="h6" color="blue-gray" className="mb-3">
-                Name of Teacher
-              </Typography>
-              <Input
-                size="lg"
-                name="teacherName"
-                value={formData.teacherName}
-                onChange={handleChange}
-                placeholder="Name of Teacher"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
-              />
-            </div> */}
             <div className="w-full md:w-1/2 px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
                 Department
               </Typography>
               <Input
                 size="lg"
-                name="department"
-                value={formData.department}
+                name="Department"
+                value={formData.Department}
                 onChange={handleChange}
-                placeholder="Department"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
+                label="Department"
               />
             </div>
           </div>
@@ -107,11 +97,10 @@ export default function Grants() {
               </Typography>
               <Input
                 size="lg"
-                name="principalInvestigatorName"
-                value={formData.principalInvestigatorName}
+                name="Principal_Investigator_Faculty_Name"
+                value={formData.Principal_Investigator_Faculty_Name}
                 onChange={handleChange}
-                placeholder="Principal Investigator Faculty Name"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
+                label="Principal Investigator Faculty Name"
               />
             </div>
             <div className="w-full md:w-1/2 px-4 mb-4">
@@ -120,11 +109,10 @@ export default function Grants() {
               </Typography>
               <Input
                 size="lg"
-                name="projectTitle"
-                value={formData.projectTitle}
+                name="Project_Title"
+                value={formData.Project_Title}
                 onChange={handleChange}
-                placeholder="Project Title"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
+                label="Project Title"
               />
             </div>
           </div>
@@ -136,11 +124,10 @@ export default function Grants() {
               </Typography>
               <Input
                 size="lg"
-                name="facultyDepartment"
-                value={formData.facultyDepartment}
+                name="Faculty_Department"
+                value={formData.Faculty_Department}
                 onChange={handleChange}
-                placeholder="Faculty Department"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
+                label="Faculty Department"
               />
             </div>
             <div className="w-full md:w-1/2 px-4 mb-4">
@@ -149,11 +136,10 @@ export default function Grants() {
               </Typography>
               <Input
                 size="lg"
-                name="coPiNames"
-                value={formData.coPiNames}
+                name="Names_of_CO_PI"
+                value={formData.Names_of_CO_PI}
                 onChange={handleChange}
-                placeholder="Name(s) of CO-PI"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
+                label="Name(s) of CO-PI"
               />
             </div>
           </div>
@@ -165,11 +151,10 @@ export default function Grants() {
               </Typography>
               <Input
                 size="lg"
-                name="coPiDepartment"
-                value={formData.coPiDepartment}
+                name="Department_of_CO_PI"
+                value={formData.Department_of_CO_PI}
                 onChange={handleChange}
-                placeholder="Department of CO-PI"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
+                label="Department of CO-PI"
               />
             </div>
             <div className="w-full md:w-1/2 px-4 mb-4">
@@ -178,11 +163,18 @@ export default function Grants() {
               </Typography>
               <Select
                 size="lg"
-                name="projectType"
-                value={formData.projectType}
-                onChange={handleChange}
-                placeholder="Select Project Type"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
+                name="Project_Type_Government_Non_Government"
+                value={formData.Project_Type_Government_Non_Government}
+                onChange={(value) =>
+                  handleChange({
+                    target: {
+                      name: "Project_Type_Government_Non_Government",
+                      value,
+                    },
+                  })
+                }
+                // onChange={handleChange}
+                label="Select Project Type"
               >
                 <Option value="Government">Government</Option>
                 <Option value="Non Government">Non Government</Option>
@@ -197,11 +189,10 @@ export default function Grants() {
               </Typography>
               <Input
                 size="lg"
-                name="fundingAgency"
-                value={formData.fundingAgency}
+                name="Name_of_Funding_Agency"
+                value={formData.Name_of_Funding_Agency}
                 onChange={handleChange}
-                placeholder="Name of Funding Agency"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
+                label="Name of Funding Agency"
               />
             </div>
             <div className="w-full md:w-1/2 px-4 mb-4">
@@ -210,11 +201,10 @@ export default function Grants() {
               </Typography>
               <Input
                 size="lg"
-                name="schemeName"
-                value={formData.schemeName}
+                name="Name_of_the_Scheme"
+                value={formData.Name_of_the_Scheme}
                 onChange={handleChange}
-                placeholder="Name of the Scheme"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
+                label="Name of the Scheme"
               />
             </div>
           </div>
@@ -226,11 +216,10 @@ export default function Grants() {
               </Typography>
               <Input
                 size="lg"
-                name="amountSanctioned"
-                value={formData.amountSanctioned}
+                name="Amount_Sanctioned"
+                value={formData.Amount_Sanctioned}
                 onChange={handleChange}
-                placeholder="Amount Sanctioned"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
+                label="Amount Sanctioned"
               />
             </div>
             <div className="w-full md:w-1/2 px-4 mb-4">
@@ -239,12 +228,19 @@ export default function Grants() {
               </Typography>
               <Select
                 size="lg"
-                name="yearOfGrant"
-                value={formData.yearOfGrant}
-                onChange={handleChange}
-                placeholder="Select Year"
+                name="Year_of_grant_received"
+                value={formData.Year_of_grant_received}
+                onChange={(value) =>
+                  handleChange({
+                    target: {
+                      name: "Year_of_grant_received",
+                      value,
+                    },
+                  })
+                }
+                // onChange={handleChange}
+                label="Select Year"
                 color="light-gray"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
               >
                 {years.map((year) => (
                   <Option key={year} value={year}>
@@ -262,11 +258,10 @@ export default function Grants() {
               </Typography>
               <Input
                 size="lg"
-                name="startDate"
-                value={formData.startDate}
+                name="Start_Date"
+                value={formData.Start_Date}
                 onChange={handleChange}
                 type="date"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
               />
             </div>
             <div className="w-full md:w-1/2 px-4 mb-4">
@@ -275,11 +270,10 @@ export default function Grants() {
               </Typography>
               <Input
                 size="lg"
-                name="endDate"
-                value={formData.endDate}
+                name="End_Date"
+                value={formData.End_Date}
                 onChange={handleChange}
                 type="date"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
               />
             </div>
           </div>
@@ -291,11 +285,10 @@ export default function Grants() {
               </Typography>
               <Input
                 size="lg"
-                name="amountDeposited"
-                value={formData.amountDeposited}
+                name="Amount_deposited_to_PICT_account"
+                value={formData.Amount_deposited_to_PICT_account}
                 onChange={handleChange}
-                placeholder="Amount deposited to PICT account"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
+                label="Amount deposited to PICT account"
               />
             </div>
             <div className="w-full md:w-1/2 px-4 mb-4">
@@ -304,11 +297,10 @@ export default function Grants() {
               </Typography>
               <Input
                 size="lg"
-                name="transactionDate"
-                value={formData.transactionDate}
+                name="Transaction_date"
+                value={formData.Transaction_date}
                 onChange={handleChange}
                 type="date"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
               />
             </div>
           </div>
@@ -320,11 +312,15 @@ export default function Grants() {
               </Typography>
               <Select
                 size="lg"
-                name="status"
-                value={formData.status}
-                onChange={handleChange}
-                placeholder="Select Status"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
+                name="Status_Ongoing_Completed"
+                value={formData.Status_Ongoing_Completed}
+                onChange={(value) =>
+                  handleChange({
+                    target: { name: "Status_Ongoing_Completed", value },
+                  })
+                }
+                // onChange={handleChange}
+                label="Select Status"
               >
                 <Option value="Ongoing">Ongoing</Option>
                 <Option value="Completed">Completed</Option>
@@ -336,11 +332,10 @@ export default function Grants() {
               </Typography>
               <Input
                 size="lg"
-                name="duration"
-                value={formData.duration}
+                name="Duration"
+                value={formData.Duration}
                 onChange={handleChange}
-                placeholder="Duration"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
+                label="Duration"
               />
             </div>
           </div>
@@ -352,11 +347,10 @@ export default function Grants() {
               </Typography>
               <Input
                 size="lg"
-                name="outcome"
-                value={formData.outcome}
+                name="Outcome"
+                value={formData.Outcome}
                 onChange={handleChange}
-                placeholder="Outcome"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
+                label="Outcome"
               />
             </div>
           </div>

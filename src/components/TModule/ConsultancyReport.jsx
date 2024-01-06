@@ -1,4 +1,4 @@
-import { useState } from "react";
+import {  useState } from "react";
 import {
   Card,
   Select,
@@ -7,24 +7,30 @@ import {
   Button,
   Typography,
 } from "@material-tailwind/react";
+import axios from "axios";
+import { addRecordsConsultancy } from "./API_Routes";
+import { useSelector } from "react-redux";
 
 export default function ConsultancyReport() {
+  const { currentUser } = useSelector((state) => state.user);
   const [formData, setFormData] = useState({
-    // facultyName: "",
-    departmentName: "",
-    role: "",
-    clientOrganisation: "",
-    chiefConsultant: "",
-    workTitle: "",
-    type: "",
-    amount: "",
-    startDate: "",
-    endDate: "",
-    amountDeposited: "",
-    transactionDate: "",
-    evidenceLink: "",
-    status: "",
-    outcome: "",
+    T_ID: null,
+    Username: currentUser?.Email,
+    Name_of_Department: "",
+    Role: "",
+    Client_Organisation: "",
+    Chief_Consultant: "",
+    Title_of_Work_domain: "",
+    Type_Paid_Unpaid: "",
+    Amount: "",
+    Start_Date: "",
+    End_Date: "",
+    Amt_Deposited: "",
+    Date_of_Transaction: "",
+    Link_to_evidence: "",
+    Status: "",
+    Outcome: "",
+    Upload_Docs: "",
   });
 
   const handleChange = (e) => {
@@ -35,10 +41,15 @@ export default function ConsultancyReport() {
     });
   };
 
-  const handleSubmit = (e) => {
+  //Add records
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Handle form submission here, you can access form data in the formData object
+    console.log("FormData: ", formData);
+    const response = await axios.post(addRecordsConsultancy, formData);
+    console.log("Response is : ", response.data);
   };
+
+  
 
   return (
     <>
@@ -57,29 +68,15 @@ export default function ConsultancyReport() {
 
         <form className="mt-8 mb-2" onSubmit={handleSubmit}>
           <div className="mb-4 flex flex-wrap -mx-4">
-            {/* <div className="w-full md:w-1/2 px-4 mb-4">
-              <Typography variant="h6" color="blue-gray" className="mb-3">
-                Faculty Name
-              </Typography>
-              <Input
-                size="lg"
-                name="facultyName"
-                value={formData.facultyName}
-                placeholder="Faculty Name"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
-                onChange={handleChange}
-              />
-            </div> */}
-            <div className="w-full md:w-1/2 px-4 mb-4">
+            <div className="w-full px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
                 Name of Department
               </Typography>
               <Input
                 size="lg"
-                name="departmentName"
-                value={formData.departmentName}
-                placeholder="Name of Department"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
+                name="Name_of_Department"
+                value={formData.Name_of_Department}
+                label="Name of Department"
                 onChange={handleChange}
               />
             </div>
@@ -91,10 +88,9 @@ export default function ConsultancyReport() {
               </Typography>
               <Input
                 size="lg"
-                name="role"
-                value={formData.role}
-                placeholder="Role"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
+                name="Role"
+                value={formData.Role}
+                label="Role"
                 onChange={handleChange}
               />
             </div>
@@ -104,10 +100,9 @@ export default function ConsultancyReport() {
               </Typography>
               <Input
                 size="lg"
-                name="clientOrganisation"
-                value={formData.clientOrganisation}
-                placeholder="Client Organisation"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
+                name="Client_Organisation"
+                value={formData.Client_Organisation}
+                label="Client Organisation"
                 onChange={handleChange}
               />
             </div>
@@ -119,10 +114,9 @@ export default function ConsultancyReport() {
               </Typography>
               <Input
                 size="lg"
-                name="chiefConsultant"
-                value={formData.chiefConsultant}
-                placeholder="Chief Consultant"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
+                name="Chief_Consultant"
+                value={formData.Chief_Consultant}
+                label="Chief Consultant"
                 onChange={handleChange}
               />
             </div>
@@ -132,10 +126,9 @@ export default function ConsultancyReport() {
               </Typography>
               <Input
                 size="lg"
-                name="workTitle"
-                value={formData.workTitle}
-                placeholder="Title of Work domain"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
+                name="Title_of_Work_domain"
+                value={formData.Title_of_Work_domain}
+                label="Title of Work domain"
                 onChange={handleChange}
               />
             </div>
@@ -147,11 +140,13 @@ export default function ConsultancyReport() {
               </Typography>
               <Select
                 size="lg"
-                name="type"
-                value={formData.type}
-                placeholder="Select Type"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
-                onChange={handleChange}
+                name="Type_Paid_Unpaid"
+                value={formData.Type_Paid_Unpaid}
+                label="Select Type"
+                // onChange={handleChange}
+                onChange={(value) =>
+                  handleChange({ target: { name: "Type_Paid_Unpaid", value } })
+                }
               >
                 <Option value="Paid">Paid</Option>
                 <Option value="Unpaid">Unpaid</Option>
@@ -163,10 +158,9 @@ export default function ConsultancyReport() {
               </Typography>
               <Input
                 size="lg"
-                name="amount"
-                value={formData.amount}
-                placeholder="Amount"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
+                name="Amount"
+                value={formData.Amount}
+                label="Amount"
                 onChange={handleChange}
               />
             </div>
@@ -178,11 +172,10 @@ export default function ConsultancyReport() {
               </Typography>
               <Input
                 size="lg"
-                name="startDate"
-                value={formData.startDate}
+                name="Start_Date"
+                value={formData.Start_Date}
                 type="date"
-                placeholder="Start Date"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
+                label="Start Date"
                 onChange={handleChange}
               />
             </div>
@@ -192,11 +185,10 @@ export default function ConsultancyReport() {
               </Typography>
               <Input
                 size="lg"
-                name="endDate"
-                value={formData.endDate}
+                name="End_Date"
+                value={formData.End_Date}
                 type="date"
-                placeholder="End Date"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
+                label="End Date"
                 onChange={handleChange}
               />
             </div>
@@ -208,10 +200,9 @@ export default function ConsultancyReport() {
               </Typography>
               <Input
                 size="lg"
-                name="amountDeposited"
-                value={formData.amountDeposited}
-                placeholder="Amount Deposited to college account"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
+                name="Amt_Deposited"
+                value={formData.Amt_Deposited}
+                label="Amount Deposited to college account"
                 onChange={handleChange}
               />
             </div>
@@ -221,11 +212,10 @@ export default function ConsultancyReport() {
               </Typography>
               <Input
                 size="lg"
-                name="transactionDate"
-                value={formData.transactionDate}
+                name="Date_of_Transaction"
+                value={formData.Date_of_Transaction}
                 type="date"
-                placeholder="Date of Transaction"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
+                label="Date of Transaction"
                 onChange={handleChange}
               />
             </div>
@@ -237,10 +227,9 @@ export default function ConsultancyReport() {
               </Typography>
               <Input
                 size="lg"
-                name="evidenceLink"
-                value={formData.evidenceLink}
-                placeholder="Link to evidence"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
+                name="Link_to_evidence"
+                value={formData.Link_to_evidence}
+                label="Link to evidence"
                 onChange={handleChange}
               />
             </div>
@@ -250,11 +239,13 @@ export default function ConsultancyReport() {
               </Typography>
               <Select
                 size="lg"
-                name="status"
-                value={formData.status}
-                placeholder="Select Status"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
-                onChange={handleChange}
+                name="Status"
+                value={formData.Status}
+                label="Select Status"
+                // onChange={handleChange}
+                onChange={(value) =>
+                  handleChange({ target: { name: "Status", value } })
+                }
               >
                 <Option value="Completed">Completed</Option>
                 <Option value="Ongoing">Ongoing</Option>
@@ -268,10 +259,9 @@ export default function ConsultancyReport() {
               </Typography>
               <Input
                 size="lg"
-                name="outcome"
-                value={formData.outcome}
-                placeholder="Outcome"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
+                name="Outcome"
+                value={formData.Outcome}
+                label="Outcome"
                 onChange={handleChange}
               />
             </div>
@@ -282,8 +272,10 @@ export default function ConsultancyReport() {
               <Input
                 size="lg"
                 type="text"
-                placeholder="Upload PDF Documents(Add drive link)"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
+                name="Upload_Docs"
+                value={formData.Upload_Docs}
+                label="Upload PDF Documents(Add drive link)"
+                onChange={handleChange}
               />
             </div>
           </div>

@@ -56,20 +56,7 @@ export default function PatentPublication() {
 
         <form className="mt-8 mb-2" onSubmit={handleSubmit}>
           <div className="mb-4 flex flex-wrap -mx-4">
-            {/* <div className="w-full md:w-1/2 px-4 mb-4">
-              <Typography variant="h6" color="blue-gray" className="mb-3">
-                Name of Staff
-              </Typography>
-              <Input
-                size="lg"
-                name="staffName"
-                value={formData.staffName}
-                onChange={handleChange}
-                placeholder="Name of Staff"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
-              />
-            </div> */}
-            <div className="w-full md:w-1/2 px-4 mb-4">
+            <div className="w-full px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
                 Name of Department
               </Typography>
@@ -78,8 +65,7 @@ export default function PatentPublication() {
                 name="departmentName"
                 value={formData.departmentName}
                 onChange={handleChange}
-                placeholder="Name of Department"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
+                label="Name of Department"
               />
             </div>
           </div>
@@ -93,8 +79,7 @@ export default function PatentPublication() {
                 name="patentApplicationNo"
                 value={formData.patentApplicationNo}
                 onChange={handleChange}
-                placeholder="Patent Application No."
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
+                label="Patent Application No."
               />
             </div>
             <div className="w-full md:w-1/2 px-4 mb-4">
@@ -106,8 +91,7 @@ export default function PatentPublication() {
                 name="patentStatus"
                 value={formData.patentStatus}
                 onChange={handleChange}
-                placeholder="Status of Patent (Published / Granted)"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
+                label="Status of Patent (Published / Granted)"
               />
             </div>
           </div>
@@ -121,8 +105,7 @@ export default function PatentPublication() {
                 name="inventorName"
                 value={formData.inventorName}
                 onChange={handleChange}
-                placeholder="Inventor's Name"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
+                label="Inventor's Name"
               />
             </div>
             <div className="w-full md:w-1/2 px-4 mb-4">
@@ -134,8 +117,7 @@ export default function PatentPublication() {
                 name="patentTitle"
                 value={formData.patentTitle}
                 onChange={handleChange}
-                placeholder="Title of the Patent"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
+                label="Title of the Patent"
               />
             </div>
           </div>
@@ -149,8 +131,7 @@ export default function PatentPublication() {
                 name="applicantName"
                 value={formData.applicantName}
                 onChange={handleChange}
-                placeholder="Applicant's Name"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
+                label="Applicant's Name"
               />
             </div>
             <div className="w-full md:w-1/2 px-4 mb-4">
@@ -163,8 +144,7 @@ export default function PatentPublication() {
                 value={formData.patentFiledDate}
                 onChange={handleChange}
                 type="date"
-                placeholder="Patent Filed Date (DD/MM/YYYY)"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
+                label="Patent Filed Date (DD/MM/YYYY)"
               />
             </div>
           </div>
@@ -179,8 +159,7 @@ export default function PatentPublication() {
                 value={formData.patentPublishedDate}
                 onChange={handleChange}
                 type="date"
-                placeholder="Patent Published Date / Granted Date (DD/MM/YYYY)"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
+                label="Patent Published Date / Granted Date (DD/MM/YYYY)"
               />
             </div>
             <div className="w-full md:w-1/2 px-4 mb-4">
@@ -192,8 +171,7 @@ export default function PatentPublication() {
                 name="publicationNumber"
                 value={formData.publicationNumber}
                 onChange={handleChange}
-                placeholder="Patent Publication Number / Patent Granted Number"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
+                label="Patent Publication Number / Patent Granted Number"
               />
             </div>
           </div>
@@ -206,8 +184,7 @@ export default function PatentPublication() {
               name="assigneeName"
               value={formData.assigneeName}
               onChange={handleChange}
-              placeholder="Assignee's Name"
-              className="border-t-blue-gray-200 focus-border-t-gray-900"
+              label="Assignee's Name"
             />
           </div>
           <div className="mb-4">
@@ -219,8 +196,7 @@ export default function PatentPublication() {
               name="financialSupport"
               value={formData.financialSupport}
               onChange={handleChange}
-              placeholder="Financial Support by PICT Amount in Rs"
-              className="border-t-blue-gray-200 focus-border-t-gray-900"
+              label="Financial Support by PICT Amount in Rs"
             />
           </div>
           <div className="mb-4 flex flex-wrap -mx-4">
@@ -233,8 +209,7 @@ export default function PatentPublication() {
                 name="sourceProofURL"
                 value={formData.sourceProofURL}
                 onChange={handleChange}
-                placeholder="Source Proof URL/Website Links, etc."
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
+                label="Source Proof URL/Website Links, etc."
               />
             </div>
             <div className="w-full md:w-1/2 px-4 mb-4">
@@ -246,8 +221,7 @@ export default function PatentPublication() {
                 name="patentType"
                 value={formData.patentType}
                 onChange={handleChange}
-                placeholder="Type of the Patent"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
+                label="Type of the Patent"
               />
             </div>
           </div>
@@ -261,8 +235,7 @@ export default function PatentPublication() {
                 name="country"
                 value={formData.country}
                 onChange={handleChange}
-                placeholder="Country"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
+                label="Country"
               />
             </div>
             <div className="w-full md:w-1/2 px-4 mb-4">
@@ -274,8 +247,7 @@ export default function PatentPublication() {
                 name="patentDocument"
                 onChange={handleChange}
                 type="text"
-                placeholder="Upload Patent Document"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
+                label="Upload Patent Document"
               />
             </div>
           </div>

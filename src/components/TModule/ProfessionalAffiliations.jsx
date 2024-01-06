@@ -39,35 +39,6 @@ export default function ProfessionalAffiliations() {
         </Typography>
 
         <form className="mt-8 mb-2" onSubmit={handleSubmit}>
-          {/* <div className="mb-4 flex flex-wrap -mx-4">
-            <div className="w-full md:w-1/2 px-4 mb-4">
-              <Typography variant="h6" color="blue-gray" className="mb-3">
-                Name of Teacher
-              </Typography>
-              <Input
-                size="lg"
-                name="teacherName"
-                value={formData.teacherName}
-                placeholder="Name of Teacher"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
-                onChange={handleChange}
-              />
-            </div>
-            <div className="w-full md:w-1/2 px-4 mb-4">
-              <Typography variant="h6" color="blue-gray" className="mb-3">
-                Faculty Name
-              </Typography>
-              <Input
-                size="lg"
-                name="facultyName"
-                value={formData.facultyName}
-                placeholder="Faculty Name"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
-                onChange={handleChange}
-              />
-            </div>
-          </div> */}
-
           <div className="mb-4 flex flex-wrap -mx-4">
             <div className="w-full md:w-1/2 px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
@@ -77,8 +48,7 @@ export default function ProfessionalAffiliations() {
                 size="lg"
                 name="professionalAffiliation"
                 value={formData.professionalAffiliation}
-                placeholder="Professional Affiliation"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
+                label="Professional Affiliation"
                 onChange={handleChange}
               />
             </div>
@@ -90,8 +60,7 @@ export default function ProfessionalAffiliations() {
                 size="lg"
                 name="membershipNumber"
                 value={formData.membershipNumber}
-                placeholder="Membership Number/ID"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
+                label="Membership Number/ID"
                 onChange={handleChange}
               />
             </div>
@@ -104,8 +73,7 @@ export default function ProfessionalAffiliations() {
               size="lg"
               name="financialSupport"
               value={formData.financialSupport}
-              placeholder="Financial Support from PICT"
-              className="border-t-blue-gray-200 focus-border-t-gray-900"
+              label="Financial Support from PICT"
               onChange={handleChange}
             />
           </div>
