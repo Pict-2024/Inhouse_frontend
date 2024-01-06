@@ -17,29 +17,29 @@ export default function Research() {
 
   const [formData, setFormData] = useState({
     // nameOfFaculty: "",
-    department: "",
-    titleOfResearchArticle: "",
-    type: "",
-    level: "",
-    indexed: "",
-    date: "",
-    author: "",
-    affiliation: "",
-    role: "",
-    publisher: "",
-    coAuthors: "",
-    journalName: "",
-    issn: "",
-    volume: "",
-    pageNumbers: "",
-    issue: "",
-    year: "",
-    doi: "",
-    financialSupport: "",
-    linkToArticle: "",
-    achievements: "",
-    paper: null,
-    achievementsPaper: null,
+    Department: "",
+    Title_of_Research_Article: "",
+    Type_Research_Review: "",
+    Level_International_National_State_University: "",
+    Indexed_SCI_Scopus_Web_of_Science_UGC_Others: "",
+    Date: "",
+    Author: "",
+    Affiliation_at_the_Time_of_Publication: "",
+    Role_First_Author_Second_Author_Third_Author: "",
+    Publisher: "",
+    Co_Authors: "",
+    Journal_Name: "",
+    ISSN: "",
+    Volume: "",
+    Page_Numbers: "",
+    Issue: "",
+    Year: "",
+    DOI: "",
+    Financial_support_from_institute_in_INR: "",
+    LInk_to_article_paper_abstract_of_the_article: "",
+    Achievements_if_any: "",
+    Upload_the_Paper: null,
+    Upload_Document_of_Achievement: null,
   });
 
   const handleChange = (e) => {
@@ -94,8 +94,8 @@ export default function Research() {
                 size="lg"
                 placeholder="Department"
                 className="border-t-blue-gray-200 focus-border-t-gray-900"
-                name="department"
-                value={formData.department}
+                name="Department"
+                value={formData.Department}
                 onChange={handleChange}
               />
             </div>
@@ -110,8 +110,8 @@ export default function Research() {
                 size="lg"
                 placeholder="Title of Research Article"
                 className="border-t-blue-gray-200 focus-border-t-gray-900"
-                name="titleOfResearchArticle"
-                value={formData.titleOfResearchArticle}
+                name="Title_of_Research_Article"
+                value={formData.Title_of_Research_Article}
                 onChange={handleChange}
               />
             </div>
@@ -123,8 +123,8 @@ export default function Research() {
                 size="lg"
                 placeholder="Type (Research/Review)"
                 className="border-t-blue-gray-200 focus-border-t-gray-900"
-                name="type"
-                value={formData.type}
+                name="Type_Research_Revie"
+                value={formData.Type_Research_Revie}
                 onChange={handleChange}
               />
             </div>
@@ -139,8 +139,8 @@ export default function Research() {
                 size="lg"
                 placeholder="Select Level"
                 className="border-t-blue-gray-200 focus-border-t-gray-900"
-                name="level"
-                value={formData.level}
+                name="Level_International_National_State_University"
+                value={formData.Level_International_National_State_University}
                 onChange={handleChange}
               >
                 <Option value="International">International</Option>
@@ -180,8 +180,8 @@ export default function Research() {
                 placeholder="Date"
                 type="date"
                 className="border-t-blue-gray-200 focus-border-t-gray-900"
-                name="date"
-                value={formData.date}
+                name="Date"
+                value={formData.Date}
                 onChange={handleChange}
               />
             </div>
@@ -223,8 +223,8 @@ export default function Research() {
                 placeholder="Select Role"
                 color="light-gray"
                 className="border-t-blue-gray-200 focus-border-t-gray-900"
-                name="role"
-                value={formData.role}
+                name="Role_First_Author_Second_Author_Third_Author"
+                value={formData.Role_First_Author_Second_Author_Third_Author}
                 onChange={handleChange}
               >
                 <Option value="First Author">First Author</Option>
@@ -243,8 +243,8 @@ export default function Research() {
                 size="lg"
                 placeholder="Publisher"
                 className="border-t-blue-gray-200 focus-border-t-gray-900"
-                name="publisher"
-                value={formData.publisher}
+                name="Publisher"
+                value={formData.Publisher}
                 onChange={handleChange}
               />
             </div>
@@ -256,8 +256,8 @@ export default function Research() {
                 size="lg"
                 placeholder="Co-Author"
                 className="border-t-blue-gray-200 focus-border-t-gray-900"
-                name="coAuthors"
-                value={formData.coAuthors}
+                name="Co_Authors"
+                value={formData.Co_Authors}
                 onChange={handleChange}
               />
             </div>
@@ -272,8 +272,8 @@ export default function Research() {
                 size="lg"
                 placeholder="Journal Name"
                 className="border-t-blue-gray-200 focus-border-t-gray-900"
-                name="journalName"
-                value={formData.journalName}
+                name="Journal_Name"
+                value={formData.Journal_Name}
                 onChange={handleChange}
               />
             </div>
@@ -285,8 +285,8 @@ export default function Research() {
                 size="lg"
                 placeholder="ISSN"
                 className="border-t-blue-gray-200 focus-border-t-gray-900"
-                name="issn"
-                value={formData.issn}
+                name="ISSN"
+                value={formData.ISSN}
                 onChange={handleChange}
               />
             </div>
@@ -301,8 +301,8 @@ export default function Research() {
                 size="lg"
                 placeholder="Volume"
                 className="border-t-blue-gray-200 focus-border-t-gray-900"
-                name="volume"
-                value={formData.volume}
+                name="Volume"
+                value={formData.Volume}
                 onChange={handleChange}
               />
             </div>
@@ -314,8 +314,8 @@ export default function Research() {
                 size="lg"
                 placeholder="Page Numbers"
                 className="border-t-blue-gray-200 focus-border-t-gray-900"
-                name="pageNumbers"
-                value={formData.pageNumbers}
+                name="Page_Numbers"
+                value={formData.Page_Numbers}
                 onChange={handleChange}
               />
             </div>
@@ -330,8 +330,8 @@ export default function Research() {
                 size="lg"
                 placeholder="Issue"
                 className="border-t-blue-gray-200 focus-border-t-gray-900"
-                name="issue"
-                value={formData.issue}
+                name="Issue"
+                value={formData.Issue}
                 onChange={handleChange}
               />
             </div>
@@ -344,8 +344,8 @@ export default function Research() {
                 placeholder="Select Year"
                 color="light-gray"
                 className="border-t-blue-gray-200 focus-border-t-gray-900"
-                name="year"
-                value={formData.year}
+                name="Year"
+                value={formData.Year}
                 onChange={handleChange}
               >
                 {years.map((year) => (
@@ -366,8 +366,8 @@ export default function Research() {
                 size="lg"
                 placeholder="DOI"
                 className="border-t-blue-gray-200 focus-border-t-gray-900"
-                name="doi"
-                value={formData.doi}
+                name="DOI"
+                value={formData.DOI}
                 onChange={handleChange}
               />
             </div>
@@ -379,8 +379,8 @@ export default function Research() {
                 size="lg"
                 placeholder="Financial support from institute in INR"
                 className="border-t-blue-gray-200 focus-border-t-gray-900"
-                name="financialSupport"
-                value={formData.financialSupport}
+                name="Financial_support_from_institute_in_INR"
+                value={formData.Financial_support_from_institute_in_INR}
                 onChange={handleChange}
               />
             </div>
@@ -394,8 +394,8 @@ export default function Research() {
                 size="lg"
                 placeholder="Link to article / paper / abstract of the article"
                 className="border-t-blue-gray-200 focus-border-t-gray-900"
-                name="linkToArticle"
-                value={formData.linkToArticle}
+                name="LInk_to_article_paper_abstract_of_the_article"
+                value={formData.LInk_to_article_paper_abstract_of_the_article}
                 onChange={handleChange}
               />
             </div>
@@ -408,8 +408,8 @@ export default function Research() {
                 type="text"
                 placeholder="Financial support from institute in INR "
                 className="border-t-blue-gray-200 focus:border-t-gray-900"
-                name="paper"
-                value={formData.paper}
+                name="Upload_the_Paper"
+                value={formData.Upload_the_Paper}
                 onChange={handleChange}
               />
             </div>
@@ -423,8 +423,8 @@ export default function Research() {
                 size="lg"
                 placeholder="Achievements if any  "
                 className="border-t-blue-gray-200 focus:border-t-gray-900"
-                name="achievements"
-                value={formData.achievements}
+                name="Achievements_if_any"
+                value={formData.Achievements_if_any}
                 onChange={handleChange}
               />
             </div>
@@ -437,8 +437,8 @@ export default function Research() {
                 type="text"
                 placeholder="Financial support from institute in INR "
                 className="border-t-blue-gray-200 focus:border-t-gray-900"
-                name="achievementPaper"
-                value={formData.achievementPaper}
+                name="Upload_Document_of_Achievement"
+                value={formData.Upload_Document_of_Achievement}
                 onChange={handleChange}
               />
             </div>

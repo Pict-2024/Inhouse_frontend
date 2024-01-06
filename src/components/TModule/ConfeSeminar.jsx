@@ -7,23 +7,25 @@ import {
   Button,
   Typography,
 } from "@material-tailwind/react";
+// import axios from 'axios';
 
 export default function ConfeSeminar() {
   const [formData, setFormData] = useState({
     // teacherName: "",
-    department: "",
-    title: "",
-    level: "",
-    sponsoringAuthority: "",
-    participants: "",
-    startDate: "",
-    endDate: "",
-    resourcePersons: "",
-    coordinators: "",
-    remarks: "",
-    sponsorshipAmount: "",
-    participantsFromPICT: "",
-    participantsOutsidePICT: "",
+    Department: "",
+    Title: "",
+    University_State_National_International: "",
+    Activity_Event_FDP_STTP_Workshop: "",
+    Sponsoring_Authority: "",
+    No_of_Participants: "",
+    Start_Date_DD_MM_YYYY: "",
+    End_Date_DD_MM_YYYY: "",
+    List_of_Resource_Persons: "",
+    Name_of_the_Coordinators: "",
+    Remarks: "",
+    Sponsorship_Amount: "",
+    Number_of_participants_from_PICT: "",
+    Number_of_participants_from_outside_PICT: "",
   });
 
   const handleOnChange = (e) => {
@@ -33,9 +35,18 @@ export default function ConfeSeminar() {
     });
   };
 
+  //get all entries
+  // const getAllEntries = async ()=>{
+  //   try {
+  //       const response = await axios.get(`${process.env,BASE_URL}/teacher/con-sem/all`);
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // }
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Handle form submission here
+    console.log(formData);
   };
 
   return (
@@ -55,29 +66,29 @@ export default function ConfeSeminar() {
 
         <form className="mt-8 mb-2" onSubmit={handleSubmit}>
           <div className="mb-4 flex flex-wrap -mx-4">
-            {/* <div className="w-full md:w-1/2 px-4 mb-4">
-              <Typography variant="h6" color="blue-gray" className="mb-3">
-                Name of Teacher
-              </Typography>
-              <Input
-                id="teacherName"
-                size="lg"
-                placeholder="Name of Teacher"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
-                value={formData.teacherName}
-                onChange={handleOnChange}
-              />
-            </div> */}
             <div className="w-full md:w-1/2 px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
                 Department
               </Typography>
               <Input
-                id="department"
+                id="Department"
                 size="lg"
                 placeholder="Department"
                 className="border-t-blue-gray-200 focus-border-t-gray-900"
-                value={formData.department}
+                value={formData.Department}
+                onChange={handleOnChange}
+              />
+            </div>
+            <div className="w-full md:w-1/2 px-4 mb-4">
+              <Typography variant="h6" color="blue-gray" className="mb-3">
+                Activity/Event/FDP/STTP/Workshop
+              </Typography>
+              <Input
+                id="Activity_Event_FDP_STTP_Workshop"
+                size="lg"
+                placeholder="Activity_Event_FDP_STTP_Workshop"
+                className="border-t-blue-gray-200 focus-border-t-gray-900"
+                value={formData.Activity_Event_FDP_STTP_Workshop}
                 onChange={handleOnChange}
               />
             </div>
@@ -86,14 +97,14 @@ export default function ConfeSeminar() {
           <div className="mb-4 flex flex-wrap -mx-4">
             <div className="w-full md:w-1/2 px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
-                Activity/Event/FDP/STTP/Workshop Title
+                Title
               </Typography>
               <Input
-                id="title"
+                id="Title"
                 size="lg"
                 placeholder="Title"
                 className="border-t-blue-gray-200 focus-border-t-gray-900"
-                value={formData.title}
+                value={formData.Title}
                 onChange={handleOnChange}
               />
             </div>
@@ -102,12 +113,20 @@ export default function ConfeSeminar() {
                 University/State/National/International
               </Typography>
               <Select
-                id="level"
+                id="University_State_National_International"
                 size="lg"
-                placeholder="Select Level"
+                placeholder="Select University_State_National_International"
                 className="border-t-blue-gray-200 focus-border-t-gray-900"
-                value={formData.level}
-                onChange={handleOnChange}
+                value={formData.University_State_National_International}
+                onChange={(value) =>
+                  handleOnChange({
+                    target: {
+                      id: "University_State_National_International",
+                      value,
+                    },
+                  })
+                }
+                // onChange={handleOnChange}
               >
                 <Option value="International">International</Option>
                 <Option value="National">National</Option>
@@ -123,11 +142,11 @@ export default function ConfeSeminar() {
                 Sponsoring Authority
               </Typography>
               <Input
-                id="sponsoringAuthority"
+                id="Sponsoring_Authority"
                 size="lg"
                 placeholder="Sponsoring Authority"
                 className="border-t-blue-gray-200 focus-border-t-gray-900"
-                value={formData.sponsoringAuthority}
+                value={formData.Sponsoring_Authority}
                 onChange={handleOnChange}
               />
             </div>
@@ -136,12 +155,12 @@ export default function ConfeSeminar() {
                 No. of Participants
               </Typography>
               <Input
-                id="participants"
+                id="No_of_Participants"
                 size="lg"
                 placeholder="No. of Participants"
                 type="number"
                 className="border-t-blue-gray-200 focus-border-t-gray-900"
-                value={formData.participants}
+                value={formData.No_of_Participants}
                 onChange={handleOnChange}
               />
             </div>
@@ -153,12 +172,12 @@ export default function ConfeSeminar() {
                 Start Date(DD-MM-YYYY)
               </Typography>
               <Input
-                id="startDate"
+                id="Start_Date_DD_MM_YYYY"
                 size="lg"
                 placeholder="Start Date"
                 type="date"
                 className="border-t-blue-gray-200 focus-border-t-gray-900"
-                value={formData.startDate}
+                value={formData.Start_Date_DD_MM_YYYY}
                 onChange={handleOnChange}
               />
             </div>
@@ -167,12 +186,12 @@ export default function ConfeSeminar() {
                 End Date(DD-MM-YYYY)
               </Typography>
               <Input
-                id="endDate"
+                id="End_Date_DD_MM_YYYY"
                 size="lg"
                 placeholder="End Date"
                 type="date"
                 className="border-t-blue-gray-200 focus-border-t-gray-900"
-                value={formData.endDate}
+                value={formData.End_Date_DD_MM_YYYY}
                 onChange={handleOnChange}
               />
             </div>
@@ -183,11 +202,11 @@ export default function ConfeSeminar() {
               List of Resource Persons
             </Typography>
             <Input
-              id="resourcePersons"
+              id="List_of_Resource_Persons"
               size="lg"
               placeholder="List of Resource Persons"
               className="border-t-blue-gray-200 focus-border-t-gray-900"
-              value={formData.resourcePersons}
+              value={formData.List_of_Resource_Persons}
               onChange={handleOnChange}
             />
           </div>
@@ -198,11 +217,11 @@ export default function ConfeSeminar() {
                 Name of the Coordinator(s)
               </Typography>
               <Input
-                id="coordinators"
+                id="Name_of_the_Coordinators"
                 size="lg"
                 placeholder="Name of the Coordinator(s)"
                 className="border-t-blue-gray-200 focus-border-t-gray-900"
-                value={formData.coordinators}
+                value={formData.Name_of_the_Coordinators}
                 onChange={handleOnChange}
               />
             </div>
@@ -211,11 +230,11 @@ export default function ConfeSeminar() {
                 Remarks
               </Typography>
               <Input
-                id="remarks"
+                id="Remarks"
                 size="lg"
                 placeholder="Remarks"
                 className="border-t-blue-gray-200 focus-border-t-gray-900"
-                value={formData.remarks}
+                value={formData.Remarks}
                 onChange={handleOnChange}
               />
             </div>
@@ -227,11 +246,11 @@ export default function ConfeSeminar() {
                 Sponsorship Amount
               </Typography>
               <Input
-                id="sponsorshipAmount"
+                id="Sponsorship_Amount"
                 size="lg"
                 placeholder="Sponsorship Amount"
                 className="border-t-blue-gray-200 focus-border-t-gray-900"
-                value={formData.sponsorshipAmount}
+                value={formData.Sponsorship_Amount}
                 onChange={handleOnChange}
               />
             </div>
@@ -240,12 +259,12 @@ export default function ConfeSeminar() {
                 Number of Participants from PICT
               </Typography>
               <Input
-                id="participantsFromPICT"
+                id="Number_of_participants_from_PICT"
                 size="lg"
                 placeholder="Number of Participants from PICT"
                 type="number"
                 className="border-t-blue-gray-200 focus-border-t-gray-900"
-                value={formData.participantsFromPICT}
+                value={formData.Number_of_participants_from_PICT}
                 onChange={handleOnChange}
               />
             </div>
@@ -256,17 +275,17 @@ export default function ConfeSeminar() {
               Number of Participants from outside PICT
             </Typography>
             <Input
-              id="participantsOutsidePICT"
+              id="Number_of_participants_from_outside_PICT"
               size="lg"
               placeholder="Number of Participants from outside PICT"
               type="number"
               className="border-t-blue-gray-200 focus-border-t-gray-900"
-              value={formData.participantsOutsidePICT}
+              value={formData.Number_of_participants_from_outside_PICT}
               onChange={handleOnChange}
             />
           </div>
 
-          <Button className="mt-4" fullWidth>
+          <Button className="mt-4" type="submit" fullWidth>
             Add Changes
           </Button>
         </form>
