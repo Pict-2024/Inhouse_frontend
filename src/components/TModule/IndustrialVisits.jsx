@@ -44,20 +44,7 @@ export default function IndustrialVisit() {
 
         <form className="mt-8 mb-2" onSubmit={handleSubmit}>
           <div className="mb-4 flex flex-wrap -mx-4">
-            {/* <div className="w-full md:w-1/2 px-4 mb-4">
-              <Typography variant="h6" color="blue-gray" className="mb-3">
-                Name of the staff
-              </Typography>
-              <Input
-                size="lg"
-                name="staffName"
-                value={formData.staffName}
-                placeholder="Name of the staff"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
-                onChange={handleChange}
-              />
-            </div> */}
-            <div className="w-full md:w-1/2 px-4 mb-4">
+            <div className="w-full px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
                 Department
               </Typography>
@@ -65,8 +52,7 @@ export default function IndustrialVisit() {
                 size="lg"
                 name="department"
                 value={formData.department}
-                placeholder="Department"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
+                label="Department"
                 onChange={handleChange}
               />
             </div>
@@ -81,8 +67,7 @@ export default function IndustrialVisit() {
                 size="lg"
                 name="companyAddress"
                 value={formData.companyAddress}
-                placeholder="Name and address of the Company / Industry visited"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
+                label="Name and address of the Company / Industry visited"
                 onChange={handleChange}
               />
             </div>
@@ -94,8 +79,7 @@ export default function IndustrialVisit() {
                 size="lg"
                 name="purposeOfVisit"
                 value={formData.purposeOfVisit}
-                placeholder="Purpose of the visit"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
+                label="Purpose of the visit"
                 onChange={handleChange}
               />
             </div>
@@ -110,9 +94,8 @@ export default function IndustrialVisit() {
                 size="lg"
                 name="numberOfStudents"
                 value={formData.numberOfStudents}
-                placeholder="No. of Students"
+                label="No. of Students"
                 type="number"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
                 onChange={handleChange}
               />
             </div>
@@ -124,9 +107,8 @@ export default function IndustrialVisit() {
                 size="lg"
                 name="dateOfVisit"
                 value={formData.dateOfVisit}
-                placeholder="Date of visit"
+                label="Date of visit"
                 type="date"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
                 onChange={handleChange}
               />
             </div>
@@ -141,8 +123,7 @@ export default function IndustrialVisit() {
                 size="lg"
                 name="coordinators"
                 value={formData.coordinators}
-                placeholder="Coordinator(s)"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
+                label="Coordinator(s)"
                 onChange={handleChange}
               />
             </div>
@@ -154,8 +135,7 @@ export default function IndustrialVisit() {
                 size="lg"
                 name="financialSupport"
                 value={formData.financialSupport}
-                placeholder="Financial support from PICT"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
+                label="Financial support from PICT"
                 onChange={handleChange}
               />
             </div>
@@ -169,8 +149,7 @@ export default function IndustrialVisit() {
               size="lg"
               name="reportApproval"
               value={formData.reportApproval}
-              placeholder="Report with approval application"
-              className="border-t-blue-gray-200 focus-border-t-gray-900"
+              label="Report with approval application"
               onChange={handleChange}
             />
           </div>

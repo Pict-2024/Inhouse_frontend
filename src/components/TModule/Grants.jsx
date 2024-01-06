@@ -39,7 +39,6 @@ export default function Grants() {
     Outcome: "",
   });
 
-
   const handleChange = (e) => {
     setFormData({
       ...formData,
@@ -77,19 +76,6 @@ export default function Grants() {
 
         <form className="mt-8 mb-2" onSubmit={handleSubmit}>
           <div className="mb-4 flex flex-wrap -mx-4">
-            {/* <div className="w-full md:w-1/2 px-4 mb-4">
-              <Typography variant="h6" color="blue-gray" className="mb-3">
-                Name of Teacher
-              </Typography>
-              <Input
-                size="lg"
-                name="teacherName"
-                value={formData.teacherName}
-                onChange={handleChange}
-                placeholder="Name of Teacher"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
-              />
-            </div> */}
             <div className="w-full md:w-1/2 px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
                 Department
@@ -99,8 +85,7 @@ export default function Grants() {
                 name="Department"
                 value={formData.Department}
                 onChange={handleChange}
-                placeholder="Department"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
+                label="Department"
               />
             </div>
           </div>
@@ -115,8 +100,7 @@ export default function Grants() {
                 name="Principal_Investigator_Faculty_Name"
                 value={formData.Principal_Investigator_Faculty_Name}
                 onChange={handleChange}
-                placeholder="Principal Investigator Faculty Name"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
+                label="Principal Investigator Faculty Name"
               />
             </div>
             <div className="w-full md:w-1/2 px-4 mb-4">
@@ -128,8 +112,7 @@ export default function Grants() {
                 name="Project_Title"
                 value={formData.Project_Title}
                 onChange={handleChange}
-                placeholder="Project Title"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
+                label="Project Title"
               />
             </div>
           </div>
@@ -144,8 +127,7 @@ export default function Grants() {
                 name="Faculty_Department"
                 value={formData.Faculty_Department}
                 onChange={handleChange}
-                placeholder="Faculty Department"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
+                label="Faculty Department"
               />
             </div>
             <div className="w-full md:w-1/2 px-4 mb-4">
@@ -157,8 +139,7 @@ export default function Grants() {
                 name="Names_of_CO_PI"
                 value={formData.Names_of_CO_PI}
                 onChange={handleChange}
-                placeholder="Name(s) of CO-PI"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
+                label="Name(s) of CO-PI"
               />
             </div>
           </div>
@@ -173,8 +154,7 @@ export default function Grants() {
                 name="Department_of_CO_PI"
                 value={formData.Department_of_CO_PI}
                 onChange={handleChange}
-                placeholder="Department of CO-PI"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
+                label="Department of CO-PI"
               />
             </div>
             <div className="w-full md:w-1/2 px-4 mb-4">
@@ -194,8 +174,7 @@ export default function Grants() {
                   })
                 }
                 // onChange={handleChange}
-                placeholder="Select Project Type"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
+                label="Select Project Type"
               >
                 <Option value="Government">Government</Option>
                 <Option value="Non Government">Non Government</Option>
@@ -213,8 +192,7 @@ export default function Grants() {
                 name="Name_of_Funding_Agency"
                 value={formData.Name_of_Funding_Agency}
                 onChange={handleChange}
-                placeholder="Name of Funding Agency"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
+                label="Name of Funding Agency"
               />
             </div>
             <div className="w-full md:w-1/2 px-4 mb-4">
@@ -226,8 +204,7 @@ export default function Grants() {
                 name="Name_of_the_Scheme"
                 value={formData.Name_of_the_Scheme}
                 onChange={handleChange}
-                placeholder="Name of the Scheme"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
+                label="Name of the Scheme"
               />
             </div>
           </div>
@@ -242,8 +219,7 @@ export default function Grants() {
                 name="Amount_Sanctioned"
                 value={formData.Amount_Sanctioned}
                 onChange={handleChange}
-                placeholder="Amount Sanctioned"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
+                label="Amount Sanctioned"
               />
             </div>
             <div className="w-full md:w-1/2 px-4 mb-4">
@@ -263,9 +239,8 @@ export default function Grants() {
                   })
                 }
                 // onChange={handleChange}
-                placeholder="Select Year"
+                label="Select Year"
                 color="light-gray"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
               >
                 {years.map((year) => (
                   <Option key={year} value={year}>
@@ -287,7 +262,6 @@ export default function Grants() {
                 value={formData.Start_Date}
                 onChange={handleChange}
                 type="date"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
               />
             </div>
             <div className="w-full md:w-1/2 px-4 mb-4">
@@ -300,7 +274,6 @@ export default function Grants() {
                 value={formData.End_Date}
                 onChange={handleChange}
                 type="date"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
               />
             </div>
           </div>
@@ -315,8 +288,7 @@ export default function Grants() {
                 name="Amount_deposited_to_PICT_account"
                 value={formData.Amount_deposited_to_PICT_account}
                 onChange={handleChange}
-                placeholder="Amount deposited to PICT account"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
+                label="Amount deposited to PICT account"
               />
             </div>
             <div className="w-full md:w-1/2 px-4 mb-4">
@@ -329,7 +301,6 @@ export default function Grants() {
                 value={formData.Transaction_date}
                 onChange={handleChange}
                 type="date"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
               />
             </div>
           </div>
@@ -349,8 +320,7 @@ export default function Grants() {
                   })
                 }
                 // onChange={handleChange}
-                placeholder="Select Status"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
+                label="Select Status"
               >
                 <Option value="Ongoing">Ongoing</Option>
                 <Option value="Completed">Completed</Option>
@@ -365,8 +335,7 @@ export default function Grants() {
                 name="Duration"
                 value={formData.Duration}
                 onChange={handleChange}
-                placeholder="Duration"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
+                label="Duration"
               />
             </div>
           </div>
@@ -381,8 +350,7 @@ export default function Grants() {
                 name="Outcome"
                 value={formData.Outcome}
                 onChange={handleChange}
-                placeholder="Outcome"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
+                label="Outcome"
               />
             </div>
           </div>

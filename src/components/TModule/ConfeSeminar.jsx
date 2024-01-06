@@ -73,8 +73,7 @@ export default function ConfeSeminar() {
               <Input
                 id="Department"
                 size="lg"
-                placeholder="Department"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
+                label="Department"
                 value={formData.Department}
                 onChange={handleOnChange}
               />
@@ -86,8 +85,7 @@ export default function ConfeSeminar() {
               <Input
                 id="Activity_Event_FDP_STTP_Workshop"
                 size="lg"
-                placeholder="Activity_Event_FDP_STTP_Workshop"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
+                label="Activity_Event_FDP_STTP_Workshop"
                 value={formData.Activity_Event_FDP_STTP_Workshop}
                 onChange={handleOnChange}
               />
@@ -102,8 +100,7 @@ export default function ConfeSeminar() {
               <Input
                 id="Title"
                 size="lg"
-                placeholder="Title"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
+                label="Title"
                 value={formData.Title}
                 onChange={handleOnChange}
               />
@@ -115,8 +112,7 @@ export default function ConfeSeminar() {
               <Select
                 id="University_State_National_International"
                 size="lg"
-                placeholder="Select University_State_National_International"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
+                label="Select University_State_National_International"
                 value={formData.University_State_National_International}
                 onChange={(value) =>
                   handleOnChange({
@@ -144,8 +140,7 @@ export default function ConfeSeminar() {
               <Input
                 id="Sponsoring_Authority"
                 size="lg"
-                placeholder="Sponsoring Authority"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
+                label="Sponsoring Authority"
                 value={formData.Sponsoring_Authority}
                 onChange={handleOnChange}
               />
@@ -157,9 +152,8 @@ export default function ConfeSeminar() {
               <Input
                 id="No_of_Participants"
                 size="lg"
-                placeholder="No. of Participants"
+                label="No. of Participants"
                 type="number"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
                 value={formData.No_of_Participants}
                 onChange={handleOnChange}
               />
@@ -174,9 +168,8 @@ export default function ConfeSeminar() {
               <Input
                 id="Start_Date_DD_MM_YYYY"
                 size="lg"
-                placeholder="Start Date"
+                label="Start Date"
                 type="date"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
                 value={formData.Start_Date_DD_MM_YYYY}
                 onChange={handleOnChange}
               />
@@ -188,9 +181,8 @@ export default function ConfeSeminar() {
               <Input
                 id="End_Date_DD_MM_YYYY"
                 size="lg"
-                placeholder="End Date"
+                label="End Date"
                 type="date"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
                 value={formData.End_Date_DD_MM_YYYY}
                 onChange={handleOnChange}
               />
@@ -204,8 +196,7 @@ export default function ConfeSeminar() {
             <Input
               id="List_of_Resource_Persons"
               size="lg"
-              placeholder="List of Resource Persons"
-              className="border-t-blue-gray-200 focus-border-t-gray-900"
+              label="List of Resource Persons"
               value={formData.List_of_Resource_Persons}
               onChange={handleOnChange}
             />
@@ -219,8 +210,7 @@ export default function ConfeSeminar() {
               <Input
                 id="Name_of_the_Coordinators"
                 size="lg"
-                placeholder="Name of the Coordinator(s)"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
+                label="Name of the Coordinator(s)"
                 value={formData.Name_of_the_Coordinators}
                 onChange={handleOnChange}
               />
@@ -232,8 +222,7 @@ export default function ConfeSeminar() {
               <Input
                 id="Remarks"
                 size="lg"
-                placeholder="Remarks"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
+                label="Remarks"
                 value={formData.Remarks}
                 onChange={handleOnChange}
               />
@@ -248,8 +237,7 @@ export default function ConfeSeminar() {
               <Input
                 id="Sponsorship_Amount"
                 size="lg"
-                placeholder="Sponsorship Amount"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
+                label="Sponsorship Amount"
                 value={formData.Sponsorship_Amount}
                 onChange={handleOnChange}
               />
@@ -261,9 +249,8 @@ export default function ConfeSeminar() {
               <Input
                 id="Number_of_participants_from_PICT"
                 size="lg"
-                placeholder="Number of Participants from PICT"
+                label="Number of Participants from PICT"
                 type="number"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
                 value={formData.Number_of_participants_from_PICT}
                 onChange={handleOnChange}
               />
@@ -277,9 +264,8 @@ export default function ConfeSeminar() {
             <Input
               id="Number_of_participants_from_outside_PICT"
               size="lg"
-              placeholder="Number of Participants from outside PICT"
+              label="Number of Participants from outside PICT"
               type="number"
-              className="border-t-blue-gray-200 focus-border-t-gray-900"
               value={formData.Number_of_participants_from_outside_PICT}
               onChange={handleOnChange}
             />

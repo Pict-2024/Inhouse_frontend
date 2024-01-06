@@ -41,19 +41,6 @@ export default function Contribution() {
 
         <form className="mt-8 mb-2" onSubmit={handleSubmit}>
           <div className="mb-4 flex flex-wrap -mx-4">
-            {/* <div className="w-full md:w-1/2 px-4 mb-4">
-              <Typography variant="h6" color="blue-gray" className="mb-3">
-                Name of Teacher
-              </Typography>
-              <Input
-                size="lg"
-                name="teacherName"
-                value={formData.teacherName}
-                placeholder="Name of Teacher"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
-                onChange={handleOnChange}
-              />
-            </div> */}
             <div className="w-full md:w-1/2 px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
                 Department
@@ -62,8 +49,7 @@ export default function Contribution() {
                 size="lg"
                 name="department"
                 value={formData.department}
-                placeholder="Department"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
+                label="Department"
                 onChange={handleOnChange}
               />
             </div>
@@ -78,8 +64,7 @@ export default function Contribution() {
                 size="lg"
                 name="academicYear"
                 value={formData.academicYear}
-                placeholder="Academic Year"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
+                label="Academic Year"
                 onChange={handleOnChange}
               />
             </div>
@@ -91,8 +76,7 @@ export default function Contribution() {
                 size="lg"
                 name="teacherParticipated"
                 value={formData.teacherParticipated}
-                placeholder="Name of teacher participated"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
+                label="Name of teacher participated"
                 onChange={handleOnChange}
               />
             </div>
@@ -107,8 +91,7 @@ export default function Contribution() {
                 size="lg"
                 name="role"
                 value={formData.role}
-                placeholder="Role"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
+                label="Role"
                 onChange={handleOnChange}
               />
             </div>
@@ -120,8 +103,7 @@ export default function Contribution() {
                 size="lg"
                 name="university"
                 value={formData.university}
-                placeholder="University/Institution"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
+                label="University/Institution"
                 onChange={handleOnChange}
               />
             </div>
@@ -135,8 +117,7 @@ export default function Contribution() {
               size="lg"
               name="bodyName"
               value={formData.bodyName}
-              placeholder="Name of the body"
-              className="border-t-blue-gray-200 focus-border-t-gray-900"
+              label="Name of the body"
               onChange={handleOnChange}
             />
           </div>

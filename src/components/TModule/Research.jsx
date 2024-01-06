@@ -1,4 +1,4 @@
-import { useState } from "react";
+import {  useState } from "react";
 import {
   Card,
   Select,
@@ -7,8 +7,12 @@ import {
   Button,
   Typography,
 } from "@material-tailwind/react";
+import { useSelector } from "react-redux";
+import { addRecordsResearch } from "./API_Routes";
+import axios from "axios";
 
 export default function Research() {
+  const { currentUser } = useSelector((state) => state.user);
   const currentYear = new Date().getFullYear();
   const years = Array.from(
     { length: currentYear - 1999 },
@@ -16,7 +20,8 @@ export default function Research() {
   );
 
   const [formData, setFormData] = useState({
-    // nameOfFaculty: "",
+    T_ID: null,
+    Username: currentUser?.Email,
     Department: "",
     Title_of_Research_Article: "",
     Type_Research_Review: "",
@@ -50,11 +55,26 @@ export default function Research() {
     });
   };
 
-  const handleSubmit = (e) => {
+  //Add records
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // You can access the form data here and perform further actions, like submitting it to the server
-    console.log(formData);
+    console.log("FormData: ", formData);
+    const response = await axios.post(addRecordsResearch, formData);
+    console.log("Response is : ", response.data);
   };
+
+  //get all records
+  // const getAllRecords = async () => {
+  //   try {
+  //     const response = await axios.get(getAllRecordsResearch);
+  //     console.log("Response is : ", response);
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // };
+  // useEffect(() => {
+  //   getAllRecords();
+  // }, []);
 
   return (
     <>
@@ -73,27 +93,13 @@ export default function Research() {
 
         <form className="mt-8 mb-2" onSubmit={handleSubmit}>
           <div className="mb-4 flex flex-wrap -mx-4">
-            {/* <div className="w-full md:w-1/2 px-4 mb-4">
-              <Typography variant="h6" color="blue-gray" className="mb-3">
-                Name of Faculty
-              </Typography>
-              <Input
-                size="lg"
-                placeholder="Name of Faculty"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
-                name="nameOfFaculty"
-                value={formData.nameOfFaculty}
-                onChange={handleChange}
-              />
-            </div> */}
-            <div className="w-full md:w-1/2 px-4 mb-4">
+            <div className="w-full px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
                 Department
               </Typography>
               <Input
                 size="lg"
-                placeholder="Department"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
+                label="Department"
                 name="Department"
                 value={formData.Department}
                 onChange={handleChange}
@@ -108,8 +114,7 @@ export default function Research() {
               </Typography>
               <Input
                 size="lg"
-                placeholder="Title of Research Article"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
+                label="Title of Research Article"
                 name="Title_of_Research_Article"
                 value={formData.Title_of_Research_Article}
                 onChange={handleChange}
@@ -117,14 +122,13 @@ export default function Research() {
             </div>
             <div className="w-full md:w-1/2 px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
-                Type (Research/Review)
+                Type
               </Typography>
               <Input
                 size="lg"
-                placeholder="Type (Research/Review)"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
-                name="Type_Research_Revie"
-                value={formData.Type_Research_Revie}
+                label="Type (Research/Review)"
+                name="Type_Research_Review"
+                value={formData.Type_Research_Review}
                 onChange={handleChange}
               />
             </div>
@@ -137,11 +141,17 @@ export default function Research() {
               </Typography>
               <Select
                 size="lg"
-                placeholder="Select Level"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
+                label="Level"
                 name="Level_International_National_State_University"
                 value={formData.Level_International_National_State_University}
-                onChange={handleChange}
+                onChange={(value) =>
+                  handleChange({
+                    target: {
+                      name: "Level_International_National_State_University",
+                      value,
+                    },
+                  })
+                }
               >
                 <Option value="International">International</Option>
                 <Option value="National">National</Option>
@@ -154,12 +164,18 @@ export default function Research() {
               </Typography>
               <Select
                 size="lg"
-                placeholder="Select Selection"
+                label="Select Selection"
                 color="light-gray"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
-                name="indexed"
+                name="Indexed_SCI_Scopus_Web_of_Science_UGC_Others"
                 value={formData.indexed}
-                onChange={handleChange}
+                onChange={(value) =>
+                  handleChange({
+                    target: {
+                      name: "Indexed_SCI_Scopus_Web_of_Science_UGC_Others",
+                      value,
+                    },
+                  })
+                }
               >
                 <Option value="SCI">SCI</Option>
                 <Option value="Scopus">Scopus</Option>
@@ -177,9 +193,8 @@ export default function Research() {
               </Typography>
               <Input
                 size="lg"
-                placeholder="Date"
+                label="Date"
                 type="date"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
                 name="Date"
                 value={formData.Date}
                 onChange={handleChange}
@@ -191,10 +206,9 @@ export default function Research() {
               </Typography>
               <Input
                 size="lg"
-                placeholder="Author"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
-                name="author"
-                value={formData.author}
+                label="Author"
+                name="Author"
+                value={formData.Author}
                 onChange={handleChange}
               />
             </div>
@@ -207,10 +221,9 @@ export default function Research() {
               </Typography>
               <Input
                 size="lg"
-                placeholder="Affiliation at the Time of Publication"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
-                name="affiliation"
-                value={formData.affiliation}
+                label="Affiliation at the Time of Publication"
+                name="Affiliation_at_the_Time_of_Publication"
+                value={formData.Affiliation_at_the_Time_of_Publication}
                 onChange={handleChange}
               />
             </div>
@@ -220,12 +233,19 @@ export default function Research() {
               </Typography>
               <Select
                 size="lg"
-                placeholder="Select Role"
+                label="Select Role"
                 color="light-gray"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
                 name="Role_First_Author_Second_Author_Third_Author"
                 value={formData.Role_First_Author_Second_Author_Third_Author}
-                onChange={handleChange}
+                // onChange={handleChange}
+                onChange={(value) =>
+                  handleChange({
+                    target: {
+                      name: "Role_First_Author_Second_Author_Third_Author",
+                      value,
+                    },
+                  })
+                }
               >
                 <Option value="First Author">First Author</Option>
                 <Option value="Second Author">Second Author</Option>
@@ -241,8 +261,7 @@ export default function Research() {
               </Typography>
               <Input
                 size="lg"
-                placeholder="Publisher"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
+                label="Publisher"
                 name="Publisher"
                 value={formData.Publisher}
                 onChange={handleChange}
@@ -254,8 +273,7 @@ export default function Research() {
               </Typography>
               <Input
                 size="lg"
-                placeholder="Co-Author"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
+                label="Co-Author"
                 name="Co_Authors"
                 value={formData.Co_Authors}
                 onChange={handleChange}
@@ -270,8 +288,7 @@ export default function Research() {
               </Typography>
               <Input
                 size="lg"
-                placeholder="Journal Name"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
+                label="Journal Name"
                 name="Journal_Name"
                 value={formData.Journal_Name}
                 onChange={handleChange}
@@ -283,8 +300,7 @@ export default function Research() {
               </Typography>
               <Input
                 size="lg"
-                placeholder="ISSN"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
+                label="ISSN"
                 name="ISSN"
                 value={formData.ISSN}
                 onChange={handleChange}
@@ -299,8 +315,7 @@ export default function Research() {
               </Typography>
               <Input
                 size="lg"
-                placeholder="Volume"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
+                label="Volume"
                 name="Volume"
                 value={formData.Volume}
                 onChange={handleChange}
@@ -312,8 +327,7 @@ export default function Research() {
               </Typography>
               <Input
                 size="lg"
-                placeholder="Page Numbers"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
+                label="Page Numbers"
                 name="Page_Numbers"
                 value={formData.Page_Numbers}
                 onChange={handleChange}
@@ -328,8 +342,7 @@ export default function Research() {
               </Typography>
               <Input
                 size="lg"
-                placeholder="Issue"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
+                label="Issue"
                 name="Issue"
                 value={formData.Issue}
                 onChange={handleChange}
@@ -341,12 +354,14 @@ export default function Research() {
               </Typography>
               <Select
                 size="lg"
-                placeholder="Select Year"
+                label="Select Year"
                 color="light-gray"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
                 name="Year"
                 value={formData.Year}
-                onChange={handleChange}
+                // onChange={handleChange}
+                onChange={(value) =>
+                  handleChange({ target: { name: "Year", value } })
+                }
               >
                 {years.map((year) => (
                   <Option key={year} value={year}>
@@ -364,8 +379,7 @@ export default function Research() {
               </Typography>
               <Input
                 size="lg"
-                placeholder="DOI"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
+                label="DOI"
                 name="DOI"
                 value={formData.DOI}
                 onChange={handleChange}
@@ -377,8 +391,7 @@ export default function Research() {
               </Typography>
               <Input
                 size="lg"
-                placeholder="Financial support from institute in INR"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
+                label="Financial support from institute in INR"
                 name="Financial_support_from_institute_in_INR"
                 value={formData.Financial_support_from_institute_in_INR}
                 onChange={handleChange}
@@ -392,8 +405,7 @@ export default function Research() {
               </Typography>
               <Input
                 size="lg"
-                placeholder="Link to article / paper / abstract of the article"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
+                label="Link to article / paper / abstract of the article"
                 name="LInk_to_article_paper_abstract_of_the_article"
                 value={formData.LInk_to_article_paper_abstract_of_the_article}
                 onChange={handleChange}
@@ -406,7 +418,7 @@ export default function Research() {
               <Input
                 size="lg"
                 type="text"
-                placeholder="Financial support from institute in INR "
+                label="Financial support from institute in INR "
                 className="border-t-blue-gray-200 focus:border-t-gray-900"
                 name="Upload_the_Paper"
                 value={formData.Upload_the_Paper}
@@ -421,7 +433,7 @@ export default function Research() {
               </Typography>
               <Input
                 size="lg"
-                placeholder="Achievements if any  "
+                label="Achievements if any  "
                 className="border-t-blue-gray-200 focus:border-t-gray-900"
                 name="Achievements_if_any"
                 value={formData.Achievements_if_any}
@@ -435,7 +447,7 @@ export default function Research() {
               <Input
                 size="lg"
                 type="text"
-                placeholder="Financial support from institute in INR "
+                label="Financial support from institute in INR "
                 className="border-t-blue-gray-200 focus:border-t-gray-900"
                 name="Upload_Document_of_Achievement"
                 value={formData.Upload_Document_of_Achievement}
@@ -444,7 +456,7 @@ export default function Research() {
             </div>
           </div>
 
-          <Button className="mt-4" fullWidth>
+          <Button type="submit" className="mt-4" fullWidth>
             Add Changes
           </Button>
         </form>

@@ -10,7 +10,6 @@ import {
 
 export default function FacultyAchievements() {
   const [formData, setFormData] = useState({
-    // facultyName: "",
     department: "",
     achievementDetails: "",
     eventName: "",
@@ -49,20 +48,7 @@ export default function FacultyAchievements() {
 
         <form className="mt-8 mb-2" onSubmit={handleSubmit}>
           <div className="mb-4 flex flex-wrap -mx-4">
-            {/* <div className="w-full md:w-1/2 px-4 mb-4">
-              <Typography variant="h6" color="blue-gray" className="mb-3">
-                Name of the faculty
-              </Typography>
-              <Input
-                size="lg"
-                name="facultyName"
-                value={formData.facultyName}
-                placeholder="Name of the faculty"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
-                onChange={handleInputChange}
-              />
-            </div> */}
-            <div className="w-full md:w-1/2 px-4 mb-4">
+            <div className="w-full px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
                 Department
               </Typography>
@@ -70,8 +56,7 @@ export default function FacultyAchievements() {
                 size="lg"
                 name="department"
                 value={formData.department}
-                placeholder="Department"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
+                label="Department"
                 onChange={handleInputChange}
               />
             </div>
@@ -86,8 +71,7 @@ export default function FacultyAchievements() {
                 size="lg"
                 name="achievementDetails"
                 value={formData.achievementDetails}
-                placeholder="Achievement / Awards Details"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
+                label="Achievement / Awards Details"
                 onChange={handleInputChange}
               />
             </div>
@@ -99,8 +83,7 @@ export default function FacultyAchievements() {
                 size="lg"
                 name="eventName"
                 value={formData.eventName}
-                placeholder="Name of Event"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
+                label="Name of Event"
                 onChange={handleInputChange}
               />
             </div>
@@ -115,8 +98,7 @@ export default function FacultyAchievements() {
                 size="lg"
                 name="organiserName"
                 value={formData.organiserName}
-                placeholder="Name of Organiser"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
+                label="Name of Organiser"
                 onChange={handleInputChange}
               />
             </div>
@@ -128,8 +110,7 @@ export default function FacultyAchievements() {
                 size="lg"
                 name="achievementLevel"
                 value={formData.achievementLevel}
-                placeholder="Select Level"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
+                label="Select Level"
                 onChange={handleInputChange}
               >
                 <Option value="International">International</Option>
@@ -151,8 +132,7 @@ export default function FacultyAchievements() {
                 size="lg"
                 name="awardType"
                 value={formData.awardType}
-                placeholder="Select Award Type"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
+                label="Select Award Type"
                 onChange={handleInputChange}
               >
                 <Option value="Winner">Winner</Option>
@@ -169,8 +149,7 @@ export default function FacultyAchievements() {
                 size="lg"
                 name="awardMoney"
                 value={formData.awardMoney}
-                placeholder="Award/Prize Money"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
+                label="Award/Prize Money"
                 onChange={handleInputChange}
               />
             </div>

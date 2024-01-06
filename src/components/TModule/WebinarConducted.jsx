@@ -51,24 +51,13 @@ export default function WebinarConducted() {
 
         <form className="mt-8 mb-2" onSubmit={handleSubmit}>
           <div className="mb-4 flex flex-wrap -mx-4">
-            {/* <div className="w-full md:w-1/2 px-4 mb-4">
-              <Typography variant="h6" color="blue-gray" className="mb-3">
-                Name of Teacher
-              </Typography>
-              <Input
-                size="lg"
-                placeholder="Name of Teacher"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
-              />
-            </div> */}
             <div className="w-full md:w-1/2 px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
                 Department
               </Typography>
               <Input
                 size="lg"
-                placeholder="Department"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
+                label="Department"
                 onChange={handleInputChange}
                 value={formData.department}
               />
@@ -82,8 +71,7 @@ export default function WebinarConducted() {
               </Typography>
               <Input
                 size="lg"
-                placeholder="Activity/Event"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
+                label="Activity/Event"
                 onChange={handleInputChange}
                 value={formData.activityEvent}
               />
@@ -94,8 +82,7 @@ export default function WebinarConducted() {
               </Typography>
               <Input
                 size="lg"
-                placeholder="Title"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
+                label="Title"
                 onChange={handleInputChange}
                 value={formData.title}
               />
@@ -109,8 +96,7 @@ export default function WebinarConducted() {
               </Typography>
               <Input
                 size="lg"
-                placeholder="Speaker/Resource Person"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
+                label="Speaker/Resource Person"
                 onChange={handleInputChange}
                 value={formData.speakerResourcePerson}
               />
@@ -121,8 +107,7 @@ export default function WebinarConducted() {
               </Typography>
               <Input
                 size="lg"
-                placeholder="Resource Person Affiliation"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
+                label="Resource Person Affiliation"
                 onChange={handleInputChange}
                 value={formData.resourcePersonAffiliation}
               />
@@ -136,9 +121,8 @@ export default function WebinarConducted() {
               </Typography>
               <Input
                 size="lg"
-                placeholder="No. of Participants"
+                label="No. of Participants"
                 type="number"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
                 onChange={handleInputChange}
                 value={formData.noOfParticipants}
               />
@@ -149,8 +133,7 @@ export default function WebinarConducted() {
               </Typography>
               <Input
                 size="lg"
-                placeholder="Remarks"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
+                label="Remarks"
                 onChange={handleInputChange}
                 value={formData.remarks}
               />
@@ -164,9 +147,8 @@ export default function WebinarConducted() {
               </Typography>
               <Input
                 size="lg"
-                placeholder="Start Date"
+                label="Start Date"
                 type="date"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
                 onChange={handleInputChange}
                 value={formData.startDate}
               />
@@ -177,9 +159,8 @@ export default function WebinarConducted() {
               </Typography>
               <Input
                 size="lg"
-                placeholder="End Date"
+                label="End Date"
                 type="date"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
                 onChange={handleInputChange}
                 value={formData.endDate}
               />
@@ -193,8 +174,7 @@ export default function WebinarConducted() {
               </Typography>
               <Input
                 size="lg"
-                placeholder="Name of the coordinator(s)"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
+                label="Name of the coordinator(s)"
                 onChange={handleInputChange}
                 value={formData.coordinators}
               />
@@ -205,8 +185,7 @@ export default function WebinarConducted() {
               </Typography>
               <Input
                 size="lg"
-                placeholder="Targeted Audience Faculty/Students"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
+                label="Targeted Audience Faculty/Students"
                 onChange={handleInputChange}
                 value={formData.targetedAudience}
               />
@@ -220,8 +199,7 @@ export default function WebinarConducted() {
               </Typography>
               <Input
                 size="lg"
-                placeholder="Duration in Hrs"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
+                label="Duration in Hrs"
                 onChange={handleInputChange}
                 value={formData.durationInHours}
               />
@@ -232,8 +210,7 @@ export default function WebinarConducted() {
               </Typography>
               <Input
                 size="lg"
-                placeholder="Financial Details/Remuneration Paid"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
+                label="Financial Details/Remuneration Paid"
                 onChange={handleInputChange}
                 value={formData.financialDetails}
               />

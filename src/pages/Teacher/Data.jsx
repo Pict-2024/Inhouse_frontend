@@ -1,29 +1,12 @@
 import React, { useState } from "react";
 import Select from "react-select";
+import Book_Publication from "../../components/TModule/Table Data/Book_Publication";
+import Consultancy_Report from "../../components/TModule/Table Data/Consultancy_Report";
+import Faculty_Conference_Publication from "../../components/TModule/Table Data/Faculty_Conference_Publication";
+// Import other components here
 
-import {
-  Attended,
-  BookPublication,
-  CertificateCourses,
-  ConfeSeminar,
-  ConsultancyReport,
-  Contribution,
-  ExtensionActivity,
-  FacultyAchievements,
-  FacultyConferencePublication,
-  FacultyExchange,
-  FacultyResource,
-  Grants,
-  IndustrialVisits,
-  PatentPublication,
-  ProfessionalAffiliations,
-  Research,
-  TechnicalCompetitions,
-  WebinarConducted,
-} from "../../components/TModule";
-
-export default function General() {
-  const [selectedOption, setSelectedOption] = useState("Faculty Achievement");
+export default function Data() {
+  const [selectedOption, setSelectedOption] = useState("Book Publication");
 
   const options = [
     { value: "Research", label: "Research" },
@@ -74,47 +57,21 @@ export default function General() {
     { value: "Contribution to BoS", label: "Contribution to BoS" },
   ];
 
-  // A mapping of option values to their corresponding components
   const optionComponents = {
-    Research: Research,
-    "Book Publication": BookPublication,
-    "Faculty Conference Publication": FacultyConferencePublication,
-    Grants: Grants,
-    "Consultancy Report": ConsultancyReport,
-    "Patent Publication": PatentPublication,
-    "Conferences, Seminars, Workshops, FDP, STTP Organized /conducted":
-      ConfeSeminar,
-    "STTP/FDP/Workshop/Conference Attended": Attended,
-    "Webinar/Guest-Expert Lecture / Video conference /Invited talks organized /conducted":
-      WebinarConducted,
-    "Number of MoUs, collaborations / linkages for Faculty exchange":
-      FacultyExchange,
-
-    "Certificate Courses": CertificateCourses,
-    "Professional Affiliations": ProfessionalAffiliations,
-    "Faculty as Resource Person you": FacultyResource,
-    "Extension Activity": ExtensionActivity,
-    "Technical Competitions / Tech Fest Organized/Extra & Co-curricular activities Organized":
-      TechnicalCompetitions,
-    "Faculty Achievement": FacultyAchievements,
-    "Industrial Visits / Tours / Field Trip": IndustrialVisits,
-    "Contribution to BoS": Contribution,
+    "Book Publication": Book_Publication,
+    "Faculty Conference Publication": Faculty_Conference_Publication,
+    "Consultancy Report": Consultancy_Report,
   };
 
-  // Function to handle the option selection
-  const handleOptionChange = (event) => {
-    // console.log(event.target.option);
-    // console.log("selected hit");
-    setSelectedOption(event.value);
-    // console.log(selectedOption);
-    // console.log(selectedOption);
+  const handleOptionChange = (selectedOption) => {
+    setSelectedOption(selectedOption.value);
   };
 
   return (
     <>
       <div className="w-full mt-4 flex flex-col items-center justify-center gap-2">
         <h2 className="text-slate-900 text-xl font-bold">
-          Select your choice :
+          Select your choice:
         </h2>
         <Select
           value={options.find((option) => option.value === selectedOption)}
@@ -123,14 +80,12 @@ export default function General() {
           className="w-2/3 "
         />
       </div>
-      {selectedOption ? (
-        // Render the selected component if an option is selected
+      {selectedOption && optionComponents[selectedOption] ? (
         <div className="w-full mt-4">
           {React.createElement(optionComponents[selectedOption])}
         </div>
       ) : (
-        // Render the Faculty Achievement component by default
-        <FacultyAchievements />
+        <div>Component not found</div>
       )}
     </>
   );

@@ -72,8 +72,7 @@ export default function FacultyExchange() {
               name="mouName"
               value={formData.mouName}
               onChange={handleChange}
-              placeholder="Name of the MoU / Collaboration / Linkage"
-              className="border-t-blue-gray-200 focus-border-t-gray-900"
+              label="Name of the MoU / Collaboration / Linkage"
             />
           </div>
           <div className="mb-4">
@@ -86,8 +85,7 @@ export default function FacultyExchange() {
               name="collaboratingAgency"
               value={formData.collaboratingAgency}
               onChange={handleChange}
-              placeholder="Collaborating Agency / Institution"
-              className="border-t-blue-gray-200 focus-border-t-gray-900"
+              label="Collaborating Agency / Institution"
             />
           </div>
 
@@ -101,8 +99,7 @@ export default function FacultyExchange() {
                 name="facultyCoordinator"
                 value={formData.facultyCoordinator}
                 onChange={handleChange}
-                placeholder="Faculty Coordinator"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
+                label="Faculty Coordinator"
               />
             </div>
             <div className="w-full md:w-1/2 px-4 mb-4">
@@ -114,8 +111,7 @@ export default function FacultyExchange() {
                 name="department"
                 value={formData.department}
                 onChange={handleChange}
-                placeholder="Department"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
+                label="Department"
               />
             </div>
           </div>
@@ -130,9 +126,8 @@ export default function FacultyExchange() {
                 name="yearOfSigning"
                 value={formData.yearOfSigning}
                 onChange={handleChange}
-                placeholder="Select Year"
+                label="Select Year"
                 color="light-gray"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
               >
                 {years.map((year) => (
                   <Option key={year} value={year}>
@@ -150,8 +145,7 @@ export default function FacultyExchange() {
                 name="duration"
                 value={formData.duration}
                 onChange={handleChange}
-                placeholder="Duration (in years)"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
+                label="Duration (in years)"
               />
             </div>
           </div>
@@ -165,8 +159,7 @@ export default function FacultyExchange() {
               name="objectives"
               value={formData.objectives}
               onChange={handleChange}
-              placeholder="Objectives/Purpose"
-              className="border-t-blue-gray-200 focus-border-t-gray-900"
+              label="Objectives/Purpose"
             />
           </div>
 
@@ -179,8 +172,7 @@ export default function FacultyExchange() {
               name="activitiesAndLinks"
               value={formData.activitiesAndLinks}
               onChange={handleChange}
-              placeholder="Activities and Web-Links"
-              className="border-t-blue-gray-200 focus-border-t-gray-900"
+              label="Activities and Web-Links"
             />
           </div>
 
@@ -193,8 +185,7 @@ export default function FacultyExchange() {
               name="documentLink"
               value={formData.documentLink}
               onChange={handleChange}
-              placeholder="Relevant Document Link"
-              className="border-t-blue-gray-200 focus-border-t-gray-900"
+              label="Relevant Document Link"
             />
           </div>
 
@@ -208,8 +199,7 @@ export default function FacultyExchange() {
                 name="financialSupport"
                 value={formData.financialSupport}
                 onChange={handleChange}
-                placeholder="Financial Support/Transaction"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
+                label="Financial Support/Transaction"
               />
             </div>
             <div className="w-full md:w-1/2 px-4 mb-4">
@@ -221,7 +211,6 @@ export default function FacultyExchange() {
                 name="reportFile"
                 type="text"
                 onChange={handleChange}
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
               />
             </div>
           </div>
