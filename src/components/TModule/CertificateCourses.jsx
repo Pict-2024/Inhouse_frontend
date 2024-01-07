@@ -52,28 +52,14 @@ export default function CertificateCourses() {
 
         <form className="mt-8 mb-2" onSubmit={handleSubmit}>
           <div className="mb-4 flex flex-wrap -mx-4">
-            {/* <div className="w-full md:w-1/2 px-4 mb-4">
-              <Typography variant="h6" color="blue-gray" className="mb-3">
-                Name of the Staff
-              </Typography>
-              <Input
-                id="staffName"
-                size="lg"
-                placeholder="Name of the Staff"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
-                value={formData.staffName}
-                onChange={handleOnChange}
-              />
-            </div> */}
-            <div className="w-full md:w-1/2 px-4 mb-4">
+            <div className="w-full px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
                 Department
               </Typography>
               <Input
                 id="department"
                 size="lg"
-                placeholder="Department"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
+                label="Department"
                 value={formData.department}
                 onChange={handleOnChange}
               />
@@ -88,8 +74,7 @@ export default function CertificateCourses() {
               <Input
                 id="courseName"
                 size="lg"
-                placeholder="Name of Add-On / Certificate Program"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
+                label="Name of Add-On / Certificate Program"
                 value={formData.courseName}
                 onChange={handleOnChange}
               />
@@ -101,9 +86,8 @@ export default function CertificateCourses() {
               <Input
                 id="yearOfOffering"
                 size="lg"
-                placeholder="Year of Offering"
+                label="Year of Offering"
                 type="number"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
                 value={formData.yearOfOffering}
                 onChange={handleOnChange}
               />
@@ -118,9 +102,8 @@ export default function CertificateCourses() {
               <Input
                 id="timesOffered"
                 size="lg"
-                placeholder="No. of Times Offered During the Same Year"
+                label="No. of Times Offered During the Same Year"
                 type="number"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
                 value={formData.timesOffered}
                 onChange={handleOnChange}
               />
@@ -132,8 +115,7 @@ export default function CertificateCourses() {
               <Input
                 id="courseDuration"
                 size="lg"
-                placeholder="Duration of Course"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
+                label="Duration of Course"
                 value={formData.courseDuration}
                 onChange={handleOnChange}
               />
@@ -148,9 +130,8 @@ export default function CertificateCourses() {
               <Input
                 id="startDate"
                 size="lg"
-                placeholder="Start Date"
+                label="Start Date"
                 type="date"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
                 value={formData.startDate}
                 onChange={handleOnChange}
               />
@@ -162,9 +143,8 @@ export default function CertificateCourses() {
               <Input
                 id="endDate"
                 size="lg"
-                placeholder="End Date"
+                label="End Date"
                 type="date"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
                 value={formData.endDate}
                 onChange={handleOnChange}
               />
@@ -179,9 +159,8 @@ export default function CertificateCourses() {
               <Input
                 id="enrolledStudents"
                 size="lg"
-                placeholder="Number of Students Enrolled in the Year"
+                label="Number of Students Enrolled in the Year"
                 type="number"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
                 value={formData.enrolledStudents}
                 onChange={handleOnChange}
               />
@@ -193,9 +172,8 @@ export default function CertificateCourses() {
               <Input
                 id="completedStudents"
                 size="lg"
-                placeholder="Number of Students Completing the Course in the Year"
+                label="Number of Students Completing the Course in the Year"
                 type="number"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
                 value={formData.completedStudents}
                 onChange={handleOnChange}
               />
@@ -209,8 +187,7 @@ export default function CertificateCourses() {
             <Input
               id="speakers"
               size="lg"
-              placeholder="Names of Speakers"
-              className="border-t-blue-gray-200 focus-border-t-gray-900"
+              label="Names of Speakers"
               value={formData.speakers}
               onChange={handleOnChange}
             />
@@ -223,8 +200,7 @@ export default function CertificateCourses() {
             <Input
               id="speakerDetails"
               size="lg"
-              placeholder="Speaker Details"
-              className="border-t-blue-gray-200 focus-border-t-gray-900"
+              label="Speaker Details"
               value={formData.speakerDetails}
               onChange={handleOnChange}
             />
@@ -238,8 +214,7 @@ export default function CertificateCourses() {
             <Input
               id="reportLink"
               size="lg"
-              placeholder="Link to Report Consisting of Geotagged Photograph, Feedback, Attendance"
-              className="border-t-blue-gray-200 focus-border-t-gray-900"
+              label="Link to Report Consisting of Geotagged Photograph, Feedback, Attendance"
               value={formData.reportLink}
               onChange={handleOnChange}
             />
@@ -252,8 +227,7 @@ export default function CertificateCourses() {
             <Input
               id="psosAttained"
               size="lg"
-              placeholder="Program Specific Outcomes (PSOs) Attained Through This Course"
-              className="border-t-blue-gray-200 focus-border-t-gray-900"
+              label="Program Specific Outcomes (PSOs) Attained Through This Course"
               value={formData.psosAttained}
               onChange={handleOnChange}
             />
@@ -267,8 +241,7 @@ export default function CertificateCourses() {
               <Input
                 id="fundGenerated"
                 size="lg"
-                placeholder="Fund Generated"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
+                label="Fund Generated"
                 value={formData.fundGenerated}
                 onChange={handleOnChange}
               />
@@ -280,8 +253,7 @@ export default function CertificateCourses() {
               <Input
                 id="sponsorship"
                 size="lg"
-                placeholder="Sponsorship/Collaboration"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
+                label="Sponsorship/Collaboration"
                 value={formData.sponsorship}
                 onChange={handleOnChange}
               />

@@ -1,5 +1,6 @@
 import Teacher from "../Layouts/Teacher";
 import General from "../pages/Teacher/General";
+import Data from "../pages/Teacher/Data";
 import TDashboard from "../pages/Teacher/TDashboard";
 
 export const TeacherRoutes = {
@@ -14,6 +15,10 @@ export const TeacherRoutes = {
     {
       path: "general",
       element: <General />,
+    },
+    {
+      path: "data",
+      element: <Data />,
     },
   ],
 };

@@ -69,28 +69,13 @@ export default function TechnicalCompetitions() {
 
         <form className="mt-8 mb-2" onSubmit={handleSubmit}>
           <div className="mb-4 flex flex-wrap -mx-4">
-            {/* <div className="w-full md:w-1/2 px-4 mb-4">
-              <Typography variant="h6" color="blue-gray" className="mb-3">
-                Name of Teacher
-              </Typography>
-              <Input
-                size="lg"
-                placeholder="Name of Teacher"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
-                name="nameOfTeacher"
-                value={formData.nameOfTeacher}
-                onChange={handleChange}
-              />
-            </div> */}
-
-            <div className="w-full md:w-1/2 px-4 mb-4">
+            <div className="w-full px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
                 Department
               </Typography>
               <Input
                 size="lg"
-                placeholder="Department"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
+                label="Department"
                 name="department"
                 value={formData.department}
                 onChange={handleChange}
@@ -105,8 +90,7 @@ export default function TechnicalCompetitions() {
               </Typography>
               <Input
                 size="lg"
-                placeholder="Principal Investigator Faculty Name"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
+                label="Principal Investigator Faculty Name"
                 name="principalInvestigator"
                 value={formData.principalInvestigator}
                 onChange={handleChange}
@@ -119,8 +103,7 @@ export default function TechnicalCompetitions() {
               </Typography>
               <Input
                 size="lg"
-                placeholder="Project Title"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
+                label="Project Title"
                 name="projectTitle"
                 value={formData.projectTitle}
                 onChange={handleChange}
@@ -135,8 +118,7 @@ export default function TechnicalCompetitions() {
               </Typography>
               <Input
                 size="lg"
-                placeholder="Faculty Department"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
+                label="Faculty Department"
                 name="facultyDepartment"
                 value={formData.facultyDepartment}
                 onChange={handleChange}
@@ -149,8 +131,7 @@ export default function TechnicalCompetitions() {
               </Typography>
               <Input
                 size="lg"
-                placeholder="Name(s) of CO-PI"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
+                label="Name(s) of CO-PI"
                 name="coPiName"
                 value={formData.coPiName}
                 onChange={handleChange}
@@ -165,8 +146,7 @@ export default function TechnicalCompetitions() {
               </Typography>
               <Input
                 size="lg"
-                placeholder="Department of CO-PI"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
+                label="Department of CO-PI"
                 name="departmentOfCoPi"
                 value={formData.departmentOfCoPi}
                 onChange={handleChange}
@@ -179,8 +159,7 @@ export default function TechnicalCompetitions() {
               </Typography>
               <Select
                 size="lg"
-                placeholder="Select Project Type"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
+                label="Select Project Type"
                 name="projectType"
                 value={formData.projectType}
                 onChange={handleChange}
@@ -198,8 +177,7 @@ export default function TechnicalCompetitions() {
               </Typography>
               <Input
                 size="lg"
-                placeholder="Name of Funding Agency"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
+                label="Name of Funding Agency"
                 name="fundingAgency"
                 value={formData.fundingAgency}
                 onChange={handleChange}
@@ -212,8 +190,7 @@ export default function TechnicalCompetitions() {
               </Typography>
               <Input
                 size="lg"
-                placeholder="Name of the Scheme"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
+                label="Name of the Scheme"
                 name="schemeName"
                 value={formData.schemeName}
                 onChange={handleChange}
@@ -228,8 +205,7 @@ export default function TechnicalCompetitions() {
               </Typography>
               <Input
                 size="lg"
-                placeholder="Amount Sanctioned"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
+                label="Amount Sanctioned"
                 name="amountSanctioned"
                 value={formData.amountSanctioned}
                 onChange={handleChange}
@@ -242,9 +218,8 @@ export default function TechnicalCompetitions() {
               </Typography>
               <Select
                 size="lg"
-                placeholder="Select Year"
+                label="Select Year"
                 color="light-gray"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
                 name="yearOfGrant"
                 value={formData.yearOfGrant}
                 onChange={handleChange}
@@ -266,7 +241,6 @@ export default function TechnicalCompetitions() {
               <Input
                 size="lg"
                 type="date"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
                 name="startDate"
                 value={formData.startDate}
                 onChange={handleChange}
@@ -280,7 +254,6 @@ export default function TechnicalCompetitions() {
               <Input
                 size="lg"
                 type="date"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
                 name="endDate"
                 value={formData.endDate}
                 onChange={handleChange}
@@ -295,8 +268,7 @@ export default function TechnicalCompetitions() {
               </Typography>
               <Input
                 size="lg"
-                placeholder="Amount deposited to PICT account"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
+                label="Amount deposited to PICT account"
                 name="amountDeposited"
                 value={formData.amountDeposited}
                 onChange={handleChange}
@@ -310,7 +282,6 @@ export default function TechnicalCompetitions() {
               <Input
                 size="lg"
                 type="date"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
                 name="transactionDate"
                 value={formData.transactionDate}
                 onChange={handleChange}
@@ -325,8 +296,7 @@ export default function TechnicalCompetitions() {
               </Typography>
               <Select
                 size="lg"
-                placeholder="Select Status"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
+                label="Select Status"
                 name="status"
                 value={formData.status}
                 onChange={handleChange}
@@ -342,8 +312,7 @@ export default function TechnicalCompetitions() {
               </Typography>
               <Input
                 size="lg"
-                placeholder="Duration"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
+                label="Duration"
                 name="duration"
                 value={formData.duration}
                 onChange={handleChange}
@@ -358,8 +327,7 @@ export default function TechnicalCompetitions() {
               </Typography>
               <Input
                 size="lg"
-                placeholder="Outcome"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
+                label="Outcome"
                 name="outcome"
                 value={formData.outcome}
                 onChange={handleChange}

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import {  useState } from "react";
 import {
   Card,
   Select,
@@ -7,11 +7,11 @@ import {
   Button,
   Typography,
 } from "@material-tailwind/react";
-import { useSelector } from 'react-redux';
-import axios from  'axios';
+import { useSelector } from "react-redux";
+import axios from "axios";
+import { addRecordsBook } from "./API_Routes";
 
 export default function BookPublication() {
-
   const { currentUser } = useSelector((state) => state.user);
 
   const currentYear = new Date().getFullYear();
@@ -21,9 +21,8 @@ export default function BookPublication() {
   );
 
   const [formData, setFormData] = useState({
-
     T_ID: null,
-    UserName: currentUser.Email,
+    Username: currentUser?.Email,
     Department: "",
     Book_Title: "",
     Chapter_if_any: "",
@@ -42,15 +41,14 @@ export default function BookPublication() {
     });
   };
 
+  //Add records
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    console.log("formdata is : ", formData);
-    const response = await axios.post('http://localhost:5000/api/v1/teacher/book-pb/create-new',
-    formData);
-
-    console.log("Response is : ", response);
+    const response = await axios.post(addRecordsBook, formData);
+    console.log("Response is : ", response.data);
   };
+
+ 
 
   return (
     <>
@@ -69,28 +67,14 @@ export default function BookPublication() {
 
         <form className="mt-8 mb-2" onSubmit={handleSubmit}>
           <div className="mb-4 flex flex-wrap -mx-4">
-            {/* <div className="w-full md:w-1/2 px-4 mb-4">
-              <Typography variant="h6" color="blue-gray" className="mb-3">
-                Faculty Name
-              </Typography>
-              <Input
-                id="Facultyname"
-                size="lg"
-                placeholder="Name of Faculty"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
-                value={formData.FacultyName}
-                onChange={handleOnChange}
-              />
-            </div> */}
-            <div className="w-full md:w-1/2 px-4 mb-4">
+            <div className="w-full px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
                 Department
               </Typography>
               <Input
                 id="Department"
                 size="lg"
-                placeholder="Department"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
+                label="Department"
                 value={formData.Department}
                 onChange={handleOnChange}
               />
@@ -104,21 +88,19 @@ export default function BookPublication() {
               <Input
                 id="Book_Title"
                 size="lg"
-                placeholder="Title of book"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
+                label="Title of book"
                 value={formData.Book_Title}
                 onChange={handleOnChange}
               />
             </div>
             <div className="w-full md:w-1/2 px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
-                Chapter_if_any (if any)
+                Chapter (if any)
               </Typography>
               <Input
                 id="Chapter_if_any"
                 size="lg"
-                placeholder="Chapter_if_any"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
+                label="Chapters"
                 value={formData.Chapter_if_any}
                 onChange={handleOnChange}
               />
@@ -132,10 +114,13 @@ export default function BookPublication() {
               <Select
                 id="Level_International_National"
                 size="lg"
-                placeholder="Select Level_International_National"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
+                label="Select Level_International_National"
                 value={formData.Level_International_National}
-                onChange={(value) => handleOnChange({ target: { id: "Level_International_National", value } })}
+                onChange={(value) =>
+                  handleOnChange({
+                    target: { id: "Level_International_National", value },
+                  })
+                }
                 // onChange={handleOnChange}
               >
                 <Option value="International">International</Option>
@@ -149,8 +134,7 @@ export default function BookPublication() {
               <Input
                 id="Publisher"
                 size="lg"
-                placeholder="Publisher"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
+                label="Publisher"
                 value={formData.Publisher}
                 onChange={handleOnChange}
               />
@@ -164,11 +148,14 @@ export default function BookPublication() {
               <Select
                 id="Year_of_Publication"
                 size="lg"
-                placeholder="Select Year_of_Publication"
+                label="Select Year_of_Publication"
                 color="light-gray"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
                 value={formData.Year_of_Publication}
-                onChange={(value) => handleOnChange({ target: { id: "Year_of_Publication", value } })}
+                onChange={(value) =>
+                  handleOnChange({
+                    target: { id: "Year_of_Publication", value },
+                  })
+                }
                 // onChange={handleOnChange}
               >
                 {years.map((year) => (
@@ -185,15 +172,14 @@ export default function BookPublication() {
               <Input
                 id="ISBN_ISSN_DOI_any_other"
                 size="lg"
-                placeholder="Author"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
+                label="Author"
                 value={formData.ISBN_ISSN_DOI_any_other}
                 onChange={handleOnChange}
               />
             </div>
           </div>
           <div className="mb-4 flex flex-wrap -mx-4">
-            <div className="w-full md:w-1/2 px-4 mb-4">
+            <div className="w-full px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
                 Proof (Add drive link)
               </Typography>
@@ -201,8 +187,7 @@ export default function BookPublication() {
                 id="Proof"
                 size="lg"
                 type="text"
-                placeholder="Financial support from institute in INR"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
+                label="Financial support from institute in INR"
                 onChange={handleOnChange}
               />
             </div>

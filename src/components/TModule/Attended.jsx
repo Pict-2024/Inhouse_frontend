@@ -8,12 +8,11 @@ import {
   Typography,
 } from "@material-tailwind/react";
 // import axios from 'axios';
-import {useSelector} from 'react-redux';
+import { useSelector } from "react-redux";
 
 export default function Attended() {
-
   const { currentUser } = useSelector((state) => state.user);
-  
+
   const [formData, setFormData] = useState({
     // userName: "",
     department: "",
@@ -41,8 +40,6 @@ export default function Attended() {
     e.preventDefault();
     console.log(currentUser.Email);
     // const data = await axios.post('http://localhost:5000/')
-   
-    
   };
 
   return (
@@ -62,28 +59,14 @@ export default function Attended() {
 
         <form className="mt-8 mb-2" onSubmit={handleSubmit}>
           <div className="mb-4 flex flex-wrap -mx-4">
-            {/* <div className="w-full md:w-1/2 px-4 mb-4">
-              <Typography variant="h6" color="blue-gray" className="mb-3">
-                Name of the Faculty
-              </Typography>
-              <Input
-                id="name"
-                size="lg"
-                placeholder="Name of Faculty"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
-                value={formData.name}
-                onChange={handleOnChange}
-              />
-            </div> */}
-            <div className="w-full md:w-1/2 px-4 mb-4">
+            <div className="w-full px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
                 Department
               </Typography>
               <Input
                 id="department"
                 size="lg"
-                placeholder="Department"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
+                label="Department"
                 value={formData.department}
                 onChange={handleOnChange}
               />
@@ -98,8 +81,7 @@ export default function Attended() {
               <Input
                 id="eventTitle"
                 size="lg"
-                placeholder="Title of the Event"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
+                label="Title of the Event"
                 value={formData.eventTitle}
                 onChange={handleOnChange}
               />
@@ -111,8 +93,7 @@ export default function Attended() {
               <Input
                 id="eventType"
                 size="lg"
-                placeholder="Type/Nature"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
+                label="Type/Nature"
                 value={formData.eventType}
                 onChange={handleOnChange}
               />
@@ -127,8 +108,7 @@ export default function Attended() {
               <Input
                 id="instituteName"
                 size="lg"
-                placeholder="Organizing Institute"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
+                label="Organizing Institute"
                 value={formData.instituteName}
                 onChange={handleOnChange}
               />
@@ -140,8 +120,7 @@ export default function Attended() {
               <Input
                 id="coordinators"
                 size="lg"
-                placeholder="Coordinator(s)"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
+                label="Coordinator(s)"
                 value={formData.coordinators}
                 onChange={handleOnChange}
               />
@@ -157,7 +136,6 @@ export default function Attended() {
                 id="startDate"
                 size="lg"
                 type="date"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
                 value={formData.startDate}
                 onChange={handleOnChange}
               />
@@ -170,7 +148,6 @@ export default function Attended() {
                 id="endDate"
                 size="lg"
                 type="date"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
                 value={formData.endDate}
                 onChange={handleOnChange}
               />
@@ -185,10 +162,11 @@ export default function Attended() {
               <Select
                 id="mode"
                 size="lg"
-                placeholder="Select Mode"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
+                label="Select Mode"
                 value={formData.mode}
-                onChange={(value) => handleOnChange({ target: { id: "mode", value } })}
+                onChange={(value) =>
+                  handleOnChange({ target: { id: "mode", value } })
+                }
                 // onChange={handleOnChange}
               >
                 <Option value="Online">Online</Option>
@@ -202,8 +180,7 @@ export default function Attended() {
               <Input
                 id="duration"
                 size="lg"
-                placeholder="Duration"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
+                label="Duration"
                 value={formData.duration}
                 onChange={handleOnChange}
               />
@@ -218,8 +195,7 @@ export default function Attended() {
               <Input
                 id="financeSupport"
                 size="lg"
-                placeholder="Finance Support Received from PICT"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
+                label="Finance Support Received from PICT"
                 value={formData.financeSupport}
                 onChange={handleOnChange}
               />
@@ -232,7 +208,6 @@ export default function Attended() {
                 id="certificate"
                 size="lg"
                 type="text"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
                 onChange={handleOnChange}
               />
             </div>
