@@ -33,11 +33,11 @@ export default function FacultyAchievements() {
   };
 
   return (
-    <>
+    <div className="">
       <Card
         color="transparent"
         shadow={false}
-        className="border border-gray-300 w-85 mx-auto p-2 my-2 rounded-md"
+        className="border border-gray-300 w-85  p-2 mt-2 rounded-md"
       >
         <Typography
           variant="h4"
@@ -181,6 +181,6 @@ export default function FacultyAchievements() {
           </Button>
         </form>
       </Card>
-    </>
+    </div>
   );
 }

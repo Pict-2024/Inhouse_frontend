@@ -111,8 +111,8 @@ export default function General() {
   };
 
   return (
-    <>
-      <div className="w-full mt-4 flex flex-col items-center justify-center gap-2">
+    <div className="  h-full">
+      <div className="w-full mt-4 flex flex-col items-center justify-center space-y-2">
         <h2 className="text-slate-900 text-xl font-bold">
           Select your choice :
         </h2>
@@ -120,18 +120,18 @@ export default function General() {
           value={options.find((option) => option.value === selectedOption)}
           onChange={handleOptionChange}
           options={options}
-          className="w-2/3 "
+          className="w-2/3"
         />
       </div>
       {selectedOption ? (
         // Render the selected component if an option is selected
-        <div className="w-full mt-4">
+        <div className="w-full mt-4 ">
           {React.createElement(optionComponents[selectedOption])}
         </div>
       ) : (
         // Render the Faculty Achievement component by default
         <FacultyAchievements />
       )}
-    </>
+    </div>
   );
 }

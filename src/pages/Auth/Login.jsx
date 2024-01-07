@@ -57,7 +57,25 @@ export default function Login() {
         return;
       }
       dispatch(signInUserSuccess(response.data.data));
-      navigate('/');
+
+      const currentUser  = response.data.data;
+
+      var pathLink = "";
+    
+      if(currentUser && currentUser.Role === 0)
+      {
+        pathLink = "/a/dashboard";
+      }
+      else if(currentUser && currentUser.Role === 1)
+      {
+        pathLink = "/t/dashboard";
+      }
+      else if(currentUser && currentUser.Role === 2)
+      {
+        pathLink = "/s/dashboard";
+      }
+      
+      navigate(pathLink);
 
       // setLogin(true);
 
