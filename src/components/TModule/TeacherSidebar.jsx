@@ -51,7 +51,7 @@ export default function TeacherSidebar() {
           <ListItemPrefix>
             <DocumentIcon className="h-5 w-5" />
           </ListItemPrefix>
-         <Link to={'/t/general'}>View Uploads</Link>
+         <Link to={'/t/data'}>View Uploads</Link>
         </ListItem>
         
         <ListItem>
