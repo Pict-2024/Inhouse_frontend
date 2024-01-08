@@ -47,8 +47,7 @@ export default function BookPublication() {
     const response = await axios.post(addRecordsBook, formData);
     console.log("Response is : ", response.data);
   };
-
- 
+  
 
   return (
     <>

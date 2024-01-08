@@ -18,11 +18,24 @@ import {
 import axios from "axios";
 import PropTypes from "prop-types";
 import {
-  getAllRecordsAttended,
-  getAllRecordsBook,
-  getAllRecordsConference,
-  getAllRecordsConsultancy,
-  getAllRecordsFaculty,
+  getOneRecordsAchievements,
+  getOneRecordsAttended,
+  getOneRecordsBook,
+  getOneRecordsCertificate,
+  getOneRecordsConference,
+  getOneRecordsConsultancy,
+  getOneRecordsContribution,
+  getOneRecordsExtension,
+  getOneRecordsFaculty,
+  getOneRecordsGrants,
+  getOneRecordsIndustrial,
+  getOneRecordsMous,
+  getOneRecordsPatent,
+  getOneRecordsProfessional,
+  getOneRecordsResearch,
+  getOneRecordsResource,
+  getOneRecordsTechnical,
+  getOneRecordsWebinar,
 } from "../API_Routes";
 import { useSelector } from "react-redux";
 
@@ -35,20 +48,53 @@ export default function TableData({ tableName }) {
   const getApiRoute = (tableName) => {
     // Define your API routes based on the table names
     const apiRoutes = {
-      "Book Publication": getAllRecordsBook,
-      "Faculty Conference Publication": getAllRecordsFaculty,
-      "Consultancy Report": getAllRecordsConsultancy,
-      "Conference Seminars": getAllRecordsConference,
-      "SSTP_FDP_Workshop Attended": getAllRecordsAttended,
+      Research: (username) => getOneRecordsResearch(username),
+      "Book Publication": (username) => getOneRecordsBook(username),
+      "Faculty Conference Publication": (username) =>
+        getOneRecordsFaculty(username),
+      Grants: (username) => getOneRecordsGrants(username),
+      "Consultancy Report": (username) => getOneRecordsConsultancy(username),
+      "Patent Publication": (username) => getOneRecordsPatent(username),
+      "Conferences, Seminars, Workshops, FDP, STTP Organized /conducted": (
+        username
+      ) => getOneRecordsConference(username),
+      "STTP/FDP/Workshop/Conference Attended": (username) =>
+        getOneRecordsAttended(username),
+      "Webinar/Guest-Expert Lecture / Video conference /Invited talks organized /conducted":
+        (username) => getOneRecordsWebinar(username),
+      "Number of MoUs, collaborations / linkages for Faculty exchange": (
+        username
+      ) => getOneRecordsMous(username),
+      "Certificate Courses": (username) => getOneRecordsCertificate(username),
+      "Professional Affiliations": (username) =>
+        getOneRecordsProfessional(username),
+      "Faculty as Resource Person you": (username) =>
+        getOneRecordsResource(username),
+      "Extension Activity": (username) => getOneRecordsExtension(username),
+      "Technical Competitions / Tech Fest Organized/Extra & Co-curricular activities Organized":
+        (username) => getOneRecordsTechnical(username),
+      "Faculty Achievement": (username) => getOneRecordsAchievements(username),
+      "Industrial Visits / Tours / Field Trip": (username) =>
+        getOneRecordsIndustrial(username),
+      "Contribution to BoS": (username) => getOneRecordsContribution(username),
     };
 
-    return apiRoutes[tableName];
+    const apiRoute = apiRoutes[tableName];
+    // console.log("apiRoute:", apiRoute); // Add this line
+    return apiRoute;
   };
 
   //get all records
   const getAllRecords = async () => {
+    const user = await currentUser.Email;
     try {
-      const response = await axios.get(getApiRoute(tableName));
+      const apiurl = getApiRoute(tableName)(user);
+      // console.log("apiRoute in getAllRecords:", apiurl);
+      const response = await axios.get(apiurl, {
+        headers: {
+          "Content-Type": "application/json", // Make sure this header is defined
+        },
+      });
       // console.log("Rows : ", response.data.data);
       const columnHeaders = Object.keys(response.data.data[0]);
       // console.log("Columns:", columnHeaders);
@@ -71,9 +117,8 @@ export default function TableData({ tableName }) {
     getAllRecords();
   }, [tableName]);
 
-
   return (
-    <Card className="h-full w-full" >
+    <Card className="h-full w-full">
       <CardHeader floated={false} shadow={false} className="rounded-none">
         <div className="flex items-center justify-between gap-8 mt-2">
           <div>
@@ -89,15 +134,17 @@ export default function TableData({ tableName }) {
           </div>
         </div>
       </CardHeader>
-      <CardBody className="px-0" >
-        <div className="overflow-x-auto max-w-screen-xl mx-auto" >
+      <CardBody className="px-0">
+        <div className="overflow-x-auto max-w-screen-xl mx-auto">
           <table className="mt-4 w-full min-w-max table-auto text-left">
             <thead>
               <tr>
                 {tableHead.map((head, index) => (
                   <th
                     key={head}
-                    className="cursor-pointer border-y border-blue-gray-100 bg-blue-gray-50/50 p-4 transition-colors hover:bg-blue-gray-50"
+                    className={`${
+                      index === 0 ? "hidden" : "" // Hide the first column
+                    } cursor-pointer border-y border-blue-gray-100 bg-blue-gray-50/50 p-4 transition-colors hover:bg-blue-gray-50`}
                   >
                     <Typography
                       variant="small"
@@ -127,7 +174,9 @@ export default function TableData({ tableName }) {
                   {tableHead.map((head, colIndex) => (
                     <td
                       key={head}
-                      className={`p-4 whitespace-normal border-r ${
+                      className={`${
+                        colIndex === 0 ? "hidden" : "" // Hide the first column
+                      } p-4 whitespace-normal border-r ${
                         colIndex === tableHead.length - 1
                           ? ""
                           : "border-solid border-blue-gray-200"
@@ -136,12 +185,13 @@ export default function TableData({ tableName }) {
                       <Typography
                         variant="body"
                         color="black"
-                        className="text-dark" // Add text-dark class here
+                        className="text-dark"
                       >
                         {record[head]}
                       </Typography>
                     </td>
                   ))}
+
                   <td className="p-4 border-r border-solid border-blue-gray-200">
                     <Tooltip content="Edit data">
                       <IconButton variant="text">

@@ -58,23 +58,12 @@ export default function Research() {
   //Add records
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("FormData: ", formData);
+    // console.log("FormData: ", formData);
     const response = await axios.post(addRecordsResearch, formData);
     console.log("Response is : ", response.data);
   };
 
-  //get all records
-  // const getAllRecords = async () => {
-  //   try {
-  //     const response = await axios.get(getAllRecordsResearch);
-  //     console.log("Response is : ", response);
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // };
-  // useEffect(() => {
-  //   getAllRecords();
-  // }, []);
+
 
   return (
     <>

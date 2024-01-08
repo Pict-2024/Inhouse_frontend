@@ -7,9 +7,13 @@ import {
   Button,
   Typography,
 } from "@material-tailwind/react";
+import { useSelector } from "react-redux";
+import axios from "axios";
+import { addRecordsGrants } from "./API_Routes";
 // import axios from 'axios';
 
 export default function Grants() {
+  const { currentUser } = useSelector((state) => state.user);
   const currentYear = new Date().getFullYear();
   const years = Array.from(
     { length: currentYear - 1999 },
@@ -18,7 +22,8 @@ export default function Grants() {
 
   // Define state variables for form fields
   const [formData, setFormData] = useState({
-    // teacherName: "",
+    T_ID: null,
+    Username: currentUser?.Email,
     Department: "",
     Principal_Investigator_Faculty_Name: "",
     Project_Title: "",
@@ -46,17 +51,12 @@ export default function Grants() {
     });
   };
 
-  //fetch all entries
-  // const getAllEntries = async ()=>{
-  //   const response = await axios.get(`{process.env.BASE_URL}/teacher/grants/all`);
-  // }
-
   // add new entry
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // const response = await axios.post(`${process.env.BASE_URL}/teacher/grants/create-new`,
-    // formData);
-    console.log(formData);
+    // console.log(formData);
+    const response = await axios.post(addRecordsGrants, formData);
+    console.log("Response is : ", response.data);
   };
 
   return (

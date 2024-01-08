@@ -1,10 +1,15 @@
 import { useState } from "react";
 import { Card, Input, Button, Typography } from "@material-tailwind/react";
+import { useSelector } from "react-redux";
+import { addRecordsPatent } from "./API_Routes";
+import axios from "axios";
 
 export default function PatentPublication() {
+  const { currentUser } = useSelector((state) => state.user);
   // Define state variables for form fields
   const [formData, setFormData] = useState({
-    // staffName: "",
+    T_ID: null,
+    Username: currentUser?.Email,
     departmentName: "",
     patentApplicationNo: "",
     patentStatus: "",
@@ -32,11 +37,13 @@ export default function PatentPublication() {
   };
 
   // Handle form submission
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     // You can access the form data in the `formData` object
-    console.log(formData);
-    // Add your submission logic here
+    // console.log(formData);
+    const response = await axios.post(addRecordsPatent, formData);
+    console.log("Response is : ", response.data);
+    
   };
 
   return (

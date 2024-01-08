@@ -1,16 +1,21 @@
 import { useState } from "react";
 import { Card, Input, Button, Typography } from "@material-tailwind/react";
+import { useSelector } from "react-redux";
+import axios from "axios";
+import { addRecordsResource } from "./API_Routes";
 
 export default function FacultyResource() {
+  const { currentUser } = useSelector((state) => state.user);
   const [formData, setFormData] = useState({
-    // staffName: "",
-    department: "",
-    achievementDetails: "",
+    T_ID: null,
+    Username: currentUser?.Email,
+    Department: "",
+    FDP_Workshop_Name: "",
     eventName: "",
-    level: "",
-    topic: "",
-    organizer: "",
-    date: "",
+    Level: "",
+    Topic: "",
+    Organizer: "",
+    Date: "",
   });
 
   const handleChange = (e) => {
@@ -21,9 +26,10 @@ export default function FacultyResource() {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Handle form submission here, you can access form data in formData object
+    const response = await axios.post(addRecordsResource, formData);
+    console.log("Response is : ", response.data);
   };
 
   return (
@@ -45,13 +51,13 @@ export default function FacultyResource() {
           <div className="mb-4 flex flex-wrap -mx-4">
             <div className="w-full px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
-                Name Of the department
+                Name Of the Department
               </Typography>
               <Input
                 size="lg"
-                name="department"
-                value={formData.department}
-                label="Name Of the department"
+                name="Department"
+                value={formData.Department}
+                label="Name Of the Department"
                 onChange={handleChange}
               />
             </div>
@@ -64,8 +70,8 @@ export default function FacultyResource() {
               </Typography>
               <Input
                 size="lg"
-                name="eventName"
-                value={formData.eventName}
+                name="FDP_Workshop_Name"
+                value={formData.FDP_Workshop_Name}
                 label="Name of FDP / Workshop / Other"
                 onChange={handleChange}
               />
@@ -76,8 +82,8 @@ export default function FacultyResource() {
               </Typography>
               <Input
                 size="lg"
-                name="level"
-                value={formData.level}
+                name="Level"
+                value={formData.Level}
                 label="Level"
                 onChange={handleChange}
               />
@@ -91,8 +97,8 @@ export default function FacultyResource() {
               </Typography>
               <Input
                 size="lg"
-                name="topic"
-                value={formData.topic}
+                name="Topic"
+                value={formData.Topic}
                 label="Topic"
                 onChange={handleChange}
               />
@@ -103,8 +109,8 @@ export default function FacultyResource() {
               </Typography>
               <Input
                 size="lg"
-                name="organizer"
-                value={formData.organizer}
+                name="Organizer"
+                value={formData.Organizer}
                 label="Organizer"
                 onChange={handleChange}
               />
@@ -118,8 +124,8 @@ export default function FacultyResource() {
               </Typography>
               <Input
                 size="lg"
-                name="date"
-                value={formData.date}
+                name="Date"
+                value={formData.Date}
                 label="Date"
                 type="date"
                 onChange={handleChange}

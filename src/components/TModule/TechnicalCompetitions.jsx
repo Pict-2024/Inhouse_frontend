@@ -7,8 +7,12 @@ import {
   Button,
   Typography,
 } from "@material-tailwind/react";
+import { useSelector } from "react-redux";
+import axios from "axios";
+import { addRecordsTechnical } from "./API_Routes";
 
 export default function TechnicalCompetitions() {
+  const { currentUser } = useSelector((state) => state.user);
   const currentYear = new Date().getFullYear();
   const years = Array.from(
     { length: currentYear - 1999 },
@@ -16,7 +20,8 @@ export default function TechnicalCompetitions() {
   );
 
   const [formData, setFormData] = useState({
-    // nameOfTeacher: "",
+    T_ID:null,
+    Username:currentUser?.Email,
     department: "",
     principalInvestigator: "",
     projectTitle: "",
@@ -45,10 +50,13 @@ export default function TechnicalCompetitions() {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     // Handle form submission, you can access formData to send it to your backend or perform other actions.
-    console.log(formData);
+    // console.log(formData);
+    const response = await axios.post(addRecordsTechnical, formData);
+    console.log("Response is : ", response.data);
+
   };
 
   return (
@@ -222,7 +230,12 @@ export default function TechnicalCompetitions() {
                 color="light-gray"
                 name="yearOfGrant"
                 value={formData.yearOfGrant}
-                onChange={handleChange}
+                // onChange={handleChange}
+                onChange={(value) =>
+                  handleChange({
+                    target: { id: "yearOfGrant", value },
+                  })
+                }
               >
                 {years.map((year) => (
                   <Option key={year} value={year}>
@@ -299,7 +312,12 @@ export default function TechnicalCompetitions() {
                 label="Select Status"
                 name="status"
                 value={formData.status}
-                onChange={handleChange}
+                // onChange={handleChange}
+                onChange={(value) =>
+                  handleChange({
+                    target: { id: "status", value },
+                  })
+                }
               >
                 <Option value="Ongoing">Ongoing</Option>
                 <Option value="Completed">Completed</Option>

@@ -7,8 +7,12 @@ import {
   Button,
   Typography,
 } from "@material-tailwind/react";
+import { useSelector } from "react-redux";
+import axios from "axios";
+import { addRecordsMous } from "./API_Routes";
 
 export default function FacultyExchange() {
+  const { currentUser } = useSelector((state) => state.user);
   const currentYear = new Date().getFullYear();
   const years = Array.from(
     { length: currentYear - 1999 },
@@ -17,6 +21,8 @@ export default function FacultyExchange() {
 
   // Define state variables for form fields
   const [formData, setFormData] = useState({
+    T_ID: null,
+    Username: currentUser?.Email,
     mouName: "",
     collaboratingAgency: "",
     facultyCoordinator: "",
@@ -40,11 +46,12 @@ export default function FacultyExchange() {
   };
 
   // Handle form submission
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     // You can access the form data in the `formData` object
-    console.log(formData);
-    // Add your submission logic here
+    // console.log(formData);
+    const response = await axios.post(addRecordsMous, formData);
+    console.log("Response is : ", response.data);
   };
 
   return (
