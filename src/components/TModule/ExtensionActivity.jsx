@@ -1,8 +1,14 @@
 import { Card, Input, Button, Typography } from "@material-tailwind/react";
 import { useState } from "react";
+import { useSelector } from "react-redux";
+import  axios  from 'axios';
+import { addRecordsExtension } from "./API_Routes";
 
 export default function ExtensionActivity() {
+  const { currentUser } = useSelector((state) => state.user);
   const [formData, setFormData] = useState({
+    T_ID:null,
+    Username:currentUser?.Email,
     deptName: "",
     title: "",
     startDate: "",
@@ -25,10 +31,11 @@ export default function ExtensionActivity() {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // You can do something with the form data here, like sending it to an API or performing any other actions.
-    console.log(formData);
+    // console.log(formData);
+    const response = await axios.post(addRecordsExtension, formData);
+    console.log("Response is : ", response.data);
   };
 
   return (

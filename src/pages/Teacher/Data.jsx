@@ -1,9 +1,6 @@
 import React, { useState } from "react";
 import Select from "react-select";
-import Book_Publication from "../../components/TModule/Table Data/Book_Publication";
-import Consultancy_Report from "../../components/TModule/Table Data/Consultancy_Report";
-import Faculty_Conference_Publication from "../../components/TModule/Table Data/Faculty_Conference_Publication";
-// Import other components here
+import TableData from './../../components/TModule/Table Data/TableData';
 
 export default function Data() {
   const [selectedOption, setSelectedOption] = useState("Book Publication");
@@ -58,9 +55,29 @@ export default function Data() {
   ];
 
   const optionComponents = {
-    "Book Publication": Book_Publication,
-    "Faculty Conference Publication": Faculty_Conference_Publication,
-    "Consultancy Report": Consultancy_Report,
+    Research: TableData,
+    "Book Publication": TableData,
+    "Faculty Conference Publication": TableData,
+    Grants: TableData,
+    "Consultancy Report": TableData,
+    "Patent Publication": TableData,
+    "Conferences, Seminars, Workshops, FDP, STTP Organized /conducted":
+    TableData,
+    "STTP/FDP/Workshop/Conference Attended": TableData,
+    "Webinar/Guest-Expert Lecture / Video conference /Invited talks organized /conducted":
+    TableData,
+    "Number of MoUs, collaborations / linkages for Faculty exchange":
+    TableData,
+
+    "Certificate Courses": TableData,
+    "Professional Affiliations": TableData,
+    "Faculty as Resource Person you": TableData,
+    "Extension Activity": TableData,
+    "Technical Competitions / Tech Fest Organized/Extra & Co-curricular activities Organized":
+    TableData,
+    "Faculty Achievement": TableData,
+    "Industrial Visits / Tours / Field Trip": TableData,
+    "Contribution to BoS": TableData,
   };
 
   const handleOptionChange = (selectedOption) => {
@@ -69,7 +86,7 @@ export default function Data() {
 
   return (
     <>
-      <div className="w-full mt-4 flex flex-col items-center justify-center gap-2">
+      <div className="w-full mt-4 flex flex-col items-center justify-center gap-2 " >
         <h2 className="text-slate-900 text-xl font-bold">
           Select your choice:
         </h2>
@@ -81,8 +98,10 @@ export default function Data() {
         />
       </div>
       {selectedOption && optionComponents[selectedOption] ? (
-        <div className="w-full mt-4">
-          {React.createElement(optionComponents[selectedOption])}
+        <div className="w-full mt-4 ">
+          {React.createElement(optionComponents[selectedOption], {
+            tableName: selectedOption,
+          })}
         </div>
       ) : (
         <div>Component not found</div>

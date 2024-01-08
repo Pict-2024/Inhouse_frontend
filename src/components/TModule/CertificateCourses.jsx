@@ -1,9 +1,14 @@
 import { useState } from "react";
 import { Card, Input, Button, Typography } from "@material-tailwind/react";
+import { useSelector } from "react-redux";
+import axios from "axios";
+import { addRecordsCertificate } from "./API_Routes";
 
 export default function CertificateCourses() {
+  const { currentUser } = useSelector((state) => state.user);
   const [formData, setFormData] = useState({
-    // staffName: "",
+    T_ID: null,
+    UserName: currentUser?.Email,
     department: "",
     courseName: "",
     yearOfOffering: "",
@@ -29,10 +34,11 @@ export default function CertificateCourses() {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Handle form submission here
-    console.log(formData);
+    // console.log(formData);
+    const response = await axios.post(addRecordsCertificate, formData);
+    console.log("Response is : ", response.data);
   };
 
   return (

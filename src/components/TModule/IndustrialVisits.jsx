@@ -1,17 +1,22 @@
 import { useState } from "react";
 import { Card, Input, Button, Typography } from "@material-tailwind/react";
+import { useSelector } from "react-redux";
+import axios from "axios";
+import { addRecordsIndustrial } from "./API_Routes";
 
 export default function IndustrialVisit() {
+  const { currentUser } = useSelector((state) => state.user);
   const [formData, setFormData] = useState({
-    // staffName: "",
-    department: "",
-    companyAddress: "",
-    purposeOfVisit: "",
-    numberOfStudents: "",
-    dateOfVisit: "",
-    coordinators: "",
-    financialSupport: "",
-    reportApproval: "",
+    T_ID:null,
+    Username:currentUser?.Email,
+    Department: "",
+    Name_Of_Industry_Visited: "",
+    Purpose_of_the_visit: "",
+    No_of_Students: "",
+    Date_of_visit: "",
+    Coordinator: "",
+    Finance_Support_By_PICT: "",
+    Report: "",
   });
 
   const handleChange = (e) => {
@@ -22,9 +27,10 @@ export default function IndustrialVisit() {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Handle form submission here, you can access form data in the formData object
+    const response = await axios.post(addRecordsIndustrial, formData);
+    console.log("Response is : ", response.data);
   };
 
   return (
@@ -50,8 +56,8 @@ export default function IndustrialVisit() {
               </Typography>
               <Input
                 size="lg"
-                name="department"
-                value={formData.department}
+                name="Department"
+                value={formData.Department}
                 label="Department"
                 onChange={handleChange}
               />
@@ -65,8 +71,8 @@ export default function IndustrialVisit() {
               </Typography>
               <Input
                 size="lg"
-                name="companyAddress"
-                value={formData.companyAddress}
+                name="Name_Of_Industry_Visited"
+                value={formData.Name_Of_Industry_Visited}
                 label="Name and address of the Company / Industry visited"
                 onChange={handleChange}
               />
@@ -77,8 +83,8 @@ export default function IndustrialVisit() {
               </Typography>
               <Input
                 size="lg"
-                name="purposeOfVisit"
-                value={formData.purposeOfVisit}
+                name="Purpose_of_the_visit"
+                value={formData.Purpose_of_the_visit}
                 label="Purpose of the visit"
                 onChange={handleChange}
               />
@@ -92,8 +98,8 @@ export default function IndustrialVisit() {
               </Typography>
               <Input
                 size="lg"
-                name="numberOfStudents"
-                value={formData.numberOfStudents}
+                name="No_of_Students"
+                value={formData.No_of_Students}
                 label="No. of Students"
                 type="number"
                 onChange={handleChange}
@@ -105,8 +111,8 @@ export default function IndustrialVisit() {
               </Typography>
               <Input
                 size="lg"
-                name="dateOfVisit"
-                value={formData.dateOfVisit}
+                name="Date_of_visit"
+                value={formData.Date_of_visit}
                 label="Date of visit"
                 type="date"
                 onChange={handleChange}
@@ -121,8 +127,8 @@ export default function IndustrialVisit() {
               </Typography>
               <Input
                 size="lg"
-                name="coordinators"
-                value={formData.coordinators}
+                name="Coordinator"
+                value={formData.Coordinator}
                 label="Coordinator(s)"
                 onChange={handleChange}
               />
@@ -133,8 +139,8 @@ export default function IndustrialVisit() {
               </Typography>
               <Input
                 size="lg"
-                name="financialSupport"
-                value={formData.financialSupport}
+                name="Finance_Support_By_PICT"
+                value={formData.Finance_Support_By_PICT}
                 label="Financial support from PICT"
                 onChange={handleChange}
               />
@@ -147,8 +153,8 @@ export default function IndustrialVisit() {
             </Typography>
             <Input
               size="lg"
-              name="reportApproval"
-              value={formData.reportApproval}
+              name="Report"
+              value={formData.Report}
               label="Report with approval application"
               onChange={handleChange}
             />

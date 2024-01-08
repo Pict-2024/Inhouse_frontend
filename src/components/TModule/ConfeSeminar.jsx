@@ -7,11 +7,16 @@ import {
   Button,
   Typography,
 } from "@material-tailwind/react";
+import { useSelector } from "react-redux";
+import axios from "axios";
+import { addRecordsConference } from "./API_Routes";
 // import axios from 'axios';
 
 export default function ConfeSeminar() {
+  const { currentUser } = useSelector((state) => state.user);
   const [formData, setFormData] = useState({
-    // teacherName: "",
+    T_ID: null,
+    Username:currentUser?.Email,
     Department: "",
     Title: "",
     University_State_National_International: "",
@@ -35,18 +40,12 @@ export default function ConfeSeminar() {
     });
   };
 
-  //get all entries
-  // const getAllEntries = async ()=>{
-  //   try {
-  //       const response = await axios.get(`${process.env,BASE_URL}/teacher/con-sem/all`);
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // }
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(formData);
+    // console.log(formData);
+    const response = await axios.post(addRecordsConference, formData);
+    console.log("Response is : ", response.data);
   };
 
   return (

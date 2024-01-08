@@ -44,7 +44,7 @@ export default function ConsultancyReport() {
   //Add records
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("FormData: ", formData);
+    // console.log("FormData: ", formData);
     const response = await axios.post(addRecordsConsultancy, formData);
     console.log("Response is : ", response.data);
   };

@@ -1,11 +1,13 @@
 import { useState } from "react";
 import { Card, Input, Button, Typography } from "@material-tailwind/react";
+import { useSelector } from "react-redux";
 
 export default function TDashboard() {
+  const { currentUser } = useSelector((state) => state.user);
   const [formData, setFormData] = useState({
     userProfile: {
-      username: "pict",
-      email: "pict@ms.pict.edu",
+      username: currentUser?.Name,
+      email: currentUser?.Email,
     },
   });
 
@@ -39,7 +41,10 @@ export default function TDashboard() {
           User Profile
         </Typography>
 
-        <form className="mt-8 mb-2 w-full flex flex-col" onSubmit={handleSubmit}>
+        <form
+          className="mt-8 mb-2 w-full flex flex-col"
+          onSubmit={handleSubmit}
+        >
           <div className="mb-4 flex flex-wrap -mx-4">
             <div className="w-full px-4">
               <div className="mb-2 flex flex-col sm:flex-row">
@@ -51,8 +56,7 @@ export default function TDashboard() {
                     size="lg"
                     name="username"
                     value={formData.userProfile.username}
-                    placeholder="Username"
-                    className="border-t-blue-gray-200 focus-border-t-gray-900"
+                    label="Username"
                     onChange={handleUserProfileChange}
                   />
                 </div>
@@ -64,8 +68,7 @@ export default function TDashboard() {
                     size="lg"
                     name="email"
                     value={formData.userProfile.email}
-                    placeholder="Email"
-                    className="border-t-blue-gray-200 focus-border-t-gray-900"
+                    label="Email"
                     onChange={handleUserProfileChange}
                   />
                 </div>
@@ -75,7 +78,7 @@ export default function TDashboard() {
           </div>
 
           <Button type="submit" className="mt-4" fullWidth>
-            Add Changes
+            Save Changes
           </Button>
         </form>
       </Card>

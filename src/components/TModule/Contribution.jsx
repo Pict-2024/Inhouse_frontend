@@ -1,15 +1,20 @@
 import { useState } from "react";
 import { Card, Input, Button, Typography } from "@material-tailwind/react";
+import { useSelector } from "react-redux";
+import axios from "axios";
+import { addRecordsContribution } from "./API_Routes";
 
 export default function Contribution() {
+  const { currentUser } = useSelector((state) => state.user);
   const [formData, setFormData] = useState({
-    // teacherName: "",
-    department: "",
-    academicYear: "",
-    teacherParticipated: "",
-    role: "",
-    university: "",
-    bodyName: "",
+    T_ID:null,
+    Username:currentUser?.Email,
+    Department: "",
+    Academic_Year: "",
+    Faculty_Name: "",
+    Role: "",
+    University_Institution: "",
+    Body_Name: "",
   });
 
   const handleOnChange = (e) => {
@@ -19,9 +24,10 @@ export default function Contribution() {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Handle form submission here
+    const response = await axios.post(addRecordsContribution, formData);
+    console.log("Response is : ", response.data);
   };
 
   return (
@@ -47,8 +53,8 @@ export default function Contribution() {
               </Typography>
               <Input
                 size="lg"
-                name="department"
-                value={formData.department}
+                name="Department"
+                value={formData.Department}
                 label="Department"
                 onChange={handleOnChange}
               />
@@ -62,8 +68,8 @@ export default function Contribution() {
               </Typography>
               <Input
                 size="lg"
-                name="academicYear"
-                value={formData.academicYear}
+                name="Academic_Year"
+                value={formData.Academic_Year}
                 label="Academic Year"
                 onChange={handleOnChange}
               />
@@ -74,8 +80,8 @@ export default function Contribution() {
               </Typography>
               <Input
                 size="lg"
-                name="teacherParticipated"
-                value={formData.teacherParticipated}
+                name="Faculty_Name"
+                value={formData.Faculty_Name}
                 label="Name of teacher participated"
                 onChange={handleOnChange}
               />
@@ -89,8 +95,8 @@ export default function Contribution() {
               </Typography>
               <Input
                 size="lg"
-                name="role"
-                value={formData.role}
+                name="Role"
+                value={formData.Role}
                 label="Role"
                 onChange={handleOnChange}
               />
@@ -101,8 +107,8 @@ export default function Contribution() {
               </Typography>
               <Input
                 size="lg"
-                name="university"
-                value={formData.university}
+                name="University_Institution"
+                value={formData.University_Institution}
                 label="University/Institution"
                 onChange={handleOnChange}
               />
@@ -115,8 +121,8 @@ export default function Contribution() {
             </Typography>
             <Input
               size="lg"
-              name="bodyName"
-              value={formData.bodyName}
+              name="Body_Name"
+              value={formData.Body_Name}
               label="Name of the body"
               onChange={handleOnChange}
             />

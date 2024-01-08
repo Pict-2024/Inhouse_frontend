@@ -111,7 +111,7 @@ export default function General() {
   };
 
   return (
-    <div className="  h-full">
+    <div className="h-full  " style={{ padding: "5px" }}>
       <div className="w-full mt-4 flex flex-col items-center justify-center space-y-2">
         <h2 className="text-slate-900 text-xl font-bold">
           Select your choice :

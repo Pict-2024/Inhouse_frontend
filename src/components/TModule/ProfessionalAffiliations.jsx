@@ -1,13 +1,17 @@
 import { useState } from "react";
 import { Card, Input, Button, Typography } from "@material-tailwind/react";
+import { useSelector } from "react-redux";
+import axios from "axios";
+import { addRecordsProfessional } from "./API_Routes";
 
 export default function ProfessionalAffiliations() {
+  const { currentUser } = useSelector((state) => state.user);
   const [formData, setFormData] = useState({
-    // teacherName: "",
-    // facultyName: "",
-    professionalAffiliation: "",
-    membershipNumber: "",
-    financialSupport: "",
+    T_ID:null,
+    Username:currentUser?.Email,
+    Professional_Affiliation: "",
+    Membership_Number_ID: "",
+    Finance_Support_By_PICT: "",
   });
 
   const handleChange = (e) => {
@@ -18,9 +22,10 @@ export default function ProfessionalAffiliations() {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Handle form submission here, you can access form data in the formData object
+    const response = await axios.post(addRecordsProfessional, formData);
+    console.log("Response is : ", response.data);
   };
 
   return (
@@ -46,8 +51,8 @@ export default function ProfessionalAffiliations() {
               </Typography>
               <Input
                 size="lg"
-                name="professionalAffiliation"
-                value={formData.professionalAffiliation}
+                name="Professional_Affiliation"
+                value={formData.Professional_Affiliation}
                 label="Professional Affiliation"
                 onChange={handleChange}
               />
@@ -58,8 +63,8 @@ export default function ProfessionalAffiliations() {
               </Typography>
               <Input
                 size="lg"
-                name="membershipNumber"
-                value={formData.membershipNumber}
+                name="Membership_Number_ID"
+                value={formData.Membership_Number_ID}
                 label="Membership Number/ID"
                 onChange={handleChange}
               />
@@ -71,8 +76,8 @@ export default function ProfessionalAffiliations() {
             </Typography>
             <Input
               size="lg"
-              name="financialSupport"
-              value={formData.financialSupport}
+              name="Finance_Support_By_PICT"
+              value={formData.Finance_Support_By_PICT}
               label="Financial Support from PICT"
               onChange={handleChange}
             />

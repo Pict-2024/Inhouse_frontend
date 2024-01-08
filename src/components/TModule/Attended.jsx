@@ -7,25 +7,27 @@ import {
   Button,
   Typography,
 } from "@material-tailwind/react";
-// import axios from 'axios';
+import axios from "axios";
 import { useSelector } from "react-redux";
+import { addRecordsAttended } from "./API_Routes";
 
 export default function Attended() {
   const { currentUser } = useSelector((state) => state.user);
 
   const [formData, setFormData] = useState({
-    // userName: "",
-    department: "",
-    eventTitle: "",
-    eventType: "",
-    instituteName: "",
-    coordinators: "",
-    startDate: "",
-    endDate: "",
-    mode: "",
-    duration: "",
-    financeSupport: "",
-    certificate: null,
+    T_ID: null,
+    UserName: currentUser?.Email,
+    Department: "",
+    Title_of_the_Event: "",
+    Type_Nature: "",
+    Organizer_Institute_Name: "",
+    Name_of_Coordinators: "",
+    Start_Date: "",
+    End_Date: "",
+    Mode_Online_Physical: "",
+    Duration_in_Days: "",
+    Financial_Support_By_PICT: "",
+    Upload_Certificate: null,
   });
 
   const handleOnChange = (e) => {
@@ -38,8 +40,8 @@ export default function Attended() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(currentUser.Email);
-    // const data = await axios.post('http://localhost:5000/')
+    const response = await axios.post(addRecordsAttended, formData);
+    console.log("Response is : ", response.data);
   };
 
   return (
@@ -64,10 +66,10 @@ export default function Attended() {
                 Department
               </Typography>
               <Input
-                id="department"
+                id="Department"
                 size="lg"
                 label="Department"
-                value={formData.department}
+                value={formData.Department}
                 onChange={handleOnChange}
               />
             </div>
@@ -79,10 +81,10 @@ export default function Attended() {
                 Title of the Event
               </Typography>
               <Input
-                id="eventTitle"
+                id="Title_of_the_Event"
                 size="lg"
                 label="Title of the Event"
-                value={formData.eventTitle}
+                value={formData.Title_of_the_Event}
                 onChange={handleOnChange}
               />
             </div>
@@ -91,10 +93,10 @@ export default function Attended() {
                 Type/Nature (FDP/STTP/Workshop/Conference etc)
               </Typography>
               <Input
-                id="eventType"
+                id="Type_Nature"
                 size="lg"
                 label="Type/Nature"
-                value={formData.eventType}
+                value={formData.Type_Nature}
                 onChange={handleOnChange}
               />
             </div>
@@ -106,10 +108,10 @@ export default function Attended() {
                 Name of organizing Institute
               </Typography>
               <Input
-                id="instituteName"
+                id="Organizer_Institute_Name"
                 size="lg"
                 label="Organizing Institute"
-                value={formData.instituteName}
+                value={formData.Organizer_Institute_Name}
                 onChange={handleOnChange}
               />
             </div>
@@ -118,10 +120,10 @@ export default function Attended() {
                 Name of the coordinator(s)
               </Typography>
               <Input
-                id="coordinators"
+                id="Name_of_Coordinators"
                 size="lg"
                 label="Coordinator(s)"
-                value={formData.coordinators}
+                value={formData.Name_of_Coordinators}
                 onChange={handleOnChange}
               />
             </div>
@@ -133,10 +135,10 @@ export default function Attended() {
                 Start Date (DD-MM-YYYY)
               </Typography>
               <Input
-                id="startDate"
+                id="Start_Date"
                 size="lg"
                 type="date"
-                value={formData.startDate}
+                value={formData.Start_Date}
                 onChange={handleOnChange}
               />
             </div>
@@ -145,10 +147,10 @@ export default function Attended() {
                 End Date (DD-MM-YYYY)
               </Typography>
               <Input
-                id="endDate"
+                id="End_Date"
                 size="lg"
                 type="date"
-                value={formData.endDate}
+                value={formData.End_Date}
                 onChange={handleOnChange}
               />
             </div>
@@ -160,12 +162,12 @@ export default function Attended() {
                 Mode: Online/Physical
               </Typography>
               <Select
-                id="mode"
+                id="Mode_Online_Physical"
                 size="lg"
                 label="Select Mode"
-                value={formData.mode}
+                value={formData.Mode_Online_Physical}
                 onChange={(value) =>
-                  handleOnChange({ target: { id: "mode", value } })
+                  handleOnChange({ target: { id: "Mode_Online_Physical", value } })
                 }
                 // onChange={handleOnChange}
               >
@@ -178,10 +180,10 @@ export default function Attended() {
                 Duration in Days
               </Typography>
               <Input
-                id="duration"
+                id="Duration_in_Days"
                 size="lg"
                 label="Duration"
-                value={formData.duration}
+                value={formData.Duration_in_Days}
                 onChange={handleOnChange}
               />
             </div>
@@ -193,19 +195,19 @@ export default function Attended() {
                 Finance Support Received from PICT
               </Typography>
               <Input
-                id="financeSupport"
+                id="Financial_Support_By_PICT"
                 size="lg"
                 label="Finance Support Received from PICT"
-                value={formData.financeSupport}
+                value={formData.Financial_Support_By_PICT}
                 onChange={handleOnChange}
               />
             </div>
             <div className="w-full md:w-1/2 px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
-                Upload Certificate(Add drive link)
+                Upload Upload_Certificate(Add drive link)
               </Typography>
               <Input
-                id="certificate"
+                id="Upload_Certificate"
                 size="lg"
                 type="text"
                 onChange={handleOnChange}

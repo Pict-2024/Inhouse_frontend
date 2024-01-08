@@ -7,16 +7,22 @@ import {
   Button,
   Typography,
 } from "@material-tailwind/react";
+import { useSelector } from "react-redux";
+import axios from "axios";
+import { addRecordsAchievements } from "./API_Routes";
 
 export default function FacultyAchievements() {
+  const { currentUser } = useSelector((state) => state.user);
   const [formData, setFormData] = useState({
-    department: "",
-    achievementDetails: "",
-    eventName: "",
-    organiserName: "",
-    achievementLevel: "",
-    awardType: "",
-    awardMoney: "",
+    T_ID: null,
+    Username: currentUser?.Email,
+    Department: "",
+    Achievement_Details: "",
+    Name_of_Event: "",
+    Name_of_Organiser: "",
+    Level: "",
+    Award_Type: "",
+    Award_Prize_Money: "",
   });
 
   const handleInputChange = (e) => {
@@ -26,9 +32,10 @@ export default function FacultyAchievements() {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Handle form submission here
+    const response = await axios.post(addRecordsAchievements, formData);
+    console.log("Response is : ", response.data);
   };
 
   return (
@@ -54,8 +61,8 @@ export default function FacultyAchievements() {
               </Typography>
               <Input
                 size="lg"
-                name="department"
-                value={formData.department}
+                name="Department"
+                value={formData.Department}
                 label="Department"
                 onChange={handleInputChange}
               />
@@ -69,8 +76,8 @@ export default function FacultyAchievements() {
               </Typography>
               <Input
                 size="lg"
-                name="achievementDetails"
-                value={formData.achievementDetails}
+                name="Achievement_Details"
+                value={formData.Achievement_Details}
                 label="Achievement / Awards Details"
                 onChange={handleInputChange}
               />
@@ -81,8 +88,8 @@ export default function FacultyAchievements() {
               </Typography>
               <Input
                 size="lg"
-                name="eventName"
-                value={formData.eventName}
+                name="Name_of_Event"
+                value={formData.Name_of_Event}
                 label="Name of Event"
                 onChange={handleInputChange}
               />
@@ -96,8 +103,8 @@ export default function FacultyAchievements() {
               </Typography>
               <Input
                 size="lg"
-                name="organiserName"
-                value={formData.organiserName}
+                name="Name_of_Organiser"
+                value={formData.Name_of_Organiser}
                 label="Name of Organiser"
                 onChange={handleInputChange}
               />
@@ -108,10 +115,15 @@ export default function FacultyAchievements() {
               </Typography>
               <Select
                 size="lg"
-                name="achievementLevel"
-                value={formData.achievementLevel}
+                name="Level"
+                value={formData.Level}
                 label="Select Level"
-                onChange={handleInputChange}
+                onChange={(value) =>
+                  handleInputChange({
+                    target: { id: "Level", value },
+                  })
+                }
+                // onChange={handleInputChange}
               >
                 <Option value="International">International</Option>
                 <Option value="National">National</Option>
@@ -130,10 +142,15 @@ export default function FacultyAchievements() {
               </Typography>
               <Select
                 size="lg"
-                name="awardType"
-                value={formData.awardType}
+                name="Award_Type"
+                value={formData.Award_Type}
                 label="Select Award Type"
-                onChange={handleInputChange}
+                onChange={(value) =>
+                  handleInputChange({
+                    target: { id: "Award_Type", value },
+                  })
+                }
+                // onChange={handleInputChange}
               >
                 <Option value="Winner">Winner</Option>
                 <Option value="Runner">Runner</Option>
@@ -147,15 +164,15 @@ export default function FacultyAchievements() {
               </Typography>
               <Input
                 size="lg"
-                name="awardMoney"
-                value={formData.awardMoney}
+                name="Award_Prize_Money"
+                value={formData.Award_Prize_Money}
                 label="Award/Prize Money"
                 onChange={handleInputChange}
               />
             </div>
           </div>
 
-          <Button className="mt-4" fullWidth>
+          <Button type="submit" className="mt-4" fullWidth>
             Add Changes
           </Button>
         </form>

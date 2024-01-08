@@ -1,8 +1,14 @@
 import { Card, Input, Button, Typography } from "@material-tailwind/react";
+import axios from "axios";
 import { useState } from "react";
+import { useSelector } from "react-redux";
+import { addRecordsWebinar } from "./API_Routes";
 
 export default function WebinarConducted() {
+  const { currentUser } = useSelector((state) => state.user);
   const [formData, setFormData] = useState({
+    T_ID: null,
+    Username: currentUser?.Email,
     department: "",
     activityEvent: "",
     title: "",
@@ -18,7 +24,7 @@ export default function WebinarConducted() {
     financialDetails: "",
   });
 
-  const handleInputChange = (e) => {
+  const handleInputChange =  (e) => {
     const { name, value, type } = e.target;
 
     setFormData((prevData) => ({
@@ -27,10 +33,12 @@ export default function WebinarConducted() {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     // Handle form submission here
-    console.log("Form submitted:", formData);
+    // console.log("Form submitted:", formData);
+    const response = await axios.post(addRecordsWebinar, formData);
+    console.log("Response is : ", response.data);
   };
 
   return (
@@ -51,7 +59,7 @@ export default function WebinarConducted() {
 
         <form className="mt-8 mb-2" onSubmit={handleSubmit}>
           <div className="mb-4 flex flex-wrap -mx-4">
-            <div className="w-full md:w-1/2 px-4 mb-4">
+            <div className="w-full px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
                 Department
               </Typography>
@@ -217,7 +225,7 @@ export default function WebinarConducted() {
             </div>
           </div>
 
-          <Button className="mt-4" fullWidth>
+          <Button type="submit" className="mt-4" fullWidth>
             Add Changes
           </Button>
         </form>
