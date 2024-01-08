@@ -16,16 +16,28 @@ import {
   Tooltip,
 } from "@material-tailwind/react";
 import axios from "axios";
-import { getAllRecordsBook } from "../API_Routes";
+import { getOneRecordsBook } from "../API_Routes"
+import { useSelector } from "react-redux";
 
 export default function Book_Publication() {
+  
+  const { currentUser } = useSelector((state) => state.user);
+
   const [tableHead, setTableHead] = useState([]);
   const [tableRows, setTableRows] = useState([]);
 
   //get all records
   const getAllRecords = async () => {
+
+    const user = await currentUser.Email;
     try {
-      const response = await axios.get(getAllRecordsBook);
+
+      const apiurl = getOneRecordsBook(user);
+      const response = await axios.get(apiurl, {
+        headers: {
+          'Content-Type': 'application/json',  // Make sure this header is defined
+        },});
+      // console.log("Response data is : ", response.data);
       console.log("Rows : ", response.data.data);
       const columnHeaders = Object.keys(response.data.data[0]);
       console.log("Columns:", columnHeaders);
