@@ -29,7 +29,7 @@ export default function TDashboard() {
       <Card
         color="transparent"
         shadow={false}
-        className="border border-gray-300 w-85 mx-auto p-2 my-2 rounded-md"
+        className="border border-gray-300 w-full p-2 my-2 rounded-md"
       >
         <Typography
           variant="h4"
@@ -39,11 +39,11 @@ export default function TDashboard() {
           User Profile
         </Typography>
 
-        <form className="mt-8 mb-2" onSubmit={handleSubmit}>
+        <form className="mt-8 mb-2 w-full flex flex-col" onSubmit={handleSubmit}>
           <div className="mb-4 flex flex-wrap -mx-4">
             <div className="w-full px-4">
-              <div className="mb-2 flex flex-wrap -mx-2">
-                <div className="w-1/2 px-2">
+              <div className="mb-2 flex flex-col sm:flex-row">
+                <div className="w-full px-2">
                   <Typography variant="h6" color="blue-gray" className="mb-3">
                     Username
                   </Typography>
@@ -56,7 +56,7 @@ export default function TDashboard() {
                     onChange={handleUserProfileChange}
                   />
                 </div>
-                <div className="w-1/2 px-2">
+                <div className="w-full px-2">
                   <Typography variant="h6" color="blue-gray" className="mb-3">
                     Email
                   </Typography>

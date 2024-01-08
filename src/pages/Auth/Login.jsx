@@ -14,6 +14,9 @@ import {
   signInUserFailure 
 } from "../../redux/user/userSlice";
 
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 export default function Login() {
 
   const navigate = useNavigate();
@@ -73,10 +76,20 @@ export default function Login() {
       {
         pathLink = "/s/dashboard";
       }
-      
-      navigate(pathLink);
 
-      // setLogin(true);
+      navigate(pathLink);
+      toast.success('Login Successful', {
+        position: "top-right",
+        autoClose: 1500,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+      
+
 
     } catch (error) {
       // setError("Invalid credentials");
