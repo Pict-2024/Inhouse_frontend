@@ -38,6 +38,7 @@ import {
   getOneRecordsWebinar,
 } from "../API_Routes";
 import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
 export default function TableData({ tableName }) {
   const { currentUser } = useSelector((state) => state.user);
@@ -117,6 +118,18 @@ export default function TableData({ tableName }) {
     getAllRecords();
   }, [tableName]);
 
+  const navigate = useNavigate();
+
+  const handleUpdate = (record) => {
+
+    console.log("record id is : ", record.T_ID)
+    const updateValue = true;
+    const queryString = `?update=${updateValue}&tablename=${tableName}&rowid=${record.T_ID}`;
+    // console.log("query string is : ", queryString);
+    navigate(`/t/general${queryString}`);
+
+  }
+
   return (
     <Card className="h-full w-full">
       <CardHeader floated={false} shadow={false} className="rounded-none">
@@ -194,8 +207,8 @@ export default function TableData({ tableName }) {
 
                   <td className="p-4 border-r border-solid border-blue-gray-200">
                     <Tooltip content="Edit data">
-                      <IconButton variant="text">
-                        <PencilIcon className="h-4 w-4" />
+                      <IconButton onClick={() => handleUpdate(record)}  variant="text">
+                        <PencilIcon  className="h-4 w-4" />
                       </IconButton>
                     </Tooltip>
                   </td>
