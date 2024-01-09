@@ -1,5 +1,10 @@
 import Admin from "../Layouts/Admin";
+import Report from "../pages/Admin/Report";
+import Students from "../pages/Admin/Students";
+
+import Teachers from "../pages/Admin/Teachers";
 import { ADashBoard } from './../pages/Admin/ADashboard';
+
 
 export const AdminRoutes =  {
     path: "a/",
@@ -10,5 +15,18 @@ export const AdminRoutes =  {
             path:'dashboard',
             element:<ADashBoard/>
         },
+        {
+            path:'teachers',
+            element:<Teachers/>
+        },
+        {
+            path:'students',
+            element:<Students/>
+        },
+        {
+            path:'report',
+            element:<Report/>
+        },
+        
     ]
 }
