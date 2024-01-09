@@ -5,6 +5,11 @@ export const HomePage = () => {
   return (
     <>
     <NavList/>
+    <h1>Hello World</h1>
+    <h1>Hello World</h1>    
+    <h1>Hello World</h1>    
+    <h1>Hello World</h1>    
+      <h1>Hello World</h1>
       {/* <h1 className="mb-4 mt-3">Landing Page</h1> */}
       {/* <Carousel transition={{ duration: 2 }} >
         <img
