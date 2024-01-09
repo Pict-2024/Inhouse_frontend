@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-key */
 import * as React from "react";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
@@ -7,6 +8,9 @@ import DeleteIcon from "@mui/icons-material/DeleteOutlined";
 import SaveIcon from "@mui/icons-material/Save";
 import CancelIcon from "@mui/icons-material/Close";
 import Header from "../../components/AModule/Header";
+import axios from 'axios';
+import { getAllTeachers } from "../../components/AModule/APIRoutes";
+
 import {
   GridRowModes,
   DataGrid,
@@ -14,17 +18,21 @@ import {
   GridActionsCellItem,
   GridRowEditStopReasons,
 } from "@mui/x-data-grid";
+
 import {
   randomCreatedDate,
   randomTraderName,
   randomId,
   randomArrayItem,
 } from "@mui/x-data-grid-generator";
+import { useEffect } from "react";
 
 const roles = ["Market", "Finance", "Development"];
 const randomRole = () => {
   return randomArrayItem(roles);
 };
+
+
 
 const initialRows = [
   {
@@ -130,6 +138,16 @@ export default function Teachers() {
   const handleRowModesModelChange = (newRowModesModel) => {
     setRowModesModel(newRowModesModel);
   };
+
+  const getAllTeachersData = async () =>{
+    const response = await axios.get(getAllTeachers);
+    console.log(response);
+  }
+  
+  useEffect(() => {
+    getAllTeachersData();
+  }, [])
+
 
   const columns = [
     { field: "name", headerName: "Name", width: 180, editable: true },
