@@ -1,4 +1,4 @@
-import {  useState } from "react";
+import {  useEffect, useState } from "react";
 import {
   Card,
   Select,
@@ -10,28 +10,48 @@ import {
 import { useSelector } from "react-redux";
 import axios from "axios";
 import { addRecordsBook } from "./API_Routes";
+import { useParams } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 
 export default function BookPublication() {
+
   const { currentUser } = useSelector((state) => state.user);
+  
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  
+  const update = queryParams.get("update");
+  const tablename = queryParams.get("tablename");
+  const rowid = queryParams.get("rowid");
+
+  console.log('Query parameters are : ', update, " ", tablename, " ", rowid);
+  
+    const [formData, setFormData] = useState({
+      T_ID: null,
+      Username: currentUser?.Email,
+      Department: "",
+      Book_Title: "",
+      Chapter_if_any: "",
+      Level_International_National: "",
+      Publisher: "",
+      Year_of_Publication: "",
+      ISBN_ISSN_DOI_any_other: "",
+      Proof: null,
+    });
+
+  // if(update && tablename && rowid)
+  // {
+  //   useEffect({
+      
+  //   }, [])
+
+  // }
 
   const currentYear = new Date().getFullYear();
   const years = Array.from(
     { length: currentYear - 1999 },
     (_, index) => currentYear - index
   );
-
-  const [formData, setFormData] = useState({
-    T_ID: null,
-    Username: currentUser?.Email,
-    Department: "",
-    Book_Title: "",
-    Chapter_if_any: "",
-    Level_International_National: "",
-    Publisher: "",
-    Year_of_Publication: "",
-    ISBN_ISSN_DOI_any_other: "",
-    Proof: null,
-  });
 
   const handleOnChange = (e) => {
     const { id, value, type, files } = e.target;

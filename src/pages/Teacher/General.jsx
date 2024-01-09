@@ -23,7 +23,7 @@ import {
 } from "../../components/TModule";
 
 export default function General() {
-  const [selectedOption, setSelectedOption] = useState("Faculty Achievement");
+  const [selectedOption, setSelectedOption] = useState("Book Publication");
 
   const options = [
     { value: "Research", label: "Research" },
@@ -130,7 +130,7 @@ export default function General() {
         </div>
       ) : (
         // Render the Faculty Achievement component by default
-        <FacultyAchievements />
+        <BookPublication />
       )}
     </div>
   );
