@@ -1,7 +1,7 @@
 import * as React from "react";
 import Box from "@mui/material/Box";
-import Button from "@mui/material/Button";
-import AddIcon from "@mui/icons-material/Add";
+// import Button from "@mui/material/Button";
+// import AddIcon from "@mui/icons-material/Add";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/DeleteOutlined";
 import SaveIcon from "@mui/icons-material/Save";
@@ -10,22 +10,22 @@ import Header from "../../components/AModule/Header";
 import {
   GridRowModes,
   DataGrid,
-  GridToolbarContainer,
+  // GridToolbarContainer,
   GridActionsCellItem,
   GridRowEditStopReasons,
 } from "@mui/x-data-grid";
 import {
   // randomCreatedDate,
   // randomTraderName,
-  randomId,
+  // randomId,
   // randomArrayItem,
 } from "@mui/x-data-grid-generator";
 import { useEffect } from "react";
 import axios from "axios";
-import { useSelector } from "react-redux";
+// import { useSelector } from "react-redux";
 import { useState } from "react";
 
-const roles = ["Market", "Finance", "Development"];
+// const roles = ["Market", "Finance", "Development"];
 // const randomRole = () => {
 //   return randomArrayItem(roles);
 // };
@@ -60,7 +60,7 @@ function EditToolbar() {
 export default function Teachers() {
 
   
-  const { currentUser } = useSelector((state) => state.user);
+  // const { currentUser } = useSelector((state) => state.user);
 
   let columns = [
     { field: "Name", headerName: "Name", width: 300, editable: true },
@@ -93,6 +93,7 @@ export default function Teachers() {
         if (isInEditMode) {
           return [
             <GridActionsCellItem
+              key={id}
               icon={<SaveIcon />}
               label="Save"
               sx={{
@@ -101,6 +102,7 @@ export default function Teachers() {
               onClick={handleSaveClick(id)}
             />,
             <GridActionsCellItem
+              key={id}
               icon={<CancelIcon />}
               label="Cancel"
               className="textPrimary"
@@ -112,6 +114,7 @@ export default function Teachers() {
 
         return [
           <GridActionsCellItem
+            key={id}
             icon={<EditIcon />}
             label="Edit"
             className="textPrimary"
@@ -119,6 +122,7 @@ export default function Teachers() {
             color="inherit"
           />,
           <GridActionsCellItem
+            key={id}
             icon={<DeleteIcon />}
             label="Delete"
             onClick={handleDeleteClick(id)}
