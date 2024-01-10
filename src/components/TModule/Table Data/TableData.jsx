@@ -1,13 +1,13 @@
 import { useEffect, useState } from "react";
 import {
-  MagnifyingGlassIcon,
+  // MagnifyingGlassIcon,
   ChevronUpDownIcon,
 } from "@heroicons/react/24/outline";
-import { PencilIcon } from "@heroicons/react/24/solid";
+import { DocumentIcon, PencilIcon } from "@heroicons/react/24/solid";
 import {
   Card,
   CardHeader,
-  Input,
+  // Input,
   Typography,
   Button,
   CardBody,
@@ -130,6 +130,12 @@ export default function TableData({ tableName }) {
 
   }
 
+  const handleLink = (link) => {
+
+    console.log("Link of document is : ", link);
+    window.open(link, '_blank');
+  }
+
   return (
     <Card className="h-full w-full">
       <CardHeader floated={false} shadow={false} className="rounded-none">
@@ -139,16 +145,19 @@ export default function TableData({ tableName }) {
               {tableName}
             </Typography>
           </div>
+
+          {/** 
           <div className="w-full md:w-72">
             <Input
               label="Search"
               icon={<MagnifyingGlassIcon className="h-5 w-5" />}
             />
           </div>
+          */}
         </div>
       </CardHeader>
       <CardBody className="px-0">
-        <div className="overflow-x-auto max-w-screen-xl mx-auto">
+        <div className="overflow-x-auto  mx-4">
           <table className="mt-4 w-full min-w-max table-auto text-left">
             <thead>
               <tr>
@@ -195,16 +204,23 @@ export default function TableData({ tableName }) {
                           : "border-solid border-blue-gray-200"
                       }`}
                     >
-                      <Typography
-                        variant="body"
-                        color="black"
-                        className="text-dark"
-                      >
+                    {head.startsWith("Upload") || head.startsWith("Link") ? (
+
+                      <DocumentIcon onClick={() => handleLink(record[head])} className="cursor-pointer w-6 h-6" />
+                      ) : (
+                        // Render the text content when head doesn't start with "Upload"
+                        <Typography
+                          variant="body"
+                          color="black"
+                          className="text-dark"
+                        >
+                        <p>
                         {record[head]}
-                      </Typography>
+                        </p>
+                        </Typography>
+                      )}
                     </td>
                   ))}
-
                   <td className="p-4 border-r border-solid border-blue-gray-200">
                     <Tooltip content="Edit data">
                       <IconButton onClick={() => handleUpdate(record)}  variant="text">
