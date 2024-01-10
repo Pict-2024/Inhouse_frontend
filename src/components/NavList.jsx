@@ -45,17 +45,17 @@ const profileMenuItems = [
   {
     label: "My Profile",
     icon: UserCircleIcon,
-    link: "/t/dashboard"
+    link: "/dashboard"
   },
   {
     label: "Achievements",
     icon: Square3Stack3DIcon,
-    link: "/t/general"
+    link: "/general"
   },
   {
     label: "Inbox",
     icon: InboxArrowDownIcon,
-    link: "/t/general"
+    link: "/general"
   },
   // {
   //   label: "Help",
@@ -68,7 +68,7 @@ const profileMenuItems = [
 ];
 
 
-function ProfileMenu() {
+function ProfileMenu({ currUser }) {
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -86,7 +86,7 @@ function ProfileMenu() {
     }
     else
     {
-      navigate(link);
+      navigate(currUser + link);
     }
   }
  
@@ -210,15 +210,15 @@ export default function NavList() {
 
   if(currentUser && currentUser.Role === 0)
   {
-    pathLink = "/a/dashboard";
+    pathLink = "/a";
   }
   else if(currentUser && currentUser.Role === 1)
   {
-    pathLink = "/t/dashboard";
+    pathLink = "/t";
   }
   else if(currentUser && currentUser.Role === 2)
   {
-    pathLink = "/s/dashboard";
+    pathLink = "/s";
   }
   
 
@@ -252,7 +252,7 @@ export default function NavList() {
                 {/**<div className="rounded-full bg-gray-400 w-8 h-8 flex items-center justify-center text-dark font-bold">
                   {currentUser.Name ? currentUser.Name[0] : 'A'}
           </div>**/}
-                <ProfileMenu />
+                <ProfileMenu currUser={pathLink} />
               </div>
             </div>
           )}
