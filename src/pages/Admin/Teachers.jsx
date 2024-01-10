@@ -15,147 +15,71 @@ import {
   GridRowEditStopReasons,
 } from "@mui/x-data-grid";
 import {
-  randomCreatedDate,
-  randomTraderName,
+  // randomCreatedDate,
+  // randomTraderName,
   randomId,
-  randomArrayItem,
+  // randomArrayItem,
 } from "@mui/x-data-grid-generator";
+import { useEffect } from "react";
+import axios from "axios";
+import { useSelector } from "react-redux";
+import { useState } from "react";
 
 const roles = ["Market", "Finance", "Development"];
-const randomRole = () => {
-  return randomArrayItem(roles);
-};
+// const randomRole = () => {
+//   return randomArrayItem(roles);
+// };
 
-const initialRows = [
-  {
-    id: randomId(),
-    name: randomTraderName(),
-    age: 25,
-    joinDate: randomCreatedDate(),
-    role: randomRole(),
-  },
-  {
-    id: randomId(),
-    name: randomTraderName(),
-    age: 36,
-    joinDate: randomCreatedDate(),
-    role: randomRole(),
-  },
-  {
-    id: randomId(),
-    name: randomTraderName(),
-    age: 19,
-    joinDate: randomCreatedDate(),
-    role: randomRole(),
-  },
-  {
-    id: randomId(),
-    name: randomTraderName(),
-    age: 28,
-    joinDate: randomCreatedDate(),
-    role: randomRole(),
-  },
-  {
-    id: randomId(),
-    name: randomTraderName(),
-    age: 23,
-    joinDate: randomCreatedDate(),
-    role: randomRole(),
-  },
-];
+// let initialRows;
 
-function EditToolbar(props) {
-  const { setRows, setRowModesModel } = props;
+function EditToolbar() {
+  // const { setRows, setRowModesModel } = props;
 
-  const handleClick = () => {
-    const id = randomId();
-    setRows((oldRows) => [...oldRows, { id, name: "", age: "", isNew: true }]);
-    setRowModesModel((oldModel) => ({
-      ...oldModel,
-      [id]: { mode: GridRowModes.Edit, fieldToFocus: "name" },
-    }));
-  };
+  // const handleClick = () => {
+  //   const id = randomId();
+  //   setRows((oldRows) => [...oldRows, { id, Name: "", Email: "", isNew: true }]);
+  //   setRowModesModel((oldModel) => ({
+  //     ...oldModel,
+  //     [id]: { mode: GridRowModes.Edit, fieldToFocus: "Email" },
+  //   }));
+  // };
 
   return (
     <>
+    {/** 
       <GridToolbarContainer>
         <Button color="primary" startIcon={<AddIcon />} onClick={handleClick}>
           Add record
         </Button>
       </GridToolbarContainer>
+      */}
     </>
   );
 }
 
 export default function Teachers() {
-  const [rows, setRows] = React.useState(initialRows);
-  const [rowModesModel, setRowModesModel] = React.useState({});
 
-  const handleRowEditStop = (params, event) => {
-    if (params.reason === GridRowEditStopReasons.rowFocusOut) {
-      event.defaultMuiPrevented = true;
-    }
-  };
+  
+  const { currentUser } = useSelector((state) => state.user);
 
-  const handleEditClick = (id) => () => {
-    setRowModesModel({ ...rowModesModel, [id]: { mode: GridRowModes.Edit } });
-  };
-
-  const handleSaveClick = (id) => () => {
-    setRowModesModel({ ...rowModesModel, [id]: { mode: GridRowModes.View } });
-  };
-
-  const handleDeleteClick = (id) => () => {
-    setRows(rows.filter((row) => row.id !== id));
-  };
-
-  const handleCancelClick = (id) => () => {
-    setRowModesModel({
-      ...rowModesModel,
-      [id]: { mode: GridRowModes.View, ignoreModifications: true },
-    });
-
-    const editedRow = rows.find((row) => row.id === id);
-    if (editedRow.isNew) {
-      setRows(rows.filter((row) => row.id !== id));
-    }
-  };
-
-  const processRowUpdate = (newRow) => {
-    const updatedRow = { ...newRow, isNew: false };
-    setRows(rows.map((row) => (row.id === newRow.id ? updatedRow : row)));
-    return updatedRow;
-  };
-
-  const handleRowModesModelChange = (newRowModesModel) => {
-    setRowModesModel(newRowModesModel);
-  };
-
-  const columns = [
-    { field: "name", headerName: "Name", width: 180, editable: true },
+  let columns = [
+    { field: "Name", headerName: "Name", width: 300, editable: true },
     {
-      field: "age",
-      headerName: "Age",
-      type: "number",
-      width: 80,
+      field: "Email",
+      headerName: "Email",
+      width: 300,
       align: "left",
       headerAlign: "left",
       editable: true,
     },
     {
-      field: "joinDate",
-      headerName: "Join date",
-      type: "date",
-      width: 180,
-      editable: true,
-    },
-    {
-      field: "role",
-      headerName: "Department",
+      field: "SpecialAccess",
+      headerName: "SpecialAccess",
       width: 220,
+      align: "left",
       editable: true,
       type: "singleSelect",
-      valueOptions: ["Market", "Finance", "Development"],
+      valueOptions: ["NAAC", "PDA", "Development", "Sports"],
     },
     {
       field: "actions",
@@ -204,6 +128,88 @@ export default function Teachers() {
       },
     },
   ];
+
+  const addIdToTeachers = (dataArray) => {
+    return dataArray.map((obj) => {
+      return { ...obj, id: obj.Email };
+    });
+  };
+
+  const getAllTeachers = async () => {
+
+    try {
+      const apiurl = "http://localhost:5000/api/v1/auth/getAllTeacher";
+      // console.log("apiRoute in getAllRecords:", apiurl);
+      const response = await axios.get(apiurl, {
+        headers: {
+          "Content-Type": "application/json", // Make sure this header is defined
+        },
+      });
+      // console.log("Rows : ", response.data.data);
+      const columnHeaders = Object.keys(response.data.data[0]);
+
+      console.log("Response is : ", response);
+      console.log("column headers are : ", columnHeaders);
+
+      columns = columnHeaders;
+      console.log("Columns are : ", columns);
+
+      const newRows = addIdToTeachers(response.data.data);
+      setRows(newRows);
+
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    getAllTeachers();
+  }, []);
+
+  const [rows, setRows] = useState([]);
+  const [rowModesModel, setRowModesModel] = React.useState({});
+
+  const handleRowEditStop = (params, event) => {
+    if (params.reason === GridRowEditStopReasons.rowFocusOut) {
+      event.defaultMuiPrevented = true;
+    }
+  };
+
+  const handleEditClick = (Email) => () => {
+    setRowModesModel({ ...rowModesModel, [Email]: { mode: GridRowModes.Edit } });
+  };
+
+  const handleSaveClick = (Email) => () => {
+    setRowModesModel({ ...rowModesModel, [Email]: { mode: GridRowModes.View } });
+  };
+
+  const handleDeleteClick = (Email) => () => {
+    setRows(rows.filter((row) => row.Email !== Email));
+  };
+
+  const handleCancelClick = (Email) => () => {
+    setRowModesModel({
+      ...rowModesModel,
+      [Email]: { mode: GridRowModes.View, ignoreModifications: true },
+    });
+
+    const editedRow = rows.find((row) => row.Email === Email);
+    if (editedRow.isNew) {
+      setRows(rows.filter((row) => row.Email !== Email));
+    }
+  };
+
+  const processRowUpdate = (newRow) => {
+    const updatedRow = { ...newRow, isNew: false };
+    setRows(rows.map((row) => (row.Email === newRow.Email ? updatedRow : row)));
+    return updatedRow;
+  };
+
+  const handleRowModesModelChange = (newRowModesModel) => {
+    setRowModesModel(newRowModesModel);
+  };
+
+  
 
   return (
     <Box
