@@ -1,16 +1,20 @@
 import { useEffect, useState } from "react";
-import { ChevronUpDownIcon, TrashIcon } from "@heroicons/react/24/outline";
+import {
+  CheckCircleIcon,
+  ChevronUpDownIcon,
+  TrashIcon,
+} from "@heroicons/react/24/outline";
 import { DocumentIcon, PencilIcon } from "@heroicons/react/24/solid";
 import {
   Card,
   CardHeader,
-  // Input,
   Typography,
   Button,
   CardBody,
   CardFooter,
   IconButton,
   Tooltip,
+  Input,
 } from "@material-tailwind/react";
 import axios from "axios";
 import PropTypes from "prop-types";
@@ -51,6 +55,24 @@ import {
   deleteRecordsContribution,
   deleteRecordsConference,
   deleteRecordsGrants,
+  updateRecordsBook,
+  updateRecordsResearch,
+  updateRecordsFaculty,
+  updateRecordsGrants,
+  updateRecordsConsultancy,
+  updateRecordsPatent,
+  updateRecordsConference,
+  updateRecordsAttended,
+  updateRecordsWebinar,
+  updateRecordsMous,
+  updateRecordsCertificate,
+  updateRecordsProfessional,
+  updateRecordsResource,
+  updateRecordsExtension,
+  updateRecordsTechnical,
+  updateRecordsAchievements,
+  updateRecordsIndustrial,
+  updateRecordsContribution,
 } from "../API_Routes";
 import { useSelector } from "react-redux";
 
@@ -58,8 +80,10 @@ export default function TableData({ tableName }) {
   const { currentUser } = useSelector((state) => state.user);
   const [tableHead, setTableHead] = useState([]);
   const [tableRows, setTableRows] = useState([]);
+  const [editableFields, setEditableFields] = useState({});
+  
 
-  // Generate API route based on tableName
+  // getRecords by username apis
   const getApiRoute = (tableName) => {
     // Define your API routes based on the table names
     const apiRoutes = {
@@ -99,36 +123,7 @@ export default function TableData({ tableName }) {
     return apiRoute;
   };
 
-  //get all records
-  const getAllRecords = async () => {
-    const user = await currentUser.Email;
-    try {
-      const apiurl = getApiRoute(tableName)(user);
-      // console.log("apiRoute in getAllRecords:", apiurl);
-      const response = await axios.get(apiurl, {
-        headers: {
-          "Content-Type": "application/json", // Make sure this header is defined
-        },
-      });
-      // console.log("Rows : ", response.data.data);
-      const columnHeaders = Object.keys(response.data.data[0]);
-      // console.log("Columns:", columnHeaders);
-
-      setTableHead(columnHeaders);
-
-      // Filter records based on currentUser's name
-      const userRecords = response.data.data.filter(
-        (record) => record.Username === currentUser.Email
-      );
-      // console.log("UserRecords:", userRecords);
-      setTableRows(userRecords);
-      // setTableRows(response.data.data);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  //all delete rapis
+  //delete apis
   const deleteAPIRoute = (tableName) => {
     const deleteRoutes = {
       "Book Publication": (username, T_ID) =>
@@ -178,6 +173,86 @@ export default function TableData({ tableName }) {
     return deleteRoutes[tableName];
   };
 
+  //update  apis
+  const updateAPIRoute = (tableName) => {
+    const updateRoutes = {
+      "Book Publication": (username, T_ID) =>
+        `${updateRecordsBook}?username=${username}&T_ID=${T_ID}`,
+      Research: (username, T_ID) =>
+        `${updateRecordsResearch}?username=${username}&T_ID=${T_ID}`,
+      "Faculty Conference Publication": (username, T_ID) =>
+        `${updateRecordsFaculty}?username=${username}&T_ID=${T_ID}`,
+      Grants: (username, T_ID) =>
+        `${updateRecordsGrants}?username=${username}&T_ID=${T_ID}`,
+      "Consultancy Report": (username, T_ID) =>
+        `${updateRecordsConsultancy}?username=${username}&T_ID=${T_ID}`,
+      "Patent Publication": (username, T_ID) =>
+        `${updateRecordsPatent}?username=${username}&T_ID=${T_ID}`,
+      "Conferences, Seminars, Workshops, FDP, STTP Organized /conducted": (
+        username,
+        T_ID
+      ) => `${updateRecordsConference}?username=${username}&T_ID=${T_ID}`,
+      "STTP/FDP/Workshop/Conference Attended": (username, T_ID) =>
+        `${updateRecordsAttended}?username=${username}&T_ID=${T_ID}`,
+      "Webinar/Guest-Expert Lecture / Video conference /Invited talks organized /conducted":
+        (username, T_ID) =>
+          `${updateRecordsWebinar}?username=${username}&T_ID=${T_ID}`,
+      "Number of MoUs, collaborations / linkages for Faculty exchange": (
+        username,
+        T_ID
+      ) => `${updateRecordsMous}?username=${username}&T_ID=${T_ID}`,
+      "Certificate Courses": (username, T_ID) =>
+        `${updateRecordsCertificate}?username=${username}&T_ID=${T_ID}`,
+      "Professional Affiliations": (username, T_ID) =>
+        `${updateRecordsProfessional}?username=${username}&T_ID=${T_ID}`,
+      "Faculty as Resource Person you": (username, T_ID) =>
+        `${updateRecordsResource}?username=${username}&T_ID=${T_ID}`,
+      "Extension Activity": (username, T_ID) =>
+        `${updateRecordsExtension}?username=${username}&T_ID=${T_ID}`,
+      "Technical Competitions / Tech Fest Organized/Extra & Co-curricular activities Organized":
+        (username, T_ID) =>
+          `${updateRecordsTechnical}?username=${username}&T_ID=${T_ID}`,
+      "Faculty Achievement": (username, T_ID) =>
+        `${updateRecordsAchievements}?username=${username}&T_ID=${T_ID}`,
+      "Industrial Visits / Tours / Field Trip": (username, T_ID) =>
+        `${updateRecordsIndustrial}?username=${username}&T_ID=${T_ID}`,
+      "Contribution to BoS": (username, T_ID) =>
+        `${updateRecordsContribution}?username=${username}&T_ID=${T_ID}`,
+    };
+
+    return updateRoutes[tableName];
+  };
+
+  //get all records
+  const getAllRecords = async () => {
+    const user = await currentUser.Email;
+    try {
+      const apiurl = getApiRoute(tableName)(user);
+      // console.log("apiRoute in getAllRecords:", apiurl);
+      const response = await axios.get(apiurl, {
+        headers: {
+          "Content-Type": "application/json", // Make sure this header is defined
+        },
+      });
+      // console.log("Rows : ", response.data.data);
+      const columnHeaders = Object.keys(response.data.data[0]);
+      // console.log("Columns:", columnHeaders);
+
+      setTableHead(columnHeaders);
+
+      // Filter records based on currentUser's name
+      const userRecords = response.data.data.filter(
+        (record) => record.Username === currentUser.Email
+      );
+      // console.log("UserRecords:", userRecords);
+      setTableRows(userRecords);
+      // setTableRows(response.data.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  //Handle delete
   const onDelete = async (record) => {
     try {
       const apiurl = deleteAPIRoute(tableName)(currentUser.Email, record.T_ID);
@@ -198,6 +273,61 @@ export default function TableData({ tableName }) {
       setTableRows(updatedRows);
     } catch (error) {
       console.error("Error deleting record:", error.response.data.message);
+      // Handle error gracefully, e.g., show a user-friendly message
+    }
+  };
+
+  // Handle edit action
+  const handleEdit = (record) => {
+    setEditableFields({
+      ...editableFields,
+      [record.T_ID]: { ...record },
+    });
+  };
+
+  // Handle editable field changes
+  const handleEditField = (tId, field, value) => {
+    setEditableFields({
+      ...editableFields,
+      [tId]: {
+        ...editableFields[tId],
+        [field]: value,
+      },
+    });
+  };
+
+  // Handle save changes
+  const handleSave = async (tId) => {
+    try {
+      const updatedRecord = editableFields[tId];
+      // console.log("Updated:", updatedRecord);
+      // Send a PUT request to update the record in the backend
+      const apiurl = updateAPIRoute(tableName)(currentUser.Email, tId);
+      // console.log("updating record with:", currentUser.Email, tId);
+      // console.log("Table:", tableName);
+      await axios.put(apiurl, updatedRecord, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+        data: {
+          username: currentUser.Email,
+          T_ID: tId,
+        },
+      });
+
+      // Update tableRows state
+      const updatedRows = tableRows.map((r) =>
+        r.T_ID === tId ? { ...r, ...updatedRecord } : r
+      );
+      setTableRows(updatedRows);
+
+      // Clear editable fields
+      setEditableFields({
+        ...editableFields,
+        [tId]: undefined,
+      });
+    } catch (error) {
+      console.error("Error updating record:", error.response.data.message);
       // Handle error gracefully, e.g., show a user-friendly message
     }
   };
@@ -270,7 +400,17 @@ export default function TableData({ tableName }) {
                           : "border-solid border-blue-gray-200"
                       }`}
                     >
-                      {head.startsWith("Upload") || head.startsWith("Link") ? (
+                      {editableFields[record.T_ID] &&
+                      editableFields[record.T_ID][head] !== undefined ? (
+                        <Input
+                          value={editableFields[record.T_ID][head]}
+                          label={[head]}
+                          onChange={(e) =>
+                            handleEditField(record.T_ID, head, e.target.value)
+                          }
+                        />
+                      ) : head.startsWith("Upload") ||
+                        head.startsWith("Link") ? (
                         <DocumentIcon
                           onClick={() => handleLink(record[head])}
                           className="cursor-pointer w-6 h-6"
@@ -287,22 +427,35 @@ export default function TableData({ tableName }) {
                     </td>
                   ))}
                   <td className="p-4 border-r border-solid border-blue-gray-200">
-                    <Tooltip content="Edit data">
-                      <IconButton
-                        // onClick={() => handleUpdate(record)}
-                        variant="text"
-                      >
-                        <PencilIcon className="h-4 w-4 text-blue-500" />
-                      </IconButton>
-                    </Tooltip>
-                    <Tooltip content="Delete data">
-                      <IconButton
-                        onClick={() => onDelete(record)}
-                        variant="text"
-                      >
-                        <TrashIcon className="h-4 w-4 text-red-500" />
-                      </IconButton>
-                    </Tooltip>
+                    {editableFields[record.T_ID] ? (
+                      <Tooltip content="Save Changes">
+                        <IconButton
+                          onClick={() => handleSave(record.T_ID)}
+                          variant="text"
+                        >
+                          <CheckCircleIcon className="h-4 w-4 text-green-500" />
+                        </IconButton>
+                      </Tooltip>
+                    ) : (
+                      <>
+                        <Tooltip content="Edit data">
+                          <IconButton
+                            onClick={() => handleEdit(record)}
+                            variant="text"
+                          >
+                            <PencilIcon className="h-4 w-4 text-blue-500" />
+                          </IconButton>
+                        </Tooltip>
+                        <Tooltip content="Delete data">
+                          <IconButton
+                            onClick={() => onDelete(record)}
+                            variant="text"
+                          >
+                            <TrashIcon className="h-4 w-4 text-red-500" />
+                          </IconButton>
+                        </Tooltip>
+                      </>
+                    )}
                   </td>
                 </tr>
               ))}

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import Select from "react-select";
-import TableData from './../../components/TModule/Table Data/TableData';
+import TableData from "./../../components/TModule/Table Data/TableData";
 
 export default function Data() {
   const [selectedOption, setSelectedOption] = useState("Book Publication");
@@ -62,19 +62,18 @@ export default function Data() {
     "Consultancy Report": TableData,
     "Patent Publication": TableData,
     "Conferences, Seminars, Workshops, FDP, STTP Organized /conducted":
-    TableData,
+      TableData,
     "STTP/FDP/Workshop/Conference Attended": TableData,
     "Webinar/Guest-Expert Lecture / Video conference /Invited talks organized /conducted":
-    TableData,
-    "Number of MoUs, collaborations / linkages for Faculty exchange":
-    TableData,
+      TableData,
+    "Number of MoUs, collaborations / linkages for Faculty exchange": TableData,
 
     "Certificate Courses": TableData,
     "Professional Affiliations": TableData,
     "Faculty as Resource Person you": TableData,
     "Extension Activity": TableData,
     "Technical Competitions / Tech Fest Organized/Extra & Co-curricular activities Organized":
-    TableData,
+      TableData,
     "Faculty Achievement": TableData,
     "Industrial Visits / Tours / Field Trip": TableData,
     "Contribution to BoS": TableData,
@@ -82,11 +81,12 @@ export default function Data() {
 
   const handleOptionChange = (selectedOption) => {
     setSelectedOption(selectedOption.value);
+    // console.log(selectedOption.value);
   };
 
   return (
     <>
-      <div className="w-full mt-4 flex flex-col items-center justify-center gap-2 " >
+      <div className="w-full mt-4 flex flex-col items-center justify-center gap-2 ">
         <h2 className="text-slate-900 text-xl font-bold">
           Select your choice:
         </h2>
