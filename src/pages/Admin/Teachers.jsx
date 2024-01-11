@@ -8,8 +8,8 @@ import DeleteIcon from "@mui/icons-material/DeleteOutlined";
 import SaveIcon from "@mui/icons-material/Save";
 import CancelIcon from "@mui/icons-material/Close";
 import Header from "../../components/AModule/Header";
-import axios from 'axios';
-import { getAllTeachers } from "../../components/AModule/APIRoutes";
+// import axios from 'axios';
+// import { getAllTeachers } from "../../components/AModule/APIRoutes";
 
 import {
   GridRowModes,
@@ -25,7 +25,7 @@ import {
   randomId,
   randomArrayItem,
 } from "@mui/x-data-grid-generator";
-import { useEffect } from "react";
+// import { useEffect } from "react";
 
 const roles = ["Market", "Finance", "Development"];
 const randomRole = () => {
@@ -139,14 +139,14 @@ export default function Teachers() {
     setRowModesModel(newRowModesModel);
   };
 
-  const getAllTeachersData = async () =>{
-    const response = await axios.get(getAllTeachers);
-    console.log(response);
-  }
+  // const getAllTeachersData = async () =>{
+  //   const response = await axios.get(getAllTeachers);
+  //   console.log(response);
+  // }
   
-  useEffect(() => {
-    getAllTeachersData();
-  }, [])
+  // useEffect(() => {
+  //   getAllTeachersData();
+  // }, [])
 
 
   const columns = [
