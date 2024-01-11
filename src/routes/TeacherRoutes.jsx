@@ -2,6 +2,7 @@ import Teacher from "../Layouts/Teacher";
 import General from "../pages/Teacher/General";
 import Data from "../pages/Teacher/Data";
 import TDashboard from "../pages/Teacher/TDashboard";
+import Report from "../pages/Teacher/Report";
 
 export const TeacherRoutes = {
   path: "t/",
@@ -20,5 +21,9 @@ export const TeacherRoutes = {
       path: "data",
       element: <Data />,
     },
+    {
+      path: "report/:access",
+      element: <Report/>
+    }
   ],
 };

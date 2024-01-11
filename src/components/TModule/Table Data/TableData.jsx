@@ -1,13 +1,10 @@
 import { useEffect, useState } from "react";
-import {
-  MagnifyingGlassIcon,
-  ChevronUpDownIcon,
-} from "@heroicons/react/24/outline";
-import { PencilIcon } from "@heroicons/react/24/solid";
+import { ChevronUpDownIcon, TrashIcon } from "@heroicons/react/24/outline";
+import { DocumentIcon, PencilIcon } from "@heroicons/react/24/solid";
 import {
   Card,
   CardHeader,
-  Input,
+  // Input,
   Typography,
   Button,
   CardBody,
@@ -36,9 +33,26 @@ import {
   getOneRecordsResource,
   getOneRecordsTechnical,
   getOneRecordsWebinar,
+  deleteRecordsBook,
+  deleteRecordsResearch,
+  deleteRecordsFaculty,
+  deleteRecordsConsultancy,
+  deleteRecordsPatent,
+  deleteRecordsAttended,
+  deleteRecordsWebinar,
+  deleteRecordsMous,
+  deleteRecordsCertificate,
+  deleteRecordsProfessional,
+  deleteRecordsResource,
+  deleteRecordsExtension,
+  deleteRecordsTechnical,
+  deleteRecordsAchievements,
+  deleteRecordsIndustrial,
+  deleteRecordsContribution,
+  deleteRecordsConference,
+  deleteRecordsGrants,
 } from "../API_Routes";
 import { useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
 
 export default function TableData({ tableName }) {
   const { currentUser } = useSelector((state) => state.user);
@@ -114,21 +128,88 @@ export default function TableData({ tableName }) {
     }
   };
 
+  //all delete rapis
+  const deleteAPIRoute = (tableName) => {
+    const deleteRoutes = {
+      "Book Publication": (username, T_ID) =>
+        `${deleteRecordsBook}?username=${username}&T_ID=${T_ID}`,
+      Research: (username, T_ID) =>
+        `${deleteRecordsResearch}?username=${username}&T_ID=${T_ID}`,
+      "Faculty Conference Publication": (username, T_ID) =>
+        `${deleteRecordsFaculty}?username=${username}&T_ID=${T_ID}`,
+      Grants: (username, T_ID) =>
+        `${deleteRecordsGrants}?username=${username}&T_ID=${T_ID}`,
+      "Consultancy Report": (username, T_ID) =>
+        `${deleteRecordsConsultancy}?username=${username}&T_ID=${T_ID}`,
+      "Patent Publication": (username, T_ID) =>
+        `${deleteRecordsPatent}?username=${username}&T_ID=${T_ID}`,
+      "Conferences, Seminars, Workshops, FDP, STTP Organized /conducted": (
+        username,
+        T_ID
+      ) => `${deleteRecordsConference}?username=${username}&T_ID=${T_ID}`,
+      "STTP/FDP/Workshop/Conference Attended": (username, T_ID) =>
+        `${deleteRecordsAttended}?username=${username}&T_ID=${T_ID}`,
+      "Webinar/Guest-Expert Lecture / Video conference /Invited talks organized /conducted":
+        (username, T_ID) =>
+          `${deleteRecordsWebinar}?username=${username}&T_ID=${T_ID}`,
+      "Number of MoUs, collaborations / linkages for Faculty exchange": (
+        username,
+        T_ID
+      ) => `${deleteRecordsMous}?username=${username}&T_ID=${T_ID}`,
+      "Certificate Courses": (username, T_ID) =>
+        `${deleteRecordsCertificate}?username=${username}&T_ID=${T_ID}`,
+      "Professional Affiliations": (username, T_ID) =>
+        `${deleteRecordsProfessional}?username=${username}&T_ID=${T_ID}`,
+      "Faculty as Resource Person you": (username, T_ID) =>
+        `${deleteRecordsResource}?username=${username}&T_ID=${T_ID}`,
+      "Extension Activity": (username, T_ID) =>
+        `${deleteRecordsExtension}?username=${username}&T_ID=${T_ID}`,
+      "Technical Competitions / Tech Fest Organized/Extra & Co-curricular activities Organized":
+        (username, T_ID) =>
+          `${deleteRecordsTechnical}?username=${username}&T_ID=${T_ID}`,
+      "Faculty Achievement": (username, T_ID) =>
+        `${deleteRecordsAchievements}?username=${username}&T_ID=${T_ID}`,
+      "Industrial Visits / Tours / Field Trip": (username, T_ID) =>
+        `${deleteRecordsIndustrial}?username=${username}&T_ID=${T_ID}`,
+      "Contribution to BoS": (username, T_ID) =>
+        `${deleteRecordsContribution}?username=${username}&T_ID=${T_ID}`,
+    };
+
+    return deleteRoutes[tableName];
+  };
+
+  const onDelete = async (record) => {
+    try {
+      const apiurl = deleteAPIRoute(tableName)(currentUser.Email, record.T_ID);
+      // console.log("Deleting record with:", currentUser.Email, record.T_ID);
+      // console.log("Table:", tableName);
+
+      await axios.delete(apiurl, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+        data: {
+          username: currentUser.Email,
+          T_ID: record.T_ID,
+        },
+      });
+
+      const updatedRows = tableRows.filter((r) => r.T_ID !== record.T_ID);
+      setTableRows(updatedRows);
+    } catch (error) {
+      console.error("Error deleting record:", error.response.data.message);
+      // Handle error gracefully, e.g., show a user-friendly message
+    }
+  };
+
   useEffect(() => {
     getAllRecords();
   }, [tableName]);
 
-  const navigate = useNavigate();
-
-  const handleUpdate = (record) => {
-
-    console.log("record id is : ", record.T_ID)
-    const updateValue = true;
-    const queryString = `?update=${updateValue}&tablename=${tableName}&rowid=${record.T_ID}`;
-    // console.log("query string is : ", queryString);
-    navigate(`/t/general${queryString}`);
-
-  }
+  const handleLink = (link) => {
+    console.log("Link of document is : ", link);
+    window.open(link, "_blank");
+  };
 
   return (
     <Card className="h-full w-full">
@@ -139,16 +220,10 @@ export default function TableData({ tableName }) {
               {tableName}
             </Typography>
           </div>
-          <div className="w-full md:w-72">
-            <Input
-              label="Search"
-              icon={<MagnifyingGlassIcon className="h-5 w-5" />}
-            />
-          </div>
         </div>
       </CardHeader>
       <CardBody className="px-0">
-        <div className="overflow-x-auto max-w-screen-xl mx-auto">
+        <div className="overflow-x-auto mx-4">
           <table className="mt-4 w-full min-w-max table-auto text-left">
             <thead>
               <tr>
@@ -156,13 +231,13 @@ export default function TableData({ tableName }) {
                   <th
                     key={head}
                     className={`${
-                      index === 0 ? "hidden" : "" // Hide the first column
+                      index === 0 ? "hidden" : ""
                     } cursor-pointer border-y border-blue-gray-100 bg-blue-gray-50/50 p-4 transition-colors hover:bg-blue-gray-50`}
                   >
                     <Typography
                       variant="small"
                       color="blue"
-                      className="flex items-center justify-between gap-2 font-normal leading-none opacity-70"
+                      className="flex items-center justify-between gap-2 font-normal leading-none opacity-70 font-bold text-blue-700"
                     >
                       {head}{" "}
                       {index !== tableHead.length - 1 && (
@@ -188,27 +263,44 @@ export default function TableData({ tableName }) {
                     <td
                       key={head}
                       className={`${
-                        colIndex === 0 ? "hidden" : "" // Hide the first column
+                        colIndex === 0 ? "hidden" : ""
                       } p-4 whitespace-normal border-r ${
                         colIndex === tableHead.length - 1
                           ? ""
                           : "border-solid border-blue-gray-200"
                       }`}
                     >
-                      <Typography
-                        variant="body"
-                        color="black"
-                        className="text-dark"
-                      >
-                        {record[head]}
-                      </Typography>
+                      {head.startsWith("Upload") || head.startsWith("Link") ? (
+                        <DocumentIcon
+                          onClick={() => handleLink(record[head])}
+                          className="cursor-pointer w-6 h-6"
+                        />
+                      ) : (
+                        <Typography
+                          variant="body"
+                          color="black"
+                          className="text-dark font-bold"
+                        >
+                          <p>{record[head]}</p>
+                        </Typography>
+                      )}
                     </td>
                   ))}
-
                   <td className="p-4 border-r border-solid border-blue-gray-200">
                     <Tooltip content="Edit data">
-                      <IconButton onClick={() => handleUpdate(record)}  variant="text">
-                        <PencilIcon  className="h-4 w-4" />
+                      <IconButton
+                        // onClick={() => handleUpdate(record)}
+                        variant="text"
+                      >
+                        <PencilIcon className="h-4 w-4 text-blue-500" />
+                      </IconButton>
+                    </Tooltip>
+                    <Tooltip content="Delete data">
+                      <IconButton
+                        onClick={() => onDelete(record)}
+                        variant="text"
+                      >
+                        <TrashIcon className="h-4 w-4 text-red-500" />
                       </IconButton>
                     </Tooltip>
                   </td>

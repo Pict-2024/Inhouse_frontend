@@ -35,34 +35,45 @@ export default function TeacherSidebar() {
         </Typography>
       </div>
       <List>
+      <Link to={"/t/dashboard"}>
         <ListItem>
           <ListItemPrefix>
             <PresentationChartBarIcon className="h-5 w-5" />
           </ListItemPrefix>
-          <Link to={"/t/dashboard"}>Dashboard</Link>
+          Dashboard
         </ListItem>
+        </Link>
+        <Link to={"/t/general"} className="text-ellipsis">
         <ListItem>
           <ListItemPrefix>
             <TrophyIcon className="h-5 w-5" />
           </ListItemPrefix>
-          <Link to={"/t/general"} className="text-ellipsis">
+          
             Add Achievements
-          </Link>
-        </ListItem>
-
-        <ListItem>
+            </ListItem>
+            
+            </Link>
+            <Link to={"/t/data"}>
+            <ListItem>
           <ListItemPrefix>
             <DocumentIcon className="h-5 w-5" />
           </ListItemPrefix>
-          <Link to={"/t/data"}>View Uploads</Link>
-        </ListItem>
-
-        <ListItem>
-          <ListItemPrefix>
-            <DocumentChartBarIcon className="h-5 w-5" />
-          </ListItemPrefix>
-          <Link to={"/t/general"}>Reports</Link>
-        </ListItem>
+          View Uploads
+          </ListItem>
+          </Link>
+          {
+            currentUser && currentUser.SpecialAccess !== null && (
+              
+              <Link to={`/t/report/${currentUser.SpecialAccess}`}>
+                <ListItem>
+                  <ListItemPrefix>
+                    <DocumentChartBarIcon className="h-5 w-5" />
+                  </ListItemPrefix>
+                  Reports
+                </ListItem>
+              </Link>
+            )
+          }
       </List>
     </div>
   );

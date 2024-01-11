@@ -126,8 +126,8 @@ export default function Login() {
                 size="lg"
                 name="gmail"
                 value={formData.gmail}
-                placeholder="gmail"
-                className="border-t-blue-gray-200 focus-border-t-gray-900"
+                label="gmail"
+                
                 onChange={handleInputChange}
               />
             </div>
@@ -142,8 +142,8 @@ export default function Login() {
               name="password"
               value={formData.password}
               type="password"
-              placeholder="Password"
-              className="border-t-blue-gray-200 focus-border-t-gray-900"
+              label="Password"
+              
               onChange={handleInputChange}
             />
           </div>

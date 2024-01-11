@@ -1,4 +1,4 @@
-import {  useEffect, useState } from "react";
+import {  useState } from "react";
 import {
   Card,
   Select,
@@ -10,7 +10,7 @@ import {
 import { useSelector } from "react-redux";
 import axios from "axios";
 import { addRecordsBook } from "./API_Routes";
-import { useParams } from "react-router-dom";
+
 import { useLocation } from "react-router-dom";
 
 export default function BookPublication() {
@@ -39,13 +39,7 @@ export default function BookPublication() {
       Proof: null,
     });
 
-  // if(update && tablename && rowid)
-  // {
-  //   useEffect({
-      
-  //   }, [])
-
-  // }
+ 
 
   const currentYear = new Date().getFullYear();
   const years = Array.from(
