@@ -1,162 +1,204 @@
-import React, { useState } from 'react';
 import Box from "@mui/material/Box";
 import Header from '../../components/AModule/Header';
-import {
-  Paper,
-  Button,
-  Select,
-  MenuItem,
-  FormControl,
-  InputLabel,
-  Checkbox,
-  ListItemText,
-  TableContainer,
-  Table,
-  TableHead,
-  TableRow,
-  TableCell,
-  TableBody,
-  TablePagination,
-  IconButton
-} from '@mui/material';
-import EditIcon from "@mui/icons-material/Edit";
-import DeleteIcon from "@mui/icons-material/Delete";
+import React, { useState, useEffect } from 'react';
+import { Table, TableContainer, TableHead, TableRow, TableCell, TableBody, Paper, Button } from '@mui/material';
+import jsPDF from 'jspdf';
+import 'jspdf-autotable';
+import axios from 'axios';
 
 const Report = () => {
-  const [selectedRole, setSelectedRole] = useState(null);
-  const [selectedOptions, setSelectedOptions] = useState([]);
-  const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(5);
 
-  const handleRoleButtonClick = (role) => {
-    setSelectedRole(role);
-    setSelectedOptions([]); // Reset selected options when role changes
-    setPage(0); // Reset page when role changes
+  let tablename = "";
+
+  const [tableData, setTableData] = useState([]);
+  const [selectedTable, setSelectedTable] = useState('');
+  const [selectedFilters, setSelectedFilters] = useState([]);
+  const [tableNames, setTableNames] = useState([]);
+  const [columnNames, setColumnNames] = useState([]);
+
+  const getAllTables = async () => {
+
+    try {
+      const response = await axios.get('http://localhost:5000/api/v1/general/alltables');
+      setTableNames(response.data.data);
+      console.log("table names are : ", tableNames)
+      
+    } catch (error) {
+      console.log("error is : \n", error.message);
+    }
   };
 
-  const handleSelectChange = (event) => {
-    setSelectedOptions(event.target.value);
+  // const getAllColumns = async () => {
+  //   try {
+  //       const response = await axios.get(`http://localhost:5000/api/v1/general/allcolumns?tablename=${selectedTable}`);
+  //       console.log("columns  is : ", response);
+  //   } catch (error) {
+  //     console.log("Error is : ", error.message);
+  //   }
+  // };
+
+  useEffect(() => {
+    getAllTables();
+  }, []);
+
+  const getAllColumns = async () => {
+    try {
+      const response = await axios.get(`http://localhost:5000/api/v1/general/allcolumns?tablename=${tablename}`);
+      console.log("columns are: ", response.data);
+      return response.data; // Returning the data for further processing
+    } catch (error) {
+      console.log("Error:", error.message);
+      throw error; // Rethrowing the error for the calling code to handle
+    }
+  };
+  
+  // Usage example
+  const fetchData = async () => {
+
+      try {
+        const columnsData = await getAllColumns();
+        console.log("Column Names are :", columnsData.data);
+        
+      } catch (error) {
+        console.error("Error fetching columns data:", error.message);
+      }
   };
 
-  const handleChangePage = (event, newPage) => {
-    setPage(newPage);
+  const setTableName = async (e) => {
+    setSelectedTable(e.target.value);
+    tablename = e.target.value;
+    console.log("Table is : ", tablename)
+
+  }
+
+  // useEffect(() => {
+  //     fetchData();
+    
+  // }, [selectedTable]);
+
+  const generatePDF = () => {
+    const doc = new jsPDF();
+    const tableRows = [];
+
+    // Add custom headings
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(16);
+    doc.text('PUNE INSTITUTE OF COMPUTER TECHNOLOGY', 20, 20);
+
+    // Add table name
+    doc.setFontSize(14);
+    doc.text(`Report on ${selectedTable}`, 20, 30);
+
+    // Add table header
+    const tableHeader = columnNames;
+    tableRows.push(tableHeader);
+
+    // Add table data
+    tableData.forEach(row => {
+      const rowData = Object.values(row);
+      tableRows.push(rowData);
+    });
+
+    // AutoTable plugin to generate PDF table
+    doc.autoTable({
+      head: [tableHeader],
+      body: tableRows,
+      startY: 40, // Set the Y position for the table
+    });
+
+    console.log("Table name is : ", selectedTable);
+    // Save the PDF
+    doc.save('report.pdf');
   };
 
-  const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
-  };
+  const setTable = async (e) => {
+    console.log("Value is : ", e.target.value);
 
-  // Dummy data for the table
-  const teacherData = [
-    { id: 1, name: 'John', age: 35, subject: 'Math' },
-    { id: 2, name: 'Jane', age: 28, subject: 'English' },
-    // Add more dummy data as needed
-  ];
 
-  const studentData = [
-    { id: 1, name: 'Alice', age: 20, grade: 'A' },
-    { id: 2, name: 'Bob', age: 22, grade: 'B' },
-    // Add more dummy data as needed
-  ];
+    tablename = e.target.value;
+    console.log("Table is : ", tablename)
+    fetchData();
 
-  const currentData = selectedRole === 'teacher' ? teacherData : studentData;
+    
+    // setSelectedTable(e.target.value);
+    // console.log("Selected table is : ", selectedTable)
+  }
 
   return (
-    <Box
-      sx={{
-        height: 'auto',
-        width: "100%",
-        "& .actions": {
-          color: "text.secondary",
-        },
-        "& .textPrimary": {
-          color: "text.primary",
-        },
-      }}
-    >
-      <div>
-        <Header category="Page" title="Report" />
-      </div>
-
-      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: '20px' }}>
-        <Button variant="contained" onClick={() => handleRoleButtonClick('teacher')} style={{ marginRight: '5%' }}>
-          Teacher
-        </Button>
-        <Button variant="contained" onClick={() => handleRoleButtonClick('student')}>
-          Student
-        </Button>
-      </div>
-
-      {selectedRole && (
-        <div style={{ marginTop: '20px' }}>
-          <FormControl fullWidth>
-            <InputLabel style={{ fontSize: '20px' }}>Select {selectedRole}</InputLabel>
-            <Select value={selectedOptions} onChange={handleSelectChange} multiple>
-              <MenuItem value="option1">Option 1</MenuItem>
-              <MenuItem value="option2">Option 2</MenuItem>
-              <MenuItem value="option3">Option 3</MenuItem>
-            </Select>
-          </FormControl>
+    <>
+      <Box
+        sx={{
+          height: 500,
+          width: "100%",
+          "& .actions": {
+            color: "text.secondary",
+          },
+          "& .textPrimary": {
+            color: "text.primary",
+          },
+        }}
+      >
+        <div>
+          <Header category="Page" title="Report" />
         </div>
-      )}
 
-      {selectedOptions.length > 0 && (
-        <div style={{ marginTop: '20px' }}>
-          <Paper elevation={3} style={{ padding: '20px', width: '80%', margin: '20px' }}>
-            <TableContainer>
-              <Table>
-                <TableHead>
-                  <TableRow>
-                    <TableCell>ID</TableCell>
-                    <TableCell>Name</TableCell>
-                    <TableCell>Age</TableCell>
-                    {selectedRole === 'teacher' ? <TableCell>Subject</TableCell> : <TableCell>Grade</TableCell>}
-                    <TableCell>Actions</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {(rowsPerPage > 0
-                    ? currentData.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                    : currentData
-                  ).map((row) => (
-                    <TableRow key={row.id}>
-                      <TableCell>{row.id}</TableCell>
-                      <TableCell>{row.name}</TableCell>
-                      <TableCell>{row.age}</TableCell>
-                      <TableCell>{selectedRole === 'teacher' ? row.subject : row.grade}</TableCell>
-                      <TableCell>
-                        <IconButton color="primary" aria-label="edit">
-                          <EditIcon />
-                        </IconButton>
-                        <IconButton color="error" aria-label="delete">
-                          <DeleteIcon />
-                        </IconButton>
-                      </TableCell>
-                    </TableRow>
+        <div>
+          <label>Select Table:</label>
+          <select onChange={(e) => setTable(e)}>
+            {tableNames.map((table, index) => (
+              <option className="px-4 py-2" key={index} value={table.Tables_in_inhouse_hod}>{table.Tables_in_inhouse_hod}</option>
+            ))}
+          </select>
+
+          <label>Select Filters:</label>
+          {/* Checkbox for selecting filters */}
+          {/* Use columnNames fetched from the backend API */}
+          <div>
+            {columnNames.map((column) => (
+              <label key={column}>
+                <input
+                  type="checkbox"
+                  value={column}
+                  checked={selectedFilters.includes(column)}
+                  onChange={() => setSelectedFilters(prevFilters => (
+                    prevFilters.includes(column) ? prevFilters.filter(f => f !== column) : [...prevFilters, column]
                   ))}
-                </TableBody>
-              </Table>
-            </TableContainer>
-            <TablePagination
-              rowsPerPageOptions={[5]}
-              component="div"
-              count={currentData.length}
-              rowsPerPage={5}
-              page={page}
-              onPageChange={handleChangePage}
-              onRowsPerPageChange={handleChangeRowsPerPage}
-            />
-            <Button variant="outlined" style={{ float: 'right', marginTop: '10px' }}>
-              Filter
-            </Button>
-          </Paper>
-        </div>
-      )}
+                />
+                {column}
+              </label>
+            ))}
+          </div>
 
-    </Box>
-  )
-}
+          {/* Display the generated report */}
+          <TableContainer component={Paper}>
+            <Table>
+              <TableHead>
+                <TableRow>
+                  {columnNames.map((header) => (
+                    <TableCell key={header}>{header}</TableCell>
+                  ))}
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {tableData.map((row, rowIndex) => (
+                  <TableRow key={rowIndex}>
+                    {columnNames.map((columnName) => (
+                      <TableCell key={columnName}>{row[columnName]}</TableCell>
+                    ))}
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+
+          {/* Button to generate PDF */}
+          <Button variant="contained" onClick={generatePDF}>
+            Generate PDF
+          </Button>
+        </div>
+      </Box>
+    </>
+  );
+};
 
 export default Report;
-
