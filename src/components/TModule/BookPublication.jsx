@@ -11,20 +11,11 @@ import { useSelector } from "react-redux";
 import axios from "axios";
 import { addRecordsBook } from "./API_Routes";
 
-import { useLocation } from "react-router-dom";
 
 export default function BookPublication() {
 
   const { currentUser } = useSelector((state) => state.user);
   
-  const location = useLocation();
-  const queryParams = new URLSearchParams(location.search);
-  
-  const update = queryParams.get("update");
-  const tablename = queryParams.get("tablename");
-  const rowid = queryParams.get("rowid");
-
-  console.log('Query parameters are : ', update, " ", tablename, " ", rowid);
   
     const [formData, setFormData] = useState({
       T_ID: null,
