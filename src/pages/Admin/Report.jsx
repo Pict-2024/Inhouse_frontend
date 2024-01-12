@@ -7,40 +7,42 @@ import 'jspdf-autotable';
 import axios from 'axios';
 
 const Report = () => {
+  let tablename = "";
+
   const [tableData, setTableData] = useState([]);
   const [selectedTable, setSelectedTable] = useState('');
   const [tableNames, setTableNames] = useState([]);
   const [columnNames, setColumnNames] = useState([]);
   const [formFilters, setFormFilters] = useState({});
-  const [apiUrl, setApiUrl] = useState("");
+  const [apiUrl, setApiUrl] = useState("http://localhost:5000/api/v1/general/allcolumns");
+
+  const getAllTables = async () => {
+    try {
+      const response = await axios.get('http://localhost:5000/api/v1/general/alltables');
+      const fetchedTableNames = response.data.data;
+      setTableNames(fetchedTableNames);
+      console.log("table names are : ", fetchedTableNames);
+    } catch (error) {
+      console.log("error is : \n", error.message);
+    }
+  };
 
   useEffect(() => {
     getAllTables();
   }, []);
 
-  const getAllTables = async () => {
+  const getAllColumns = async () => {
     try {
-      const response = await axios.get('http://localhost:5000/api/v1/general/alltables');
-      setTableNames(response.data.data);
-      console.log("table names are: ", response.data.data);
+      const response = await axios.get(`http://localhost:5000/api/v1/general/allcolumns?tablename=${tablename}`);
+      return response.data; // Returning the data for further processing
     } catch (error) {
       console.log("error is: ", error.message);
     }
   };
 
-  const getAllColumns = async (tableName) => {
-    try {
-      const response = await axios.post(`http://localhost:5000/api/v1/general/allcolumns?tablename=${tableName}`);
-      return response.data;
-    } catch (error) {
-      console.log("Error:", error.message);
-      throw error;
-    }
-  };
-
   const fetchData = async () => {
     try {
-      const columnsData = await getAllColumns(selectedTable);
+      const columnsData = await getAllColumns();
       console.log("Return value of columns: ", columnsData.data);
       setColumnNames(columnsData.data);
     } catch (error) {
@@ -79,11 +81,11 @@ const Report = () => {
     doc.setFontSize(14);
     doc.text(`Report on ${selectedTable}`, 20, 30);
 
-    const tableHeader = columnNames.map(header => header.Field);
+    const tableHeader = columnNames.map((header) => header.Field);
     tableRows.push(tableHeader);
 
     tableData.forEach(row => {
-      const rowData = columnNames.map(column => row[column.Field]);
+      const rowData = columnNames.map(columnName => row[columnName.Field]);
       tableRows.push(rowData);
     });
 
@@ -93,20 +95,21 @@ const Report = () => {
       startY: 40,
     });
 
-    console.log("Table name is: ", selectedTable);
+    console.log("Table name is : ", selectedTable);
     doc.save('report.pdf');
   };
 
-  const setTable = (e) => {
+  const setTable = async (e) => {
     const selectedTableName = e.target.value;
     console.log("Selected Table is: ", selectedTableName);
+    tablename = selectedTableName;
     setSelectedTable(selectedTableName);
     fetchData();
   };
 
   const handleSubmit = () => {
     fetch(apiUrl, {
-      method: 'POST',
+      method: 'GET',
       headers: {
         'Content-Type': 'application/json',
       },
@@ -117,7 +120,7 @@ const Report = () => {
   };
 
   const renderInputFields = () => {
-    return columnNames.map(column => (
+    return columnNames.map((column) => (
       <div key={column.Field}>
         <label>{column.Field}</label>
         {renderInputField(column)}
@@ -133,6 +136,7 @@ const Report = () => {
         <input
           key={Field}
           type="text"
+          placeholder={`Enter ${Field}`}
           value={formFilters[Field] || ''}
           onChange={(e) => handleInputChange(Field, e.target.value)}
         />
@@ -142,6 +146,7 @@ const Report = () => {
         <input
           key={Field}
           type="number"
+          placeholder={`Enter ${Field}`}
           value={formFilters[Field] || ''}
           onChange={(e) => handleInputChange(Field, e.target.value)}
         />
@@ -149,11 +154,13 @@ const Report = () => {
     } else if (Type === 'date') {
       return (
         <div key={Field}>
+          <label>{`${Field} Start Date`}</label>
           <input
             type="date"
             value={formFilters[`${Field}_start`] || ''}
             onChange={(e) => handleInputChange(`${Field}_start`, e.target.value)}
           />
+          <label>{`${Field} End Date`}</label>
           <input
             type="date"
             value={formFilters[`${Field}_end`] || ''}
@@ -167,52 +174,37 @@ const Report = () => {
   };
 
   return (
-    <Box sx={{/* ... */}}>
-      <div>{/* Header component */}</div>
-
-      <div className="flex flex-col justify-center items-center gap-4">
-        <label>Select Table:</label>
-        <select onChange={(e) => setTable(e)}>
-          {tableNames.map((table, index) => (
-            <option key={index} value={table.Tables_in_inhouse}>
-              {table.Tables_in_inhouse}
-            </option>
-          ))}
-        </select>
-
-        <label>Select Filters:</label>
-
+    <>
+      <Box sx={{}}>
         <div>
-          {renderInputFields()}
-          <button onClick={handleSubmit}>Submit</button>
+          {/* Header component */}
         </div>
 
-        <TableContainer component={Paper}>
-          <Table>
-            <TableHead>
-              <TableRow>
-                {columnNames.map((header) => (
-                  <TableCell key={header.Field}>{header.Field}</TableCell>
-                ))}
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {tableData.map((row, rowIndex) => (
-                <TableRow key={rowIndex}>
-                  {columnNames.map((column) => (
-                    <TableCell key={column.Field}>{row[column.Field]}</TableCell>
-                  ))}
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
+        <div className="flex flex-col justify-center items-center gap-4">
+          <label>Select Table:</label>
+          <select onChange={(e) => setTable(e)}>
+            {tableNames.map((table, index) => (
+              <option className="px-4 py-2" key={index} value={table.Tables_in_inhouse_hod}>{table.Tables_in_inhouse_hod}</option>
+            ))}
+          </select>
 
-        <Button variant="contained" onClick={generatePDF}>
-          Generate PDF
-        </Button>
-      </div>
-    </Box>
+          <label>Select Filters:</label>
+
+          <div>
+            {renderInputFields()}
+            <button onClick={handleSubmit}>Submit</button>
+          </div>
+
+          <TableContainer component={Paper}>
+            {/* Display the generated report */}
+          </TableContainer>
+
+          <Button variant="contained" onClick={generatePDF}>
+            Generate PDF
+          </Button>
+        </div>
+      </Box>
+    </>
   );
 };
 
