@@ -1,6 +1,6 @@
 import Box from "@mui/material/Box";
 import Header from '../../components/AModule/Header';
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Table, TableContainer, TableHead, TableRow, TableCell, TableBody, Paper, Button } from '@mui/material';
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
@@ -9,12 +9,17 @@ import axios from 'axios';
 const Report = () => {
 
   let tablename = "";
+  let columnnames = [];
 
   const [tableData, setTableData] = useState([]);
   const [selectedTable, setSelectedTable] = useState('');
   const [selectedFilters, setSelectedFilters] = useState([]);
   const [tableNames, setTableNames] = useState([]);
+
   const [columnNames, setColumnNames] = useState([]);
+
+  const [formFilters, setFormFilters] = useState({});
+  const [apiUrl, setApiUrl] = useState("http://localhost:5000/api/v1/general/allcolumns")
 
   const getAllTables = async () => {
 
@@ -44,7 +49,7 @@ const Report = () => {
   const getAllColumns = async () => {
     try {
       const response = await axios.get(`http://localhost:5000/api/v1/general/allcolumns?tablename=${tablename}`);
-      console.log("columns are: ", response.data);
+      // console.log("columns are: ", response.data);
       return response.data; // Returning the data for further processing
     } catch (error) {
       console.log("Error:", error.message);
@@ -57,24 +62,42 @@ const Report = () => {
 
       try {
         const columnsData = await getAllColumns();
-        console.log("Column Names are :", columnsData.data);
+        // console.log("Column Names are :", columnsData.data);
+        columnnames = columnsData.data;
+        console.log("Return value of columns : ", columnsData.data)
+        setColumnNames(columnsData.data);
+        console.log("Column names are : ", columnNames);
+        if(columnNames.length == 0)
+        {
+          setColumnNames(columnsData.data)
+          console.log("Column names are : ", columnNames);
+        }
+
         
       } catch (error) {
         console.error("Error fetching columns data:", error.message);
       }
   };
 
-  // const setTableName = async (e) => {
-  //   setSelectedTable(e.target.value);
-  //   tablename = e.target.value;
-  //   console.log("Table is : ", tablename)
+  const handleInputChange = (fieldName, value) => {
+    setFormFilters(prevData => ({ ...prevData, [fieldName]: value }));
+  };
 
-  // }
+  const updateApiUrl = () => {
+    const queryParameters = Object.entries(formFilters)
+      .filter(([key, value]) => value !== undefined && value !== '')
+      .map(([key, value]) => `${key}=${encodeURIComponent(value)}`)
+      .join('&');
 
-  // useEffect(() => {
-  //     fetchData();
-    
-  // }, [selectedTable]);
+    setApiUrl(`http://localhost:5000/api/v1/teacher/${tablename}/filter?${queryParameters}`);
+  };
+
+
+  // Update API URL whenever the form data changes
+  useEffect(() => {
+    updateApiUrl();
+  }, [formFilters]);
+
 
   const generatePDF = () => {
     const doc = new jsPDF();
@@ -124,6 +147,46 @@ const Report = () => {
     // console.log("Selected table is : ", selectedTable)
   }
 
+  const handleSubmit = () => {
+    // Send data to the backend using the generated API URL
+    // Example using fetch:
+    fetch(apiUrl, {
+      method: 'GET', // Adjust the method accordingly
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+      .then(response => response.json())
+      .then(data => console.log('Data retrieved successfully', data))
+      .catch(error => console.error('Error retrieving data', error));
+  };
+
+  const renderInputField = (Field, Type) => {
+
+    console.log("Rendering component called")
+    // const { Field, Type } = column;
+    console.log("====================================")
+    console.log("Field is : ", Field);
+    console.log("Type is : ", Type);
+    console.log("====================================")
+
+    if (Type.includes('varchar')) {
+      return <input type="text" value={formFilters[Field] || ''} onChange={(e) => handleInputChange(Field, e.target.value)} />;
+    } else if (Type.includes('int')) {
+      return <input type="number" value={formFilters[Field] || ''} onChange={(e) => handleInputChange(Field, e.target.value)} />;
+    } else if (Type === 'date') {
+      // Assuming you have a DatePicker component
+      return (
+        <>
+          <input type="date" value={formFilters[`${Field}_start`] || ''} onChange={(e) => handleInputChange(`${Field}_start`, e.target.value)} />
+          <input type="date" value={formFilters[`${Field}_end`] || ''} onChange={(e) => handleInputChange(`${Field}_end`, e.target.value)} />
+        </>
+      );
+    }
+
+    return null;
+  };
+
   return (
     <>
       <Box
@@ -142,7 +205,7 @@ const Report = () => {
           <Header category="Page" title="Report" />
         </div>
 
-        <div>
+        <div className="flex flex-col justify-center items-center gap-4">
           <label>Select Table:</label>
           <select onChange={(e) => setTable(e)}>
             {tableNames.map((table, index) => (
@@ -151,23 +214,40 @@ const Report = () => {
           </select>
 
           <label>Select Filters:</label>
+
+
+          <div>
+            {/* Render input fields based on column data */}
+            {columnNames.length > 0 && columnnames.map((column, index) => (
+              console.log("Column is : ", column),
+              <div key={index}>
+                <label>{column.Field}</label>
+                {renderInputField(column.Field, column.Type)}
+              </div>
+            ))}
+
+            {/* Submit button */}
+            <button onClick={handleSubmit}>Submit</button>
+          </div>  
           {/* Checkbox for selecting filters */}
           {/* Use columnNames fetched from the backend API */}
-          <div>
+
+          {/* <div>
             {columnNames.map((column) => (
               <label key={column}>
                 <input
                   type="checkbox"
-                  value={column}
-                  checked={selectedFilters.includes(column)}
+                  value={column.Field}
+                  checked={selectedFilters.includes(column.Field)}
                   onChange={() => setSelectedFilters(prevFilters => (
-                    prevFilters.includes(column) ? prevFilters.filter(f => f !== column) : [...prevFilters, column]
+                    prevFilters.includes(column.Field) ? prevFilters.filter(f => f !== column.Field) : [...prevFilters, column.Field]
                   ))}
                 />
                 {column}
               </label>
             ))}
-          </div>
+          </div> */}
+
 
           {/* Display the generated report */}
           <TableContainer component={Paper}>
