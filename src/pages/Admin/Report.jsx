@@ -1,6 +1,6 @@
 import Box from "@mui/material/Box";
 import Header from '../../components/AModule/Header';
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Table, TableContainer, TableHead, TableRow, TableCell, TableBody, Paper, Button } from '@mui/material';
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
