@@ -64,12 +64,12 @@ const Report = () => {
       }
   };
 
-  const setTableName = async (e) => {
-    setSelectedTable(e.target.value);
-    tablename = e.target.value;
-    console.log("Table is : ", tablename)
+  // const setTableName = async (e) => {
+  //   setSelectedTable(e.target.value);
+  //   tablename = e.target.value;
+  //   console.log("Table is : ", tablename)
 
-  }
+  // }
 
   // useEffect(() => {
   //     fetchData();
