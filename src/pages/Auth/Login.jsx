@@ -42,7 +42,7 @@ export default function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // console.log("formdata is : ", formData);
+    console.log("formdata is : ", formData);
 
     try {
       dispatch(signInUserStart());
@@ -55,7 +55,7 @@ export default function Login() {
       // setFormData(response?.data);
 
       if (response.success === false) {
-        dispatch(signInUserFailure(response.message));
+        dispatch(signInUserFailure(response.data));
         return;
       }
       dispatch(signInUserSuccess(response.data.data));
@@ -92,35 +92,36 @@ export default function Login() {
 
 
     } catch (error) {
+      console.log("Error is : ",error.response.data.message)
       // setError("Invalid credentials");
-      dispatch(signInUserFailure(error?.message));
+      dispatch(signInUserFailure(error.response.data.message));
       // console.error(error.response.data);
     }
   };
 
   return (
-    <div className="flex justify-center items-center h-screen">
+    <div className="flex justify-center items-center h-[100vh]">
       <Card
         color="transparent"
         shadow={true}
-        className="border border-gray-300 w-85 p-6 rounded-md"
+        className="border bg-white border-gray-300 w-1/3 h-1/2 p-6 rounded-md flex flex-col justify-between"
       >
         <Typography
           variant="h4"
           color="blue-gray"
-          className="mb-4 text-center text-bold"
+          className="mb-4 text-center w-full text-bold"
         >
           Login
         </Typography>
 
-        <form className="mt-2" 
-        onSubmit={handleSubmit}  >
+        <form className="mt-2 flex flex-col justify-between flex-grow " 
+        onSubmit={handleSubmit}>
           <div className="mb-4 flex justify-between items-center">
-            <div>
+            <div className="w-full">
               <div className="flex justify-between">
-                <Typography variant="h6" color="blue-gray">
+                {/**<Typography variant="h6" color="blue-gray">
                   Gmail
-                </Typography>
+  </Typography> **/}
               </div>
               <Input
                 size="lg"
@@ -134,9 +135,9 @@ export default function Login() {
           </div>
 
           <div className="mb-4">
-            <Typography variant="h6" color="blue-gray">
+            {/**<Typography variant="h6" color="blue-gray">
               Password
-            </Typography>
+</Typography> **/}
             <Input
               size="lg"
               name="password"
@@ -155,7 +156,7 @@ export default function Login() {
              "login" }
           </Button>
 
-          {error && <p className="error">{error}</p>}
+          {error && <p className="error text-center text-red-600">{error}</p> }
           {/**  && <p className="success">Login successful!</p> */}
 
           <div className="text-center">
@@ -168,6 +169,7 @@ export default function Login() {
           </div>
         </form>
       </Card>
+
     </div>
   );
 }
