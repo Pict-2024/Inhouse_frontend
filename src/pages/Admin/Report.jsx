@@ -1,27 +1,126 @@
 // Import necessary dependencies
 import Box from "@mui/material/Box";
-import Header from '../../components/AModule/Header';
-import { useState, useEffect } from 'react';
-import { Table, TableContainer, TableHead, TableRow, TableCell, TableBody, Paper, Button } from '@mui/material';
-import jsPDF from 'jspdf';
-import 'jspdf-autotable';
-import axios from 'axios';
+import Header from "../../components/AModule/Header";
+import React, { useState, useEffect } from "react";
+import moment from "moment";
+import {
+  Table,
+  TableContainer,
+  TableHead,
+  TableRow,
+  TableCell,
+  TableBody,
+  Paper,
+  Button,
+} from "@mui/material";
+import jsPDF from "jspdf";
+import "jspdf-autotable";
+import axios from "axios";
+import { getAllRecordsAchievements, getAllRecordsAttended, getAllRecordsBook, getAllRecordsCertificate, getAllRecordsConference, getAllRecordsConsultancy, getAllRecordsContribution, getAllRecordsExtension, getAllRecordsFaculty, getAllRecordsGrants, getAllRecordsIndustrial, getAllRecordsMous, getAllRecordsPatent, getAllRecordsProfessional, getAllRecordsResearch, getAllRecordsResource, getAllRecordsTechnical, getAllRecordsWebinar } from "../../components/TModule/API_Routes";
 
 // Define the Report component
 const Report = () => {
   let tablename = "";
 
+  const tableMapping = {
+    "10_mous": "number-of_mous",
+    "11_certcourses": "cert-courses",
+    "12_prof_affiliation": "prof-aff",
+    "13_resource_person": "facultyresource",
+    "14_extension_activity": "extension-act",
+    "15_tech_comp_fest": "techfest-org",
+    "16_faculty_achievements": "faculty-achievement",
+    "17_indusvisitstoursfieldtrip": "visit-tours",
+    "18_contribution_to_bos": "contribution-bos",
+    "1__student___internship_details": "",
+    "1_research_publication": "research-pb",
+    "2__student___research_publication": "",
+    "2_book_publication": "book-pb",
+    "3__student___conference_publication": "",
+    "3_faculty_conference_publication": "faculty-pb",
+    "4__student___certificate_course_attended": "",
+    "4_grants": "grants",
+    "5__students___sports_data": "",
+    "5_consultancy_report": "cons-rep",
+    "6__students___event_participated": "",
+    "6_patent_publication": "patent-pb",
+    "7__students___event_organized": "",
+    "7_confsemworkshops": "con-sem",
+    "8__students___technical_events": "",
+    "8_sttp_fdp_conf_attended": "sf-ws",
+    "9__student___higher_education": "",
+    "9_webinarguestlec": "web-guest",
+    login_details: "",
+    register: "",
+  };
+
+  const tableRoutesMapping = (table) => {
+    const tableRoute = {
+      "1_research_publication": getAllRecordsResearch,
+      "2_book_publication": getAllRecordsBook,
+      "3_faculty_conference_publication": getAllRecordsFaculty,
+      "4_grants": getAllRecordsGrants,
+      "5_consultancy_report": getAllRecordsConsultancy,
+      "6_patent_publication": getAllRecordsPatent,
+      "7_confsemworkshops": getAllRecordsConference,
+      "8_sttp_fdp_conf_attended": getAllRecordsAttended,
+      "9_webinarguestlec": getAllRecordsWebinar,
+      "10_mous": getAllRecordsMous,
+      "11_certcourses": getAllRecordsCertificate,
+      "12_prof_affiliation": getAllRecordsProfessional,
+      "13_resource_person": getAllRecordsResource,
+      "14_extension_activity": getAllRecordsExtension,
+      "15_tech_comp_fest": getAllRecordsTechnical,
+      "16_faculty_achievements": getAllRecordsAchievements,
+      "17_indusvisitstoursfieldtrip": getAllRecordsIndustrial,
+      "18_contribution_to_bos": getAllRecordsContribution,
+    };
+    console.log("Returned table:",tableRoute[table])
+    return tableRoute[table];
+  };
+
   const [tableData, setTableData] = useState([]);
-  const [selectedTable, setSelectedTable] = useState('');
+  const [selectedTable, setSelectedTable] = useState("");
   const [tableNames, setTableNames] = useState([]);
   const [columnNames, setColumnNames] = useState([]);
   const [formFilters, setFormFilters] = useState({});
-  const [apiUrl, setApiUrl] = useState("http://localhost:5000/api/v1/general/allcolumns");
+  const [apiUrl, setApiUrl] = useState(
+    "http://localhost:5000/api/v1/general/allcolumns"
+  );
+  const [tableRows, setTableRows] = useState([]);
+
+  //get all records
+  const getAllRecords = async () => {
+    try {
+      const apiurl = tableRoutesMapping(selectedTable);
+      console.log("Table Name: ", selectedTable);
+      console.log("apiRoute in getAllRecords:", apiurl);
+
+      const response = await axios.get(apiurl, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      console.log(response.data.data);
+      setTableRows(response.data.data);
+    } catch (error) {
+      console.error("Error fetching records:", error.message);
+    }
+  };
+
+  useEffect(() => {
+    if (selectedTable) {
+      getAllRecords();
+    }
+  }, [selectedTable]); 
 
   // Function to fetch all tables
   const getAllTables = async () => {
     try {
-      const response = await axios.get('http://localhost:5000/api/v1/general/alltables');
+      const response = await axios.get(
+        "http://localhost:5000/api/v1/general/alltables"
+      );
       const fetchedTableNames = response.data.data;
       setTableNames(fetchedTableNames);
       // console.log("table names are : ", fetchedTableNames);
@@ -36,11 +135,12 @@ const Report = () => {
 
   const getAllColumns = async () => {
     try {
-      const response = await axios.post(`http://localhost:5000/api/v1/general/allcolumns?tablename=${tablename}`);
+      const response = await axios.post(
+        `http://localhost:5000/api/v1/general/allcolumns?tablename=${tablename}`
+      );
       return response.data; // Returning the data for further processing
     } catch (error) {
-      console.log("Error:", error.message);
-      throw error; // Rethrowing the error for the calling code to handle
+      console.log("error is: ", error.message);
     }
   };
 
@@ -63,11 +163,13 @@ const Report = () => {
 
   const updateApiUrl = () => {
     const queryParameters = Object.entries(formFilters)
-      .filter(([key, value]) => value !== undefined && value !== '')
+      .filter(([key, value]) => value !== undefined && value !== "")
       .map(([key, value]) => `${key}=${encodeURIComponent(value)}`)
-      .join('&');
+      .join("&");
 
-    setApiUrl(`http://localhost:5000/api/v1/teacher/${tablename}/filter?${queryParameters}`);
+    setApiUrl(
+      `http://localhost:5000/api/v1/teacher/${tableMapping[selectedTable]}/filter?${queryParameters}`
+    );
   };
 
   useEffect(() => {
@@ -76,31 +178,37 @@ const Report = () => {
 
   const generatePDF = () => {
     const doc = new jsPDF();
-    const tableRows = [];
+    const tableRow = [];
+    let headersAdded = false;
 
-    doc.setFont('helvetica', 'bold');
+    doc.setFont("helvetica", "bold");
     doc.setFontSize(16);
     doc.text("PUNE INSTITUTE OF COMPUTER TECHNOLOGY", 20, 20);
 
     doc.setFontSize(14);
     doc.text(`Report on ${selectedTable}`, 20, 30);
 
-    const tableHeader = columnNames.map((header) => header.Field);
-    tableRows.push(tableHeader);
+    // Add table rows
+    tableRows.forEach((row) => {
+      const rowData = columnNames.map((columnName) => row[columnName.Field]);
+      tableRow.push(rowData);
 
-    tableData.forEach(row => {
-      const rowData = columnNames.map(columnName => row[columnName.Field]);
-      tableRows.push(rowData);
+      // Add headers only once
+      if (!headersAdded) {
+        const tableHeader = columnNames.map((header) => header.Field);
+        tableRow.unshift(tableHeader);
+        headersAdded = true;
+      }
     });
 
     doc.autoTable({
-      head: [tableHeader],
-      body: tableRows,
+      head: [tableRow[0]], // Use the first element as headers
+      body: tableRow.slice(1), // Exclude the headers from the body
       startY: 40,
     });
 
     console.log("Table name is : ", selectedTable);
-    doc.save('report.pdf');
+    doc.save("report.pdf");
   };
 
   const setTable = async (e) => {
@@ -112,15 +220,21 @@ const Report = () => {
   };
 
   const handleSubmit = () => {
-    console.log(apiUrl);
+    console.log("form filters are : ", formFilters);
+    console.log("API URL is : ", apiUrl);
+
     fetch(apiUrl, {
-      method: 'POST',
+      method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
     })
       .then((response) => response.json())
-      .then((data) => console.log("Data retrieved successfully", data))
+      .then((data) => {
+        console.log("Data retrieved successfully", data);
+        // Update the table rows state with the fetched data
+        setTableRows(data.data);
+      })
       .catch((error) => console.error("Error retrieving data", error));
   };
 
@@ -136,40 +250,49 @@ const Report = () => {
   const renderInputField = (column) => {
     const { Field, Type } = column;
 
-    if (Type.includes('varchar')) {
+    if (Type.includes("varchar")) {
       return (
-        <input
-          key={Field}
-          type="text"
-          placeholder={`Enter ${Field}`}
-          value={formFilters[Field] || ''}
-          onChange={(e) => handleInputChange(Field, e.target.value)}
-        />
-      );
-    } else if (Type.includes('int')) {
-      return (
-        <input
-          key={Field}
-          type="number"
-          placeholder={`Enter ${Field}`}
-          value={formFilters[Field] || ''}
-          onChange={(e) => handleInputChange(Field, e.target.value)}
-        />
-      );
-    } else if (Type === 'date') {
-      return (
-        <div key={Field}>
-          <label>{`${Field} Start Date`}</label>
+        <div key={Field} className="mb-4 py-3 bg-white rounded-lg">
+          {/* <label className="block mb-2">{`Enter ${Field}`}</label> */}
           <input
-            type="date"
-            value={formFilters[`${Field}_start`] || ''}
-            onChange={(e) => handleInputChange(`${Field}_start`, e.target.value)}
+            type="text"
+            placeholder={`Enter ${Field}`}
+            value={formFilters[Field] || ""}
+            onChange={(e) => handleInputChange(Field, e.target.value)}
+            className="w-full  py-2 border border-black rounded-md "
           />
-          <label>{`${Field} End Date`}</label>
+        </div>
+      );
+    } else if (Type.includes("int")) {
+      return (
+        <div key={Field} className="mb-4 py-3 bg-white rounded-lg">
+          {/* <label className="block mb-2">{`Enter ${Field}`}</label> */}
+          <input
+            type="number"
+            value={formFilters[Field] || ""}
+            onChange={(e) => handleInputChange(Field, e.target.value)}
+            className="w-full py-2 border border-black rounded-md "
+          />
+        </div>
+      );
+    } else if (Type === "date") {
+      return (
+        <div key={Field} className="mb-4 py-3 bg-white rounded-lg">
+          {/* <label className="block mb-2">{`${Field} Start Date`}</label> */}
           <input
             type="date"
-            value={formFilters[`${Field}_end`] || ''}
+            value={formFilters[`${Field}_start`] || ""}
+            onChange={(e) =>
+              handleInputChange(`${Field}_start`, e.target.value)
+            }
+            className="w-full mb-2  py-2 border border-black rounded-md "
+          />
+          {/* <label className="block mb-2">{`${Field} End Date`}</label> */}
+          <input
+            type="date"
+            value={formFilters[`${Field}_end`] || ""}
             onChange={(e) => handleInputChange(`${Field}_end`, e.target.value)}
+            className="w-full  py-2 border border-black rounded-md "
           />
         </div>
       );
@@ -181,9 +304,7 @@ const Report = () => {
   return (
     <>
       <Box sx={{}}>
-        <div>
-          {/* Header component */}
-        </div>
+        <div>{/* Header component */}</div>
 
         <div className="flex flex-col justify-center items-center gap-4">
           <label>Select Table:</label>
@@ -200,12 +321,41 @@ const Report = () => {
           </select>
           <label>Select Filters:</label>
 
-          <div>
-            {renderInputFields()}
-            <button onClick={handleSubmit}>Submit</button>
+          <div className="flex flex-col border-2 border-red-500 justify-end align-items-center m-2 p-4">
+            <div className="flex flex-row  gap-4 flex-wrap">
+              {renderInputFields()}
+            </div>
+            <Button variant="contained" className="w-20" onClick={handleSubmit}>
+              Submit
+            </Button>
           </div>
 
-          
+          <TableContainer component={Paper}>
+            <Table>
+              <TableHead>
+                <TableRow>
+                  {/* Display column headers */}
+                  {columnNames.map((column) => (
+                    <TableCell key={column.Field}>{column.Field}</TableCell>
+                  ))}
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {/* Display table rows */}
+                {tableRows.map((row, rowIndex) => (
+                  <TableRow key={rowIndex}>
+                    {columnNames.map((column) => (
+                      <TableCell key={column.Field}>
+                        {column.Type === "date"
+                          ? moment(row[column.Field]).format("DD-MM-YYYY")
+                          : row[column.Field]}
+                      </TableCell>
+                    ))}
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
 
           <TableContainer component={Paper}>
             {/* Display the generated report */}
