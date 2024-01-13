@@ -68,14 +68,14 @@ export default function Teachers() {
   // const { currentUser } = useSelector((state) => state.user);
 
   let columns = [
-    { field: "Name", headerName: "Name", width: 300, editable: true },
+    { field: "Name", headerName: "Name", width: 300, editable: false },
     {
       field: "Email",
       headerName: "Email",
       width: 300,
       align: "left",
       headerAlign: "left",
-      editable: true,
+      editable: false,
     },
     {
       field: "SpecialAccess",
@@ -185,11 +185,32 @@ export default function Teachers() {
   };
 
   const handleEditClick = (Email) => () => {
+    
+    console.log("-------------------------------")
+    console.log("Edit click hit");
+    console.log("-------------------------------")
     setRowModesModel({ ...rowModesModel, [Email]: { mode: GridRowModes.Edit } });
   };
 
-  const handleSaveClick = (Email) => () => {
-    setRowModesModel({ ...rowModesModel, [Email]: { mode: GridRowModes.View } });
+  const handleSaveClick = async (Email) => {
+
+    console.log("-------------------------------")
+    console.log("Save click hit");
+    console.log("-------------------------------")
+
+    try {
+      const editedRow = rows.find((row) => row.Email === Email);
+      const apiurl = `http://localhost:5000/api/v1/general/update-access?Email=${Email}&SpecialAccess=${editedRow.SpecialAccess}`;
+      const response = await axios.post(apiurl);
+      console.log("Response is : ", response.data.data)
+  
+      setRowModesModel({ ...rowModesModel, [Email]: { mode: GridRowModes.View } });
+    } catch (error) {
+      console.log(error);
+      // Handle error
+    }
+
+    // setRowModesModel({ ...rowModesModel, [Email]: { mode: GridRowModes.View } });
   };
 
   const handleDeleteClick = (Email) => () => {
