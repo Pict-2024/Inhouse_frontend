@@ -1,6 +1,7 @@
+// Import necessary dependencies
 import Box from "@mui/material/Box";
 import Header from "../../components/AModule/Header";
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import {
   Table,
   TableContainer,
@@ -10,12 +11,15 @@ import {
   TableBody,
   Paper,
   Button,
+  TextField,
 } from "@mui/material";
 import jsPDF from "jspdf";
 import "jspdf-autotable";
 import axios from "axios";
 
+// Define the Report component
 const Report = () => {
+  // Define initial state variables
   let tablename = "";
   let columnnames = [];
 
@@ -31,44 +35,32 @@ const Report = () => {
     "http://localhost:5000/api/v1/general/allcolumns"
   );
 
+  // Function to fetch all tables
   const getAllTables = async () => {
     try {
       const response = await axios.get(
         "http://localhost:5000/api/v1/general/alltables"
       );
       setTableNames(response.data.data);
-      // console.log("table names are : ", response.data.data);
+      console.log("table selected:", selectedTable);
     } catch (error) {
       console.log("error is : \n", error.message);
     }
   };
 
-  // const getAllColumns = async () => {
-  //   try {
-  //       const response = await axios.get(`http://localhost:5000/api/v1/general/allcolumns?tablename=${selectedTable}`);
-  //       console.log("columns  is : ", response);
-  //   } catch (error) {
-  //     console.log("Error is : ", error.message);
-  //   }
-  // };
-
+  // useEffect hook to fetch all tables on component mount
   useEffect(() => {
     getAllTables();
   }, []);
 
+  // API endpoint for fetching columns
   const columnAPI = "http://localhost:5000/api/v1/general/allcolumns";
 
-  const getAllColumns = async () => {
+  // Function to fetch all columns for a given table
+  const getAllColumns = async (table) => {
     try {
-      const response = await axios.post(`${columnAPI}?tablename=${tablename}`, {
-        headers: {
-          "Content-Type": "application/json",
-        },
-        data: {
-          tablename,
-        },
-      });
-      // console.log("columns are: ", response.data);
+      const response = await axios.post(`${columnAPI}?tablename=${table}`);
+      setColumnNames(response.data.data);
       return response.data; // Returning the data for further processing
     } catch (error) {
       console.log("Error:", error.message);
@@ -76,34 +68,39 @@ const Report = () => {
     }
   };
 
-  // Usage example
+  // Function to set the selected table and fetch columns
+  const setTable = async (e) => {
+    const selectedTableName = e.target.value;
+    setSelectedTable(selectedTableName); // Update selectedTable state
+    const columnsData = await getAllColumns(selectedTableName);
+    setColumnNames(columnsData.data);
+  };
+
+  // useEffect hook to fetch columns when the tablename changes
+  useEffect(() => {
+    fetchData();
+  }, [selectedTable]); // Trigger fetchData whenever tablename changes
+
+  // Function to fetch data based on the selected filters
   const fetchData = async () => {
     try {
       const columnsData = await getAllColumns(selectedTable);
-      console.log("Table is:", tablename);
-      console.log("Column Names are :", columnsData.data);
       columnnames = columnsData.data;
-      console.log("Return value of columns columnnames : ", columnnames);
       setColumnNames(columnsData.data);
-      console.log("columnNames : ", columnNames);
+      console.log("columnnames", columnnames);
       if (columnsData.data.length === 0) {
         setColumnNames(columnsData.data);
-        console.log("Column names are : ", columnNames);
       }
-      console.log("Table name is : ", selectedTable);
     } catch (error) {
       console.error("Error fetching columns data:", error.message);
     }
   };
-
+  // useEffect hook to update API URL whenever formFilters change
   useEffect(() => {
-    fetchData();
-  }, [tablename]); // Trigger fetchData whenever tablename changes
+    updateApiUrl();
+  }, [formFilters]);
 
-  const handleInputChange = (fieldName, value) => {
-    setFormFilters((prevData) => ({ ...prevData, [fieldName]: value }));
-  };
-
+  // Function to update API URL based on formFilters
   const updateApiUrl = () => {
     const queryParameters = Object.entries(formFilters)
       .filter(([key, value]) => value !== undefined && value !== "")
@@ -115,11 +112,7 @@ const Report = () => {
     );
   };
 
-  // Update API URL whenever the form data changes
-  useEffect(() => {
-    updateApiUrl();
-  }, [formFilters]);
-
+  // Function to generate PDF
   const generatePDF = () => {
     const doc = new jsPDF();
     const tableRows = [];
@@ -132,7 +125,6 @@ const Report = () => {
     // Add table name
     doc.setFontSize(14);
     doc.text(`Report on ${selectedTable}`, 20, 30);
-
     // Add table header
     const tableHeader = columnNames;
     tableRows.push(tableHeader);
@@ -155,20 +147,15 @@ const Report = () => {
     doc.save("report.pdf");
   };
 
-  const setTable = async (e) => {
-    console.log("Value is : ", e.target.value);
-
-    tablename = e.target.value;
-    console.log("Table is : ", tablename);
-    setSelectedTable(e.target.value); // Update selectedTable state
-    // fetchData(); // Remove this line as useEffect will handle it
+  // Function to handle form input changes
+  const handleInputChange = (fieldName, value) => {
+    setFormFilters((prevData) => ({ ...prevData, [fieldName]: value }));
   };
 
+  // Function to handle form submission
   const handleSubmit = () => {
-    // Send data to the backend using the generated API URL
-    // Example using fetch:
     fetch(apiUrl, {
-      method: "GET", // Adjust the method accordingly
+      method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
@@ -178,53 +165,59 @@ const Report = () => {
       .catch((error) => console.error("Error retrieving data", error));
   };
 
-  const renderInputField = (Field, Type) => {
-    console.log("Rendering component called");
-    // const { Field, Type } = column;
-    console.log("====================================");
-    console.log("Field is : ", Field);
-    console.log("Type is : ", Type);
-    console.log("====================================");
+  // Function to render input field based on column type
 
-    if (Type.includes("varchar")) {
-      return (
-        <input
-          type="text"
-          value={formFilters[Field] || ""}
-          onChange={(e) => handleInputChange(Field, e.target.value)}
-        />
-      );
-    } else if (Type.includes("int")) {
-      return (
-        <input
-          type="number"
-          value={formFilters[Field] || ""}
-          onChange={(e) => handleInputChange(Field, e.target.value)}
-        />
-      );
-    } else if (Type === "date") {
-      // Assuming you have a DatePicker component
-      return (
-        <>
-          <input
-            type="date"
-            value={formFilters[`${Field}_start`] || ""}
-            onChange={(e) =>
-              handleInputChange(`${Field}_start`, e.target.value)
-            }
+  const renderInputFields = () => {
+    return columnNames.map((column, index) => (
+      <div key={index}>
+        {column.Type.includes("varchar") && (
+          <TextField
+            label={column.Field}
+            value={formFilters[column.Field] || ""}
+            onChange={(e) => handleInputChange(column.Field, e.target.value)}
+            fullWidth
+            margin="normal"
           />
-          <input
-            type="date"
-            value={formFilters[`${Field}_end`] || ""}
-            onChange={(e) => handleInputChange(`${Field}_end`, e.target.value)}
+        )}
+  
+        {column.Type.includes("int") && (
+          <TextField
+            label={column.Field}
+            type="number"
+            value={formFilters[column.Field] || ""}
+            onChange={(e) => handleInputChange(column.Field, e.target.value)}
+            fullWidth
+            margin="normal"
           />
-        </>
-      );
-    }
-
-    return null;
+        )}
+  
+        {column.Type === "date" && (
+          <div>
+            <TextField
+              label={`${column.Field} Start`}
+              type="date"
+              value={formFilters[`${column.Field}_start`] || ""}
+              onChange={(e) => handleInputChange(`${column.Field}_start`, e.target.value)}
+              fullWidth
+              margin="normal"
+            />
+            <TextField
+              label={`${column.Field} End`}
+              type="date"
+              value={formFilters[`${column.Field}_end`] || ""}
+              onChange={(e) => handleInputChange(`${column.Field}_end`, e.target.value)}
+              fullWidth
+              margin="normal"
+            />
+          </div>
+        )}
+      </div>
+    ));
   };
 
+
+
+  // JSX structure for rendering the component
   return (
     <>
       <Box
@@ -245,7 +238,6 @@ const Report = () => {
 
         <div className="flex flex-col justify-center items-center gap-4">
           <label>Select Table:</label>
-          {/* {console.log("Rendering dropdown with table names:", tableNames)} */}
           <select onChange={(e) => setTable(e)} style={{ width: "200px" }}>
             {tableNames.map((table, index) => (
               <option
@@ -259,40 +251,10 @@ const Report = () => {
           </select>
           <label>Select Filters:</label>
           <div>
-            {/* Render input fields based on column data */}
-            {columnNames.length > 0 &&
-              columnnames.map(
-                (column, index) => (
-                  console.log("Column is : ", column),
-                  (
-                    <div key={index}>
-                      <label>{column.Field}</label>
-                      {renderInputField(column.Field, column.Type)}
-                    </div>
-                  )
-                )
-              )}
-
-            {/* Submit button */}
+            {renderInputFields()}
             <button onClick={handleSubmit}>Submit</button>
           </div>
-          {/* Checkbox for selecting filters */}
-          {/* Use columnNames fetched from the backend API */}
-          {/* <div>
-            {columnNames.map((column) => (
-              <label key={column}>
-                <input
-                  type="checkbox"
-                  value={column.Field}
-                  checked={selectedFilters.includes(column.Field)}
-                  onChange={() => setSelectedFilters(prevFilters => (
-                    prevFilters.includes(column.Field) ? prevFilters.filter(f => f !== column.Field) : [...prevFilters, column.Field]
-                  ))}
-                />
-                {column}
-              </label>
-            ))}
-          </div> */}
+
           {/* Display the generated report */}
           <TableContainer component={Paper}>
             <Table>
@@ -314,6 +276,7 @@ const Report = () => {
               </TableBody>
             </Table>
           </TableContainer>
+
           {/* Button to generate PDF */}
           <Button variant="contained" onClick={generatePDF}>
             Generate PDF
