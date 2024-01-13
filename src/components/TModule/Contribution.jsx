@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Card, Input, Button, Typography } from "@material-tailwind/react";
+import { Card, Input, Button, Typography,Select, Option } from "@material-tailwind/react";
 import { useSelector } from "react-redux";
 import axios from "axios";
 import { addRecordsContribution } from "./API_Routes";
@@ -47,17 +47,26 @@ export default function Contribution() {
 
         <form className="mt-8 mb-2" onSubmit={handleSubmit}>
           <div className="mb-4 flex flex-wrap -mx-4">
-            <div className="w-full md:w-1/2 px-4 mb-4">
+            <div className="w-full  px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
                 Department
               </Typography>
-              <Input
+              <Select
                 size="lg"
                 name="Department"
-                value={formData.Department}
                 label="Department"
-                onChange={handleOnChange}
-              />
+                value={formData.Department}
+                onChange={(value) =>
+                  handleOnChange({
+                    target: { name: "Department", value },
+                  })
+                }
+              >
+                <Option value="CS">CS</Option>
+                <Option value="IT">IT</Option>
+                <Option value="EnTC">EnTC</Option>
+                <Option value="FE">FE</Option>
+              </Select>
             </div>
           </div>
 

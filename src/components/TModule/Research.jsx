@@ -1,4 +1,4 @@
-import {  useState } from "react";
+import { useState } from "react";
 import {
   Card,
   Select,
@@ -63,8 +63,6 @@ export default function Research() {
     console.log("Response is : ", response.data);
   };
 
-
-
   return (
     <>
       <Card
@@ -86,13 +84,23 @@ export default function Research() {
               <Typography variant="h6" color="blue-gray" className="mb-3">
                 Department
               </Typography>
-              <Input
+              <Select
+                name="Department"
                 size="lg"
                 label="Department"
-                name="Department"
                 value={formData.Department}
-                onChange={handleChange}
-              />
+                onChange={(value) =>
+                  handleChange({
+                    target: { name: "Department", value },
+                  })
+                }
+                // onChange={handleOnChange}
+              >
+                <Option value="CS">CS</Option>
+                <Option value="IT">IT</Option>
+                <Option value="EnTC">EnTC</Option>
+                <Option value="FE">FE</Option>
+              </Select>
             </div>
           </div>
 

@@ -1,5 +1,12 @@
 import { useState } from "react";
-import { Card, Input, Button, Typography } from "@material-tailwind/react";
+import {
+  Card,
+  Input,
+  Button,
+  Typography,
+  Select,
+  Option,
+} from "@material-tailwind/react";
 import { useSelector } from "react-redux";
 import { addRecordsPatent } from "./API_Routes";
 import axios from "axios";
@@ -10,7 +17,7 @@ export default function PatentPublication() {
   const [formData, setFormData] = useState({
     T_ID: null,
     Username: currentUser?.Email,
-    departmentName: "",
+    Name_of_the_Department: "",
     patentApplicationNo: "",
     patentStatus: "",
     inventorName: "",
@@ -43,7 +50,6 @@ export default function PatentPublication() {
     // console.log(formData);
     const response = await axios.post(addRecordsPatent, formData);
     console.log("Response is : ", response.data);
-    
   };
 
   return (
@@ -67,13 +73,22 @@ export default function PatentPublication() {
               <Typography variant="h6" color="blue-gray" className="mb-3">
                 Name of Department
               </Typography>
-              <Input
+              <Select
+                name="Name_of_the_Department"
                 size="lg"
-                name="departmentName"
-                value={formData.departmentName}
-                onChange={handleChange}
-                label="Name of Department"
-              />
+                label="Department"
+                value={formData.Name_of_the_Department}
+                onChange={(value) =>
+                  handleChange({
+                    target: { name: "Name_of_the_Department", value },
+                  })
+                }
+              >
+                <Option value="CS">CS</Option>
+                <Option value="IT">IT</Option>
+                <Option value="EnTC">EnTC</Option>
+                <Option value="FE">FE</Option>
+              </Select>
             </div>
           </div>
           <div className="mb-4 flex flex-wrap -mx-4">
@@ -93,13 +108,20 @@ export default function PatentPublication() {
               <Typography variant="h6" color="blue-gray" className="mb-3">
                 Status of Patent (Published / Granted)
               </Typography>
-              <Input
+              <Select
+                name="Status_of_Patent_Pub"
                 size="lg"
-                name="patentStatus"
-                value={formData.patentStatus}
-                onChange={handleChange}
-                label="Status of Patent (Published / Granted)"
-              />
+                label="Status"
+                value={formData.Status_of_Patent_Pub}
+                onChange={(value) =>
+                  handleChange({
+                    target: { name: "Status_of_Patent_Pub", value },
+                  })
+                }
+              >
+                <Option value="Published">Published</Option>
+                <Option value="Granted">Granted</Option>
+              </Select>
             </div>
           </div>
           <div className="mb-4 flex flex-wrap -mx-4">

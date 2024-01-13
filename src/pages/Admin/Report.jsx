@@ -12,11 +12,31 @@ import {
   TableBody,
   Paper,
   Button,
+  TablePagination,
 } from "@mui/material";
 import jsPDF from "jspdf";
 import "jspdf-autotable";
 import axios from "axios";
-import { getAllRecordsAchievements, getAllRecordsAttended, getAllRecordsBook, getAllRecordsCertificate, getAllRecordsConference, getAllRecordsConsultancy, getAllRecordsContribution, getAllRecordsExtension, getAllRecordsFaculty, getAllRecordsGrants, getAllRecordsIndustrial, getAllRecordsMous, getAllRecordsPatent, getAllRecordsProfessional, getAllRecordsResearch, getAllRecordsResource, getAllRecordsTechnical, getAllRecordsWebinar } from "../../components/TModule/API_Routes";
+import {
+  getAllRecordsAchievements,
+  getAllRecordsAttended,
+  getAllRecordsBook,
+  getAllRecordsCertificate,
+  getAllRecordsConference,
+  getAllRecordsConsultancy,
+  getAllRecordsContribution,
+  getAllRecordsExtension,
+  getAllRecordsFaculty,
+  getAllRecordsGrants,
+  getAllRecordsIndustrial,
+  getAllRecordsMous,
+  getAllRecordsPatent,
+  getAllRecordsProfessional,
+  getAllRecordsResearch,
+  getAllRecordsResource,
+  getAllRecordsTechnical,
+  getAllRecordsWebinar,
+} from "../../components/TModule/API_Routes";
 
 // Define the Report component
 const Report = () => {
@@ -75,7 +95,7 @@ const Report = () => {
       "17_indusvisitstoursfieldtrip": getAllRecordsIndustrial,
       "18_contribution_to_bos": getAllRecordsContribution,
     };
-    console.log("Returned table:",tableRoute[table])
+    console.log("Returned table:", tableRoute[table]);
     return tableRoute[table];
   };
 
@@ -88,6 +108,17 @@ const Report = () => {
     "http://localhost:5000/api/v1/general/allcolumns"
   );
   const [tableRows, setTableRows] = useState([]);
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
+
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(+event.target.value);
+    setPage(0);
+  };
 
   //get all records
   const getAllRecords = async () => {
@@ -113,7 +144,7 @@ const Report = () => {
     if (selectedTable) {
       getAllRecords();
     }
-  }, [selectedTable]); 
+  }, [selectedTable]);
 
   // Function to fetch all tables
   const getAllTables = async () => {
@@ -304,14 +335,19 @@ const Report = () => {
   return (
     <>
       <Box sx={{}}>
-        <div>{/* Header component */}</div>
+        {/* <div><Header/></div> */}
 
         <div className="flex flex-col justify-center items-center gap-4">
-          <label>Select Table:</label>
-          <select onChange={(e) => setTable(e)} style={{ width: "200px" }}>
+          <label className="block text-gray-700 text-sm font-bold mb-2">
+            Select Table:
+          </label>
+          <select
+            onChange={(e) => setTable(e)}
+            className="border border-gray-300 rounded-md p-2 w-200 focus:outline-none focus:ring focus:border-blue-300 transition-all duration-300 ease-in-out"
+          >
             {tableNames.map((table, index) => (
               <option
-                className="px-4 py-2"
+                className="py-2 hover:bg-blue-100"
                 key={index}
                 value={table.Tables_in_inhouse}
               >
@@ -319,9 +355,10 @@ const Report = () => {
               </option>
             ))}
           </select>
+
           <label>Select Filters:</label>
 
-          <div className="flex flex-col border-2 border-red-500 justify-end align-items-center m-2 p-4">
+          <div className="flex flex-col justify-end align-items-center m-2 p-4">
             <div className="flex flex-row  gap-4 flex-wrap">
               {renderInputFields()}
             </div>
@@ -334,28 +371,41 @@ const Report = () => {
             <Table>
               <TableHead>
                 <TableRow>
-                  {/* Display column headers */}
                   {columnNames.map((column) => (
                     <TableCell key={column.Field}>{column.Field}</TableCell>
                   ))}
                 </TableRow>
               </TableHead>
               <TableBody>
-                {/* Display table rows */}
-                {tableRows.map((row, rowIndex) => (
-                  <TableRow key={rowIndex}>
-                    {columnNames.map((column) => (
-                      <TableCell key={column.Field}>
-                        {column.Type === "date"
-                          ? moment(row[column.Field]).format("DD-MM-YYYY")
-                          : row[column.Field]}
-                      </TableCell>
+                {tableRows &&
+                  tableRows
+                    .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                    .map((row, rowIndex) => (
+                      <TableRow key={rowIndex}>
+                        {columnNames.map((column) => (
+                          <TableCell key={column.Field}>
+                            {column.Type === "date"
+                              ? moment(row[column.Field]).format("DD-MM-YYYY")
+                              : row[column.Field]}
+                          </TableCell>
+                        ))}
+                      </TableRow>
                     ))}
-                  </TableRow>
-                ))}
               </TableBody>
             </Table>
           </TableContainer>
+
+          <TablePagination
+            rowsPerPageOptions={[10, 25, 50]}
+            component="div"
+            count={tableRows ? tableRows.length : 0}
+            rowsPerPage={rowsPerPage}
+            page={page}
+            onPageChange={handleChangePage}
+            onRowsPerPageChange={handleChangeRowsPerPage}
+          />
+
+          
 
           <TableContainer component={Paper}>
             {/* Display the generated report */}

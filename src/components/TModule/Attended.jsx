@@ -65,13 +65,22 @@ export default function Attended() {
               <Typography variant="h6" color="blue-gray" className="mb-3">
                 Department
               </Typography>
-              <Input
+              <Select
                 id="Department"
                 size="lg"
                 label="Department"
                 value={formData.Department}
-                onChange={handleOnChange}
-              />
+                onChange={(value) =>
+                  handleOnChange({
+                    target: { id: "Department", value },
+                  })
+                }
+              >
+                <Option value="CS">CS</Option>
+                <Option value="IT">IT</Option>
+                <Option value="EnTC">EnTC</Option>
+                <Option value="FE">FE</Option>
+              </Select>
             </div>
           </div>
 
@@ -92,13 +101,24 @@ export default function Attended() {
               <Typography variant="h6" color="blue-gray" className="mb-3">
                 Type/Nature (FDP/STTP/Workshop/Conference etc)
               </Typography>
-              <Input
+              <Select
                 id="Type_Nature"
                 size="lg"
                 label="Type/Nature"
                 value={formData.Type_Nature}
-                onChange={handleOnChange}
-              />
+                onChange={(value) =>
+                  handleOnChange({
+                    target: { id: "Type_Nature", value },
+                  })
+                }
+              >
+                <Option value="FDP">FDP</Option>
+                <Option value="STTP">STTP</Option>
+                <Option value="Workshop">Workshop</Option>
+                <Option value="Webinar">Webinar</Option>
+                <Option value="Conference">Conference</Option>
+                <Option value="Other">Other</Option>
+              </Select>
             </div>
           </div>
 
@@ -167,9 +187,10 @@ export default function Attended() {
                 label="Select Mode"
                 value={formData.Mode_Online_Physical}
                 onChange={(value) =>
-                  handleOnChange({ target: { id: "Mode_Online_Physical", value } })
+                  handleOnChange({
+                    target: { id: "Mode_Online_Physical", value },
+                  })
                 }
-                // onChange={handleOnChange}
               >
                 <Option value="Online">Online</Option>
                 <Option value="Physical">Physical</Option>

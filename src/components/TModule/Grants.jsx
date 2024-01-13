@@ -76,17 +76,26 @@ export default function Grants() {
 
         <form className="mt-8 mb-2" onSubmit={handleSubmit}>
           <div className="mb-4 flex flex-wrap -mx-4">
-            <div className="w-full md:w-1/2 px-4 mb-4">
+            <div className="w-full px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
                 Department
               </Typography>
-              <Input
-                size="lg"
+              <Select
                 name="Department"
-                value={formData.Department}
-                onChange={handleChange}
+                size="lg"
                 label="Department"
-              />
+                value={formData.Department}
+                onChange={(value) =>
+                  handleChange({
+                    target: { name: "Department", value },
+                  })
+                }
+              >
+                <Option value="CS">CS</Option>
+                <Option value="IT">IT</Option>
+                <Option value="EnTC">EnTC</Option>
+                <Option value="FE">FE</Option>
+              </Select>
             </div>
           </div>
 

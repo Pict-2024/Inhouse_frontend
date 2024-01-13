@@ -20,8 +20,8 @@ export default function TechnicalCompetitions() {
   );
 
   const [formData, setFormData] = useState({
-    T_ID:null,
-    Username:currentUser?.Email,
+    T_ID: null,
+    Username: currentUser?.Email,
     department: "",
     principalInvestigator: "",
     projectTitle: "",
@@ -56,7 +56,6 @@ export default function TechnicalCompetitions() {
     // console.log(formData);
     const response = await axios.post(addRecordsTechnical, formData);
     console.log("Response is : ", response.data);
-
   };
 
   return (
@@ -81,13 +80,22 @@ export default function TechnicalCompetitions() {
               <Typography variant="h6" color="blue-gray" className="mb-3">
                 Department
               </Typography>
-              <Input
+              <Select
                 size="lg"
+                name="Department"
                 label="Department"
-                name="department"
-                value={formData.department}
-                onChange={handleChange}
-              />
+                value={formData.Department}
+                onChange={(value) =>
+                  handleChange({
+                    target: { name: "Department", value },
+                  })
+                }
+              >
+                <Option value="CS">CS</Option>
+                <Option value="IT">IT</Option>
+                <Option value="EnTC">EnTC</Option>
+                <Option value="FE">FE</Option>
+              </Select>
             </div>
           </div>
 
