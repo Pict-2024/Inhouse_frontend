@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Card, Input, Button, Typography } from "@material-tailwind/react";
 import axios from "axios";
+import { Link } from "react-router-dom";
 
 export default function Register() {
   const [formData, setFormData] = useState({
@@ -78,16 +79,16 @@ export default function Register() {
   };
 
   return (
-    <div className="flex justify-center items-center h-screen">
+    <div className="flex justify-center items-center h-[100vh]">
       <Card
         color="transparent"
         shadow={true}
-        className="border border-gray-300 w-100 p-6 rounded-md"
+        className="border bg-white border-gray-300 w-1/3 h-3/5 p-6 rounded-md"
       >
         <Typography
           variant="h4"
           color="blue-gray"
-          className="mb-4 text-center text-bold"
+          className="mb-4 text-center w-full text-bold"
         >
           Register
         </Typography>
@@ -170,12 +171,21 @@ export default function Register() {
           )}
         </form>
 
+        <div className="text-center mt-2">
+            <span className="text-gray-700 mt-2 text-sm">
+              Have an account ?
+              <Link to={"/auth/login"} className="text-blue-500 mx-2">
+                login
+              </Link>
+            </span>
+        </div>
+
         {verified && (
           <p className="text-green-500 mt-2">
             Email and Password verified! You can now set your new password.
           </p>
         )}
-        {error && <p className="text-red-500 mt-2">{error}</p>}
+        {error && <p className="text-red-500 text-center mt-2">{error}</p>}
         {register && (
           <p className="text-green-500 mt-2">Registered Successfully!</p>
         )}
