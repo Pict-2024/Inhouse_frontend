@@ -1,66 +1,42 @@
 // Import necessary dependencies
 import Box from "@mui/material/Box";
-import Header from "../../components/AModule/Header";
-import { useState, useEffect } from "react";
-import {
-  Table,
-  TableContainer,
-  TableHead,
-  TableRow,
-  TableCell,
-  TableBody,
-  Paper,
-  Button,
-  TextField,
-} from "@mui/material";
-import jsPDF from "jspdf";
-import "jspdf-autotable";
-import axios from "axios";
+import Header from '../../components/AModule/Header';
+import { useState, useEffect } from 'react';
+import { Table, TableContainer, TableHead, TableRow, TableCell, TableBody, Paper, Button } from '@mui/material';
+import jsPDF from 'jspdf';
+import 'jspdf-autotable';
+import axios from 'axios';
 
 // Define the Report component
 const Report = () => {
-  // Define initial state variables
   let tablename = "";
-  let columnnames = [];
 
   const [tableData, setTableData] = useState([]);
-  const [selectedTable, setSelectedTable] = useState("");
-  const [selectedFilters, setSelectedFilters] = useState([]);
+  const [selectedTable, setSelectedTable] = useState('');
   const [tableNames, setTableNames] = useState([]);
-
   const [columnNames, setColumnNames] = useState([]);
-
   const [formFilters, setFormFilters] = useState({});
-  const [apiUrl, setApiUrl] = useState(
-    "http://localhost:5000/api/v1/general/allcolumns"
-  );
+  const [apiUrl, setApiUrl] = useState("http://localhost:5000/api/v1/general/allcolumns");
 
   // Function to fetch all tables
   const getAllTables = async () => {
     try {
-      const response = await axios.get(
-        "http://localhost:5000/api/v1/general/alltables"
-      );
-      setTableNames(response.data.data);
-      console.log("table selected:", selectedTable);
+      const response = await axios.get('http://localhost:5000/api/v1/general/alltables');
+      const fetchedTableNames = response.data.data;
+      setTableNames(fetchedTableNames);
+      // console.log("table names are : ", fetchedTableNames);
     } catch (error) {
       console.log("error is : \n", error.message);
     }
   };
 
-  // useEffect hook to fetch all tables on component mount
   useEffect(() => {
     getAllTables();
   }, []);
 
-  // API endpoint for fetching columns
-  const columnAPI = "http://localhost:5000/api/v1/general/allcolumns";
-
-  // Function to fetch all columns for a given table
-  const getAllColumns = async (table) => {
+  const getAllColumns = async () => {
     try {
-      const response = await axios.post(`${columnAPI}?tablename=${table}`);
-      setColumnNames(response.data.data);
+      const response = await axios.post(`http://localhost:5000/api/v1/general/allcolumns?tablename=${tablename}`);
       return response.data; // Returning the data for further processing
     } catch (error) {
       console.log("Error:", error.message);
@@ -68,94 +44,77 @@ const Report = () => {
     }
   };
 
-  // Function to set the selected table and fetch columns
-  const setTable = async (e) => {
-    const selectedTableName = e.target.value;
-    setSelectedTable(selectedTableName); // Update selectedTable state
-    const columnsData = await getAllColumns(selectedTableName);
-    setColumnNames(columnsData.data);
-  };
-
-  // useEffect hook to fetch columns when the tablename changes
-  useEffect(() => {
-    fetchData();
-  }, [selectedTable]); // Trigger fetchData whenever tablename changes
-
-  // Function to fetch data based on the selected filters
   const fetchData = async () => {
     try {
-      const columnsData = await getAllColumns(selectedTable);
-      columnnames = columnsData.data;
+      const columnsData = await getAllColumns();
+      console.log("Return value of columns: ", columnsData.data);
       setColumnNames(columnsData.data);
-      console.log("columnnames", columnnames);
-      if (columnsData.data.length === 0) {
-        setColumnNames(columnsData.data);
-      }
     } catch (error) {
       console.error("Error fetching columns data:", error.message);
     }
   };
-  // useEffect hook to update API URL whenever formFilters change
+
+  const handleInputChange = (Field, value) => {
+    setFormFilters({
+      ...formFilters,
+      [Field]: value,
+    });
+  };
+
+  const updateApiUrl = () => {
+    const queryParameters = Object.entries(formFilters)
+      .filter(([key, value]) => value !== undefined && value !== '')
+      .map(([key, value]) => `${key}=${encodeURIComponent(value)}`)
+      .join('&');
+
+    setApiUrl(`http://localhost:5000/api/v1/teacher/${tablename}/filter?${queryParameters}`);
+  };
+
   useEffect(() => {
     updateApiUrl();
   }, [formFilters]);
 
-  // Function to update API URL based on formFilters
-  const updateApiUrl = () => {
-    const queryParameters = Object.entries(formFilters)
-      .filter(([key, value]) => value !== undefined && value !== "")
-      .map(([key, value]) => `${key}=${encodeURIComponent(value)}`)
-      .join("&");
-
-    setApiUrl(
-      `http://localhost:5000/api/v1/teacher/${tablename}/filter?${queryParameters}`
-    );
-  };
-
-  // Function to generate PDF
   const generatePDF = () => {
     const doc = new jsPDF();
     const tableRows = [];
 
-    // Add custom headings
-    doc.setFont("helvetica", "bold");
+    doc.setFont('helvetica', 'bold');
     doc.setFontSize(16);
     doc.text("PUNE INSTITUTE OF COMPUTER TECHNOLOGY", 20, 20);
 
-    // Add table name
     doc.setFontSize(14);
     doc.text(`Report on ${selectedTable}`, 20, 30);
-    // Add table header
-    const tableHeader = columnNames;
+
+    const tableHeader = columnNames.map((header) => header.Field);
     tableRows.push(tableHeader);
 
-    // Add table data
-    tableData.forEach((row) => {
-      const rowData = Object.values(row);
+    tableData.forEach(row => {
+      const rowData = columnNames.map(columnName => row[columnName.Field]);
       tableRows.push(rowData);
     });
 
-    // AutoTable plugin to generate PDF table
     doc.autoTable({
       head: [tableHeader],
       body: tableRows,
-      startY: 40, // Set the Y position for the table
+      startY: 40,
     });
 
     console.log("Table name is : ", selectedTable);
-    // Save the PDF
-    doc.save("report.pdf");
+    doc.save('report.pdf');
   };
 
-  // Function to handle form input changes
-  const handleInputChange = (fieldName, value) => {
-    setFormFilters((prevData) => ({ ...prevData, [fieldName]: value }));
+  const setTable = async (e) => {
+    const selectedTableName = e.target.value;
+    console.log("Selected Table is: ", selectedTableName);
+    tablename = selectedTableName;
+    setSelectedTable(selectedTableName);
+    fetchData();
   };
 
-  // Function to handle form submission
   const handleSubmit = () => {
+    console.log(apiUrl);
     fetch(apiUrl, {
-      method: "POST",
+      method: 'POST',
       headers: {
         "Content-Type": "application/json",
       },
@@ -165,75 +124,65 @@ const Report = () => {
       .catch((error) => console.error("Error retrieving data", error));
   };
 
-  // Function to render input field based on column type
-
   const renderInputFields = () => {
-    return columnNames.map((column, index) => (
-      <div key={index}>
-        {column.Type.includes("varchar") && (
-          <TextField
-            label={column.Field}
-            value={formFilters[column.Field] || ""}
-            onChange={(e) => handleInputChange(column.Field, e.target.value)}
-            fullWidth
-            margin="normal"
-          />
-        )}
-  
-        {column.Type.includes("int") && (
-          <TextField
-            label={column.Field}
-            type="number"
-            value={formFilters[column.Field] || ""}
-            onChange={(e) => handleInputChange(column.Field, e.target.value)}
-            fullWidth
-            margin="normal"
-          />
-        )}
-  
-        {column.Type === "date" && (
-          <div>
-            <TextField
-              label={`${column.Field} Start`}
-              type="date"
-              value={formFilters[`${column.Field}_start`] || ""}
-              onChange={(e) => handleInputChange(`${column.Field}_start`, e.target.value)}
-              fullWidth
-              margin="normal"
-            />
-            <TextField
-              label={`${column.Field} End`}
-              type="date"
-              value={formFilters[`${column.Field}_end`] || ""}
-              onChange={(e) => handleInputChange(`${column.Field}_end`, e.target.value)}
-              fullWidth
-              margin="normal"
-            />
-          </div>
-        )}
+    return columnNames.map((column) => (
+      <div key={column.Field}>
+        <label>{column.Field}</label>
+        {renderInputField(column)}
       </div>
     ));
   };
 
+  const renderInputField = (column) => {
+    const { Field, Type } = column;
 
+    if (Type.includes('varchar')) {
+      return (
+        <input
+          key={Field}
+          type="text"
+          placeholder={`Enter ${Field}`}
+          value={formFilters[Field] || ''}
+          onChange={(e) => handleInputChange(Field, e.target.value)}
+        />
+      );
+    } else if (Type.includes('int')) {
+      return (
+        <input
+          key={Field}
+          type="number"
+          placeholder={`Enter ${Field}`}
+          value={formFilters[Field] || ''}
+          onChange={(e) => handleInputChange(Field, e.target.value)}
+        />
+      );
+    } else if (Type === 'date') {
+      return (
+        <div key={Field}>
+          <label>{`${Field} Start Date`}</label>
+          <input
+            type="date"
+            value={formFilters[`${Field}_start`] || ''}
+            onChange={(e) => handleInputChange(`${Field}_start`, e.target.value)}
+          />
+          <label>{`${Field} End Date`}</label>
+          <input
+            type="date"
+            value={formFilters[`${Field}_end`] || ''}
+            onChange={(e) => handleInputChange(`${Field}_end`, e.target.value)}
+          />
+        </div>
+      );
+    }
 
-  // JSX structure for rendering the component
+    return null;
+  };
+
   return (
     <>
-      <Box
-        sx={{
-          height: 500,
-          width: "100%",
-          "& .actions": {
-            color: "text.secondary",
-          },
-          "& .textPrimary": {
-            color: "text.primary",
-          },
-        }}
-      >
+      <Box sx={{}}>
         <div>
-          <Header category="Page" title="Report" />
+          {/* Header component */}
         </div>
 
         <div className="flex flex-col justify-center items-center gap-4">
@@ -250,34 +199,18 @@ const Report = () => {
             ))}
           </select>
           <label>Select Filters:</label>
+
           <div>
             {renderInputFields()}
             <button onClick={handleSubmit}>Submit</button>
           </div>
 
-          {/* Display the generated report */}
+          
+
           <TableContainer component={Paper}>
-            <Table>
-              <TableHead>
-                <TableRow>
-                  {columnNames.map((header) => (
-                    <TableCell key={header}>{header}</TableCell>
-                  ))}
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {tableData.map((row, rowIndex) => (
-                  <TableRow key={rowIndex}>
-                    {columnNames.map((columnName) => (
-                      <TableCell key={columnName}>{row[columnName]}</TableCell>
-                    ))}
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+            {/* Display the generated report */}
           </TableContainer>
 
-          {/* Button to generate PDF */}
           <Button variant="contained" onClick={generatePDF}>
             Generate PDF
           </Button>
