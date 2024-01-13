@@ -1,4 +1,11 @@
-import { Card, Input, Button, Typography } from "@material-tailwind/react";
+import {
+  Card,
+  Input,
+  Button,
+  Typography,
+  Option,
+  Select,
+} from "@material-tailwind/react";
 import axios from "axios";
 import { useState } from "react";
 import { useSelector } from "react-redux";
@@ -9,7 +16,7 @@ export default function WebinarConducted() {
   const [formData, setFormData] = useState({
     T_ID: null,
     Username: currentUser?.Email,
-    department: "",
+    Department: "",
     activityEvent: "",
     title: "",
     speakerResourcePerson: "",
@@ -19,12 +26,12 @@ export default function WebinarConducted() {
     startDate: "",
     endDate: "",
     coordinators: "",
-    targetedAudience: "",
+    Targeted_Audience: "",
     durationInHours: "",
     financialDetails: "",
   });
 
-  const handleInputChange =  (e) => {
+  const handleInputChange = (e) => {
     const { name, value, type } = e.target;
 
     setFormData((prevData) => ({
@@ -35,8 +42,6 @@ export default function WebinarConducted() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // Handle form submission here
-    // console.log("Form submitted:", formData);
     const response = await axios.post(addRecordsWebinar, formData);
     console.log("Response is : ", response.data);
   };
@@ -63,12 +68,23 @@ export default function WebinarConducted() {
               <Typography variant="h6" color="blue-gray" className="mb-3">
                 Department
               </Typography>
-              <Input
+              <Select
+                id="Department"
                 size="lg"
+                name="Department"
                 label="Department"
-                onChange={handleInputChange}
-                value={formData.department}
-              />
+                value={formData.Department}
+                onChange={(value) =>
+                  handleInputChange({
+                    target: { name: "Department", value },
+                  })
+                }
+              >
+                <Option value="CS">CS</Option>
+                <Option value="IT">IT</Option>
+                <Option value="EnTC">EnTC</Option>
+                <Option value="FE">FE</Option>
+              </Select>
             </div>
           </div>
 
@@ -191,12 +207,21 @@ export default function WebinarConducted() {
               <Typography variant="h6" color="blue-gray" className="mb-3">
                 Targeted Audience Faculty/Students
               </Typography>
-              <Input
+              <Select
                 size="lg"
                 label="Targeted Audience Faculty/Students"
-                onChange={handleInputChange}
-                value={formData.targetedAudience}
-              />
+                name="Targeted_Audience"
+                value={formData.Targeted_Audience}
+                onChange={(value) =>
+                  handleInputChange({
+                    target: { name: "Targeted_Audience", value },
+                  })
+                }
+              >
+                <Option value="Faculty">Faculty</Option>
+                <Option value="Student">Student</Option>
+                <Option value="Other">Other</Option>
+              </Select>
             </div>
           </div>
 

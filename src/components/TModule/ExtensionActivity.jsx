@@ -1,15 +1,22 @@
-import { Card, Input, Button, Typography } from "@material-tailwind/react";
+import {
+  Card,
+  Input,
+  Button,
+  Typography,
+  Select,
+  Option,
+} from "@material-tailwind/react";
 import { useState } from "react";
 import { useSelector } from "react-redux";
-import  axios  from 'axios';
+import axios from "axios";
 import { addRecordsExtension } from "./API_Routes";
 
 export default function ExtensionActivity() {
   const { currentUser } = useSelector((state) => state.user);
   const [formData, setFormData] = useState({
-    T_ID:null,
-    Username:currentUser?.Email,
-    deptName: "",
+    T_ID: null,
+    Username: currentUser?.Email,
+    Dept_Name: "",
     title: "",
     startDate: "",
     endDate: "",
@@ -59,13 +66,22 @@ export default function ExtensionActivity() {
               <Typography variant="h6" color="blue-gray" className="mb-3">
                 Name of the Dept
               </Typography>
-              <Input
+              <Select
                 size="lg"
-                name="deptName"
-                value={formData.deptName}
-                label="Name of the Dept"
-                onChange={handleChange}
-              />
+                name="Dept_Name"
+                label="Department"
+                value={formData.Dept_Name}
+                onChange={(value) =>
+                  handleChange({
+                    target: { name: "Dept_Name", value },
+                  })
+                }
+              >
+                <Option value="CS">CS</Option>
+                <Option value="IT">IT</Option>
+                <Option value="EnTC">EnTC</Option>
+                <Option value="FE">FE</Option>
+              </Select>
             </div>
           </div>
 

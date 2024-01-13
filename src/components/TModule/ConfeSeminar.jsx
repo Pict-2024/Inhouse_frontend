@@ -16,10 +16,10 @@ export default function ConfeSeminar() {
   const { currentUser } = useSelector((state) => state.user);
   const [formData, setFormData] = useState({
     T_ID: null,
-    Username:currentUser?.Email,
+    Username: currentUser?.Email,
     Department: "",
     Title: "",
-    University_State_National_International: "",
+    University: "",
     Activity_Event_FDP_STTP_Workshop: "",
     Sponsoring_Authority: "",
     No_of_Participants: "",
@@ -39,7 +39,6 @@ export default function ConfeSeminar() {
       [e.target.id]: e.target.value,
     });
   };
-
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -69,13 +68,22 @@ export default function ConfeSeminar() {
               <Typography variant="h6" color="blue-gray" className="mb-3">
                 Department
               </Typography>
-              <Input
+              <Select
                 id="Department"
                 size="lg"
                 label="Department"
                 value={formData.Department}
-                onChange={handleOnChange}
-              />
+                onChange={(value) =>
+                  handleOnChange({
+                    target: { id: "Department", value },
+                  })
+                }
+              >
+                <Option value="CS">CS</Option>
+                <Option value="IT">IT</Option>
+                <Option value="EnTC">EnTC</Option>
+                <Option value="FE">FE</Option>
+              </Select>
             </div>
             <div className="w-full md:w-1/2 px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
@@ -106,17 +114,17 @@ export default function ConfeSeminar() {
             </div>
             <div className="w-full md:w-1/2 px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
-                University/State/National/International
+                University
               </Typography>
               <Select
-                id="University_State_National_International"
+                id="University"
                 size="lg"
-                label="Select University_State_National_International"
-                value={formData.University_State_National_International}
+                label="Select University"
+                value={formData.University}
                 onChange={(value) =>
                   handleOnChange({
                     target: {
-                      id: "University_State_National_International",
+                      id: "University",
                       value,
                     },
                   })
@@ -127,6 +135,7 @@ export default function ConfeSeminar() {
                 <Option value="National">National</Option>
                 <Option value="State">State</Option>
                 <Option value="University">University</Option>
+                <Option value="Department">Department</Option>
               </Select>
             </div>
           </div>

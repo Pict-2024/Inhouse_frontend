@@ -59,13 +59,22 @@ export default function FacultyAchievements() {
               <Typography variant="h6" color="blue-gray" className="mb-3">
                 Department
               </Typography>
-              <Input
+              <Select
                 size="lg"
                 name="Department"
-                value={formData.Department}
                 label="Department"
-                onChange={handleInputChange}
-              />
+                value={formData.Department}
+                onChange={(value) =>
+                  handleInputChange({
+                    target: { name: "Department", value },
+                  })
+                }
+              >
+                <Option value="CS">CS</Option>
+                <Option value="IT">IT</Option>
+                <Option value="EnTC">EnTC</Option>
+                <Option value="FE">FE</Option>
+              </Select>
             </div>
           </div>
 

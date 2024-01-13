@@ -1,5 +1,12 @@
 import { useState } from "react";
-import { Card, Input, Button, Typography } from "@material-tailwind/react";
+import {
+  Card,
+  Input,
+  Button,
+  Typography,
+  Select,
+  Option,
+} from "@material-tailwind/react";
 import { useSelector } from "react-redux";
 import axios from "axios";
 import { addRecordsResource } from "./API_Routes";
@@ -53,13 +60,22 @@ export default function FacultyResource() {
               <Typography variant="h6" color="blue-gray" className="mb-3">
                 Name Of the Department
               </Typography>
-              <Input
+              <Select
                 size="lg"
                 name="Department"
+                label="Department"
                 value={formData.Department}
-                label="Name Of the Department"
-                onChange={handleChange}
-              />
+                onChange={(value) =>
+                  handleChange({
+                    target: { name: "Department", value },
+                  })
+                }
+              >
+                <Option value="CS">CS</Option>
+                <Option value="IT">IT</Option>
+                <Option value="EnTC">EnTC</Option>
+                <Option value="FE">FE</Option>
+              </Select>
             </div>
           </div>
 
@@ -80,13 +96,27 @@ export default function FacultyResource() {
               <Typography variant="h6" color="blue-gray" className="mb-3">
                 Level
               </Typography>
-              <Input
+              <Select
                 size="lg"
                 name="Level"
                 value={formData.Level}
                 label="Level"
-                onChange={handleChange}
-              />
+                onChange={(value) =>
+                  handleChange({
+                    target: {
+                      name: "Level",
+                      value,
+                    },
+                  })
+                }
+                // onChange={handleOnChange}
+              >
+                <Option value="International">International</Option>
+                <Option value="National">National</Option>
+                <Option value="State">State</Option>
+                <Option value="University">University</Option>
+                <Option value="Department">College</Option>
+              </Select>
             </div>
           </div>
 
@@ -118,7 +148,7 @@ export default function FacultyResource() {
           </div>
 
           <div className="mb-4 flex flex-wrap -mx-4">
-            <div className="w-full md:w-1/2 px-4 mb-4">
+            <div className="w-full px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
                 Date (DD-MM-YYYY)
               </Typography>

@@ -1,4 +1,4 @@
-import {  useState } from "react";
+import { useState } from "react";
 import {
   Card,
   Select,
@@ -11,26 +11,21 @@ import { useSelector } from "react-redux";
 import axios from "axios";
 import { addRecordsBook } from "./API_Routes";
 
-
 export default function BookPublication() {
-
   const { currentUser } = useSelector((state) => state.user);
-  
-  
-    const [formData, setFormData] = useState({
-      T_ID: null,
-      Username: currentUser?.Email,
-      Department: "",
-      Book_Title: "",
-      Chapter_if_any: "",
-      Level_International_National: "",
-      Publisher: "",
-      Year_of_Publication: "",
-      ISBN_ISSN_DOI_any_other: "",
-      Proof: null,
-    });
 
- 
+  const [formData, setFormData] = useState({
+    T_ID: null,
+    Username: currentUser?.Email,
+    Department: "",
+    Book_Title: "",
+    Chapter_if_any: "",
+    Level_International_National: "",
+    Publisher: "",
+    Year_of_Publication: "",
+    ISBN_ISSN_DOI_any_other: "",
+    Proof: null,
+  });
 
   const currentYear = new Date().getFullYear();
   const years = Array.from(
@@ -52,7 +47,6 @@ export default function BookPublication() {
     const response = await axios.post(addRecordsBook, formData);
     console.log("Response is : ", response.data);
   };
-  
 
   return (
     <>
@@ -75,13 +69,23 @@ export default function BookPublication() {
               <Typography variant="h6" color="blue-gray" className="mb-3">
                 Department
               </Typography>
-              <Input
+              <Select
                 id="Department"
                 size="lg"
                 label="Department"
                 value={formData.Department}
-                onChange={handleOnChange}
-              />
+                onChange={(value) =>
+                  handleOnChange({
+                    target: { id: "Department", value },
+                  })
+                }
+                // onChange={handleOnChange}
+              >
+                <Option value="CS">CS</Option>
+                <Option value="IT">IT</Option>
+                <Option value="EnTC">EnTC</Option>
+                <Option value="FE">FE</Option>
+              </Select>
             </div>
           </div>
           <div className="mb-4 flex flex-wrap -mx-4">

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Card, Input, Button, Typography } from "@material-tailwind/react";
+import { Card, Input, Button, Typography,Option,Select } from "@material-tailwind/react";
 import { useSelector } from "react-redux";
 import axios from "axios";
 import { addRecordsCertificate } from "./API_Routes";
@@ -9,7 +9,7 @@ export default function CertificateCourses() {
   const [formData, setFormData] = useState({
     T_ID: null,
     UserName: currentUser?.Email,
-    department: "",
+    Department: "",
     courseName: "",
     yearOfOffering: "",
     timesOffered: "",
@@ -36,7 +36,6 @@ export default function CertificateCourses() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // console.log(formData);
     const response = await axios.post(addRecordsCertificate, formData);
     console.log("Response is : ", response.data);
   };
@@ -62,13 +61,22 @@ export default function CertificateCourses() {
               <Typography variant="h6" color="blue-gray" className="mb-3">
                 Department
               </Typography>
-              <Input
-                id="department"
+              <Select
                 size="lg"
+                id="Department"
                 label="Department"
-                value={formData.department}
-                onChange={handleOnChange}
-              />
+                value={formData.Department}
+                onChange={(value) =>
+                  handleOnChange({
+                    target: { id: "Department", value },
+                  })
+                }
+              >
+                <Option value="CS">CS</Option>
+                <Option value="IT">IT</Option>
+                <Option value="EnTC">EnTC</Option>
+                <Option value="FE">FE</Option>
+              </Select>
             </div>
           </div>
 

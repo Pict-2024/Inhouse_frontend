@@ -12,7 +12,6 @@ import axios from "axios";
 import { useSelector } from "react-redux";
 
 export default function FacultyConferencePublication() {
-  
   const { currentUser } = useSelector((state) => state.user);
   const currentYear = new Date().getFullYear();
   const years = Array.from(
@@ -59,8 +58,6 @@ export default function FacultyConferencePublication() {
     console.log("Response is : ", response.data);
   };
 
-
-
   return (
     <>
       <Card
@@ -82,13 +79,22 @@ export default function FacultyConferencePublication() {
               <Typography variant="h6" color="blue-gray" className="mb-3">
                 Department
               </Typography>
-              <Input
+              <Select
+                name="Department"
                 size="lg"
                 label="Department"
-                onChange={handleInputChange}
-                name="Department"
                 value={formData.Department}
-              />
+                onChange={(value) =>
+                  handleInputChange({
+                    target: { name: "Department", value },
+                  })
+                }
+              >
+                <Option value="CS">CS</Option>
+                <Option value="IT">IT</Option>
+                <Option value="EnTC">EnTC</Option>
+                <Option value="FE">FE</Option>
+              </Select>
             </div>
           </div>
           <div className="mb-4 flex flex-wrap -mx-4">
@@ -310,13 +316,21 @@ export default function FacultyConferencePublication() {
               <Typography variant="h6" color="blue-gray" className="mb-3">
                 Any Achievements
               </Typography>
-              <Input
+              <Select
                 size="lg"
                 label="Any Achievements"
-                onChange={handleInputChange}
                 name="Any_Achievements"
                 value={formData.Any_Achievements}
-              />
+                onChange={(value) =>
+                  handleInputChange({
+                    target: { name: "Any_Achievements", value },
+                  })
+                }
+              >
+                <Option value="Yes">Yes</Option>
+                <Option value="No">No</Option>
+              </Select>
+              
             </div>
             <div className="w-full md:w-1/2 px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
