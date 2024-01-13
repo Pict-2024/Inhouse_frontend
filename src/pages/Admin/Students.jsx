@@ -1,243 +1,181 @@
-import * as React from "react";
-import Box from "@mui/material/Box";
-import Button from "@mui/material/Button";
-import AddIcon from "@mui/icons-material/Add";
-import EditIcon from "@mui/icons-material/Edit";
-import DeleteIcon from "@mui/icons-material/DeleteOutlined";
-import SaveIcon from "@mui/icons-material/Save";
-import CancelIcon from "@mui/icons-material/Close";
+// import { useEffect, useState } from "react";
+// import axios from "axios";
 import Header from "../../components/AModule/Header";
-import {
-  GridRowModes,
-  DataGrid,
-  GridToolbarContainer,
-  GridActionsCellItem,
-  GridRowEditStopReasons,
-} from "@mui/x-data-grid";
-import {
-  randomCreatedDate,
-  randomTraderName,
-  randomId,
-  randomArrayItem,
-} from "@mui/x-data-grid-generator";
+// import { CheckCircleIcon, PencilIcon } from "@heroicons/react/24/outline";
+// import { IconButton, Tooltip, Typography } from "@material-tailwind/react";
 
-const roles = ["Market", "Finance", "Development"];
-const randomRole = () => {
-  return randomArrayItem(roles);
-};
-
-const initialRows = [
-  {
-    id: randomId(),
-    name: randomTraderName(),
-    age: 25,
-    joinDate: randomCreatedDate(),
-    role: randomRole(),
-  },
-  {
-    id: randomId(),
-    name: randomTraderName(),
-    age: 36,
-    joinDate: randomCreatedDate(),
-    role: randomRole(),
-  },
-  {
-    id: randomId(),
-    name: randomTraderName(),
-    age: 19,
-    joinDate: randomCreatedDate(),
-    role: randomRole(),
-  },
-  {
-    id: randomId(),
-    name: randomTraderName(),
-    age: 28,
-    joinDate: randomCreatedDate(),
-    role: randomRole(),
-  },
-  {
-    id: randomId(),
-    name: randomTraderName(),
-    age: 23,
-    joinDate: randomCreatedDate(),
-    role: randomRole(),
-  },
-];
-
-function EditToolbar(props) {
-  const { setRows, setRowModesModel } = props;
-
-  const handleClick = () => {
-    const id = randomId();
-    setRows((oldRows) => [...oldRows, { id, name: "", age: "", isNew: true }]);
-    setRowModesModel((oldModel) => ({
-      ...oldModel,
-      [id]: { mode: GridRowModes.Edit, fieldToFocus: "name" },
-    }));
-  };
-
+export default function Students() {
   return (
-    <>
-      <GridToolbarContainer>
-        <Button color="primary" startIcon={<AddIcon />} onClick={handleClick}>
-          Add record
-        </Button>
-      </GridToolbarContainer>
-    </>
-  );
+    <div><Header category="Page" title="Student" /></div>
+  )
+  // const [teachers, setTeachers] = useState([]);
+  // const [editingEmail, setEditingEmail] = useState(null);
+
+  // const getAllTeachers = async () => {
+  //   try {
+  //     const apiurl = "http://localhost:5000/api/v1/auth/getAllTeacher";
+  //     const response = await axios.get(apiurl, {
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //     });
+
+  //     setTeachers(response.data.data);
+  //   } catch (error) {
+  //     console.error("Error fetching teachers:", error);
+  //   }
+  // };
+
+  // useEffect(() => {
+  //   getAllTeachers();
+  // }, []);
+
+  // const handleEditClick = (email) => {
+  //   setEditingEmail(email);
+  // };
+
+  // const handleSaveClick = async (email) => {
+  //   try {
+  //     const editedTeacher = teachers.find((teacher) => teacher.Email === email);
+  //     console.log("Email:", email);
+  //     console.log("access:", editedTeacher.SpecialAccess);
+  //     const updateApiurl = `http://localhost:5000/api/v1/general/update-access?Email=${email}&SpecialAccess=${editedTeacher.SpecialAccess}`;
+  //     await axios.put(updateApiurl, {
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //       data: {
+  //         Email: email,
+  //         SpecialAccess: editedTeacher.SpecialAccess,
+  //       },
+  //     });
+
+  //     setEditingEmail(null);
+
+  //     // Update the state with the modified value
+  //     setTeachers((prevTeachers) =>
+  //       prevTeachers.map((teacher) =>
+  //         teacher.Email === email
+  //           ? { ...teacher, SpecialAccess: editedTeacher.SpecialAccess }
+  //           : teacher
+  //       )
+  //     );
+  //   } catch (error) {
+  //     console.error("Error updating teacher:", error);
+  //   }
+  // };
+
+  // const handleSpecialAccessChange = (email, value) => {
+  //   setTeachers((prevTeachers) =>
+  //     prevTeachers.map((teacher) =>
+  //       teacher.Email === email ? { ...teacher, SpecialAccess: value } : teacher
+  //     )
+  //   );
+  // };
+
+  // return (
+  //   <div className="container mx-auto">
+  //     <div>
+  //       <Header category="Page" title="Teacher" />
+  //     </div>
+  //     <div className="overflow-x-auto mx-4">
+  //       <table className="mt-4 w-full min-w-max table-auto text-left">
+  //         <thead>
+  //           <tr className="bg-gray-200">
+  //             <th className="py-2 px-4 border-b">
+  //               <Typography
+  //                 variant="medium"
+  //                 color="blue"
+  //                 className="flex items-center justify-between gap-2 font-normal leading-none opacity-70 font-bold text-dark-700"
+  //               >
+  //                 Name
+  //               </Typography>
+  //             </th>
+  //             <th className="py-2 px-4 border-b">
+  //               <Typography
+  //                 variant="medium"
+  //                 color="blue"
+  //                 className="flex items-center justify-between gap-2 font-normal leading-none opacity-70 font-bold text-dark-700"
+  //               >
+  //                 Email
+  //               </Typography>
+  //             </th>
+  //             <th className="py-2 px-4 border-b">
+  //               <Typography
+  //                 variant="medium"
+  //                 color="blue"
+  //                 className="flex items-center justify-between gap-2 font-normal leading-none opacity-70 font-bold text-dark-700"
+  //               >
+  //                 Special Access
+  //               </Typography>
+  //             </th>
+  //             <th className="py-2 px-4 border-b">
+  //               <Typography
+  //                 variant="medium"
+  //                 color="blue"
+  //                 className="flex items-center justify-between gap-2 font-normal leading-none opacity-70 font-bold text-dark-700"
+  //               >
+  //                 Actions
+  //               </Typography>
+  //             </th>
+  //           </tr>
+  //         </thead>
+  //         <tbody>
+  //           {teachers?.map((teacher) => (
+  //             <tr key={teacher.Email} className="hover:bg-light-blue-50">
+  //               <td className="py-2 px-4 border-b">{teacher.Name}</td>
+  //               <td className="py-2 px-4 border-b">{teacher.Email}</td>
+  //               <td
+  //                 className={`py-2 px-4 border-b ${
+  //                   editingEmail === teacher.Email ? "editable" : ""
+  //                 }`}
+  //               >
+  //                 {editingEmail === teacher.Email ? (
+  //                   <select
+  //                     value={teacher.SpecialAccess}
+  //                     onChange={(e) =>
+  //                       handleSpecialAccessChange(teacher.Email, e.target.value)
+  //                     }
+  //                     className="border p-2 rounded-md focus:outline-none focus:ring focus:border-blue-300"
+  //                   >
+  //                     {["NAAC", "PDA", "Development", "Sports", "null"].map(
+  //                       (option) => (
+  //                         <option key={option} value={option}>
+  //                           {option}
+  //                         </option>
+  //                       )
+  //                     )}
+  //                   </select>
+  //                 ) : (
+  //                   teacher.SpecialAccess
+  //                 )}
+  //               </td>
+  //               <td className="py-2 px-4 border-b flex items-center">
+  //                 {editingEmail === teacher.Email ? (
+  //                   <Tooltip content="Save Changes">
+  //                     <IconButton
+  //                       onClick={() => handleSaveClick(teacher.Email)}
+  //                       variant="text"
+  //                     >
+  //                       <CheckCircleIcon className="h-4 w-4 text-green-500" />
+  //                     </IconButton>
+  //                   </Tooltip>
+  //                 ) : (
+  //                   <Tooltip content="Edit Data">
+  //                     <IconButton
+  //                       onClick={() => handleEditClick(teacher.Email)}
+  //                       variant="text"
+  //                     >
+  //                       <PencilIcon className="h-4 w-4 text-blue-500" />
+  //                     </IconButton>
+  //                   </Tooltip>
+  //                 )}
+  //               </td>
+  //             </tr>
+  //           ))}
+  //         </tbody>
+  //       </table>
+  //     </div>
+  //   </div>
+  // );
 }
-
-const Students = () => {
-  const [rows, setRows] = React.useState(initialRows);
-  const [rowModesModel, setRowModesModel] = React.useState({});
-
-  const handleRowEditStop = (params, event) => {
-    if (params.reason === GridRowEditStopReasons.rowFocusOut) {
-      event.defaultMuiPrevented = true;
-    }
-  };
-
-  const handleEditClick = (id) => () => {
-    setRowModesModel({ ...rowModesModel, [id]: { mode: GridRowModes.Edit } });
-  };
-
-  const handleSaveClick = (id) => () => {
-    setRowModesModel({ ...rowModesModel, [id]: { mode: GridRowModes.View } });
-  };
-
-  const handleDeleteClick = (id) => () => {
-    setRows(rows.filter((row) => row.id !== id));
-  };
-
-  const handleCancelClick = (id) => () => {
-    setRowModesModel({
-      ...rowModesModel,
-      [id]: { mode: GridRowModes.View, ignoreModifications: true },
-    });
-
-    const editedRow = rows.find((row) => row.id === id);
-    if (editedRow.isNew) {
-      setRows(rows.filter((row) => row.id !== id));
-    }
-  };
-
-  const processRowUpdate = (newRow) => {
-    const updatedRow = { ...newRow, isNew: false };
-    setRows(rows.map((row) => (row.id === newRow.id ? updatedRow : row)));
-    return updatedRow;
-  };
-
-  const handleRowModesModelChange = (newRowModesModel) => {
-    setRowModesModel(newRowModesModel);
-  };
-
-  const columns = [
-    { field: "name", headerName: "Name", width: 180, editable: true },
-    {
-      field: "age",
-      headerName: "Age",
-      type: "number",
-      width: 80,
-      align: "left",
-      headerAlign: "left",
-      editable: true,
-    },
-    {
-      field: "joinDate",
-      headerName: "Join date",
-      type: "date",
-      width: 180,
-      editable: true,
-    },
-    {
-      field: "role",
-      headerName: "Department",
-      width: 220,
-      editable: true,
-      type: "singleSelect",
-      valueOptions: ["Market", "Finance", "Development"],
-    },
-    {
-      field: "actions",
-      type: "actions",
-      headerName: "Actions",
-      width: 100,
-      cellClassName: "actions",
-      getActions: ({ id }) => {
-        const isInEditMode = rowModesModel[id]?.mode === GridRowModes.Edit;
-
-        if (isInEditMode) {
-          return [
-            <GridActionsCellItem
-              icon={<SaveIcon />}
-              label="Save"
-              sx={{
-                color: "primary.main",
-              }}
-              onClick={handleSaveClick(id)}
-            />,
-            <GridActionsCellItem
-              icon={<CancelIcon />}
-              label="Cancel"
-              className="textPrimary"
-              onClick={handleCancelClick(id)}
-              color="inherit"
-            />,
-          ];
-        }
-
-        return [
-          <GridActionsCellItem
-            icon={<EditIcon />}
-            label="Edit"
-            className="textPrimary"
-            onClick={handleEditClick(id)}
-            color="inherit"
-          />,
-          <GridActionsCellItem
-            icon={<DeleteIcon />}
-            label="Delete"
-            onClick={handleDeleteClick(id)}
-            color="inherit"
-          />,
-        ];
-      },
-    },
-  ];
-
-  return (
-    <Box
-      sx={{
-        height: 500,
-        width: "100%",
-        "& .actions": {
-          color: "text.secondary",
-        },
-        "& .textPrimary": {
-          color: "text.primary",
-        },
-      }}
-    >
-      <div>
-        <Header category="Page" title="Students" />
-      </div>
-      <DataGrid
-        rows={rows}
-        columns={columns}
-        editMode="row"
-        rowModesModel={rowModesModel}
-        onRowModesModelChange={handleRowModesModelChange}
-        onRowEditStop={handleRowEditStop}
-        processRowUpdate={processRowUpdate}
-        slots={{
-          toolbar: EditToolbar,
-        }}
-        slotProps={{
-          toolbar: { setRows, setRowModesModel },
-        }}
-      />
-    </Box>
-  );
-};
-
-export default Students;

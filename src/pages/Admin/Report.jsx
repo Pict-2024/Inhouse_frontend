@@ -405,8 +405,6 @@ const Report = () => {
             onRowsPerPageChange={handleChangeRowsPerPage}
           />
 
-          
-
           <TableContainer component={Paper}>
             {/* Display the generated report */}
           </TableContainer>
