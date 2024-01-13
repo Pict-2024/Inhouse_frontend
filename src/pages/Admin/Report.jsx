@@ -9,6 +9,40 @@ import axios from 'axios';
 const Report = () => {
   let tablename = "";
 
+
+  const tableMapping = {
+
+    "10_mous": "number-of_mous",
+    "11_certcourses": "cert-courses",
+    "12_prof_affiliation": "prof-aff",
+    "13_resource_person": "facultyresource",
+    "14_extension_activity": "extension-act",
+    "15_tech_comp_fest": "techfest-org",
+    "16_faculty_achievements": "faculty-achievement",
+    "17_indusvisitstoursfieldtrip": "visit-tours",
+    "18_contribution_to_bos": "contribution-bos",
+    "1__student___internship_details": "",
+    "1_research_publication": "research-pb",
+    "2__student___research_publication": "",
+    "2_book_publication": "book-pb",
+    "3__student___conference_publication": "",
+    "3_faculty_conference_publication": "faculty-pb",
+    "4__student___certificate_course_attended": "",
+    "4_grants": "grants",
+    "5__students___sports_data": "",
+    "5_consultancy_report": "cons-rep",
+    "6__students___event_participated": "",
+    "6_patent_publication": "patent-pb",
+    "7__students___event_organized": "",
+    "7_confsemworkshops": "con-sem",
+    "8__students___technical_events": "",
+    "8_sttp_fdp_conf_attended": "sf-ws",
+    "9__student___higher_education": "",
+    "9_webinarguestlec": "web-guest",
+    "login_details": "",
+    "register": ""
+  }
+
   const [tableData, setTableData] = useState([]);
   const [selectedTable, setSelectedTable] = useState('');
   const [tableNames, setTableNames] = useState([]);
@@ -33,7 +67,7 @@ const Report = () => {
 
   const getAllColumns = async () => {
     try {
-      const response = await axios.get(`http://localhost:5000/api/v1/general/allcolumns?tablename=${tablename}`);
+      const response = await axios.post(`http://localhost:5000/api/v1/general/allcolumns?tablename=${tablename}`);
       return response.data; // Returning the data for further processing
     } catch (error) {
       console.log("error is: ", error.message);
@@ -63,7 +97,7 @@ const Report = () => {
       .map(([key, value]) => `${key}=${encodeURIComponent(value)}`)
       .join('&');
 
-    setApiUrl(`http://localhost:5000/api/v1/teacher/${selectedTable}/filter?${queryParameters}`);
+    setApiUrl(`http://localhost:5000/api/v1/teacher/${tableMapping[selectedTable]}/filter?${queryParameters}`);
   };
 
   useEffect(() => {
@@ -108,8 +142,12 @@ const Report = () => {
   };
 
   const handleSubmit = () => {
+
+    console.log("form filters are : ", formFilters);
+    console.log("API URL is : ", apiUrl);
+
     fetch(apiUrl, {
-      method: 'GET',
+      method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
