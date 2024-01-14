@@ -307,6 +307,7 @@ const Report = () => {
         </div>
       );
     } else if (Type === "date") {
+      // setApiUrl(apiUrl + `data`)
       return (
         <div key={Field} className="mb-4 py-3 bg-white rounded-lg">
           {/* <label className="block mb-2">{${Field} Start Date}</label> */}
