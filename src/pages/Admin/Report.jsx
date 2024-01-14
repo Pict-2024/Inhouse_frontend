@@ -37,6 +37,7 @@ import {
   getAllRecordsTechnical,
   getAllRecordsWebinar,
 } from "../../components/TModule/API_Routes";
+import { Option, Select } from "@material-tailwind/react";
 
 // Define the Report component
 const Report = () => {
@@ -110,6 +111,13 @@ const Report = () => {
   const [tableRows, setTableRows] = useState([]);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
+
+
+  const currentYear = new Date().getFullYear();
+  const years = Array.from(
+    { length: currentYear - 1999 },
+    (_, index) => currentYear - index
+  );
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -272,8 +280,12 @@ const Report = () => {
   const renderInputFields = () => {
     return columnNames.map((column) => (
       <div key={column.Field}>
-        <label>{column.Field}</label>
-        {renderInputField(column)}
+      {!column.Field.includes("Upload") && !column.Field.includes("Link") && (
+        <>
+          <label>{column.Field}</label>
+          {renderInputField(column)}
+        </>
+      )}
       </div>
     ));
   };
@@ -281,7 +293,58 @@ const Report = () => {
   const renderInputField = (column) => {
     const { Field, Type } = column;
 
-    if (Type.includes("varchar")) {
+    if (Type.includes("varchar") && Field.includes("Year")) {
+      const startYear = formFilters['Start_Year'] || currentYear;
+      const endYear = formFilters['End_Year'] || currentYear;
+      const startYearOptions = years.map((year) => (
+        <Option key={year} value={year}>
+          {year}
+        </Option>
+      ));
+      const endYearOptions = years
+        .filter((year) => year >= startYear)
+        .map((year) => (
+          <Option key={year} value={year}>
+            {year}
+          </Option>
+        ));
+    
+      return (
+        <div key={Field}>
+          <div className="w-full md:w-1/2 px-4 mb-4">
+            <Select
+              size="lg"
+              label="Start Year"
+              color="light-gray"
+              name="Start_Year"
+              value={startYear}
+              onChange={(value) => {
+                handleInputChange("Start_Year", value);
+              }}
+            >
+              {startYearOptions}
+            </Select>
+          </div>
+    
+          <div className="w-full md:w-1/2 px-4 mb-4">
+            <Select
+              size="lg"
+              label="End Year"
+              color="light-gray"
+              name="End_Year"
+              value={endYear}
+              onChange={(value) => {
+                handleInputChange("End_Year", value);
+              }}
+            >
+              {endYearOptions}
+            </Select>
+          </div>
+        </div>
+      );
+    }
+    
+    else if (Type.includes("varchar") && Field.includes("Upload") == false && Field.includes("Link") == false) {
       return (
         <div key={Field} className="mb-4 py-3 bg-white rounded-lg">
           {/* <label className="block mb-2">{Enter ${Field}}</label> */}
@@ -307,22 +370,21 @@ const Report = () => {
         </div>
       );
     } else if (Type === "date") {
+      //  setApiUrlapi + dateColumn=${Field}
       return (
         <div key={Field} className="mb-4 py-3 bg-white rounded-lg">
           {/* <label className="block mb-2">{${Field} Start Date}</label> */}
           <input
             type="date"
-            value={formFilters[`${Field}_start`] || ""}
-            onChange={(e) =>
-              handleInputChange(`${Field}_start`, e.target.value)
-            }
+            value={formFilters[`startDate`] || ""}
+            onChange={(e) => handleInputChange(`startDate`, e.target.value)}
             className="w-full mb-2  py-2 border border-black rounded-md "
           />
           {/* <label className="block mb-2">{${Field} End Date}</label> */}
           <input
             type="date"
-            value={formFilters[`${Field}_end`] || ""}
-            onChange={(e) => handleInputChange(`${Field}_end`, e.target.value)}
+            value={formFilters[`endDate`] || ""}
+            onChange={(e) => handleInputChange(`endDate`, e.target.value)}
             className="w-full  py-2 border border-black rounded-md "
           />
         </div>
