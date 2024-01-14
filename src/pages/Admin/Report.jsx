@@ -52,23 +52,23 @@ const Report = () => {
     "16_faculty_achievements": "faculty-achievement",
     "17_indusvisitstoursfieldtrip": "visit-tours",
     "18_contribution_to_bos": "contribution-bos",
-    "1__student___internship_details": "",
+    "1_student__internship_details": "",
     "1_research_publication": "research-pb",
-    "2__student___research_publication": "",
+    "2_student__research_publication": "",
     "2_book_publication": "book-pb",
-    "3__student___conference_publication": "",
+    "3_student__conference_publication": "",
     "3_faculty_conference_publication": "faculty-pb",
-    "4__student___certificate_course_attended": "",
+    "4_student__certificate_course_attended": "",
     "4_grants": "grants",
-    "5__students___sports_data": "",
+    "5_students__sports_data": "",
     "5_consultancy_report": "cons-rep",
-    "6__students___event_participated": "",
+    "6_students__event_participated": "",
     "6_patent_publication": "patent-pb",
-    "7__students___event_organized": "",
+    "7_students__event_organized": "",
     "7_confsemworkshops": "con-sem",
-    "8__students___technical_events": "",
+    "8_students__technical_events": "",
     "8_sttp_fdp_conf_attended": "sf-ws",
-    "9__student___higher_education": "",
+    "9_student__higher_education": "",
     "9_webinarguestlec": "web-guest",
     login_details: "",
     register: "",
@@ -284,7 +284,7 @@ const Report = () => {
     if (Type.includes("varchar")) {
       return (
         <div key={Field} className="mb-4 py-3 bg-white rounded-lg">
-          {/* <label className="block mb-2">{`Enter ${Field}`}</label> */}
+          {/* <label className="block mb-2">{Enter ${Field}}</label> */}
           <input
             type="text"
             placeholder={`Enter ${Field}`}
@@ -297,7 +297,7 @@ const Report = () => {
     } else if (Type.includes("int")) {
       return (
         <div key={Field} className="mb-4 py-3 bg-white rounded-lg">
-          {/* <label className="block mb-2">{`Enter ${Field}`}</label> */}
+          {/* <label className="block mb-2">{Enter ${Field}}</label> */}
           <input
             type="number"
             value={formFilters[Field] || ""}
@@ -309,7 +309,7 @@ const Report = () => {
     } else if (Type === "date") {
       return (
         <div key={Field} className="mb-4 py-3 bg-white rounded-lg">
-          {/* <label className="block mb-2">{`${Field} Start Date`}</label> */}
+          {/* <label className="block mb-2">{${Field} Start Date}</label> */}
           <input
             type="date"
             value={formFilters[`${Field}_start`] || ""}
@@ -318,7 +318,7 @@ const Report = () => {
             }
             className="w-full mb-2  py-2 border border-black rounded-md "
           />
-          {/* <label className="block mb-2">{`${Field} End Date`}</label> */}
+          {/* <label className="block mb-2">{${Field} End Date}</label> */}
           <input
             type="date"
             value={formFilters[`${Field}_end`] || ""}
