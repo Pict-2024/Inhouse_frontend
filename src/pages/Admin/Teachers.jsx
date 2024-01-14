@@ -1,173 +1,29 @@
-/* eslint-disable react/jsx-key */
-import * as React from "react";
-import Box from "@mui/material/Box";
-// import Button from "@mui/material/Button";
-// import AddIcon from "@mui/icons-material/Add";
-import EditIcon from "@mui/icons-material/Edit";
-import DeleteIcon from "@mui/icons-material/DeleteOutlined";
-import SaveIcon from "@mui/icons-material/Save";
-import CancelIcon from "@mui/icons-material/Close";
-import Header from "../../components/AModule/Header";
-// import axios from 'axios';
-// import { getAllTeachers } from "../../components/AModule/APIRoutes";
-
-import {
-  GridRowModes,
-  DataGrid,
-  // GridToolbarContainer,
-  GridActionsCellItem,
-  GridRowEditStopReasons,
-} from "@mui/x-data-grid";
-
-import {
-  // randomCreatedDate,
-  // randomTraderName,
-  // randomId,
-  // randomArrayItem,
-} from "@mui/x-data-grid-generator";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
-// import { useSelector } from "react-redux";
-import { useState } from "react";
-
-// const roles = ["Market", "Finance", "Development"];
-// const randomRole = () => {
-//   return randomArrayItem(roles);
-// };
-
-// let initialRows;
-
-function EditToolbar() {
-  // const { setRows, setRowModesModel } = props;
-
-  // const handleClick = () => {
-  //   const id = randomId();
-  //   setRows((oldRows) => [...oldRows, { id, Name: "", Email: "", isNew: true }]);
-  //   setRowModesModel((oldModel) => ({
-  //     ...oldModel,
-  //     [id]: { mode: GridRowModes.Edit, fieldToFocus: "Email" },
-  //   }));
-  // };
-
-  return (
-    <>
-    {/** 
-      <GridToolbarContainer>
-        <Button color="primary" startIcon={<AddIcon />} onClick={handleClick}>
-          Add record
-        </Button>
-      </GridToolbarContainer>
-      */}
-    </>
-  );
-}
+import Header from "../../components/AModule/Header";
+import { CheckCircleIcon, PencilIcon } from "@heroicons/react/24/outline";
+import {
+  IconButton,
+  Tooltip,
+  Typography,
+} from "@material-tailwind/react";
 
 export default function Teachers() {
-
-  
-  // const { currentUser } = useSelector((state) => state.user);
-
-  let columns = [
-    { field: "Name", headerName: "Name", width: 300, editable: false },
-    {
-      field: "Email",
-      headerName: "Email",
-      width: 300,
-      align: "left",
-      headerAlign: "left",
-      editable: false,
-    },
-    {
-      field: "SpecialAccess",
-      headerName: "SpecialAccess",
-      width: 220,
-      align: "left",
-      editable: true,
-      type: "singleSelect",
-      valueOptions: ["NAAC", "PDA", "Development", "Sports"],
-    },
-    {
-      field: "actions",
-      type: "actions",
-      headerName: "Actions",
-      width: 100,
-      cellClassName: "actions",
-      getActions: ({ id }) => {
-        const isInEditMode = rowModesModel[id]?.mode === GridRowModes.Edit;
-
-        if (isInEditMode) {
-          return [
-            <GridActionsCellItem
-              key={id}
-              icon={<SaveIcon />}
-              label="Save"
-              sx={{
-                color: "primary.main",
-              }}
-              onClick={handleSaveClick(id)}
-            />,
-            <GridActionsCellItem
-              key={id}
-              icon={<CancelIcon />}
-              label="Cancel"
-              className="textPrimary"
-              onClick={handleCancelClick(id)}
-              color="inherit"
-            />,
-          ];
-        }
-
-        return [
-          <GridActionsCellItem
-            key={id}
-            icon={<EditIcon />}
-            label="Edit"
-            className="textPrimary"
-            onClick={handleEditClick(id)}
-            color="inherit"
-          />,
-          <GridActionsCellItem
-            key={id}
-            icon={<DeleteIcon />}
-            label="Delete"
-            onClick={handleDeleteClick(id)}
-            color="inherit"
-          />,
-        ];
-      },
-    },
-  ];
-
-  const addIdToTeachers = (dataArray) => {
-    return dataArray.map((obj) => {
-      return { ...obj, id: obj.Email };
-    });
-  };
+  const [teachers, setTeachers] = useState([]);
+  const [editingEmail, setEditingEmail] = useState(null);
 
   const getAllTeachers = async () => {
-
     try {
       const apiurl = "http://localhost:5000/api/v1/auth/getAllTeacher";
-      // console.log("apiRoute in getAllRecords:", apiurl);
       const response = await axios.get(apiurl, {
         headers: {
-          "Content-Type": "application/json", // Make sure this header is defined
+          "Content-Type": "application/json",
         },
       });
-      // console.log("Rows : ", response.data.data);
-      const columnHeaders = Object.keys(response.data.data[0]);
 
-      console.log("Response is : ", response);
-      console.log("column headers are : ", columnHeaders);
-
-      columns = columnHeaders;
-      console.log("Columns are : ", columns);
-
-      const newRows = addIdToTeachers(response.data.data);
-      setRows(newRows);
-
+      setTeachers(response.data.data);
     } catch (error) {
-      console.log(error);
+      console.error("Error fetching teachers:", error);
     }
   };
 
@@ -175,103 +31,157 @@ export default function Teachers() {
     getAllTeachers();
   }, []);
 
-  const [rows, setRows] = useState([]);
-  const [rowModesModel, setRowModesModel] = React.useState({});
-
-  const handleRowEditStop = (params, event) => {
-    if (params.reason === GridRowEditStopReasons.rowFocusOut) {
-      event.defaultMuiPrevented = true;
-    }
+  const handleEditClick = (email) => {
+    setEditingEmail(email);
   };
 
-  const handleEditClick = (Email) => () => {
-    
-    console.log("-------------------------------")
-    console.log("Edit click hit");
-    console.log("-------------------------------")
-    setRowModesModel({ ...rowModesModel, [Email]: { mode: GridRowModes.Edit } });
-  };
-
-  const handleSaveClick = async (Email) => {
-
-    console.log("-------------------------------")
-    console.log("Save click hit");
-    console.log("-------------------------------")
-
+  const handleSaveClick = async (email) => {
     try {
-      const editedRow = rows.find((row) => row.Email === Email);
-      const apiurl = `http://localhost:5000/api/v1/general/update-access?Email=${Email}&SpecialAccess=${editedRow.SpecialAccess}`;
-      const response = await axios.post(apiurl);
-      console.log("Response is : ", response.data.data)
-  
-      setRowModesModel({ ...rowModesModel, [Email]: { mode: GridRowModes.View } });
+      const editedTeacher = teachers.find((teacher) => teacher.Email === email);
+      console.log("Email:", email);
+      console.log("access:", editedTeacher.SpecialAccess);
+      const updateApiurl = `http://localhost:5000/api/v1/general/update-access?Email=${email}&SpecialAccess=${editedTeacher.SpecialAccess}`;
+      await axios.put(updateApiurl, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+        data: {
+          Email: email,
+          SpecialAccess: editedTeacher.SpecialAccess,
+        },
+      });
+
+      setEditingEmail(null);
+
+      // Update the state with the modified value
+      setTeachers((prevTeachers) =>
+        prevTeachers.map((teacher) =>
+          teacher.Email === email
+            ? { ...teacher, SpecialAccess: editedTeacher.SpecialAccess }
+            : teacher
+        )
+      );
     } catch (error) {
-      console.log(error);
-      // Handle error
-    }
-
-    // setRowModesModel({ ...rowModesModel, [Email]: { mode: GridRowModes.View } });
-  };
-
-  const handleDeleteClick = (Email) => () => {
-    setRows(rows.filter((row) => row.Email !== Email));
-  };
-
-  const handleCancelClick = (Email) => () => {
-    setRowModesModel({
-      ...rowModesModel,
-      [Email]: { mode: GridRowModes.View, ignoreModifications: true },
-    });
-
-    const editedRow = rows.find((row) => row.Email === Email);
-    if (editedRow.isNew) {
-      setRows(rows.filter((row) => row.Email !== Email));
+      console.error("Error updating teacher:", error);
     }
   };
 
-  const processRowUpdate = (newRow) => {
-    const updatedRow = { ...newRow, isNew: false };
-    setRows(rows.map((row) => (row.Email === newRow.Email ? updatedRow : row)));
-    return updatedRow;
+  const handleSpecialAccessChange = (email, value) => {
+    setTeachers((prevTeachers) =>
+      prevTeachers.map((teacher) =>
+        teacher.Email === email ? { ...teacher, SpecialAccess: value } : teacher
+      )
+    );
   };
-
-  const handleRowModesModelChange = (newRowModesModel) => {
-    setRowModesModel(newRowModesModel);
-  };
-
-  
 
   return (
-    <Box
-      sx={{
-        height: 500,
-        width: "100%",
-        "& .actions": {
-          color: "text.secondary",
-        },
-        "& .textPrimary": {
-          color: "text.primary",
-        },
-      }}
-    >
+    <div className="container mx-auto">
       <div>
         <Header category="Page" title="Teacher" />
       </div>
-      <DataGrid
-        rows={rows}
-        columns={columns}
-        editMode="row"
-        rowModesModel={rowModesModel}
-        onRowModesModelChange={handleRowModesModelChange}
-        onRowEditStop={handleRowEditStop}
-        processRowUpdate={processRowUpdate}
-        slots={{
-          toolbar: EditToolbar,
-        }}
-        slotProps={{
-          toolbar: { setRows, setRowModesModel },
-        }}
-      />
-    </Box>
+      <div className="overflow-x-auto mx-4">
+        <table className="mt-4 w-full min-w-max table-auto text-left">
+          <thead>
+            <tr className="bg-gray-200">
+              <th className="py-2 px-4 border-b">
+                <Typography
+                  variant="medium"
+                  color="blue"
+                  className="flex items-center justify-between gap-2 font-normal leading-none opacity-70 font-bold text-dark-700"
+                >
+                  Name
+                </Typography>
+              </th>
+              <th className="py-2 px-4 border-b">
+                <Typography
+                  variant="medium"
+                  color="blue"
+                  className="flex items-center justify-between gap-2 font-normal leading-none opacity-70 font-bold text-dark-700"
+                >
+                  Email
+                </Typography>
+              </th>
+              <th className="py-2 px-4 border-b">
+                <Typography
+                  variant="medium"
+                  color="blue"
+                  className="flex items-center justify-between gap-2 font-normal leading-none opacity-70 font-bold text-dark-700"
+                >
+                  Special Access
+                </Typography>
+              </th>
+              <th className="py-2 px-4 border-b">
+                <Typography
+                  variant="medium"
+                  color="blue"
+                  className="flex items-center justify-between gap-2 font-normal leading-none opacity-70 font-bold text-dark-700"
+                >
+                  Actions
+                </Typography>
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            {teachers?.map((teacher) => (
+              <tr key={teacher.Email} className="hover:bg-light-blue-50">
+                <td className="py-2 px-4 border-b">{teacher.Name}</td>
+                <td className="py-2 px-4 border-b">{teacher.Email}</td>
+                <td
+                  className={`py-2 px-4 border-b ${
+                    editingEmail === teacher.Email ? "editable" : ""
+                  }`}
+                >
+                  {editingEmail === teacher.Email ? (
+                    <select
+                      className=" bg-white border p-2 rounded-md leading-tight focus:outline-none focus:ring focus:border-blue-300"
+                      label="Select Version"
+                      value={teacher.SpecialAccess}
+                      onChange={(e) =>
+                        handleSpecialAccessChange(teacher.Email, e.target.value)
+                      }
+                    >
+                      {["NAAC", "PDA", "Development", "Sports", "null"].map(
+                        (option) => (
+                          <option
+                            key={option}
+                            value={option}
+                            className="text-gray-800 hover:bg-blue-100 hover:text-blue-700"
+                          >
+                            {option}
+                          </option>
+                        )
+                      )}
+                    </select>
+                  ) : (
+                    teacher.SpecialAccess
+                  )}
+                </td>
+                <td className="py-2 px-4 border-b flex items-center">
+                  {editingEmail === teacher.Email ? (
+                    <Tooltip content="Save Changes">
+                      <IconButton
+                        onClick={() => handleSaveClick(teacher.Email)}
+                        variant="text"
+                      >
+                        <CheckCircleIcon className="h-4 w-4 text-green-500" />
+                      </IconButton>
+                    </Tooltip>
+                  ) : (
+                    <Tooltip content="Edit Data">
+                      <IconButton
+                        onClick={() => handleEditClick(teacher.Email)}
+                        variant="text"
+                      >
+                        <PencilIcon className="h-4 w-4 text-blue-500" />
+                      </IconButton>
+                    </Tooltip>
+                  )}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
   );
 }
