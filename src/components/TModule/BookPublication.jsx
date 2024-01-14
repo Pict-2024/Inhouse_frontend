@@ -9,10 +9,14 @@ import {
 } from "@material-tailwind/react";
 import { useSelector } from "react-redux";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
+
 import { addRecordsBook } from "./API_Routes";
 
 export default function BookPublication() {
   const { currentUser } = useSelector((state) => state.user);
+
+  const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
     T_ID: null,
@@ -28,6 +32,7 @@ export default function BookPublication() {
   });
 
   const currentYear = new Date().getFullYear();
+
   const years = Array.from(
     { length: currentYear - 1999 },
     (_, index) => currentYear - index
@@ -44,8 +49,8 @@ export default function BookPublication() {
   //Add records
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const response = await axios.post(addRecordsBook, formData);
-    console.log("Response is : ", response.data);
+    await axios.post(addRecordsBook, formData);
+    navigate("/t/data");
   };
 
   return (

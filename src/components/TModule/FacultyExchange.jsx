@@ -9,10 +9,13 @@ import {
 } from "@material-tailwind/react";
 import { useSelector } from "react-redux";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
+
 import { addRecordsMous } from "./API_Routes";
 
 export default function FacultyExchange() {
   const { currentUser } = useSelector((state) => state.user);
+  const navigate = useNavigate();
   const currentYear = new Date().getFullYear();
   const years = Array.from(
     { length: currentYear - 1999 },
@@ -23,20 +26,19 @@ export default function FacultyExchange() {
   const [formData, setFormData] = useState({
     T_ID: null,
     Username: currentUser?.Email,
-    mouName: "",
-    collaboratingAgency: "",
-    facultyCoordinator: "",
-    department: "",
-    yearOfSigning: "",
-    duration: "",
-    objectives: "",
-    activitiesAndLinks: "",
-    documentLink: "",
-    financialSupport: "",
-    reportFile: null,
+    MoU_Collaboration_linkage_Name: "",
+    Name_of_the_collaboration: "",
+    Faculty_coordinator: "",
+    Department: "",
+    Year_of_signing: "",
+    Duration: "",
+    Objectives_Purpose: "",
+    Actual_Activity_Under_MOU: "",
+    Finance_Support_Transaction: "",
+    Upload_Report: null,
   });
 
-  // Handle form field changes
+  // Add new record
   const handleChange = (e) => {
     const { name, value, type, files } = e.target;
     setFormData({
@@ -48,10 +50,8 @@ export default function FacultyExchange() {
   // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // You can access the form data in the `formData` object
-    // console.log(formData);
-    const response = await axios.post(addRecordsMous, formData);
-    console.log("Response is : ", response.data);
+    await axios.post(addRecordsMous, formData);
+    navigate("/t/data");
   };
 
   return (
@@ -76,8 +76,8 @@ export default function FacultyExchange() {
             </Typography>
             <Input
               size="lg"
-              name="mouName"
-              value={formData.mouName}
+              name="MoU_Collaboration_linkage_Name"
+              value={formData.MoU_Collaboration_linkage_Name}
               onChange={handleChange}
               label="Name of the MoU / Collaboration / Linkage"
             />
@@ -89,8 +89,8 @@ export default function FacultyExchange() {
             </Typography>
             <Input
               size="lg"
-              name="collaboratingAgency"
-              value={formData.collaboratingAgency}
+              name="Name_of_the_collaboration"
+              value={formData.Name_of_the_collaboration}
               onChange={handleChange}
               label="Collaborating Agency / Institution"
             />
@@ -103,8 +103,8 @@ export default function FacultyExchange() {
               </Typography>
               <Input
                 size="lg"
-                name="facultyCoordinator"
-                value={formData.facultyCoordinator}
+                name="Faculty_coordinator"
+                value={formData.Faculty_coordinator}
                 onChange={handleChange}
                 label="Faculty Coordinator"
               />
@@ -139,8 +139,8 @@ export default function FacultyExchange() {
               </Typography>
               <Select
                 size="lg"
-                name="yearOfSigning"
-                value={formData.yearOfSigning}
+                name="Year_of_signing"
+                value={formData.Year_of_signing}
                 onChange={handleChange}
                 label="Select Year"
                 color="light-gray"
@@ -158,8 +158,8 @@ export default function FacultyExchange() {
               </Typography>
               <Input
                 size="lg"
-                name="duration"
-                value={formData.duration}
+                name="Duration"
+                value={formData.Duration}
                 onChange={handleChange}
                 label="Duration (in years)"
               />
@@ -172,8 +172,8 @@ export default function FacultyExchange() {
             </Typography>
             <Input
               size="lg"
-              name="objectives"
-              value={formData.objectives}
+              name="Objectives_Purpose"
+              value={formData.Objectives_Purpose}
               onChange={handleChange}
               label="Objectives/Purpose"
             />
@@ -185,23 +185,10 @@ export default function FacultyExchange() {
             </Typography>
             <Input
               size="lg"
-              name="activitiesAndLinks"
-              value={formData.activitiesAndLinks}
+              name="Actual_Activity_Under_MOU"
+              value={formData.Actual_Activity_Under_MOU}
               onChange={handleChange}
               label="Activities and Web-Links"
-            />
-          </div>
-
-          <div className="mb-4">
-            <Typography variant="h6" color="blue-gray" className="mb-3">
-              Link to the Relevant Document
-            </Typography>
-            <Input
-              size="lg"
-              name="documentLink"
-              value={formData.documentLink}
-              onChange={handleChange}
-              label="Relevant Document Link"
             />
           </div>
 
@@ -212,8 +199,8 @@ export default function FacultyExchange() {
               </Typography>
               <Input
                 size="lg"
-                name="financialSupport"
-                value={formData.financialSupport}
+                name="Finance_Support_Transaction"
+                value={formData.Finance_Support_Transaction}
                 onChange={handleChange}
                 label="Financial Support/Transaction"
               />
@@ -224,7 +211,7 @@ export default function FacultyExchange() {
               </Typography>
               <Input
                 size="lg"
-                name="reportFile"
+                name="Upload_Report"
                 type="text"
                 onChange={handleChange}
               />

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Card, Input, Button, Typography } from "@material-tailwind/react";
 import { useSelector } from "react-redux";
+import { MdVisibility } from "react-icons/md";
 
 export default function TDashboard() {
   const { currentUser } = useSelector((state) => state.user);
@@ -10,6 +11,22 @@ export default function TDashboard() {
       email: currentUser?.Email,
     },
   });
+
+  const publications = [
+    { type: "Book Publication", count: 20 },
+    { type: "Research Publication", count: 3 },
+    { type: "Research Publication", count: 3 },
+    { type: "Research Publication", count: 3 },
+    { type: "Research Publication", count: 3 },
+    { type: "Research Publication", count: 3 },
+    { type: "Research Publication", count: 3 },
+    { type: "Research Publication", count: 3 },
+    { type: "Research Publication", count: 3 },
+    { type: "Research Publication", count: 3 },
+    { type: "Research Publication", count: 3 },
+    { type: "Research Publication", count: 3 },
+    // Add more publications here
+  ];
 
   const handleUserProfileChange = (e) => {
     setFormData({
@@ -31,7 +48,7 @@ export default function TDashboard() {
       <Card
         color="transparent"
         shadow={false}
-        className="border border-gray-300 w-full p-2 my-2 rounded-md"
+        className="border border-gray-300 w-full p-2 my-2 rounded-md "
       >
         <Typography
           variant="h4"
@@ -82,6 +99,39 @@ export default function TDashboard() {
           </Button>
         </form>
       </Card>
+      <div className="flex justify-around gap-2 flex-wrap -mx-4">
+        {publications.map((publication, index) => (
+          <div
+            key={index}
+            className="w-full sm:w-1/2 md:w-1/2 lg:w-1/3 xl:w-1/4 px-4 py-1 my-2 transition duration-300 relative group"
+          >
+            <div
+              className="w-full h-full rounded-lg p-4"
+              style={{
+                backgroundColor: index % 2 !== 0 ? "#F0F0F0" : "#D6EAF8",
+                transition: "transform 0.3s ease-out",
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = "scale(1.05)";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = "scale(1)";
+              }}
+            >
+              <Typography
+                variant="h6"
+                color="dark"
+                className="text-center mb-3 text-wrap"
+              >
+                {publication.type}
+              </Typography>
+              <Typography variant="h5" color="dark" className="text-center">
+                {publication.count}
+              </Typography>
+            </div>
+          </div>
+        ))}
+      </div>
     </>
   );
 }

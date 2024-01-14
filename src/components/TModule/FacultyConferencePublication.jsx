@@ -7,12 +7,15 @@ import {
   Button,
   Typography,
 } from "@material-tailwind/react";
-import { addRecordsFaculty } from "./API_Routes";
 import axios from "axios";
 import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+
+import { addRecordsFaculty } from "./API_Routes";
 
 export default function FacultyConferencePublication() {
   const { currentUser } = useSelector((state) => state.user);
+  const navigate = useNavigate();
   const currentYear = new Date().getFullYear();
   const years = Array.from(
     { length: currentYear - 1999 },
@@ -53,9 +56,8 @@ export default function FacultyConferencePublication() {
   //Add records
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("FormData: ", formData);
-    const response = await axios.post(addRecordsFaculty, formData);
-    console.log("Response is : ", response.data);
+    await axios.post(addRecordsFaculty, formData);
+    navigate("/t/data");
   };
 
   return (
@@ -330,7 +332,6 @@ export default function FacultyConferencePublication() {
                 <Option value="Yes">Yes</Option>
                 <Option value="No">No</Option>
               </Select>
-              
             </div>
             <div className="w-full md:w-1/2 px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">

@@ -9,11 +9,13 @@ import {
 } from "@material-tailwind/react";
 import { useSelector } from "react-redux";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
+
 import { addRecordsConference } from "./API_Routes";
-// import axios from 'axios';
 
 export default function ConfeSeminar() {
   const { currentUser } = useSelector((state) => state.user);
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     T_ID: null,
     Username: currentUser?.Email,
@@ -40,11 +42,11 @@ export default function ConfeSeminar() {
     });
   };
 
+  //add new record
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // console.log(formData);
-    const response = await axios.post(addRecordsConference, formData);
-    console.log("Response is : ", response.data);
+    await axios.post(addRecordsConference, formData);
+    navigate("/t/data");
   };
 
   return (

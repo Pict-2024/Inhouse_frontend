@@ -8,33 +8,34 @@ import {
   Option,
 } from "@material-tailwind/react";
 import { useSelector } from "react-redux";
-import { addRecordsPatent } from "./API_Routes";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
+
+import { addRecordsPatent } from "./API_Routes";
 
 export default function PatentPublication() {
   const { currentUser } = useSelector((state) => state.user);
-  // Define state variables for form fields
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     T_ID: null,
     Username: currentUser?.Email,
     Name_of_the_Department: "",
-    patentApplicationNo: "",
-    patentStatus: "",
-    inventorName: "",
-    patentTitle: "",
-    applicantName: "",
-    patentFiledDate: "",
-    patentPublishedDate: "",
-    publicationNumber: "",
-    assigneeName: "",
-    financialSupport: "",
-    sourceProofURL: "",
-    patentType: "",
-    country: "",
-    patentDocument: null,
+    Patent_Application_No: "",
+    Status_of_Patent_Pub: "",
+    Inventor_s_Name: "",
+    Title_of_the_Patent: "",
+    Applicant_s_Name: "",
+    Patent_Filed_Date: "",
+    Patent_Pub_Grant_date: "",
+    Patent_Pub_Number: "",
+    Assignees_Name: "",
+    Financial_Support_By_PICT: "",
+    URL_Web_Links: "",
+    Type_of_the_Patent: "",
+    Country: "",
+    Upload_Patent_Document: null,
   });
 
-  // Handle form field changes
   const handleChange = (e) => {
     const { name, value, type, files } = e.target;
     setFormData({
@@ -43,13 +44,11 @@ export default function PatentPublication() {
     });
   };
 
-  // Handle form submission
+  // Add new record
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // You can access the form data in the `formData` object
-    // console.log(formData);
-    const response = await axios.post(addRecordsPatent, formData);
-    console.log("Response is : ", response.data);
+    await axios.post(addRecordsPatent, formData);
+    navigate("/t/data");
   };
 
   return (
@@ -98,8 +97,8 @@ export default function PatentPublication() {
               </Typography>
               <Input
                 size="lg"
-                name="patentApplicationNo"
-                value={formData.patentApplicationNo}
+                name="Patent_Application_No"
+                value={formData.Patent_Application_No}
                 onChange={handleChange}
                 label="Patent Application No."
               />
@@ -131,8 +130,8 @@ export default function PatentPublication() {
               </Typography>
               <Input
                 size="lg"
-                name="inventorName"
-                value={formData.inventorName}
+                name="Inventor_s_Name"
+                value={formData.Inventor_s_Name}
                 onChange={handleChange}
                 label="Inventor's Name"
               />
@@ -143,8 +142,8 @@ export default function PatentPublication() {
               </Typography>
               <Input
                 size="lg"
-                name="patentTitle"
-                value={formData.patentTitle}
+                name="Title_of_the_Patent"
+                value={formData.Title_of_the_Patent}
                 onChange={handleChange}
                 label="Title of the Patent"
               />
@@ -157,8 +156,8 @@ export default function PatentPublication() {
               </Typography>
               <Input
                 size="lg"
-                name="applicantName"
-                value={formData.applicantName}
+                name="Applicant_s_Name"
+                value={formData.Applicant_s_Name}
                 onChange={handleChange}
                 label="Applicant's Name"
               />
@@ -169,8 +168,8 @@ export default function PatentPublication() {
               </Typography>
               <Input
                 size="lg"
-                name="patentFiledDate"
-                value={formData.patentFiledDate}
+                name="Patent_Filed_Date"
+                value={formData.Patent_Filed_Date}
                 onChange={handleChange}
                 type="date"
                 label="Patent Filed Date (DD/MM/YYYY)"
@@ -184,8 +183,8 @@ export default function PatentPublication() {
               </Typography>
               <Input
                 size="lg"
-                name="patentPublishedDate"
-                value={formData.patentPublishedDate}
+                name="Patent_Pub_Grant_date"
+                value={formData.Patent_Pub_Grant_date}
                 onChange={handleChange}
                 type="date"
                 label="Patent Published Date / Granted Date (DD/MM/YYYY)"
@@ -197,8 +196,8 @@ export default function PatentPublication() {
               </Typography>
               <Input
                 size="lg"
-                name="publicationNumber"
-                value={formData.publicationNumber}
+                name="Patent_Pub_Number"
+                value={formData.Patent_Pub_Number}
                 onChange={handleChange}
                 label="Patent Publication Number / Patent Granted Number"
               />
@@ -210,8 +209,8 @@ export default function PatentPublication() {
             </Typography>
             <Input
               size="lg"
-              name="assigneeName"
-              value={formData.assigneeName}
+              name="Assignees_Name"
+              value={formData.Assignees_Name}
               onChange={handleChange}
               label="Assignee's Name"
             />
@@ -222,8 +221,8 @@ export default function PatentPublication() {
             </Typography>
             <Input
               size="lg"
-              name="financialSupport"
-              value={formData.financialSupport}
+              name="Financial_Support_By_PICT"
+              value={formData.Financial_Support_By_PICT}
               onChange={handleChange}
               label="Financial Support by PICT Amount in Rs"
             />
@@ -235,8 +234,8 @@ export default function PatentPublication() {
               </Typography>
               <Input
                 size="lg"
-                name="sourceProofURL"
-                value={formData.sourceProofURL}
+                name="URL_Web_Links"
+                value={formData.URL_Web_Links}
                 onChange={handleChange}
                 label="Source Proof URL/Website Links, etc."
               />
@@ -247,8 +246,8 @@ export default function PatentPublication() {
               </Typography>
               <Input
                 size="lg"
-                name="patentType"
-                value={formData.patentType}
+                name="Type_of_the_Patent"
+                value={formData.Type_of_the_Patent}
                 onChange={handleChange}
                 label="Type of the Patent"
               />
@@ -261,8 +260,8 @@ export default function PatentPublication() {
               </Typography>
               <Input
                 size="lg"
-                name="country"
-                value={formData.country}
+                name="Country"
+                value={formData.Country}
                 onChange={handleChange}
                 label="Country"
               />
@@ -273,7 +272,7 @@ export default function PatentPublication() {
               </Typography>
               <Input
                 size="lg"
-                name="patentDocument"
+                name="Upload_Patent_Document"
                 onChange={handleChange}
                 type="text"
                 label="Upload Patent Document"

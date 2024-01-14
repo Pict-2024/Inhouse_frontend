@@ -9,26 +9,29 @@ import {
 import axios from "axios";
 import { useState } from "react";
 import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+
 import { addRecordsWebinar } from "./API_Routes";
 
 export default function WebinarConducted() {
   const { currentUser } = useSelector((state) => state.user);
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     T_ID: null,
     Username: currentUser?.Email,
     Department: "",
-    activityEvent: "",
-    title: "",
-    speakerResourcePerson: "",
-    resourcePersonAffiliation: "",
-    noOfParticipants: "",
-    remarks: "",
-    startDate: "",
-    endDate: "",
-    coordinators: "",
+    Activity_Event: "",
+    Title: "",
+    Speaker_Resource_Person: "",
+    Resource_Person_Affiliation: "",
+    No_of_Participants: "",
+    Remarks: "",
+    Start_Date: "",
+    End_Date: "",
+    Name_of_Coordinators: "",
     Targeted_Audience: "",
-    durationInHours: "",
-    financialDetails: "",
+    Duration_in_Hrs: "",
+    Renumeration_Paid: "",
   });
 
   const handleInputChange = (e) => {
@@ -40,10 +43,11 @@ export default function WebinarConducted() {
     }));
   };
 
+  //add new record
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const response = await axios.post(addRecordsWebinar, formData);
-    console.log("Response is : ", response.data);
+    await axios.post(addRecordsWebinar, formData);
+    navigate("/t/data");
   };
 
   return (
@@ -96,8 +100,9 @@ export default function WebinarConducted() {
               <Input
                 size="lg"
                 label="Activity/Event"
+                name="Activity_Event"
                 onChange={handleInputChange}
-                value={formData.activityEvent}
+                value={formData.Activity_Event}
               />
             </div>
             <div className="w-full md:w-1/2 px-4 mb-4">
@@ -107,8 +112,9 @@ export default function WebinarConducted() {
               <Input
                 size="lg"
                 label="Title"
+                name="Title"
                 onChange={handleInputChange}
-                value={formData.title}
+                value={formData.Title}
               />
             </div>
           </div>
@@ -121,8 +127,9 @@ export default function WebinarConducted() {
               <Input
                 size="lg"
                 label="Speaker/Resource Person"
+                name="Speaker_Resource_Person"
                 onChange={handleInputChange}
-                value={formData.speakerResourcePerson}
+                value={formData.Speaker_Resource_Person}
               />
             </div>
             <div className="w-full md:w-1/2 px-4 mb-4">
@@ -132,8 +139,9 @@ export default function WebinarConducted() {
               <Input
                 size="lg"
                 label="Resource Person Affiliation"
+                name="Resource_Person_Affiliation"
                 onChange={handleInputChange}
-                value={formData.resourcePersonAffiliation}
+                value={formData.Resource_Person_Affiliation}
               />
             </div>
           </div>
@@ -147,8 +155,9 @@ export default function WebinarConducted() {
                 size="lg"
                 label="No. of Participants"
                 type="number"
+                name="No_of_Participants"
                 onChange={handleInputChange}
-                value={formData.noOfParticipants}
+                value={formData.No_of_Participants}
               />
             </div>
             <div className="w-full md:w-1/2 px-4 mb-4">
@@ -158,8 +167,9 @@ export default function WebinarConducted() {
               <Input
                 size="lg"
                 label="Remarks"
+                name="Remarks"
                 onChange={handleInputChange}
-                value={formData.remarks}
+                value={formData.Remarks}
               />
             </div>
           </div>
@@ -173,8 +183,9 @@ export default function WebinarConducted() {
                 size="lg"
                 label="Start Date"
                 type="date"
+                name="Start_Date"
                 onChange={handleInputChange}
-                value={formData.startDate}
+                value={formData.Start_Date}
               />
             </div>
             <div className="w-full md:w-1/2 px-4 mb-4">
@@ -185,8 +196,9 @@ export default function WebinarConducted() {
                 size="lg"
                 label="End Date"
                 type="date"
+                name="End_Date"
                 onChange={handleInputChange}
-                value={formData.endDate}
+                value={formData.End_Date}
               />
             </div>
           </div>
@@ -199,8 +211,9 @@ export default function WebinarConducted() {
               <Input
                 size="lg"
                 label="Name of the coordinator(s)"
+                name="Name_of_Coordinators"
                 onChange={handleInputChange}
-                value={formData.coordinators}
+                value={formData.Name_of_Coordinators}
               />
             </div>
             <div className="w-full md:w-1/2 px-4 mb-4">
@@ -233,8 +246,9 @@ export default function WebinarConducted() {
               <Input
                 size="lg"
                 label="Duration in Hrs"
+                name="Duration_in_Hrs"
                 onChange={handleInputChange}
-                value={formData.durationInHours}
+                value={formData.Duration_in_Hrs}
               />
             </div>
             <div className="w-full md:w-1/2 px-4 mb-4">
@@ -244,8 +258,9 @@ export default function WebinarConducted() {
               <Input
                 size="lg"
                 label="Financial Details/Remuneration Paid"
+                name="Renumeration_Paid"
                 onChange={handleInputChange}
-                value={formData.financialDetails}
+                value={formData.Renumeration_Paid}
               />
             </div>
           </div>

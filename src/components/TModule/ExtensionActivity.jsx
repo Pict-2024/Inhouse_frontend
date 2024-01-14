@@ -9,25 +9,28 @@ import {
 import { useState } from "react";
 import { useSelector } from "react-redux";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
+
 import { addRecordsExtension } from "./API_Routes";
 
 export default function ExtensionActivity() {
   const { currentUser } = useSelector((state) => state.user);
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     T_ID: null,
     Username: currentUser?.Email,
     Dept_Name: "",
-    title: "",
-    startDate: "",
-    endDate: "",
-    activityTitle: "",
-    schemeName: "",
-    role: "",
-    purpose: "",
-    studentParticipants: "",
-    facultyParticipants: "",
-    attainedPOsPSOs: "",
-    place: "",
+    Title: "",
+    Start_Date: "",
+    End_Date: "",
+    Title_of_extension_activity: "",
+    Scheme_Name: "",
+    Role: "",
+    Purpose: "",
+    NoOf_Student_Participants: "",
+    NoOf_Faculty_Participants: "",
+    PSOs_Attained: "",
+    Place: "",
   });
 
   const handleChange = (e) => {
@@ -38,11 +41,11 @@ export default function ExtensionActivity() {
     });
   };
 
+  //add new record
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // console.log(formData);
-    const response = await axios.post(addRecordsExtension, formData);
-    console.log("Response is : ", response.data);
+    await axios.post(addRecordsExtension, formData);
+    navigate("/t/data");
   };
 
   return (
@@ -92,8 +95,8 @@ export default function ExtensionActivity() {
               </Typography>
               <Input
                 size="lg"
-                name="title"
-                value={formData.title}
+                name="Title"
+                value={formData.Title}
                 label="Title"
                 onChange={handleChange}
               />
@@ -104,8 +107,8 @@ export default function ExtensionActivity() {
               </Typography>
               <Input
                 size="lg"
-                name="startDate"
-                value={formData.startDate}
+                name="Start_Date"
+                value={formData.Start_Date}
                 label="Start Date"
                 type="date"
                 onChange={handleChange}
@@ -120,8 +123,8 @@ export default function ExtensionActivity() {
               </Typography>
               <Input
                 size="lg"
-                name="endDate"
-                value={formData.endDate}
+                name="End_Date"
+                value={formData.End_Date}
                 label="End Date"
                 type="date"
                 onChange={handleChange}
@@ -133,8 +136,8 @@ export default function ExtensionActivity() {
               </Typography>
               <Input
                 size="lg"
-                name="activityTitle"
-                value={formData.activityTitle}
+                name="Title_of_extension_activity"
+                value={formData.Title_of_extension_activity}
                 label="Title of extension activity"
                 onChange={handleChange}
               />
@@ -148,8 +151,8 @@ export default function ExtensionActivity() {
               </Typography>
               <Input
                 size="lg"
-                name="schemeName"
-                value={formData.schemeName}
+                name="Scheme_Name"
+                value={formData.Scheme_Name}
                 label="Name of the scheme"
                 onChange={handleChange}
               />
@@ -160,8 +163,8 @@ export default function ExtensionActivity() {
               </Typography>
               <Input
                 size="lg"
-                name="role"
-                value={formData.role}
+                name="Role"
+                value={formData.Role}
                 label="Role"
                 onChange={handleChange}
               />
@@ -175,8 +178,8 @@ export default function ExtensionActivity() {
               </Typography>
               <Input
                 size="lg"
-                name="purpose"
-                value={formData.purpose}
+                name="Purpose"
+                value={formData.Purpose}
                 label="Purpose of activity"
                 onChange={handleChange}
               />
@@ -187,8 +190,8 @@ export default function ExtensionActivity() {
               </Typography>
               <Input
                 size="lg"
-                name="studentParticipants"
-                value={formData.studentParticipants}
+                name="NoOf_Student_Participants"
+                value={formData.NoOf_Student_Participants}
                 label="No. of student participant"
                 type="number"
                 onChange={handleChange}
@@ -203,8 +206,8 @@ export default function ExtensionActivity() {
               </Typography>
               <Input
                 size="lg"
-                name="facultyParticipants"
-                value={formData.facultyParticipants}
+                name="NoOf_Faculty_Participants"
+                value={formData.NoOf_Faculty_Participants}
                 label="No. of faculty participant/Contributed"
                 type="number"
                 onChange={handleChange}
@@ -216,8 +219,8 @@ export default function ExtensionActivity() {
               </Typography>
               <Input
                 size="lg"
-                name="attainedPOsPSOs"
-                value={formData.attainedPOsPSOs}
+                name="PSOs_Attained"
+                value={formData.PSOs_Attained}
                 label="POs, PSOs attained through this activity"
                 onChange={handleChange}
               />
@@ -229,8 +232,8 @@ export default function ExtensionActivity() {
             </Typography>
             <Input
               size="lg"
-              name="place"
-              value={formData.place}
+              name="Place"
+              value={formData.Place}
               label="Place of the extension activity"
               onChange={handleChange}
             />

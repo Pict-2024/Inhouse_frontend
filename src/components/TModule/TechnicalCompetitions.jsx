@@ -9,37 +9,28 @@ import {
 } from "@material-tailwind/react";
 import { useSelector } from "react-redux";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
+
 import { addRecordsTechnical } from "./API_Routes";
 
 export default function TechnicalCompetitions() {
   const { currentUser } = useSelector((state) => state.user);
-  const currentYear = new Date().getFullYear();
-  const years = Array.from(
-    { length: currentYear - 1999 },
-    (_, index) => currentYear - index
-  );
+  const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
     T_ID: null,
     Username: currentUser?.Email,
-    department: "",
-    principalInvestigator: "",
-    projectTitle: "",
-    facultyDepartment: "",
-    coPiName: "",
-    departmentOfCoPi: "",
-    projectType: "",
-    fundingAgency: "",
-    schemeName: "",
-    amountSanctioned: "",
-    yearOfGrant: "",
-    startDate: "",
-    endDate: "",
-    amountDeposited: "",
-    transactionDate: "",
-    status: "",
-    duration: "",
-    outcome: "",
+    Department: "",
+    Name_of_Competition: "",
+    No_of_participants: "",
+    Duration: "",
+    Achievement_Obtained: "",
+    Start_Date: "",
+    End_Date: "",
+    Names_of_Participants: "",
+    Level: "",
+    Sponsorship: "",
+    Finance_Support_By_PICT: "",
   });
 
   const handleChange = (e) => {
@@ -50,12 +41,11 @@ export default function TechnicalCompetitions() {
     });
   };
 
+  //add new record
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // Handle form submission, you can access formData to send it to your backend or perform other actions.
-    // console.log(formData);
-    const response = await axios.post(addRecordsTechnical, formData);
-    console.log("Response is : ", response.data);
+    await axios.post(addRecordsTechnical, formData);
+    navigate("/t/data");
   };
 
   return (
@@ -100,28 +90,15 @@ export default function TechnicalCompetitions() {
           </div>
 
           <div className="mb-4 flex flex-wrap -mx-4">
-            <div className="w-full md:w-1/2 px-4 mb-4">
+            <div className="w-full px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
-                Principal Investigator Faculty Name
+                Name of Competition
               </Typography>
               <Input
                 size="lg"
-                label="Principal Investigator Faculty Name"
-                name="principalInvestigator"
-                value={formData.principalInvestigator}
-                onChange={handleChange}
-              />
-            </div>
-
-            <div className="w-full md:w-1/2 px-4 mb-4">
-              <Typography variant="h6" color="blue-gray" className="mb-3">
-                Project Title
-              </Typography>
-              <Input
-                size="lg"
-                label="Project Title"
-                name="projectTitle"
-                value={formData.projectTitle}
+                label="Name of Competition"
+                name="Name_of_Competition"
+                value={formData.Name_of_Competition}
                 onChange={handleChange}
               />
             </div>
@@ -130,127 +107,43 @@ export default function TechnicalCompetitions() {
           <div className="mb-4 flex flex-wrap -mx-4">
             <div className="w-full md:w-1/2 px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
-                Faculty Department
+                Duration
               </Typography>
               <Input
                 size="lg"
-                label="Faculty Department"
-                name="facultyDepartment"
-                value={formData.facultyDepartment}
+                label="Duration"
+                name="Duration"
+                value={formData.Duration}
                 onChange={handleChange}
               />
             </div>
 
             <div className="w-full md:w-1/2 px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
-                Name(s) of CO-PI
+                No of Participants
               </Typography>
               <Input
                 size="lg"
-                label="Name(s) of CO-PI"
-                name="coPiName"
-                value={formData.coPiName}
-                onChange={handleChange}
-              />
-            </div>
-          </div>
-
-          <div className="mb-4 flex flex-wrap -mx-4">
-            <div className="w-full md:w-1/2 px-4 mb-4">
-              <Typography variant="h6" color="blue-gray" className="mb-3">
-                Department of CO-PI
-              </Typography>
-              <Input
-                size="lg"
-                label="Department of CO-PI"
-                name="departmentOfCoPi"
-                value={formData.departmentOfCoPi}
-                onChange={handleChange}
-              />
-            </div>
-
-            <div className="w-full md:w-1/2 px-4 mb-4">
-              <Typography variant="h6" color="blue-gray" className="mb-3">
-                Project Type (Government/Non Government)
-              </Typography>
-              <Select
-                size="lg"
-                label="Select Project Type"
-                name="projectType"
-                value={formData.projectType}
-                onChange={handleChange}
-              >
-                <Option value="Government">Government</Option>
-                <Option value="Non Government">Non Government</Option>
-              </Select>
-            </div>
-          </div>
-
-          <div className="mb-4 flex flex-wrap -mx-4">
-            <div className="w-full md:w-1/2 px-4 mb-4">
-              <Typography variant="h6" color="blue-gray" className="mb-3">
-                Name of Funding Agency
-              </Typography>
-              <Input
-                size="lg"
-                label="Name of Funding Agency"
-                name="fundingAgency"
-                value={formData.fundingAgency}
-                onChange={handleChange}
-              />
-            </div>
-
-            <div className="w-full md:w-1/2 px-4 mb-4">
-              <Typography variant="h6" color="blue-gray" className="mb-3">
-                Name of the Scheme
-              </Typography>
-              <Input
-                size="lg"
-                label="Name of the Scheme"
-                name="schemeName"
-                value={formData.schemeName}
+                label="No of Participants"
+                name="No_of_participants"
+                value={formData.No_of_participants}
                 onChange={handleChange}
               />
             </div>
           </div>
 
           <div className="mb-4 flex flex-wrap -mx-4">
-            <div className="w-full md:w-1/2 px-4 mb-4">
+            <div className="w-full px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
-                Amount Sanctioned
+                Achievements Obtained
               </Typography>
               <Input
                 size="lg"
-                label="Amount Sanctioned"
-                name="amountSanctioned"
-                value={formData.amountSanctioned}
+                label="Achievements Obtained"
+                name="Achievement_Obtained"
+                value={formData.Achievement_Obtained}
                 onChange={handleChange}
               />
-            </div>
-
-            <div className="w-full md:w-1/2 px-4 mb-4">
-              <Typography variant="h6" color="blue-gray" className="mb-3">
-                Year of grant received
-              </Typography>
-              <Select
-                size="lg"
-                label="Select Year"
-                color="light-gray"
-                name="yearOfGrant"
-                value={formData.yearOfGrant}
-                // onChange={handleChange}
-                onChange={(value) =>
-                  handleChange({
-                    target: { id: "yearOfGrant", value },
-                  })
-                }
-              >
-                {years.map((year) => (
-                  <Option key={year} value={year}>
-                    {year}
-                  </Option>
-                ))}
-              </Select>
             </div>
           </div>
 
@@ -262,8 +155,9 @@ export default function TechnicalCompetitions() {
               <Input
                 size="lg"
                 type="date"
-                name="startDate"
-                value={formData.startDate}
+                name="Start_Date"
+                label="Start Date"
+                value={formData.Start_Date}
                 onChange={handleChange}
               />
             </div>
@@ -275,36 +169,25 @@ export default function TechnicalCompetitions() {
               <Input
                 size="lg"
                 type="date"
-                name="endDate"
-                value={formData.endDate}
+                label="End Date"
+                name="End_Date"
+                value={formData.End_Date}
                 onChange={handleChange}
               />
             </div>
           </div>
 
           <div className="mb-4 flex flex-wrap -mx-4">
-            <div className="w-full md:w-1/2 px-4 mb-4">
+            <div className="w-full px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
-                Amount deposited to PICT account
-              </Typography>
-              <Input
-                size="lg"
-                label="Amount deposited to PICT account"
-                name="amountDeposited"
-                value={formData.amountDeposited}
-                onChange={handleChange}
-              />
-            </div>
-
-            <div className="w-full md:w-1/2 px-4 mb-4">
-              <Typography variant="h6" color="blue-gray" className="mb-3">
-                Transaction date
+                Names of Participants
               </Typography>
               <Input
                 size="lg"
                 type="date"
-                name="transactionDate"
-                value={formData.transactionDate}
+                label="Names of Participants"
+                name="Names_of_Participants"
+                value={formData.Names_of_Participants}
                 onChange={handleChange}
               />
             </div>
@@ -313,34 +196,36 @@ export default function TechnicalCompetitions() {
           <div className="mb-4 flex flex-wrap -mx-4">
             <div className="w-full md:w-1/2 px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
-                Status (Ongoing/ Completed)
+                Level
               </Typography>
               <Select
                 size="lg"
-                label="Select Status"
-                name="status"
-                value={formData.status}
+                label="Select level"
+                name="Level"
+                value={formData.Level}
                 // onChange={handleChange}
                 onChange={(value) =>
                   handleChange({
-                    target: { id: "status", value },
+                    target: { id: "Level", value },
                   })
                 }
               >
-                <Option value="Ongoing">Ongoing</Option>
-                <Option value="Completed">Completed</Option>
+                <Option value="College">College</Option>
+                <Option value="Department">Department</Option>
+                <Option value="National">National</Option>
+                <Option value="International">International</Option>
               </Select>
             </div>
 
             <div className="w-full md:w-1/2 px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
-                Duration
+                Sponsorship
               </Typography>
               <Input
                 size="lg"
-                label="Duration"
-                name="duration"
-                value={formData.duration}
+                label="Sponsorship"
+                name="Sponsorship"
+                value={formData.Sponsorship}
                 onChange={handleChange}
               />
             </div>
@@ -349,13 +234,13 @@ export default function TechnicalCompetitions() {
           <div className="mb-4 flex flex-wrap -mx-4">
             <div className="w-full px-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
-                Outcome
+                Finance_Support_By_PICT
               </Typography>
               <Input
                 size="lg"
-                label="Outcome"
-                name="outcome"
-                value={formData.outcome}
+                label="Finance_Support_By_PICT"
+                name="Finance_Support_By_PICT"
+                value={formData.Finance_Support_By_PICT}
                 onChange={handleChange}
               />
             </div>
