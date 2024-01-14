@@ -18,6 +18,7 @@ import {
 } from "@material-tailwind/react";
 import axios from "axios";
 import PropTypes from "prop-types";
+import { useSelector } from "react-redux";
 import {
   getOneRecordsAchievements,
   getOneRecordsAttended,
@@ -74,14 +75,12 @@ import {
   updateRecordsIndustrial,
   updateRecordsContribution,
 } from "../API_Routes";
-import { useSelector } from "react-redux";
 
 export default function TableData({ tableName }) {
   const { currentUser } = useSelector((state) => state.user);
   const [tableHead, setTableHead] = useState([]);
   const [tableRows, setTableRows] = useState([]);
   const [editableFields, setEditableFields] = useState({});
-  
 
   // getRecords by username apis
   const getApiRoute = (tableName) => {
@@ -252,7 +251,7 @@ export default function TableData({ tableName }) {
     }
   };
 
-  //Handle delete
+  //Handle delete records
   const onDelete = async (record) => {
     try {
       const apiurl = deleteAPIRoute(tableName)(currentUser.Email, record.T_ID);
@@ -296,7 +295,7 @@ export default function TableData({ tableName }) {
     });
   };
 
-  // Handle save changes
+  // Update modified changes
   const handleSave = async (tId) => {
     try {
       const updatedRecord = editableFields[tId];
@@ -332,10 +331,12 @@ export default function TableData({ tableName }) {
     }
   };
 
+  //render all records
   useEffect(() => {
     getAllRecords();
   }, [tableName]);
 
+  //link to uploaded document
   const handleLink = (link) => {
     console.log("Link of document is : ", link);
     window.open(link, "_blank");

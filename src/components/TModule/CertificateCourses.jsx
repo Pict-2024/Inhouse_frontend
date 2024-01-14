@@ -1,29 +1,39 @@
 import { useState } from "react";
-import { Card, Input, Button, Typography,Option,Select } from "@material-tailwind/react";
+import {
+  Card,
+  Input,
+  Button,
+  Typography,
+  Option,
+  Select,
+} from "@material-tailwind/react";
 import { useSelector } from "react-redux";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
+
 import { addRecordsCertificate } from "./API_Routes";
 
 export default function CertificateCourses() {
   const { currentUser } = useSelector((state) => state.user);
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     T_ID: null,
     UserName: currentUser?.Email,
     Department: "",
-    courseName: "",
-    yearOfOffering: "",
-    timesOffered: "",
-    courseDuration: "",
-    startDate: "",
-    endDate: "",
-    enrolledStudents: "",
-    completedStudents: "",
-    speakers: "",
-    speakerDetails: "",
-    reportLink: "",
-    psosAttained: "",
-    fundGenerated: "",
-    sponsorship: "",
+    Additional_Certificate_Programs: "",
+    Year_of_offering: "",
+    No_of_times_offered: "",
+    Duration_of_course: "",
+    Start_Date: "",
+    End_Date: "",
+    Students_enrolled: "",
+    Students_Completing_the_Course: "",
+    Name_of_speakers: "",
+    Speaker_details: "",
+    Upload_Report: "",
+    PSOs_Attained: "",
+    Fund_Generated: "",
+    Sponsorship_collaboration: "",
   });
 
   const handleOnChange = (e) => {
@@ -34,10 +44,11 @@ export default function CertificateCourses() {
     });
   };
 
+  //add new record
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const response = await axios.post(addRecordsCertificate, formData);
-    console.log("Response is : ", response.data);
+    await axios.post(addRecordsCertificate, formData);
+    navigate("/t/data");
   };
 
   return (
@@ -86,10 +97,10 @@ export default function CertificateCourses() {
                 Name of Add-On / Certificate Program
               </Typography>
               <Input
-                id="courseName"
+                id="Additional_Certificate_Programs"
                 size="lg"
                 label="Name of Add-On / Certificate Program"
-                value={formData.courseName}
+                value={formData.Additional_Certificate_Programs}
                 onChange={handleOnChange}
               />
             </div>
@@ -98,11 +109,11 @@ export default function CertificateCourses() {
                 Year of Offering
               </Typography>
               <Input
-                id="yearOfOffering"
+                id="Year_of_offering"
                 size="lg"
                 label="Year of Offering"
                 type="number"
-                value={formData.yearOfOffering}
+                value={formData.Year_of_offering}
                 onChange={handleOnChange}
               />
             </div>
@@ -114,11 +125,11 @@ export default function CertificateCourses() {
                 No. of Times Offered During the Same Year
               </Typography>
               <Input
-                id="timesOffered"
+                id="No_of_times_offered"
                 size="lg"
                 label="No. of Times Offered During the Same Year"
                 type="number"
-                value={formData.timesOffered}
+                value={formData.No_of_times_offered}
                 onChange={handleOnChange}
               />
             </div>
@@ -127,10 +138,10 @@ export default function CertificateCourses() {
                 Duration of Course
               </Typography>
               <Input
-                id="courseDuration"
+                id="Duration_of_course"
                 size="lg"
                 label="Duration of Course"
-                value={formData.courseDuration}
+                value={formData.Duration_of_course}
                 onChange={handleOnChange}
               />
             </div>
@@ -142,11 +153,11 @@ export default function CertificateCourses() {
                 Start Date
               </Typography>
               <Input
-                id="startDate"
+                id="Start_Date"
                 size="lg"
                 label="Start Date"
                 type="date"
-                value={formData.startDate}
+                value={formData.Start_Date}
                 onChange={handleOnChange}
               />
             </div>
@@ -155,11 +166,11 @@ export default function CertificateCourses() {
                 End Date
               </Typography>
               <Input
-                id="endDate"
+                id="End_Date"
                 size="lg"
                 label="End Date"
                 type="date"
-                value={formData.endDate}
+                value={formData.End_Date}
                 onChange={handleOnChange}
               />
             </div>
@@ -171,11 +182,11 @@ export default function CertificateCourses() {
                 Number of Students Enrolled in the Year
               </Typography>
               <Input
-                id="enrolledStudents"
+                id="Students_enrolled"
                 size="lg"
                 label="Number of Students Enrolled in the Year"
                 type="number"
-                value={formData.enrolledStudents}
+                value={formData.Students_enrolled}
                 onChange={handleOnChange}
               />
             </div>
@@ -184,11 +195,11 @@ export default function CertificateCourses() {
                 Number of Students Completing the Course in the Year
               </Typography>
               <Input
-                id="completedStudents"
+                id="Students_Completing_the_Course"
                 size="lg"
                 label="Number of Students Completing the Course in the Year"
                 type="number"
-                value={formData.completedStudents}
+                value={formData.Students_Completing_the_Course}
                 onChange={handleOnChange}
               />
             </div>
@@ -199,10 +210,10 @@ export default function CertificateCourses() {
               Names of Speakers
             </Typography>
             <Input
-              id="speakers"
+              id="Name_of_speakers"
               size="lg"
               label="Names of Speakers"
-              value={formData.speakers}
+              value={formData.Name_of_speakers}
               onChange={handleOnChange}
             />
           </div>
@@ -212,10 +223,10 @@ export default function CertificateCourses() {
               Speaker Details
             </Typography>
             <Input
-              id="speakerDetails"
+              id="Speaker_details"
               size="lg"
               label="Speaker Details"
-              value={formData.speakerDetails}
+              value={formData.Speaker_details}
               onChange={handleOnChange}
             />
           </div>
@@ -226,10 +237,10 @@ export default function CertificateCourses() {
               Attendance
             </Typography>
             <Input
-              id="reportLink"
+              id="Upload_Report"
               size="lg"
               label="Link to Report Consisting of Geotagged Photograph, Feedback, Attendance"
-              value={formData.reportLink}
+              value={formData.Upload_Report}
               onChange={handleOnChange}
             />
           </div>
@@ -239,10 +250,10 @@ export default function CertificateCourses() {
               Program Specific Outcomes (PSOs) Attained Through This Course
             </Typography>
             <Input
-              id="psosAttained"
+              id="PSOs_Attained"
               size="lg"
               label="Program Specific Outcomes (PSOs) Attained Through This Course"
-              value={formData.psosAttained}
+              value={formData.PSOs_Attained}
               onChange={handleOnChange}
             />
           </div>
@@ -253,10 +264,10 @@ export default function CertificateCourses() {
                 Fund Generated
               </Typography>
               <Input
-                id="fundGenerated"
+                id="Fund_Generated"
                 size="lg"
                 label="Fund Generated"
-                value={formData.fundGenerated}
+                value={formData.Fund_Generated}
                 onChange={handleOnChange}
               />
             </div>
@@ -265,10 +276,10 @@ export default function CertificateCourses() {
                 Sponsorship/Collaboration
               </Typography>
               <Input
-                id="sponsorship"
+                id="Sponsorship_collaboration"
                 size="lg"
                 label="Sponsorship/Collaboration"
-                value={formData.sponsorship}
+                value={formData.Sponsorship_collaboration}
                 onChange={handleOnChange}
               />
             </div>

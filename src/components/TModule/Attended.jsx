@@ -9,10 +9,13 @@ import {
 } from "@material-tailwind/react";
 import axios from "axios";
 import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+
 import { addRecordsAttended } from "./API_Routes";
 
 export default function Attended() {
   const { currentUser } = useSelector((state) => state.user);
+  const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
     T_ID: null,
@@ -38,10 +41,11 @@ export default function Attended() {
     });
   };
 
+  //add new record
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const response = await axios.post(addRecordsAttended, formData);
-    console.log("Response is : ", response.data);
+    await axios.post(addRecordsAttended, formData);
+    navigate("/t/data");
   };
 
   return (

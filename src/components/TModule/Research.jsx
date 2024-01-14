@@ -8,11 +8,14 @@ import {
   Typography,
 } from "@material-tailwind/react";
 import { useSelector } from "react-redux";
-import { addRecordsResearch } from "./API_Routes";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
+
+import { addRecordsResearch } from "./API_Routes";
 
 export default function Research() {
   const { currentUser } = useSelector((state) => state.user);
+  const navigate = useNavigate();
   const currentYear = new Date().getFullYear();
   const years = Array.from(
     { length: currentYear - 1999 },
@@ -58,9 +61,8 @@ export default function Research() {
   //Add records
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // console.log("FormData: ", formData);
-    const response = await axios.post(addRecordsResearch, formData);
-    console.log("Response is : ", response.data);
+    await axios.post(addRecordsResearch, formData);
+    navigate("/t/data");
   };
 
   return (

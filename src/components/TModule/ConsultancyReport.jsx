@@ -8,11 +8,14 @@ import {
   Typography,
 } from "@material-tailwind/react";
 import axios from "axios";
-import { addRecordsConsultancy } from "./API_Routes";
 import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+
+import { addRecordsConsultancy } from "./API_Routes";
 
 export default function ConsultancyReport() {
   const { currentUser } = useSelector((state) => state.user);
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     T_ID: null,
     Username: currentUser?.Email,
@@ -41,12 +44,11 @@ export default function ConsultancyReport() {
     });
   };
 
-  //Add records
+  //Add new records
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // console.log("FormData: ", formData);
-    const response = await axios.post(addRecordsConsultancy, formData);
-    console.log("Response is : ", response.data);
+    await axios.post(addRecordsConsultancy, formData);
+    navigate("/t/data");
   };
 
   return (

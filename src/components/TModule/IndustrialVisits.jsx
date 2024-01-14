@@ -1,11 +1,21 @@
 import { useState } from "react";
-import { Card, Input, Button, Typography,Select ,Option } from "@material-tailwind/react";
+import {
+  Card,
+  Input,
+  Button,
+  Typography,
+  Select,
+  Option,
+} from "@material-tailwind/react";
 import { useSelector } from "react-redux";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
+
 import { addRecordsIndustrial } from "./API_Routes";
 
 export default function IndustrialVisit() {
   const { currentUser } = useSelector((state) => state.user);
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     T_ID: null,
     Username: currentUser?.Email,
@@ -27,10 +37,11 @@ export default function IndustrialVisit() {
     });
   };
 
+  //add new record
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const response = await axios.post(addRecordsIndustrial, formData);
-    console.log("Response is : ", response.data);
+    await axios.post(addRecordsIndustrial, formData);
+    navigate("/t/data");
   };
 
   return (
