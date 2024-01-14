@@ -8,6 +8,9 @@ import {
   Typography,
 } from "@material-tailwind/react";
 
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 export default function Teachers() {
   const [teachers, setTeachers] = useState([]);
   const [editingEmail, setEditingEmail] = useState(null);
@@ -51,6 +54,35 @@ export default function Teachers() {
         },
       });
 
+      if(editedTeacher.SpecialAccess !== 'null')
+      {
+
+        toast.success(`Granted ${editedTeacher.SpecialAccess} Head Access to ${email}`, {
+          position: "top-right",
+          autoClose: 1500,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+        });
+
+      }
+      else
+      {
+        toast.warning(`Revoked Access from ${email}`, {
+          position: "top-right",
+          autoClose: 1500,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+        });
+      }
+
       setEditingEmail(null);
 
       // Update the state with the modified value
@@ -61,6 +93,7 @@ export default function Teachers() {
             : teacher
         )
       );
+
     } catch (error) {
       console.error("Error updating teacher:", error);
     }
