@@ -200,7 +200,7 @@ export default function BookPublication() {
                 id="Proof"
                 size="lg"
                 type="text"
-                label="Financial support from institute in INR"
+                label="Proof"
                 onChange={handleOnChange}
               />
             </div>

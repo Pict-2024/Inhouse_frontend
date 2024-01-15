@@ -154,10 +154,10 @@ export default function Research() {
                 id="Year"
                 size="lg"
                 label="Year"
-                value={formData.Year}
+                value={formData.Year_of_Study}
                 onChange={(value) =>
                   handleOnChange({
-                    target: { id: "Year", value },
+                    target: { id: "Year_of_Study", value },
                   })
                 }
               >
