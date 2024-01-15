@@ -38,6 +38,7 @@ import {
   getAllRecordsWebinar,
 } from "../../components/TModule/API_Routes";
 import { Option, Select } from "@material-tailwind/react";
+import html2pdf from 'html2pdf.js'; 
 
 // Define the Report component
 const Report = () => {
@@ -215,41 +216,132 @@ const Report = () => {
     updateApiUrl();
   }, [formFilters]);
 
-  const generatePDF = () => {
-    const doc = new jsPDF();
-    const tableRow = [];
-    let headersAdded = false;
 
-    doc.setFont("helvetica", "bold");
-    doc.setFontSize(16);
-    doc.text("PUNE INSTITUTE OF COMPUTER TECHNOLOGY", 20, 20);
+ 
+//via html2pdf
 
-    doc.setFontSize(14);
-    doc.text(`Report on ${selectedTable}`, 20, 30);
+const generatePDF = () => {
+  const tableContainer = document.getElementById('table-container');
 
-    // Add table rows
-    tableRows.forEach((row) => {
-      const rowData = columnNames.map((columnName) => row[columnName.Field]);
-      tableRow.push(rowData);
+  html2pdf(tableContainer, {
+    margin: 10,
+    filename: 'report.pdf',
+    image: { type: 'jpeg', quality: 0.98 },
+    html2canvas: { scale: 2 },
+    jsPDF: { unit: 'mm', format: 'a4', orientation: 'landscape' },
+  });
+};
 
-      // Add headers only once
-      if (!headersAdded) {
-        const tableHeader = columnNames.map((header) => header.Field);
-        tableRow.unshift(tableHeader);
-        headersAdded = true;
-      }
-    });
+//Table format
+// const generatePDF = () => {
+//   const doc = new jsPDF('landscape');
 
-    doc.autoTable({
-      head: [tableRow[0]], // Use the first element as headers
-      body: tableRow.slice(1), // Exclude the headers from the body
-      startY: 40,
-    });
+//   doc.setFont("helvetica", "bold");
+//   doc.setFontSize(16);
+//   doc.text("PUNE INSTITUTE OF COMPUTER TECHNOLOGY", 20, 20);
 
-    console.log("Table name is : ", selectedTable);
-    doc.save("report.pdf");
-  };
+//   doc.setFontSize(14);
+//   doc.text(`Report on ${selectedTable}`, 20, 30);
 
+//   doc.setFontSize(10);
+
+//   const tableRow = [];
+//   let headersAdded = false;
+
+//   tableRows.forEach((row) => {
+//     const rowData = columnNames.map((columnName) => row[columnName.Field]);
+//     tableRow.push(rowData);
+
+//     if (!headersAdded) {
+//       const tableHeader = columnNames.map((header) => {
+//         const headerLines = doc.splitTextToSize(header.Field, 25);
+//         return headerLines.join('\n');
+//       });
+//       tableRow.unshift(tableHeader);
+//       headersAdded = true;
+//     }
+//   });
+
+//   const columnWidths = tableRow[0].map(() => 25);
+
+//   // Rotate headers
+//   const rotatedHeaders = columnNames.map((header) => {
+//     const headerLines = doc.splitTextToSize(header.Field, 15);
+//     return headerLines.join('\n');
+//   });
+
+//   doc.autoTable({
+//     head: [rotatedHeaders],
+//     body: tableRow.slice(1),
+//     startY: 40,
+//     columnStyles: Object.fromEntries(columnWidths.map((width, index) => [index, { cellWidth: width }])),
+//     headStyles: { fillColor: [200, 200, 200], textColor: [0, 0, 0], fontStyle: 'bold', angle: 90 },
+//     theme: "striped",
+//     styles: { overflow: "linebreak" },
+//     didDrawPage: function (data) {
+//       doc.setFontSize(8);
+//       doc.text("Page " + data.pageNumber, data.settings.margin.left, doc.internal.pageSize.height - 5);
+//     },
+//   });
+
+//   doc.save("report.pdf");
+// };
+
+
+//via keyvalue
+
+// const generatePDF = () => {
+//   const doc = new jsPDF();
+ 
+
+//   // Set background color to cream
+//   doc.setFillColor(255, 255, 255);
+//   doc.rect(0, 0, doc.internal.pageSize.width, doc.internal.pageSize.height, "F");
+//   // Set font and styles
+//   doc.setFont("helvetica", "bold");
+//   doc.setFontSize(16);
+
+//   // Add a header with the institute name
+//   doc.text("PUNE INSTITUTE OF COMPUTER TECHNOLOGY", 20, 20);
+
+//   // Add a title for the report
+//   doc.setFontSize(14);
+//   doc.text(`Report on ${selectedTable}`, 20, 30);
+
+//   // Set font size and style for the report content
+//   doc.setFontSize(12);
+
+//   // Loop through each row in the table data
+//   tableRows.forEach((row, rowIndex) => {
+//     const keyValues = columnNames.map((column) => ({
+//       key: column.Field,
+//       value: row[column.Field],
+//     }));
+
+//     if (rowIndex > 0) {
+//       doc.addPage(); // Add a new page for each row after the first row
+//     }
+
+//     // Loop through key-value pairs and add them to the PDF
+//     keyValues.forEach(({ key, value }, index) => {
+//       const yPosition = 40 + index * 10; // Adjust the vertical spacing as needed
+
+//       // Add background color to alternate rows
+//       if (index % 2 === 0) {
+//         doc.setFillColor(240, 240, 240); // Light gray background color
+//         doc.rect(10, yPosition - 2, 190, 10, "F"); // Rectangle to fill background
+//       }
+
+//       // Add key and value to the PDF
+//       doc.text(`${key}: ${value}`, 20, yPosition);
+//     });
+//   });
+
+//   // Save the PDF with a filename
+//   doc.save("report.pdf");
+// };
+
+  
   const setTable = async (e) => {
     const selectedTableName = e.target.value;
     console.log("Selected Table is: ", selectedTableName);
@@ -376,15 +468,15 @@ const Report = () => {
           {/* <label className="block mb-2">{${Field} Start Date}</label> */}
           <input
             type="date"
-            value={formFilters[`startDate`] || ""}
-            onChange={(e) => handleInputChange(`startDate`, e.target.value)}
+            value={formFilters["startDate"] || ""}
+            onChange={(e) => handleInputChange("startDate", e.target.value)}
             className="w-full mb-2  py-2 border border-black rounded-md "
           />
           {/* <label className="block mb-2">{${Field} End Date}</label> */}
           <input
             type="date"
-            value={formFilters[`endDate`] || ""}
-            onChange={(e) => handleInputChange(`endDate`, e.target.value)}
+            value={formFilters["endDate"] || ""}
+            onChange={(e) => handleInputChange("endDate", e.target.value)}
             className="w-full  py-2 border border-black rounded-md "
           />
         </div>
@@ -411,9 +503,9 @@ const Report = () => {
               <option
                 className="py-2 hover:bg-blue-100"
                 key={index}
-                value={table.Tables_in_inhouse}
+                value={table.Tables_in_inhouse_hod}
               >
-                {table.Tables_in_inhouse}
+                {table.Tables_in_inhouse_hod}
               </option>
             ))}
           </select>
@@ -429,7 +521,7 @@ const Report = () => {
             </Button>
           </div>
 
-          <TableContainer component={Paper}>
+          <TableContainer id="table-container" component={Paper}>
             <Table>
               <TableHead>
                 <TableRow>
