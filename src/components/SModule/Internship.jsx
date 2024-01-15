@@ -179,10 +179,10 @@ export default function Internship() {
                 Internship Title
               </Typography>
               <Input
-                id="Financial_Support_By_PICT"
+                id="Internship_Title"
                 size="lg"
-                label="Finance Support Received from PICT"
-                value={formData.Financial_Support_By_PICT}
+                label="Internship Title"
+                value={formData.Internship_Title}
                 onChange={handleOnChange}
               />
             </div>
