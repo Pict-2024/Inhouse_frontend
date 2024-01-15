@@ -2,22 +2,22 @@ import React, { useState } from "react";
 import Select from "react-select";
 import {
   Internship,
-  // Research,
-  // Conference,
-  // Certificate,
-  // SportData,
-  // EventParticipated,
-  // EventOrganized,
-  // TechEvents,
-  // HigherEdu,
+  Research,
+  Conference,
+  Certificate,
+  SportData,
+  EventParticipated,
+  EventOrganized,
+  TechEvents,
+  HigherEdu,
 } from "../../components/SModule";
 
 export default function General() {
   const [selectedOption, setSelectedOption] = useState("Internship Details");
 
   const options = [
-    { value: "Internship", label: "Internship" },
-    { value: "Research Publication", label: "Research Publication" },
+    { value: "Internship Details", label: "Internship Details" },
+    { value: "Research", label: "Research Publication" },
     { value: "Conference publication", label: "Conference publication" },
     {
       value: "Certificate Course Attended",
@@ -33,14 +33,14 @@ export default function General() {
   // A mapping of option values to their corresponding components
   const optionComponents = {
     "Internship Details": Internship,
-    // "Research publication": Research,
-    // "Conference publication": Conference,
-    // "Certificate Course Attended": Certificate,
-    // "Sport Data": SportData,
-    // "Event Participated": EventParticipated,
-    // "Event Organized": EventOrganized,
-    // "Technical Events": TechEvents,
-    // "Higher Education": HigherEdu,
+    Research: Research,
+    "Conference publication": Conference,
+    "Certificate Course Attended": Certificate,
+    "Sport Data": SportData,
+    "Event Participated": EventParticipated,
+    "Event Organized": EventOrganized,
+    "Technical Events": TechEvents,
+    "Higher Education": HigherEdu,
   };
 
   // Function to handle the option selection
