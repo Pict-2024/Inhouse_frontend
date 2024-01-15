@@ -1,12 +1,10 @@
 import { Outlet, useNavigate } from "react-router-dom";
-// import Sidebar from './'
-// import Sidebar from "./../components/Sidebar";
 import NavList from "../components/NavList";
 import { useSelector } from "react-redux";
 import { useEffect } from "react";
+import StudentSidebar from "../components/SModule/StudentSidebar";
 
 export default function Student() {
-
   const { currentUser } = useSelector((state) => state.user);
   const navigate = useNavigate();
 
@@ -24,20 +22,23 @@ export default function Student() {
 
   return (
     <div className="min-h-full  font-poppins ">
-        <div className="w-full h-full  font-poppins ">
-        {
-          currentUser && currentUser.Role == 2 ?
-          (
-            <>
+      <div className="w-full h-full  font-poppins ">
+        {currentUser && currentUser.Role == 2 ? (
+          <>
+            <div className="flex flex-col w-full">
               <NavList />
-              <Outlet/>
-            </>
-          ) : (
-              <></>
-          )
-        }
-        </div>
+              <div className="w-full flex font-poppins">
+                <StudentSidebar />
+                <div className="border-l-2 w-full mx-0 px-0 overflow-x-auto">
+                  <Outlet />
+                </div>
+              </div>
+            </div>
+          </>
+        ) : (
+          <></>
+        )}
+      </div>
     </div>
   );
 }
-

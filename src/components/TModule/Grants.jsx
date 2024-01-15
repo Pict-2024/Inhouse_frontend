@@ -9,11 +9,13 @@ import {
 } from "@material-tailwind/react";
 import { useSelector } from "react-redux";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
+
 import { addRecordsGrants } from "./API_Routes";
-// import axios from 'axios';
 
 export default function Grants() {
   const { currentUser } = useSelector((state) => state.user);
+  const navigate = useNavigate();
   const currentYear = new Date().getFullYear();
   const years = Array.from(
     { length: currentYear - 1999 },
@@ -54,9 +56,8 @@ export default function Grants() {
   // add new entry
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // console.log(formData);
-    const response = await axios.post(addRecordsGrants, formData);
-    console.log("Response is : ", response.data);
+    await axios.post(addRecordsGrants, formData);
+    navigate("/t/data");
   };
 
   return (

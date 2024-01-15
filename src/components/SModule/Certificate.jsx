@@ -7,30 +7,31 @@ import {
   Button,
   Typography,
 } from "@material-tailwind/react";
-import axios from "axios";
+// import axios from "axios";
+// import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
 
-import { addRecordsAttended } from "./API_Routes";
-
-export default function Attended() {
+export default function Certificate() {
+  // const navigate = useNavigate();
   const { currentUser } = useSelector((state) => state.user);
-  const navigate = useNavigate();
-
   const [formData, setFormData] = useState({
-    T_ID: null,
-    UserName: currentUser?.Email,
+    S_ID: null,
+    Username: currentUser?.Email,
+    Academic_Year: "",
+    Student_Name: currentUser?.Name,
+    Roll_No: "",
     Department: "",
-    Title_of_the_Event: "",
-    Type_Nature: "",
-    Organizer_Institute_Name: "",
-    Name_of_Coordinators: "",
+    Year: "",
+    Certificate_Course_Title: "",
+    Organized_By: "",
+    Place: "",
+    Mode_of_Course: "",
+    Duration: "",
     Start_Date: "",
     End_Date: "",
-    Mode_Online_Physical: "",
-    Duration_in_Days: "",
-    Financial_Support_By_PICT: "",
-    Upload_Certificate: null,
+    Award: "",
+    Financial_Support_given_by_Institute_in_INR: "",
+    Certificates: null,
   });
 
   const handleOnChange = (e) => {
@@ -44,8 +45,8 @@ export default function Attended() {
   //add new record
   const handleSubmit = async (e) => {
     e.preventDefault();
-    await axios.post(addRecordsAttended, formData);
-    navigate("/t/data");
+    // await axios.post(, formData);
+    // navigate("/t/data");
   };
 
   return (
@@ -60,12 +61,12 @@ export default function Attended() {
           color="blue-gray"
           className="mx-auto underline underline-offset-2"
         >
-          STTP/FDP/Workshop/Conference Attended
+          Certificate Course Attended
         </Typography>
 
         <form className="mt-8 mb-2" onSubmit={handleSubmit}>
           <div className="mb-4 flex flex-wrap -mx-4">
-            <div className="w-full px-4 mb-4">
+            <div className="w-full md:w-1/2 px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
                 Department
               </Typography>
@@ -86,68 +87,51 @@ export default function Attended() {
                 <Option value="FE">FE</Option>
               </Select>
             </div>
+            <div className="w-full md:w-1/2 px-4 mb-4">
+              <Typography variant="h6" color="blue-gray" className="mb-3">
+                Academic Year
+              </Typography>
+              <Input
+                id="Academic_Year"
+                size="lg"
+                label="Eg.2022-2023"
+                value={formData.Academic_Year}
+                onChange={handleOnChange}
+              />
+            </div>
           </div>
 
           <div className="mb-4 flex flex-wrap -mx-4">
             <div className="w-full md:w-1/2 px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
-                Title of the Event
-              </Typography>
-              <Input
-                id="Title_of_the_Event"
-                size="lg"
-                label="Title of the Event"
-                value={formData.Title_of_the_Event}
-                onChange={handleOnChange}
-              />
-            </div>
-            <div className="w-full md:w-1/2 px-4 mb-4">
-              <Typography variant="h6" color="blue-gray" className="mb-3">
-                Type/Nature (FDP/STTP/Workshop/Conference etc)
+                Year of Study
               </Typography>
               <Select
-                id="Type_Nature"
+                id="Year"
                 size="lg"
-                label="Type/Nature"
-                value={formData.Type_Nature}
+                label="Year"
+                value={formData.Year_of_Study}
                 onChange={(value) =>
                   handleOnChange({
-                    target: { id: "Type_Nature", value },
+                    target: { id: "Year_of_Study", value },
                   })
                 }
               >
-                <Option value="FDP">FDP</Option>
-                <Option value="STTP">STTP</Option>
-                <Option value="Workshop">Workshop</Option>
-                <Option value="Webinar">Webinar</Option>
-                <Option value="Conference">Conference</Option>
-                <Option value="Other">Other</Option>
+                <Option value="FE">FE</Option>
+                <Option value="SE">SE</Option>
+                <Option value="TE">TE</Option>
+                <Option value="BE">BE</Option>
               </Select>
             </div>
-          </div>
-
-          <div className="mb-4 flex flex-wrap -mx-4">
             <div className="w-full md:w-1/2 px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
-                Name of organizing Institute
+                Roll No
               </Typography>
               <Input
-                id="Organizer_Institute_Name"
+                id="Roll_No"
                 size="lg"
-                label="Organizing Institute"
-                value={formData.Organizer_Institute_Name}
-                onChange={handleOnChange}
-              />
-            </div>
-            <div className="w-full md:w-1/2 px-4 mb-4">
-              <Typography variant="h6" color="blue-gray" className="mb-3">
-                Name of the coordinator(s)
-              </Typography>
-              <Input
-                id="Name_of_Coordinators"
-                size="lg"
-                label="Coordinator(s)"
-                value={formData.Name_of_Coordinators}
+                label="Roll No"
+                value={formData.Roll_No}
                 onChange={handleOnChange}
               />
             </div>
@@ -156,11 +140,88 @@ export default function Attended() {
           <div className="mb-4 flex flex-wrap -mx-4">
             <div className="w-full md:w-1/2 px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
-                Start Date (DD-MM-YYYY)
+                Certificate Course Title
+              </Typography>
+              <Input
+                id="Certificate_Course_Title"
+                size="lg"
+                label="Certificate Course Title"
+                value={formData.Certificate_Course_Title}
+                onChange={handleOnChange}
+              />
+            </div>
+            <div className="w-full md:w-1/2 px-4 mb-4">
+              <Typography variant="h6" color="blue-gray" className="mb-3">
+                Organized By
+              </Typography>
+              <Input
+                id="Organized_By"
+                size="lg"
+                label="Organized Byr"
+                value={formData.Organized_By}
+                onChange={handleOnChange}
+              />
+            </div>
+          </div>
+
+          <div className="mb-4 flex flex-wrap -mx-4">
+            <div className="w-full px-4 mb-4">
+              <Typography variant="h6" color="blue-gray" className="mb-3">
+                Place
+              </Typography>
+              <Input
+                id="Place"
+                size="lg"
+                label="Place"
+                value={formData.Place}
+                onChange={handleOnChange}
+              />
+            </div>
+          </div>
+
+          <div className="mb-4 flex flex-wrap -mx-4">
+            <div className="w-full md:w-1/2 px-4 mb-4">
+              <Typography variant="h6" color="blue-gray" className="mb-3">
+                Mode_of_Course
+              </Typography>
+              <Select
+                id="Mode_of_Course"
+                size="lg"
+                label="Select Mode_of_Course"
+                value={formData.Mode_of_Course}
+                onChange={(value) =>
+                  handleOnChange({
+                    target: { id: "Mode_of_Course", value },
+                  })
+                }
+              >
+                <Option value="Online">Online</Option>
+                <Option value="Offline">Offline</Option>
+              </Select>
+            </div>
+            <div className="w-full md:w-1/2 px-4 mb-4">
+              <Typography variant="h6" color="blue-gray" className="mb-3">
+                Duration in days
+              </Typography>
+              <Input
+                id="Duration"
+                size="lg"
+                label="Duration"
+                value={formData.Duration}
+                onChange={handleOnChange}
+              />
+            </div>
+          </div>
+
+          <div className="mb-4 flex flex-wrap -mx-4">
+            <div className="w-full md:w-1/2 px-4 mb-4">
+              <Typography variant="h6" color="blue-gray" className="mb-3">
+                Start Date
               </Typography>
               <Input
                 id="Start_Date"
                 size="lg"
+                label="Start Date"
                 type="date"
                 value={formData.Start_Date}
                 onChange={handleOnChange}
@@ -168,11 +229,12 @@ export default function Attended() {
             </div>
             <div className="w-full md:w-1/2 px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
-                End Date (DD-MM-YYYY)
+                End Date
               </Typography>
               <Input
                 id="End_Date"
                 size="lg"
+                label="End Date"
                 type="date"
                 value={formData.End_Date}
                 onChange={handleOnChange}
@@ -183,32 +245,25 @@ export default function Attended() {
           <div className="mb-4 flex flex-wrap -mx-4">
             <div className="w-full md:w-1/2 px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
-                Mode: Online/Physical
+                Financial Support given by Institute_in_INR
               </Typography>
-              <Select
-                id="Mode_Online_Physical"
+              <Input
+                id="Financial_Support_given_by_Institute_in_INR"
                 size="lg"
-                label="Select Mode"
-                value={formData.Mode_Online_Physical}
-                onChange={(value) =>
-                  handleOnChange({
-                    target: { id: "Mode_Online_Physical", value },
-                  })
-                }
-              >
-                <Option value="Online">Online</Option>
-                <Option value="Physical">Physical</Option>
-              </Select>
+                label="Financial Support given by Institute_in_INR"
+                value={formData.Financial_Support_given_by_Institute_in_INR}
+                onChange={handleOnChange}
+              />
             </div>
             <div className="w-full md:w-1/2 px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
-                Duration in Days
+                Award
               </Typography>
               <Input
-                id="Duration_in_Days"
+                id="Award"
                 size="lg"
-                label="Duration"
-                value={formData.Duration_in_Days}
+                label="Award"
+                value={formData.Award}
                 onChange={handleOnChange}
               />
             </div>
@@ -217,24 +272,26 @@ export default function Attended() {
           <div className="mb-4 flex flex-wrap -mx-4">
             <div className="w-full md:w-1/2 px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
-                Finance Support Received from PICT
+                Completion Certificate (drive link)
               </Typography>
               <Input
-                id="Financial_Support_By_PICT"
+                id="Certificates"
                 size="lg"
-                label="Finance Support Received from PICT"
-                value={formData.Financial_Support_By_PICT}
+                label="Completion Certificate"
+                type="text"
+                value={formData.Certificates}
                 onChange={handleOnChange}
               />
             </div>
             <div className="w-full md:w-1/2 px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
-                Upload Upload_Certificate(Add drive link)
+                Award_Prize_Money
               </Typography>
               <Input
-                id="Upload_Certificate"
+                id="Award_Prize_Money"
                 size="lg"
-                type="text"
+                label="Award_Prize_Money"
+                value={formData.Award_Prize_Money}
                 onChange={handleOnChange}
               />
             </div>

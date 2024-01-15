@@ -1,6 +1,5 @@
 import { Link } from "react-router-dom";
 import {
-  // Card,
   Typography,
   List,
   ListItem,
@@ -35,45 +34,40 @@ export default function TeacherSidebar() {
         </Typography>
       </div>
       <List>
-      <Link to={"/t/dashboard"}>
-        <ListItem>
-          <ListItemPrefix>
-            <PresentationChartBarIcon className="h-5 w-5" />
-          </ListItemPrefix>
-          Dashboard
-        </ListItem>
+        <Link to={"/t/dashboard"}>
+          <ListItem>
+            <ListItemPrefix>
+              <PresentationChartBarIcon className="h-5 w-5" />
+            </ListItemPrefix>
+            Dashboard
+          </ListItem>
         </Link>
         <Link to={"/t/general"} className="text-ellipsis">
-        <ListItem>
-          <ListItemPrefix>
-            <TrophyIcon className="h-5 w-5" />
-          </ListItemPrefix>
-          
+          <ListItem>
+            <ListItemPrefix>
+              <TrophyIcon className="h-5 w-5" />
+            </ListItemPrefix>
             Add Achievements
-            </ListItem>
-            
-            </Link>
-            <Link to={"/t/data"}>
-            <ListItem>
-          <ListItemPrefix>
-            <DocumentIcon className="h-5 w-5" />
-          </ListItemPrefix>
-          View Uploads
           </ListItem>
+        </Link>
+        <Link to={"/t/data"}>
+          <ListItem>
+            <ListItemPrefix>
+              <DocumentIcon className="h-5 w-5" />
+            </ListItemPrefix>
+            View Uploads
+          </ListItem>
+        </Link>
+        {currentUser && currentUser.SpecialAccess !== null && (
+          <Link to={`/t/report/${currentUser.SpecialAccess}`}>
+            <ListItem>
+              <ListItemPrefix>
+                <DocumentChartBarIcon className="h-5 w-5" />
+              </ListItemPrefix>
+              Reports
+            </ListItem>
           </Link>
-          {
-            currentUser && currentUser.SpecialAccess !== null && (
-              
-              <Link to={`/t/report/${currentUser.SpecialAccess}`}>
-                <ListItem>
-                  <ListItemPrefix>
-                    <DocumentChartBarIcon className="h-5 w-5" />
-                  </ListItemPrefix>
-                  Reports
-                </ListItem>
-              </Link>
-            )
-          }
+        )}
       </List>
     </div>
   );

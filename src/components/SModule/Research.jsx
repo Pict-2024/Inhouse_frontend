@@ -7,33 +7,34 @@ import {
   Button,
   Typography,
 } from "@material-tailwind/react";
+// import axios from "axios";
+// import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
-import axios from "axios";
-import { useNavigate } from "react-router-dom";
-
-import { addRecordsResearch } from "./API_Routes";
 
 export default function Research() {
+  // const navigate = useNavigate();
   const { currentUser } = useSelector((state) => state.user);
-  const navigate = useNavigate();
   const currentYear = new Date().getFullYear();
   const years = Array.from(
     { length: currentYear - 1999 },
     (_, index) => currentYear - index
   );
-
   const [formData, setFormData] = useState({
-    T_ID: null,
+    S_ID: null,
     Username: currentUser?.Email,
+    Academic_Year: "",
+    Student_Name: "",
+    Roll_No: "",
     Department: "",
-    Title_of_Research_Article: "",
-    Type_Research_Review: "",
-    Level_International_National_State_University: "",
-    Indexed_SCI_Scopus_Web_of_Science_UGC_Others: "",
+    Year_of_Study: "",
+    Research_Article_Title: "",
+    Research_Type: "",
+    Level: "",
+    Indexed: "",
     Date: "",
     Author: "",
-    Affiliation_at_the_Time_of_Publication: "",
-    Role_First_Author_Second_Author_Third_Author: "",
+    Affiliation: "",
+    Role_of_Authors: "",
     Publisher: "",
     Co_Authors: "",
     Journal_Name: "",
@@ -44,25 +45,25 @@ export default function Research() {
     Year: "",
     DOI: "",
     Financial_support_from_institute_in_INR: "",
-    LInk_to_article_paper_abstract_of_the_article: "",
-    Achievements_if_any: "",
-    Upload_the_Paper: null,
+    Article_Link: "",
+    Upload_paper: null,
+    Achievements: "",
     Upload_Document_of_Achievement: null,
   });
 
-  const handleChange = (e) => {
-    const { name, value, type, files } = e.target;
+  const handleOnChange = (e) => {
+    const { id, value, type, files } = e.target;
     setFormData({
       ...formData,
-      [name]: type === "file" ? files[0] : value,
+      [id]: type === "file" ? files[0] : value,
     });
   };
 
-  //Add records
+  //add new record
   const handleSubmit = async (e) => {
     e.preventDefault();
-    await axios.post(addRecordsResearch, formData);
-    navigate("/t/data");
+    // await axios.post(, formData);
+    // navigate("/t/data");
   };
 
   return (
@@ -77,26 +78,25 @@ export default function Research() {
           color="blue-gray"
           className="mx-auto underline underline-offset-2"
         >
-          Research Publication
+          Student Research Publication
         </Typography>
 
         <form className="mt-8 mb-2" onSubmit={handleSubmit}>
           <div className="mb-4 flex flex-wrap -mx-4">
-            <div className="w-full px-4 mb-4">
+            <div className="w-full md:w-1/2 px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
                 Department
               </Typography>
               <Select
-                name="Department"
+                id="Department"
                 size="lg"
                 label="Department"
                 value={formData.Department}
                 onChange={(value) =>
-                  handleChange({
-                    target: { name: "Department", value },
+                  handleOnChange({
+                    target: { id: "Department", value },
                   })
                 }
-                // onChange={handleOnChange}
               >
                 <Option value="CS">CS</Option>
                 <Option value="IT">IT</Option>
@@ -104,31 +104,94 @@ export default function Research() {
                 <Option value="FE">FE</Option>
               </Select>
             </div>
+            <div className="w-full md:w-1/2 px-4 mb-4">
+              <Typography variant="h6" color="blue-gray" className="mb-3">
+                Academic Year
+              </Typography>
+              <Input
+                id="Academic_Year"
+                size="lg"
+                label="Eg.2022-2023"
+                value={formData.Academic_Year}
+                onChange={handleOnChange}
+              />
+            </div>
           </div>
 
           <div className="mb-4 flex flex-wrap -mx-4">
             <div className="w-full md:w-1/2 px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
-                Title of Research Article
+                Student Name
               </Typography>
               <Input
+                id="Student_Name"
                 size="lg"
-                label="Title of Research Article"
-                name="Title_of_Research_Article"
-                value={formData.Title_of_Research_Article}
-                onChange={handleChange}
+                label="Student Name"
+                value={formData.Student_Name}
+                onChange={handleOnChange}
               />
             </div>
             <div className="w-full md:w-1/2 px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
-                Type
+                Roll No
               </Typography>
               <Input
+                id="Roll_No"
                 size="lg"
-                label="Type (Research/Review)"
-                name="Type_Research_Review"
-                value={formData.Type_Research_Review}
-                onChange={handleChange}
+                label="Roll No"
+                value={formData.Roll_No}
+                onChange={handleOnChange}
+              />
+            </div>
+          </div>
+
+          <div className="mb-4 flex flex-wrap -mx-4">
+            <div className="w-full px-4 mb-4">
+              <Typography variant="h6" color="blue-gray" className="mb-3">
+                Year of Study
+              </Typography>
+              <Select
+                id="Year"
+                size="lg"
+                label="Year"
+                value={formData.Year_of_Study}
+                onChange={(value) =>
+                  handleOnChange({
+                    target: { id: "Year_of_Study", value },
+                  })
+                }
+              >
+                <Option value="FE">FE</Option>
+                <Option value="SE">SE</Option>
+                <Option value="TE">TE</Option>
+                <Option value="BE">BE</Option>
+              </Select>
+            </div>
+          </div>
+
+          <div className="mb-4 flex flex-wrap -mx-4">
+            <div className="w-full md:w-1/2 px-4 mb-4">
+              <Typography variant="h6" color="blue-gray" className="mb-3">
+                Research Article Title
+              </Typography>
+              <Input
+                id="Research_Article_Title"
+                size="lg"
+                label="Research Article Title"
+                value={formData.Research_Article_Title}
+                onChange={handleOnChange}
+              />
+            </div>
+            <div className="w-full md:w-1/2 px-4 mb-4">
+              <Typography variant="h6" color="blue-gray" className="mb-3">
+                Research Type
+              </Typography>
+              <Input
+                id="Research_Type"
+                size="lg"
+                label="Research Type"
+                value={formData.Research_Type}
+                onChange={handleOnChange}
               />
             </div>
           </div>
@@ -139,22 +202,18 @@ export default function Research() {
                 Level
               </Typography>
               <Select
+                id="Level"
                 size="lg"
                 label="Level"
-                name="Level_International_National_State_University"
-                value={formData.Level_International_National_State_University}
+                value={formData.Level}
                 onChange={(value) =>
-                  handleChange({
-                    target: {
-                      name: "Level_International_National_State_University",
-                      value,
-                    },
+                  handleOnChange({
+                    target: { id: "Level", value },
                   })
                 }
               >
-                <Option value="International">International</Option>
                 <Option value="National">National</Option>
-                <Option value="State University">State University</Option>
+                <Option value="International">International</Option>
               </Select>
             </div>
             <div className="w-full md:w-1/2 px-4 mb-4">
@@ -165,12 +224,12 @@ export default function Research() {
                 size="lg"
                 label="Select Selection"
                 color="light-gray"
-                name="Indexed_SCI_Scopus_Web_of_Science_UGC_Others"
+                id="Indexed"
                 value={formData.indexed}
                 onChange={(value) =>
-                  handleChange({
+                  handleOnChange({
                     target: {
-                      name: "Indexed_SCI_Scopus_Web_of_Science_UGC_Others",
+                      id: "Indexed",
                       value,
                     },
                   })
@@ -196,7 +255,7 @@ export default function Research() {
                 type="date"
                 name="Date"
                 value={formData.Date}
-                onChange={handleChange}
+                onChange={handleOnChange}
               />
             </div>
             <div className="w-full md:w-1/2 px-4 mb-4">
@@ -208,7 +267,35 @@ export default function Research() {
                 label="Author"
                 name="Author"
                 value={formData.Author}
-                onChange={handleChange}
+                onChange={handleOnChange}
+              />
+            </div>
+          </div>
+
+          <div className="mb-4 flex flex-wrap -mx-4">
+            <div className="w-full md:w-1/2 px-4 mb-4">
+              <Typography variant="h6" color="blue-gray" className="mb-3">
+                Date
+              </Typography>
+              <Input
+                size="lg"
+                label="Date"
+                type="date"
+                name="Date"
+                value={formData.Date}
+                onChange={handleOnChange}
+              />
+            </div>
+            <div className="w-full md:w-1/2 px-4 mb-4">
+              <Typography variant="h6" color="blue-gray" className="mb-3">
+                Author
+              </Typography>
+              <Input
+                size="lg"
+                label="Author"
+                name="Author"
+                value={formData.Author}
+                onChange={handleOnChange}
               />
             </div>
           </div>
@@ -221,35 +308,22 @@ export default function Research() {
               <Input
                 size="lg"
                 label="Affiliation at the Time of Publication"
-                name="Affiliation_at_the_Time_of_Publication"
-                value={formData.Affiliation_at_the_Time_of_Publication}
-                onChange={handleChange}
+                id="Affiliation"
+                value={formData.Affiliation}
+                onChange={handleOnChange}
               />
             </div>
             <div className="w-full md:w-1/2 px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
-                Role
+                Role of Authors
               </Typography>
-              <Select
+              <Input
                 size="lg"
                 label="Select Role"
-                color="light-gray"
-                name="Role_First_Author_Second_Author_Third_Author"
-                value={formData.Role_First_Author_Second_Author_Third_Author}
-                // onChange={handleChange}
-                onChange={(value) =>
-                  handleChange({
-                    target: {
-                      name: "Role_First_Author_Second_Author_Third_Author",
-                      value,
-                    },
-                  })
-                }
-              >
-                <Option value="First Author">First Author</Option>
-                <Option value="Second Author">Second Author</Option>
-                <Option value="Third Author">Third Author</Option>
-              </Select>
+                id="Role_of_Authors"
+                value={formData.Role_of_Authors}
+                onChange={handleOnChange}
+              />
             </div>
           </div>
 
@@ -261,21 +335,21 @@ export default function Research() {
               <Input
                 size="lg"
                 label="Publisher"
-                name="Publisher"
+                id="Publisher"
                 value={formData.Publisher}
-                onChange={handleChange}
+                onChange={handleOnChange}
               />
             </div>
             <div className="w-full md:w-1/2 px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
-                Co-Author(s)
+                Co-Authors
               </Typography>
               <Input
                 size="lg"
-                label="Co-Author"
-                name="Co_Authors"
+                label="Co-Authors"
+                id="Co_Authors"
                 value={formData.Co_Authors}
-                onChange={handleChange}
+                onChange={handleOnChange}
               />
             </div>
           </div>
@@ -288,9 +362,9 @@ export default function Research() {
               <Input
                 size="lg"
                 label="Journal Name"
-                name="Journal_Name"
+                id="Journal_Name"
                 value={formData.Journal_Name}
-                onChange={handleChange}
+                onChange={handleOnChange}
               />
             </div>
             <div className="w-full md:w-1/2 px-4 mb-4">
@@ -300,9 +374,9 @@ export default function Research() {
               <Input
                 size="lg"
                 label="ISSN"
-                name="ISSN"
+                id="ISSN"
                 value={formData.ISSN}
-                onChange={handleChange}
+                onChange={handleOnChange}
               />
             </div>
           </div>
@@ -315,9 +389,9 @@ export default function Research() {
               <Input
                 size="lg"
                 label="Volume"
-                name="Volume"
+                id="Volume"
                 value={formData.Volume}
-                onChange={handleChange}
+                onChange={handleOnChange}
               />
             </div>
             <div className="w-full md:w-1/2 px-4 mb-4">
@@ -327,9 +401,9 @@ export default function Research() {
               <Input
                 size="lg"
                 label="Page Numbers"
-                name="Page_Numbers"
+                id="Page_Numbers"
                 value={formData.Page_Numbers}
-                onChange={handleChange}
+                onChange={handleOnChange}
               />
             </div>
           </div>
@@ -342,9 +416,9 @@ export default function Research() {
               <Input
                 size="lg"
                 label="Issue"
-                name="Issue"
+                id="Issue"
                 value={formData.Issue}
-                onChange={handleChange}
+                onChange={handleOnChange}
               />
             </div>
             <div className="w-full md:w-1/2 px-4 mb-4">
@@ -355,11 +429,11 @@ export default function Research() {
                 size="lg"
                 label="Select Year"
                 color="light-gray"
-                name="Year"
+                id="Year"
                 value={formData.Year}
-                // onChange={handleChange}
+                // onChange={handleOnChange}
                 onChange={(value) =>
-                  handleChange({ target: { name: "Year", value } })
+                  handleOnChange({ target: { id: "Year", value } })
                 }
               >
                 {years.map((year) => (
@@ -379,9 +453,9 @@ export default function Research() {
               <Input
                 size="lg"
                 label="DOI"
-                name="DOI"
+                id="DOI"
                 value={formData.DOI}
-                onChange={handleChange}
+                onChange={handleOnChange}
               />
             </div>
             <div className="w-full md:w-1/2 px-4 mb-4">
@@ -391,12 +465,13 @@ export default function Research() {
               <Input
                 size="lg"
                 label="Financial support from institute in INR"
-                name="Financial_support_from_institute_in_INR"
+                id="Financial_support_from_institute_in_INR"
                 value={formData.Financial_support_from_institute_in_INR}
-                onChange={handleChange}
+                onChange={handleOnChange}
               />
             </div>
           </div>
+
           <div className="mb-4 flex flex-wrap -mx-4">
             <div className="w-full md:w-1/2 px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
@@ -404,10 +479,10 @@ export default function Research() {
               </Typography>
               <Input
                 size="lg"
-                label="Link to article / paper / abstract of the article"
-                name="LInk_to_article_paper_abstract_of_the_article"
-                value={formData.LInk_to_article_paper_abstract_of_the_article}
-                onChange={handleChange}
+                label="Article_Link"
+                id="Article Link"
+                value={formData.Article_Link}
+                onChange={handleOnChange}
               />
             </div>
             <div className="w-full md:w-1/2 px-4 mb-4">
@@ -417,26 +492,27 @@ export default function Research() {
               <Input
                 size="lg"
                 type="text"
-                label="Financial support from institute in INR "
+                label="Upload Paper"
                 className="border-t-blue-gray-200 focus:border-t-gray-900"
-                name="Upload_the_Paper"
-                value={formData.Upload_the_Paper}
-                onChange={handleChange}
+                id="Upload_Paper"
+                value={formData.Upload_Paper}
+                onChange={handleOnChange}
               />
             </div>
           </div>
+
           <div className="mb-4 flex flex-wrap -mx-4">
             <div className="w-full md:w-1/2 px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
-                Achievements if any
+                Achievements
               </Typography>
               <Input
                 size="lg"
-                label="Achievements if any  "
+                label="Achievements"
                 className="border-t-blue-gray-200 focus:border-t-gray-900"
-                name="Achievements_if_any"
-                value={formData.Achievements_if_any}
-                onChange={handleChange}
+                id="Achievements"
+                value={formData.Achievements}
+                onChange={handleOnChange}
               />
             </div>
             <div className="w-full md:w-1/2 px-4 mb-4">
@@ -446,11 +522,11 @@ export default function Research() {
               <Input
                 size="lg"
                 type="text"
-                label="Financial support from institute in INR "
+                label="Upload Document of Achievement "
                 className="border-t-blue-gray-200 focus:border-t-gray-900"
-                name="Upload_Document_of_Achievement"
+                id="Upload_Document_of_Achievement"
                 value={formData.Upload_Document_of_Achievement}
-                onChange={handleChange}
+                onChange={handleOnChange}
               />
             </div>
           </div>

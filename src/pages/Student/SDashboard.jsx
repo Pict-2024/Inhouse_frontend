@@ -1,150 +1,136 @@
-import { useState, useEffect } from "react";
-// import { Badge, Button } from "@material-tailwind/react";
+import { useState } from "react";
+import { Card, Input, Button, Typography } from "@material-tailwind/react";
+import { useSelector } from "react-redux";
 
-export const SDashboard = () => {
+export default function SDashboard() {
+  const { currentUser } = useSelector((state) => state.user);
   const [formData, setFormData] = useState({
-    firstName: "",
-    lastName: "",
-    username: "",
-    password: "",
-    mobileNumber: "",
-    email: "",
-    city: "",
-    address: "",
+    userProfile: {
+      username: currentUser?.Name,
+      email: currentUser?.Email,
+    },
   });
 
-  const user = {
-    firstName: "John",
-    lastName: "Doe",
-    email: "john@example.com",
-  };
+  // const publications = [
+  //   { type: "Book Publication", count: 20 },
+  //   { type: "Research Publication", count: 3 },
+  //   { type: "Research Publication", count: 3 },
+  //   { type: "Research Publication", count: 3 },
+  //   { type: "Research Publication", count: 3 },
+  //   { type: "Research Publication", count: 3 },
+  //   { type: "Research Publication", count: 3 },
+  //   { type: "Research Publication", count: 3 },
+  //   { type: "Research Publication", count: 3 },
+  //   { type: "Research Publication", count: 3 },
+  //   { type: "Research Publication", count: 3 },
+  //   { type: "Research Publication", count: 3 },
+  //   // Add more publications here
+  // ];
 
-  // const handleOnChange = (e) => {
-  //   setFormData({
-  //     ...formData,
-  //     [e.target.id]: e.target.value,
-  //   });
-  // };
-
-  const initializeFormData = () => {
+  const handleUserProfileChange = (e) => {
     setFormData({
       ...formData,
-      firstName: user.firstName,
-      lastName: user.lastName,
-      email: user.email,
+      userProfile: {
+        ...formData.userProfile,
+        [e.target.name]: e.target.value,
+      },
     });
   };
 
-  useEffect(() => {
-    initializeFormData();
-  }, []);
-
-  // Function to handle form submission
-  // const handleSubmit = (e) => {
-  //   e.preventDefault();
-  //   // Handle form submission here
-  // };
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    // Handle form submission here
+  };
 
   return (
     <>
-      {/* <div className="profile-container">
-        <div className="profile-form">
-          <h2 className="profile-title">Edit Profile</h2>
-          <form onSubmit={handleSubmit}>
-            <div className="form-group">
-              <div className="input-group">
-                <input
-                  type="text"
-                  placeholder="First Name"
-                  id="firstName"
-                  value={formData.firstName}
-                  onChange={handleOnChange}
-                />
-              </div>
-              <div className="input-group">
-                <input
-                  type="text"
-                  placeholder="Last Name"
-                  id="lastName"
-                  value={formData.lastName}
-                  onChange={handleOnChange}
-                />
+      <Card
+        color="transparent"
+        shadow={false}
+        className="border border-gray-300 w-full p-2 my-2 rounded-md "
+      >
+        <Typography
+          variant="h4"
+          color="blue-gray"
+          className="mx-auto underline underline-offset-2"
+        >
+          User Profile
+        </Typography>
 
+        <form
+          className="mt-8 mb-2 w-full flex flex-col"
+          onSubmit={handleSubmit}
+        >
+          <div className="mb-4 flex flex-wrap -mx-4">
+            <div className="w-full px-4">
+              <div className="mb-2 flex flex-col sm:flex-row">
+                <div className="w-full px-2">
+                  <Typography variant="h6" color="blue-gray" className="mb-3">
+                    Username
+                  </Typography>
+                  <Input
+                    size="lg"
+                    name="username"
+                    value={formData.userProfile.username}
+                    label="Username"
+                    onChange={handleUserProfileChange}
+                  />
+                </div>
+                <div className="w-full px-2">
+                  <Typography variant="h6" color="blue-gray" className="mb-3">
+                    Email
+                  </Typography>
+                  <Input
+                    size="lg"
+                    name="email"
+                    value={formData.userProfile.email}
+                    label="Email"
+                    onChange={handleUserProfileChange}
+                  />
+                </div>
               </div>
+              {/* Add more profile fields here */}
             </div>
-            <div className="form-group">
-              <div className="input-group">
-                <input
-                  type="text"
-                  placeholder="Username"
-                  id="username"
-                  value={formData.username}
-                  onChange={handleOnChange}
-                />
-           
-              </div>
-              <div className="input-group">
-                <input
-                  type="password"
-                  placeholder="Password"
-                  id="password"
-                  value={formData.password}
-                  onChange={handleOnChange}
-                />
+          </div>
 
-              </div>
+          <Button type="submit" className="mt-4" fullWidth>
+            Save Changes
+          </Button>
+        </form>
+      </Card>
+      {/* <div className="flex justify-around gap-2 flex-wrap -mx-4">
+        {publications.map((publication, index) => (
+          <div
+            key={index}
+            className="w-full sm:w-1/2 md:w-1/2 lg:w-1/3 xl:w-1/4 px-4 py-1 my-2 transition duration-300 relative group"
+          >
+            <div
+              className="w-full h-full rounded-lg p-4"
+              style={{
+                backgroundColor: index % 2 !== 0 ? "#F0F0F0" : "#D6EAF8",
+                transition: "transform 0.3s ease-out",
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = "scale(1.05)";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = "scale(1)";
+              }}
+            >
+              <Typography
+                variant="h6"
+                color="dark"
+                className="text-center mb-3 text-wrap"
+              >
+                {publication.type}
+              </Typography>
+              <Typography variant="h5" color="dark" className="text-center">
+                {publication.count}
+              </Typography>
             </div>
-            <div className="form-group">
-              <div className="input-group">
-                <input
-                  type="tel"
-                  placeholder="Mobile Number"
-                  id="mobileNumber"
-                  value={formData.mobileNumber}
-                  onChange={handleOnChange}
-                />
-
-              </div>
-              <div className="input-group">
-                <input
-                  type="email"
-                  placeholder="Email"
-                  id="email"
-                  value={formData.email}
-                  onChange={handleOnChange}
-                />
-
-              </div>
-            </div>
-            <div className="form-group">
-              <div className="input-group">
-                <input
-                  type="text"
-                  placeholder="City"
-                  id="city"
-                  value={formData.city}
-                  onChange={handleOnChange}
-                />
- 
-              </div>
-              <div className="input-group">
-                <textarea
-                  rows={4}
-                  placeholder="Address"
-                  id="address"
-                  value={formData.address}
-                  onChange={handleOnChange}
-                />
-    
-              </div>
-            </div>
-            <div className="form-group">
-              <button className="save-button">Save Changes</button>
-            </div>
-          </form>
-        </div>
+          </div>
+        ))}
       </div> */}
-
     </>
   );
-};
+}

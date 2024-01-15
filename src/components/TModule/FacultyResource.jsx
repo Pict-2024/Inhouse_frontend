@@ -9,10 +9,13 @@ import {
 } from "@material-tailwind/react";
 import { useSelector } from "react-redux";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
+
 import { addRecordsResource } from "./API_Routes";
 
 export default function FacultyResource() {
   const { currentUser } = useSelector((state) => state.user);
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     T_ID: null,
     Username: currentUser?.Email,
@@ -33,10 +36,11 @@ export default function FacultyResource() {
     });
   };
 
+  //add new record
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const response = await axios.post(addRecordsResource, formData);
-    console.log("Response is : ", response.data);
+    await axios.post(addRecordsResource, formData);
+    navigate("/t/data");
   };
 
   return (
