@@ -21,26 +21,23 @@ export default function EventOrganized() {
     Student_Name: currentUser?.Name,
     Roll_No: "",
     Department: "",
+    Year: "",
     Email_ID: currentUser?.Email,
     Mobile_No: "",
-    Year: "",
-    Participant_or_Organizer: "",
-    Event_Name: "",
-    Name_of_Sub_Event: "",
-    Type_of_Event: "",
-    Activity_Type: "",
-    Individual_Role: "",
+    Extension_Activity_Name: "",
+    Name_of_Sub_Activity: "",
+    Organized_by: "",
     Organizer_Name: "",
     Organizer_Type: "",
     Place: "",
+    Organization_Name: "",
     Start_Date: "",
     End_Date: "",
-    Award: "",
     Financial_Support_given_by_Institute_in_INR: "",
-    Award_Prize_Money: "",
+    Award: "",
     Remarks: "",
     Geo_Tag_Photos: "",
-    Certificate: null,
+    Certificate_or_Letter_of_Appreciation: null,
   });
 
   const handleOnChange = (e) => {
@@ -149,25 +146,25 @@ export default function EventOrganized() {
           <div className="mb-4 flex flex-wrap -mx-4">
             <div className="w-full md:w-1/2 px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
-                Sport Name
+                Extension Activity Name
               </Typography>
               <Input
-                id="Event_Name"
+                id="Extension_Activity_Name"
                 size="lg"
-                label="Organized Byr"
-                value={formData.Event_Name}
+                label="Extension Activity Name"
+                value={formData.Extension_Activity_Name}
                 onChange={handleOnChange}
               />
             </div>
             <div className="w-full md:w-1/2 px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
-                Participant or Organizer
+                Organized by
               </Typography>
               <Input
-                id="Participant_or_Organizer"
+                id="Organized_by"
                 size="lg"
-                label="Certificate Course Title"
-                value={formData.Participant_or_Organizer}
+                label="Organized by"
+                value={formData.Organized_by}
                 onChange={handleOnChange}
               />
             </div>
@@ -188,66 +185,20 @@ export default function EventOrganized() {
             </div>
             <div className="w-full md:w-1/2 px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
-                Individual Role
+                Name of Sub Activity
               </Typography>
               <Input
-                id="Individual_Role"
+                id="Name_of_Sub_Activity"
                 size="lg"
-                label="Individual Role"
-                value={formData.Individual_Role}
+                label="Name of Sub Activity"
+                value={formData.Name_of_Sub_Activity}
                 onChange={handleOnChange}
               />
             </div>
           </div>
 
           <div className="mb-4 flex flex-wrap -mx-4">
-            <div className="w-full md:w-1/2 px-4 mb-4">
-              <Typography variant="h6" color="blue-gray" className="mb-3">
-                Sub Event Name
-              </Typography>
-              <Input
-                id="Name_of_Sub_Event"
-                size="lg"
-                label="Sub Event Name"
-                value={formData.Name_of_Sub_Event}
-                onChange={handleOnChange}
-              />
-            </div>
-            <div className="w-full md:w-1/2 px-4 mb-4">
-              <Typography variant="h6" color="blue-gray" className="mb-3">
-                Sport Type
-              </Typography>
-              <Input
-                id="Type_of_Event"
-                size="lg"
-                label="Sport Type"
-                value={formData.Type_of_Event}
-                onChange={handleOnChange}
-              />
-            </div>
-          </div>
-
-          <div className="mb-4 flex flex-wrap -mx-4">
-            <div className="w-full md:w-1/2 px-4 mb-4">
-              <Typography variant="h6" color="blue-gray" className="mb-3">
-                Activity Type
-              </Typography>
-              <Select
-                id="Activity_Type"
-                size="lg"
-                label="Activity Type"
-                value={formData.Activity_Type}
-                onChange={(value) =>
-                  handleOnChange({
-                    target: { id: "Activity_Type", value },
-                  })
-                }
-              >
-                <Option value="Teamwork">Teamwork</Option>
-                <Option value="Individual">Individual</Option>
-              </Select>
-            </div>
-            <div className="w-full md:w-1/2 px-4 mb-4">
+            <div className="w-full px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
                 Organizer Name
               </Typography>
@@ -264,12 +215,12 @@ export default function EventOrganized() {
           <div className="mb-4 flex flex-wrap -mx-4">
             <div className="w-full md:w-1/2 px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
-                Organizer_Type
+                Organizer Type
               </Typography>
               <Select
                 id="Organizer_Type"
                 size="lg"
-                label="Select Organizer_Type"
+                label="Select Organizer Type"
                 value={formData.Organizer_Type}
                 onChange={(value) =>
                   handleOnChange({
@@ -386,11 +337,11 @@ export default function EventOrganized() {
                 Completion Certificate (drive link)
               </Typography>
               <Input
-                id="Certificate"
+                id="Certificate_or_Letter_of_Appreciation"
                 size="lg"
                 label="Completion Certificate"
                 type="text"
-                value={formData.Certificate}
+                value={formData.Certificate_or_Letter_of_Appreciation}
                 onChange={handleOnChange}
               />
             </div>
