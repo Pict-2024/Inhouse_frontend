@@ -1,93 +1,45 @@
-// import React, { useState } from "react";
-// import Select from "react-select";
-// import TableData from "./../../components/TModule/Table Data/TableData";
+import React, { useState } from "react";
+import Select from "react-select";
+import TableData from "./../../components/SModule/Table Data/TableData";
 
 export default function Data() {
-  //   const [selectedOption, setSelectedOption] = useState("Book Publication");
+  const [selectedOption, setSelectedOption] = useState("Internship Details");
 
-  //   const options = [
-  //     { value: "Research", label: "Research" },
-  //     { value: "Book Publication", label: "Book Publication" },
-  //     {
-  //       value: "Faculty Conference Publication",
-  //       label: "Faculty Conference Publication",
-  //     },
-  //     { value: "Grants", label: "Grants" },
-  //     { value: "Consultancy Report", label: "Consultancy Report" },
-  //     { value: "Patent Publication", label: "Patent Publication" },
-  //     {
-  //       value: "Conferences, Seminars, Workshops, FDP, STTP Organized /conducted",
-  //       label: "Conferences, Seminars, Workshops, FDP, STTP Organized /conducted",
-  //     },
-  //     {
-  //       value: "STTP/FDP/Workshop/Conference Attended",
-  //       label: "STTP/FDP/Workshop/Conference Attended",
-  //     },
-  //     {
-  //       value:
-  //         "Webinar/Guest-Expert Lecture / Video conference /Invited talks organized /conducted",
-  //       label:
-  //         "Webinar/Guest-Expert Lecture / Video conference /Invited talks organized /conducted",
-  //     },
-  //     {
-  //       value: "Number of MoUs, collaborations / linkages for Faculty exchange",
-  //       label: "Number of MoUs, collaborations / linkages for Faculty exchange",
-  //     },
-  //     { value: "Certificate Courses", label: "Certificate Courses" },
-  //     { value: "Professional Affiliations", label: "Professional Affiliations" },
-  //     {
-  //       value: "Faculty as Resource Person you",
-  //       label: "Faculty as Resource Person you",
-  //     },
-  //     { value: "Extension Activity", label: "Extension Activity" },
-  //     {
-  //       value:
-  //         "Technical Competitions / Tech Fest Organized/Extra & Co-curricular activities Organized",
-  //       label:
-  //         "Technical Competitions / Tech Fest Organized/Extra & Co-curricular activities Organized",
-  //     },
-  //     { value: "Faculty Achievement", label: "Faculty Achievement" },
-  //     {
-  //       value: "Industrial Visits / Tours / Field Trip",
-  //       label: "Industrial Visits / Tours / Field Trip",
-  //     },
-  //     { value: "Contribution to BoS", label: "Contribution to BoS" },
-  //   ];
+  const options = [
+    { value: "Internship Details", label: "Internship Details" },
+    { value: "Research", label: "Research Publication" },
+    { value: "Conference publication", label: "Conference publication" },
+    {
+      value: "Certificate Course Attended",
+      label: "Certificate Course Attended",
+    },
+    { value: "Sport Data", label: "Sport Data" },
+    { value: "Event Participated", label: "Event Participated" },
+    { value: "Event Organized", label: "Event Organized" },
+    { value: "Technical Events", label: "Technical Events" },
+    { value: "Higher Education", label: "Higher Education" },
+  ];
 
-  //   const optionComponents = {
-  //     Research: TableData,
-  //     "Book Publication": TableData,
-  //     "Faculty Conference Publication": TableData,
-  //     Grants: TableData,
-  //     "Consultancy Report": TableData,
-  //     "Patent Publication": TableData,
-  //     "Conferences, Seminars, Workshops, FDP, STTP Organized /conducted":
-  //       TableData,
-  //     "STTP/FDP/Workshop/Conference Attended": TableData,
-  //     "Webinar/Guest-Expert Lecture / Video conference /Invited talks organized /conducted":
-  //       TableData,
-  //     "Number of MoUs, collaborations / linkages for Faculty exchange": TableData,
+  const optionComponents = {
+    "Internship Details": TableData,
+    Research: TableData,
+    "Conference publication": TableData,
+    "Certificate Course Attended": TableData,
+    "Sport Data": TableData,
+    "Event Participated": TableData,
+    "Event Organized": TableData,
+    "Technical Events": TableData,
+    "Higher Education": TableData,
+  };
 
-  //     "Certificate Courses": TableData,
-  //     "Professional Affiliations": TableData,
-  //     "Faculty as Resource Person you": TableData,
-  //     "Extension Activity": TableData,
-  //     "Technical Competitions / Tech Fest Organized/Extra & Co-curricular activities Organized":
-  //       TableData,
-  //     "Faculty Achievement": TableData,
-  //     "Industrial Visits / Tours / Field Trip": TableData,
-  //     "Contribution to BoS": TableData,
-  //   };
-
-  //   const handleOptionChange = (selectedOption) => {
-  //     setSelectedOption(selectedOption.value);
-  //     // console.log(selectedOption.value);
-  //   };
+  const handleOptionChange = (selectedOption) => {
+    setSelectedOption(selectedOption.value);
+    // console.log(selectedOption.value);
+  };
 
   return (
     <>
-      <h1>Student Data</h1>
-      {/* <div className="w-full mt-4 flex flex-col items-center justify-center gap-2 ">
+      <div className="w-full mt-4 flex flex-col items-center justify-center gap-2 ">
         <h2 className="text-slate-900 text-xl font-bold">
           Select your choice:
         </h2>
@@ -106,7 +58,7 @@ export default function Data() {
         </div>
       ) : (
         <div>Component not found</div>
-      )} */}
+      )}
     </>
   );
 }
