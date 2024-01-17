@@ -21,17 +21,17 @@ export default function HigherEdu() {
     Academic_Year: "",
     Student_Name: currentUser?.Name,
     Roll_No: "",
-    Div: "",
+    Division: "",
     Department: "",
     Mobile_No: "",
     Email_ID: currentUser?.Email,
     Parent_Mobile_No: "",
     Passing_Year: "",
     Qualifying_Exam_Attempted: "",
+    Upload_Score_Card_as_Evidence: null,
     Name_of_university_admitted_for_higher_studies: "",
     Name_of_enrolled_Branch_Specialization: "",
     Upload_ID_card_or_Proof_of_Admission: null,
-    Upload_Score_Card_as_Evidence: null,
   });
 
   const handleOnChange = (e) => {
@@ -146,13 +146,13 @@ export default function HigherEdu() {
                 Division
               </Typography>
               <Select
-                id="Div"
+                id="Division"
                 label="Eg.11"
                 size="lg"
-                value={formData.Div}
+                value={formData.Division}
                 onChange={(value) =>
                   handleOnChange({
-                    target: { id: "Div", value },
+                    target: { id: "Division", value },
                   })
                 }
               >

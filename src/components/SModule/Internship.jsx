@@ -18,7 +18,7 @@ export default function Internship() {
   const [formData, setFormData] = useState({
     S_ID: null,
     Academic_Year: "",
-    Student_Name: "",
+    Student_Name: currentUser?.Name,
     Roll_No: "",
     Department: "",
     Year: "",
@@ -29,8 +29,8 @@ export default function Internship() {
     Internship_Organizer: "",
     Internship_Company_Website_Address: "",
     Company_Address: "",
-    Mode: "",
     Duration: "",
+    Mode: "",
     Stipend: "",
     Internal_Mentor_Name: "",
     External_Mentor_Name: "",
