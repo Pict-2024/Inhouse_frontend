@@ -8,14 +8,14 @@ import {
   Typography,
 } from "@material-tailwind/react";
 import { useSelector } from "react-redux";
-// import axios from "axios";
-// import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
+import { addRecordsConference } from "./API_Routes";
 
 export default function Conference() {
   const { currentUser } = useSelector((state) => state.user);
 
-  // const navigate = useNavigate();
-
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     S_ID: null,
     Username: currentUser?.Email,
@@ -59,8 +59,8 @@ export default function Conference() {
   //Add records
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // await axios.post(addRecordsBook, formData);
-    // navigate("/t/data");
+    await axios.post(addRecordsConference, formData);
+    navigate("/s/data");
   };
 
   return (

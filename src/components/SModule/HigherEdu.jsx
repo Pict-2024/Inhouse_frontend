@@ -7,12 +7,13 @@ import {
   Button,
   Typography,
 } from "@material-tailwind/react";
-// import axios from "axios";
-// import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
+import { addRecordsHigherEdu } from "./API_Routes";
 
 export default function HigherEdu() {
-  // const navigate = useNavigate();
+  const navigate = useNavigate();
   const { currentUser } = useSelector((state) => state.user);
   const options = Array.from({ length: 11 }, (_, index) => index + 1);
   const [formData, setFormData] = useState({
@@ -45,8 +46,8 @@ export default function HigherEdu() {
   //add new record
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // await axios.post(, formData);
-    // navigate("/t/data");
+    await axios.post(addRecordsHigherEdu, formData);
+    navigate("/s/data");
   };
 
   return (

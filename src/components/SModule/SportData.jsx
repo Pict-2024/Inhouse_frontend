@@ -7,12 +7,13 @@ import {
   Button,
   Typography,
 } from "@material-tailwind/react";
-// import axios from "axios";
-// import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
+import { addRecordsSport } from "./API_Routes";
 
 export default function SportData() {
-  // const navigate = useNavigate();
+  const navigate = useNavigate();
   const { currentUser } = useSelector((state) => state.user);
   const [formData, setFormData] = useState({
     S_ID: null,
@@ -51,8 +52,8 @@ export default function SportData() {
   //add new record
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // await axios.post(, formData);
-    // navigate("/t/data");
+    await axios.post(addRecordsSport, formData);
+    navigate("/s/data");
   };
 
   return (

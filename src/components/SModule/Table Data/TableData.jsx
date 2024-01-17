@@ -78,25 +78,25 @@ export default function TableData({ tableName }) {
   //delete apis
   const deleteAPIRoute = (tableName) => {
     const deleteRoutes = {
-      Internship: (username, T_ID) =>
-        `${deleteRecordsInternship}?username=${username}&T_ID=${T_ID}`,
-      Research: (username, T_ID) =>
-        `${deleteRecordsResearch}?username=${username}&T_ID=${T_ID}`,
-      "Conference Publication": (username, T_ID) =>
-        `${deleteRecordsConference}?username=${username}&T_ID=${T_ID}`,
-      "Certificate Courses": (username, T_ID) =>
-        `${deleteRecordsCertificate}?username=${username}&T_ID=${T_ID}`,
-      "Sport Data": (username, T_ID) =>
-        `${deleteRecordsSport}?username=${username}&T_ID=${T_ID}`,
+      Internship: (username, S_ID) =>
+        `${deleteRecordsInternship}?username=${username}&S_ID=${S_ID}`,
+      Research: (username, S_ID) =>
+        `${deleteRecordsResearch}?username=${username}&S_ID=${S_ID}`,
+      "Conference Publication": (username, S_ID) =>
+        `${deleteRecordsConference}?username=${username}&S_ID=${S_ID}`,
+      "Certificate Courses": (username, S_ID) =>
+        `${deleteRecordsCertificate}?username=${username}&S_ID=${S_ID}`,
+      "Sport Data": (username, S_ID) =>
+        `${deleteRecordsSport}?username=${username}&S_ID=${S_ID}`,
 
-      "Event Participated": (username, T_ID) =>
-        `${deleteRecordsParticipation}?username=${username}&T_ID=${T_ID}`,
-      "Event Organized": (username, T_ID) =>
-        `${deleteRecordsOrganized}?username=${username}&T_ID=${T_ID}`,
-      "Technical Events": (username, T_ID) =>
-        `${deleteRecordsTechnical}?username=${username}&T_ID=${T_ID}`,
-      "Higher Education": (username, T_ID) =>
-        `${deleteRecordsHigherEdu}?username=${username}&T_ID=${T_ID}`,
+      "Event Participated": (username, S_ID) =>
+        `${deleteRecordsParticipation}?username=${username}&S_ID=${S_ID}`,
+      "Event Organized": (username, S_ID) =>
+        `${deleteRecordsOrganized}?username=${username}&S_ID=${S_ID}`,
+      "Technical Events": (username, S_ID) =>
+        `${deleteRecordsTechnical}?username=${username}&S_ID=${S_ID}`,
+      "Higher Education": (username, S_ID) =>
+        `${deleteRecordsHigherEdu}?username=${username}&S_ID=${S_ID}`,
     };
 
     return deleteRoutes[tableName];
@@ -105,25 +105,25 @@ export default function TableData({ tableName }) {
   //update  apis
   const updateAPIRoute = (tableName) => {
     const updateRoutes = {
-      Internship: (username, T_ID) =>
-        `${updateRecordsInternship}?username=${username}&T_ID=${T_ID}`,
-      Research: (username, T_ID) =>
-        `${updateRecordsResearch}?username=${username}&T_ID=${T_ID}`,
-      "Conference Publication": (username, T_ID) =>
-        `${updateRecordsConference}?username=${username}&T_ID=${T_ID}`,
-      "Certificate Courses": (username, T_ID) =>
-        `${updateRecordsCertificate}?username=${username}&T_ID=${T_ID}`,
-      "Sport Data": (username, T_ID) =>
-        `${updateRecordsSport}?username=${username}&T_ID=${T_ID}`,
+      Internship: (username, S_ID) =>
+        `${updateRecordsInternship}?username=${username}&S_ID=${S_ID}`,
+      Research: (username, S_ID) =>
+        `${updateRecordsResearch}?username=${username}&S_ID=${S_ID}`,
+      "Conference Publication": (username, S_ID) =>
+        `${updateRecordsConference}?username=${username}&S_ID=${S_ID}`,
+      "Certificate Courses": (username, S_ID) =>
+        `${updateRecordsCertificate}?username=${username}&S_ID=${S_ID}`,
+      "Sport Data": (username, S_ID) =>
+        `${updateRecordsSport}?username=${username}&S_ID=${S_ID}`,
 
-      "Event Participated": (username, T_ID) =>
-        `${updateRecordsParticipation}?username=${username}&T_ID=${T_ID}`,
-      "Event Organized": (username, T_ID) =>
-        `${updateRecordsOrganized}?username=${username}&T_ID=${T_ID}`,
-      "Technical Events": (username, T_ID) =>
-        `${updateRecordsTechnical}?username=${username}&T_ID=${T_ID}`,
-      "Higher Education": (username, T_ID) =>
-        `${updateRecordsHigherEdu}?username=${username}&T_ID=${T_ID}`,
+      "Event Participated": (username, S_ID) =>
+        `${updateRecordsParticipation}?username=${username}&S_ID=${S_ID}`,
+      "Event Organized": (username, S_ID) =>
+        `${updateRecordsOrganized}?username=${username}&S_ID=${S_ID}`,
+      "Technical Events": (username, S_ID) =>
+        `${updateRecordsTechnical}?username=${username}&S_ID=${S_ID}`,
+      "Higher Education": (username, S_ID) =>
+        `${updateRecordsHigherEdu}?username=${username}&S_ID=${S_ID}`,
     };
 
     return updateRoutes[tableName];
@@ -162,8 +162,8 @@ export default function TableData({ tableName }) {
   //Handle delete records
   const onDelete = async (record) => {
     try {
-      const apiurl = deleteAPIRoute(tableName)(currentUser.Email, record.T_ID);
-      // console.log("Deleting record with:", currentUser.Email, record.T_ID);
+      const apiurl = deleteAPIRoute(tableName)(currentUser.Email, record.S_ID);
+      // console.log("Deleting record with:", currentUser.Email, record.S_ID);
       // console.log("Table:", tableName);
 
       await axios.delete(apiurl, {
@@ -172,11 +172,11 @@ export default function TableData({ tableName }) {
         },
         data: {
           username: currentUser.Email,
-          T_ID: record.T_ID,
+          S_ID: record.S_ID,
         },
       });
 
-      const updatedRows = tableRows.filter((r) => r.T_ID !== record.T_ID);
+      const updatedRows = tableRows.filter((r) => r.S_ID !== record.S_ID);
       setTableRows(updatedRows);
     } catch (error) {
       console.error("Error deleting record:", error.response.data.message);
@@ -188,7 +188,7 @@ export default function TableData({ tableName }) {
   const handleEdit = (record) => {
     setEditableFields({
       ...editableFields,
-      [record.T_ID]: { ...record },
+      [record.S_ID]: { ...record },
     });
   };
 
@@ -218,13 +218,13 @@ export default function TableData({ tableName }) {
         },
         data: {
           username: currentUser.Email,
-          T_ID: tId,
+          S_ID: tId,
         },
       });
 
       // Update tableRows state
       const updatedRows = tableRows.map((r) =>
-        r.T_ID === tId ? { ...r, ...updatedRecord } : r
+        r.S_ID === tId ? { ...r, ...updatedRecord } : r
       );
       setTableRows(updatedRows);
 
@@ -309,13 +309,13 @@ export default function TableData({ tableName }) {
                           : "border-solid border-blue-gray-200"
                       }`}
                     >
-                      {editableFields[record.T_ID] &&
-                      editableFields[record.T_ID][head] !== undefined ? (
+                      {editableFields[record.S_ID] &&
+                      editableFields[record.S_ID][head] !== undefined ? (
                         <Input
-                          value={editableFields[record.T_ID][head]}
+                          value={editableFields[record.S_ID][head]}
                           label={[head]}
                           onChange={(e) =>
-                            handleEditField(record.T_ID, head, e.target.value)
+                            handleEditField(record.S_ID, head, e.target.value)
                           }
                         />
                       ) : head.startsWith("Upload") ||
@@ -336,10 +336,10 @@ export default function TableData({ tableName }) {
                     </td>
                   ))}
                   <td className="p-4 border-r border-solid border-blue-gray-200">
-                    {editableFields[record.T_ID] ? (
+                    {editableFields[record.S_ID] ? (
                       <Tooltip content="Save Changes">
                         <IconButton
-                          onClick={() => handleSave(record.T_ID)}
+                          onClick={() => handleSave(record.S_ID)}
                           variant="text"
                         >
                           <CheckCircleIcon className="h-4 w-4 text-green-500" />
