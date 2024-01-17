@@ -7,12 +7,13 @@ import {
   Button,
   Typography,
 } from "@material-tailwind/react";
-// import axios from "axios";
-// import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
+import { addRecordsSport } from "./API_Routes";
 
 export default function SportData() {
-  // const navigate = useNavigate();
+  const navigate = useNavigate();
   const { currentUser } = useSelector((state) => state.user);
   const [formData, setFormData] = useState({
     S_ID: null,
@@ -23,21 +24,21 @@ export default function SportData() {
     Department: "",
     Year: "",
     Participant_or_Organizer_for_the_Event: "",
-    Sport_Name: "",
+    Sports_Name: "",
     Sub_Event_Name: "",
-    Sport_Type: "",
+    Sports_Type: "",
     Activity_Type: "",
     Organizer_Name: "",
     Level: "",
     Place: "",
     Start_Date: "",
     End_Date: "",
-    Award: "",
     Financial_Support_given_by_Institute_in_INR: "",
+    Award: "",
+    Award_Prize_Money: "",
+    Remarks: "",
     Geo_Tag_Photos: "",
     Certificates: null,
-    Award_Prize_Money: "",
-    Remark: "",
   });
 
   const handleOnChange = (e) => {
@@ -51,8 +52,8 @@ export default function SportData() {
   //add new record
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // await axios.post(, formData);
-    // navigate("/t/data");
+    await axios.post(addRecordsSport, formData);
+    navigate("/s/data");
   };
 
   return (
@@ -149,10 +150,10 @@ export default function SportData() {
                 Sport Name
               </Typography>
               <Input
-                id="Sport_Name"
+                id="Sports_Name"
                 size="lg"
                 label="Organized Byr"
-                value={formData.Sport_Name}
+                value={formData.Sports_Name}
                 onChange={handleOnChange}
               />
             </div>
@@ -188,10 +189,10 @@ export default function SportData() {
                 Sport Type
               </Typography>
               <Input
-                id="Sport_Type"
+                id="Sports_Type"
                 size="lg"
                 label="Sport Type"
-                value={formData.Sport_Type}
+                value={formData.Sports_Type}
                 onChange={handleOnChange}
               />
             </div>
@@ -328,13 +329,13 @@ export default function SportData() {
           <div className="mb-4 flex flex-wrap -mx-4">
             <div className="w-full md:w-1/2 px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
-                Remarks
+                Remarkss
               </Typography>
               <Input
-                id="Remarks"
+                id="Remarkss"
                 size="lg"
-                label="Remarks"
-                value={formData.Remarks}
+                label="Remarkss"
+                value={formData.Remarkss}
                 onChange={handleOnChange}
               />
             </div>

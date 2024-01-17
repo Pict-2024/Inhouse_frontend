@@ -7,12 +7,13 @@ import {
   Button,
   Typography,
 } from "@material-tailwind/react";
-// import axios from "axios";
-// import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
+import { addRecordsTechnical } from "./API_Routes";
 
 export default function TechEvents() {
-  // const navigate = useNavigate();
+  const navigate = useNavigate();
   const { currentUser } = useSelector((state) => state.user);
   const [formData, setFormData] = useState({
     S_ID: null,
@@ -55,8 +56,8 @@ export default function TechEvents() {
   //add new record
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // await axios.post(, formData);
-    // navigate("/t/data");
+    await axios.post(addRecordsTechnical, formData);
+    navigate("/s/data");
   };
 
   return (

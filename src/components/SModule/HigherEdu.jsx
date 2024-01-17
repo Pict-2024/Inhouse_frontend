@@ -7,12 +7,13 @@ import {
   Button,
   Typography,
 } from "@material-tailwind/react";
-// import axios from "axios";
-// import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
+import { addRecordsHigherEdu } from "./API_Routes";
 
 export default function HigherEdu() {
-  // const navigate = useNavigate();
+  const navigate = useNavigate();
   const { currentUser } = useSelector((state) => state.user);
   const options = Array.from({ length: 11 }, (_, index) => index + 1);
   const [formData, setFormData] = useState({
@@ -21,17 +22,17 @@ export default function HigherEdu() {
     Academic_Year: "",
     Student_Name: currentUser?.Name,
     Roll_No: "",
-    Div: "",
+    Division: "",
     Department: "",
     Mobile_No: "",
     Email_ID: currentUser?.Email,
     Parent_Mobile_No: "",
     Passing_Year: "",
     Qualifying_Exam_Attempted: "",
+    Upload_Score_Card_as_Evidence: null,
     Name_of_university_admitted_for_higher_studies: "",
     Name_of_enrolled_Branch_Specialization: "",
     Upload_ID_card_or_Proof_of_Admission: null,
-    Upload_Score_Card_as_Evidence: null,
   });
 
   const handleOnChange = (e) => {
@@ -45,8 +46,8 @@ export default function HigherEdu() {
   //add new record
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // await axios.post(, formData);
-    // navigate("/t/data");
+    await axios.post(addRecordsHigherEdu, formData);
+    navigate("/s/data");
   };
 
   return (
@@ -146,13 +147,13 @@ export default function HigherEdu() {
                 Division
               </Typography>
               <Select
-                id="Div"
+                id="Division"
                 label="Eg.11"
                 size="lg"
-                value={formData.Div}
+                value={formData.Division}
                 onChange={(value) =>
                   handleOnChange({
-                    target: { id: "Div", value },
+                    target: { id: "Division", value },
                   })
                 }
               >

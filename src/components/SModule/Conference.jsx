@@ -8,14 +8,14 @@ import {
   Typography,
 } from "@material-tailwind/react";
 import { useSelector } from "react-redux";
-// import axios from "axios";
-// import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
+import { addRecordsConference } from "./API_Routes";
 
 export default function Conference() {
   const { currentUser } = useSelector((state) => state.user);
 
-  // const navigate = useNavigate();
-
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     S_ID: null,
     Username: currentUser?.Email,
@@ -36,6 +36,9 @@ export default function Conference() {
     Upload_Paper: null,
     Financial_support_given_by_institute_in_INR: "",
     DOI: "",
+    Presented: "",
+    Achievements: "",
+    Upload_Achievement_Document: null,
   });
 
   const currentYear = new Date().getFullYear();
@@ -56,8 +59,8 @@ export default function Conference() {
   //Add records
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // await axios.post(addRecordsBook, formData);
-    // navigate("/t/data");
+    await axios.post(addRecordsConference, formData);
+    navigate("/s/data");
   };
 
   return (
@@ -327,6 +330,47 @@ export default function Conference() {
                 type="date"
                 value={formData.DOI}
                 label="DOI"
+                onChange={handleOnChange}
+              />
+            </div>
+          </div>
+
+          <div className="mb-4 flex flex-wrap -mx-4">
+            <div className="w-full md:w-1/2 px-4 mb-4">
+              <Typography variant="h6" color="blue-gray" className="mb-3">
+                Presented
+              </Typography>
+              <Input
+                id="Presented"
+                size="lg"
+                value={formData.Presented}
+                label="Presented"
+                onChange={handleOnChange}
+              />
+            </div>
+            <div className="w-full md:w-1/2 px-4 mb-4">
+              <Typography variant="h6" color="blue-gray" className="mb-3">
+                Achievements
+              </Typography>
+              <Input
+                id="Achievements"
+                size="lg"
+                value={formData.Achievements}
+                label="Achievements"
+                onChange={handleOnChange}
+              />
+            </div>
+          </div>
+          <div className="mb-4 flex flex-wrap -mx-4">
+            <div className="w-full px-4 mb-4">
+              <Typography variant="h6" color="blue-gray" className="mb-3">
+                Upload Achievement Document (drive link)
+              </Typography>
+              <Input
+                id="Upload_Achievement_Document"
+                size="lg"
+                type="text"
+                label="Upload Achievement Document"
                 onChange={handleOnChange}
               />
             </div>
