@@ -112,7 +112,7 @@ const Report = () => {
   const [tableRows, setTableRows] = useState([]);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
-
+  const [selectedColumns, setSelectedColumns] = useState([]); // New state to track selected columns
 
   const currentYear = new Date().getFullYear();
   const years = Array.from(
@@ -485,12 +485,12 @@ const generatePDF = () => {
 
     return null;
   };
-
-  return (
-    <>
+  const handleColumnSelection = (selectedColumns) => {
+    setSelectedColumns(selectedColumns);
+  }
+return(
+  <>
       <Box sx={{}}>
-        {/* <div><Header/></div> */}
-
         <div className="flex flex-col justify-center items-center gap-4">
           <label className="block text-gray-700 text-sm font-bold mb-2">
             Select Table:
@@ -503,9 +503,9 @@ const generatePDF = () => {
               <option
                 className="py-2 hover:bg-blue-100"
                 key={index}
-                value={table.Tables_in_inhouse_hod}
+                value={table.Tables_in_inhouse}
               >
-                {table.Tables_in_inhouse_hod}
+                {table.Tables_in_inhouse}
               </option>
             ))}
           </select>
@@ -521,11 +521,17 @@ const generatePDF = () => {
             </Button>
           </div>
 
+          {/* New component for column selection */}
+          <ColumnSelection
+            columns={columnNames}
+            onSelectColumns={handleColumnSelection}
+          />
+
           <TableContainer id="table-container" component={Paper}>
             <Table>
               <TableHead>
                 <TableRow>
-                  {columnNames.map((column) => (
+                  {selectedColumns.map((column) => (
                     <TableCell key={column.Field}>{column.Field}</TableCell>
                   ))}
                 </TableRow>
@@ -536,7 +542,7 @@ const generatePDF = () => {
                     .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                     .map((row, rowIndex) => (
                       <TableRow key={rowIndex}>
-                        {columnNames.map((column) => (
+                        {selectedColumns.map((column) => (
                           <TableCell key={column.Field}>
                             {column.Type === "date"
                               ? moment(row[column.Field]).format("DD-MM-YYYY")
@@ -559,9 +565,7 @@ const generatePDF = () => {
             onRowsPerPageChange={handleChangeRowsPerPage}
           />
 
-          <TableContainer component={Paper}>
-            {/* Display the generated report */}
-          </TableContainer>
+          <TableContainer component={Paper}></TableContainer>
 
           <Button variant="contained" onClick={generatePDF}>
             Generate PDF
@@ -569,6 +573,57 @@ const generatePDF = () => {
         </div>
       </Box>
     </>
+  );
+};
+
+// New component for column selection
+const ColumnSelection = ({ columns, onSelectColumns }) => {
+  const [selectedColumns, setSelectedColumns] = useState([]);
+
+  const handleColumnToggle = (column) => {
+    const isSelected = selectedColumns.some(
+      (selectedColumn) => selectedColumn.Field === column.Field
+    );
+  
+    if (isSelected) {
+      setSelectedColumns((prevSelected) =>
+          prevSelected.filter(
+            (selectedColumn) => selectedColumn.Field !== column.Field
+          )
+      );
+    } else {
+      setSelectedColumns((prevSelected) => [...prevSelected, column]);
+    }
+  };
+  
+
+  useEffect(() => {
+    onSelectColumns(selectedColumns);
+  }, [selectedColumns, onSelectColumns]);
+
+  return (
+    <div className="mt-4">
+      <label className="block text-gray-700 text-sm font-bold mb-2">
+        Select Columns:
+      </label>
+      <div className="flex gap-4 flex-wrap">
+        {columns.map((column) => (
+          <div key={column.Field}>
+            <input
+              type="checkbox"
+              id={column.Field}
+              name={column.Field}
+              checked={selectedColumns.some(
+                (selectedColumn) => selectedColumn.Field === column.Field
+              )}
+              onChange={() => handleColumnToggle(column)}
+              className="mr-2"
+            />
+            <label htmlFor={column.Field}>{column.Field}</label>
+          </div>
+        ))}
+      </div>
+    </div>
   );
 };
 
