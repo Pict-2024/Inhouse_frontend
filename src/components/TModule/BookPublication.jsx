@@ -13,6 +13,10 @@ import { useNavigate } from "react-router-dom";
 
 import { addRecordsBook } from "./API_Routes";
 
+
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 export default function BookPublication() {
   const { currentUser } = useSelector((state) => state.user);
 
@@ -50,6 +54,19 @@ export default function BookPublication() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     await axios.post(addRecordsBook, formData);
+
+    toast.success('Record Added Successfully', {
+      position: "top-right",
+      autoClose: 1500,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "light",
+    });
+
+
     navigate("/t/data");
   };
 
