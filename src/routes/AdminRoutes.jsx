@@ -3,6 +3,7 @@ import Report from "../pages/Admin/Report";
 import Students from "../pages/Admin/Students";
 
 import Teachers from "../pages/Admin/Teachers";
+import UserData from "../pages/Admin/UserData";
 import { ADashBoard } from './../pages/Admin/ADashboard';
 
 
@@ -26,6 +27,10 @@ export const AdminRoutes =  {
         {
             path:'report',
             element:<Report/>
+        },
+        {
+            path:'userData',
+            element:<UserData/>
         },
         
     ]
