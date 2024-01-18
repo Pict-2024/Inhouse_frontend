@@ -18,7 +18,7 @@ export default function ConsultancyReport() {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     T_ID: null,
-    Username: currentUser?.Email,
+    Username: currentUser?.Username,
     Name_of_Department: "",
     Role: "",
     Client_Organisation: "",

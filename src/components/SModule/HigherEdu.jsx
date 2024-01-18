@@ -18,7 +18,7 @@ export default function HigherEdu() {
   const options = Array.from({ length: 11 }, (_, index) => index + 1);
   const [formData, setFormData] = useState({
     S_ID: null,
-    Username: currentUser?.Email,
+    Username: currentUser?.Username,
     Academic_Year: "",
     Student_Name: currentUser?.Name,
     Roll_No: "",

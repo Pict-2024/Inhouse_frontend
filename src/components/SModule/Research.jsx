@@ -22,7 +22,7 @@ export default function Research() {
   );
   const [formData, setFormData] = useState({
     S_ID: null,
-    Username: currentUser?.Email,
+    Username: currentUser?.Username,
     Academic_Year: "",
     Student_Name: "",
     Roll_No: "",

@@ -17,11 +17,11 @@ export default function TechEvents() {
   const { currentUser } = useSelector((state) => state.user);
   const [formData, setFormData] = useState({
     S_ID: null,
-    Username: currentUser?.Email,
+    Username: currentUser?.Username,
     Academic_Year: "",
     Student_Name: currentUser?.Name,
     Roll_No: "",
-    Email_ID: currentUser?.Email,
+    Email_ID: currentUser?.Username,
     Mobile_No: "",
     Department: "",
     Year: "",

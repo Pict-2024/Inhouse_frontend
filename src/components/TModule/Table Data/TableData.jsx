@@ -224,7 +224,8 @@ export default function TableData({ tableName }) {
 
   //get all records
   const getAllRecords = async () => {
-    const user = await currentUser.Email;
+
+    const user = await currentUser.Username;
     try {
       const apiurl = getApiRoute(tableName)(user);
       // console.log("apiRoute in getAllRecords:", apiurl);
@@ -241,7 +242,7 @@ export default function TableData({ tableName }) {
 
       // Filter records based on currentUser's name
       const userRecords = response.data.data.filter(
-        (record) => record.Username === currentUser.Email
+        (record) => record.Username === currentUser.Username
       );
       // console.log("UserRecords:", userRecords);
       setTableRows(userRecords);
@@ -254,7 +255,7 @@ export default function TableData({ tableName }) {
   //Handle delete records
   const onDelete = async (record) => {
     try {
-      const apiurl = deleteAPIRoute(tableName)(currentUser.Email, record.T_ID);
+      const apiurl = deleteAPIRoute(tableName)(currentUser.Username, record.T_ID);
       // console.log("Deleting record with:", currentUser.Email, record.T_ID);
       // console.log("Table:", tableName);
 
@@ -263,7 +264,7 @@ export default function TableData({ tableName }) {
           "Content-Type": "application/json",
         },
         data: {
-          username: currentUser.Email,
+          username: currentUser.Username,
           T_ID: record.T_ID,
         },
       });
@@ -309,7 +310,7 @@ export default function TableData({ tableName }) {
           "Content-Type": "application/json",
         },
         data: {
-          username: currentUser.Email,
+          username: currentUser.Username,
           T_ID: tId,
         },
       });

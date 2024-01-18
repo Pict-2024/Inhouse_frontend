@@ -18,7 +18,7 @@ export default function PatentPublication() {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     T_ID: null,
-    Username: currentUser?.Email,
+    Username: currentUser?.Username,
     Name_of_the_Department: "",
     Patent_Application_No: "",
     Status_of_Patent_Pub: "",

@@ -45,6 +45,7 @@ import {
   getAllRecordsCertificateStud,
   getAllRecordsSport,
   getAllRecordsParticipation,
+  
   getAllRecordsOrganized,
   getAllRecordsTechnicalStud,
   getAllRecordsHigherEdu,
@@ -224,14 +225,33 @@ const Report = () => {
   };
 
   const updateApiUrl = () => {
-    const queryParameters = Object.entries(formFilters)
+    var queryParameters = Object.entries(formFilters)
       .filter(([key, value]) => value !== undefined && value !== "")
       .map(([key, value]) => `${key}=${encodeURIComponent(value)}`)
       .join("&");
 
-    setApiUrl(
-      `http://localhost:5000/api/v1/teacher/${tableMapping[selectedTable]}/filter?${queryParameters}`
+      const includesDate = Object.keys(formFilters).some((key) =>
+  key.toLowerCase().includes("date")
+);
+
+// Add dateColumn parameter if any key includes "date" as a substring
+  if (includesDate) {
+    const dateColumn = columnNames.find((column) =>
+      column.Field.toLowerCase().includes("date")
     );
+
+    console.log("Date column is : ", dateColumn)
+    if (dateColumn) {
+      queryParameters += `&dateColumn=${encodeURIComponent(dateColumn.Field)}`;
+    }
+  }
+
+      
+      setApiUrl(
+        `http://localhost:5000/api/v1/teacher/${tableMapping[selectedTable]}/filter?${queryParameters}`
+        );
+        console.log("form filter is : ", formFilters)
+      console.log("Update api url is : ", apiUrl)
   };
 
   useEffect(() => {
@@ -549,9 +569,9 @@ const generateExcel = () => {
               <option
                 className="py-2 hover:bg-blue-100"
                 key={index}
-                value={table.Tables_in_inhouse}
+                value={table.Tables_in_inhouse_hod}
               >
-                {table.Tables_in_inhouse}
+                {table.Tables_in_inhouse_hod}
               </option>
             ))}
           </select>

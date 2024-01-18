@@ -18,7 +18,7 @@ export default function ExtensionActivity() {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     T_ID: null,
-    Username: currentUser?.Email,
+    Username: currentUser?.Username,
     Dept_Name: "",
     Title: "",
     Start_Date: "",

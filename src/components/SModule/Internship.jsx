@@ -12,6 +12,9 @@ import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { addRecordsInternship } from "./API_Routes";
 
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 export default function Internship() {
   const navigate = useNavigate();
   const { currentUser } = useSelector((state) => state.user);
@@ -25,7 +28,8 @@ export default function Internship() {
     Year: "",
     Div: "",
     Mobile_No: "",
-    Email_ID: currentUser?.Email,
+    Email_ID: currentUser?.Username,
+    Username: currentUser?.Username,
     Internship_Title: "",
     Internship_Organizer: "",
     Internship_Company_Website_Address: "",
@@ -53,8 +57,22 @@ export default function Internship() {
 
   //add new record
   const handleSubmit = async (e) => {
+
+    console.log("handle submit api hit")
+    console.log("Form data is : ", formData)
     e.preventDefault();
     await axios.post(addRecordsInternship, formData);
+
+    toast.success('Record Added Successfully', {
+      position: "top-right",
+      autoClose: 1500,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "light",
+    });
     navigate("/s/data");
   };
 

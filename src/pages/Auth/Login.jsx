@@ -42,7 +42,7 @@ export default function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    console.log("formdata is : ", formData);
+    // console.log("formdata is : ", formData);
 
     try {
       dispatch(signInUserStart());
@@ -51,16 +51,16 @@ export default function Login() {
         formData
       );
 
-      console.log("RESPONSE IS : ",response.data.data);
+      console.log("RESPONSE IS : ",response.data.data.user);
       // setFormData(response?.data);
 
       if (response.success === false) {
         dispatch(signInUserFailure(response.data));
         return;
       }
-      dispatch(signInUserSuccess(response.data.data));
+      dispatch(signInUserSuccess(response.data.data.user));
 
-      const currentUser  = response.data.data;
+      const currentUser  = response.data.data.user;
 
       var pathLink = "";
     

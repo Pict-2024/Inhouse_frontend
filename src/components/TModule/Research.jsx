@@ -11,6 +11,9 @@ import { useSelector } from "react-redux";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 import { addRecordsResearch } from "./API_Routes";
 
 export default function Research() {
@@ -24,7 +27,7 @@ export default function Research() {
 
   const [formData, setFormData] = useState({
     T_ID: null,
-    Username: currentUser?.Email,
+    Username: currentUser?.Username,
     Department: "",
     Title_of_Research_Article: "",
     Type_Research_Review: "",
@@ -62,6 +65,18 @@ export default function Research() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     await axios.post(addRecordsResearch, formData);
+
+    toast.success('Record Added Successfully', {
+      position: "top-right",
+      autoClose: 1500,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "light",
+    });
+
     navigate("/t/data");
   };
 

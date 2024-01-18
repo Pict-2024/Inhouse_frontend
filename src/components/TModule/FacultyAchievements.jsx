@@ -18,7 +18,7 @@ export default function FacultyAchievements() {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     T_ID: null,
-    Username: currentUser?.Email,
+    Username: currentUser?.Username,
     Department: "",
     Achievement_Details: "",
     Name_of_Event: "",

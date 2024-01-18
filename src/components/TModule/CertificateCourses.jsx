@@ -18,7 +18,7 @@ export default function CertificateCourses() {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     T_ID: null,
-    UserName: currentUser?.Email,
+    UserName: currentUser?.UserName,
     Department: "",
     Additional_Certificate_Programs: "",
     Year_of_offering: "",

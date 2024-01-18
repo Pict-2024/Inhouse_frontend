@@ -7,7 +7,7 @@ export default function SDashboard() {
   const [formData, setFormData] = useState({
     userProfile: {
       username: currentUser?.Name,
-      email: currentUser?.Email,
+      email: currentUser?.Username,
     },
   });
 

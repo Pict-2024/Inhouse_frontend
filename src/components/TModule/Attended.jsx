@@ -19,7 +19,7 @@ export default function Attended() {
 
   const [formData, setFormData] = useState({
     T_ID: null,
-    UserName: currentUser?.Email,
+    UserName: currentUser?.UserName,
     Department: "",
     Title_of_the_Event: "",
     Type_Nature: "",

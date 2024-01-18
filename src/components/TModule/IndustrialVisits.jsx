@@ -18,7 +18,7 @@ export default function IndustrialVisit() {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     T_ID: null,
-    Username: currentUser?.Email,
+    Username: currentUser?.Username,
     Department: "",
     Name_Of_Industry_Visited: "",
     Purpose_of_the_visit: "",

@@ -18,7 +18,7 @@ export default function Contribution() {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     T_ID: null,
-    Username: currentUser?.Email,
+    Username: currentUser?.Username,
     Department: "",
     Academic_Year: "",
     Faculty_Name: "",
