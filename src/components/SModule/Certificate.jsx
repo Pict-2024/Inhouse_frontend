@@ -10,7 +10,7 @@ import {
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
-import { addRecordsCertificate } from "./API_Routes";
+import {  addRecordsCertificateStud } from "./API_Routes";
 
 export default function Certificate() {
   const navigate = useNavigate();
@@ -47,7 +47,7 @@ export default function Certificate() {
   //add new record
   const handleSubmit = async (e) => {
     e.preventDefault();
-    await axios.post(addRecordsCertificate, formData);
+    await axios.post(addRecordsCertificateStud, formData);
     navigate("/s/data");
   };
 

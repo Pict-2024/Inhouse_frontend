@@ -1,7 +1,8 @@
 // Import necessary dependencies
 import Box from "@mui/material/Box";
 import Header from "../../components/AModule/Header";
-import  { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
+import { Checkbox } from "@material-tailwind/react";
 import moment from "moment";
 import {
   Table,
@@ -37,6 +38,17 @@ import {
   getAllRecordsTechnical,
   getAllRecordsWebinar,
 } from "../../components/TModule/API_Routes";
+import {
+  getAllRecordsInternship,
+  getAllRecordsResearchStud,
+  getAllRecordsConferenceStud,
+  getAllRecordsCertificateStud,
+  getAllRecordsSport,
+  getAllRecordsParticipation,
+  getAllRecordsOrganized,
+  getAllRecordsTechnicalStud,
+  getAllRecordsHigherEdu,
+} from "./../../components/SModule/API_Routes";
 import { Option, Select } from "@material-tailwind/react";
 import html2pdf from 'html2pdf.js'; 
 import ExcelJS from 'exceljs';
@@ -97,6 +109,15 @@ const Report = () => {
       "16_faculty_achievements": getAllRecordsAchievements,
       "17_indusvisitstoursfieldtrip": getAllRecordsIndustrial,
       "18_contribution_to_bos": getAllRecordsContribution,
+      "1__student___internship_details": getAllRecordsInternship,
+      "2__student___research_publication": getAllRecordsResearchStud,
+      "3__student___conference_publication": getAllRecordsConferenceStud,
+      "4__student___certificate_course_attended": getAllRecordsCertificateStud,
+      "5__students___sports_data": getAllRecordsSport,
+      "6__students___event_participated": getAllRecordsParticipation,
+      "7__students___event_organized": getAllRecordsOrganized,
+      "8__students___technical_events": getAllRecordsTechnicalStud,
+      "9__student___higher_education": getAllRecordsHigherEdu,
     };
     console.log("Returned table:", tableRoute[table]);
     return tableRoute[table];
@@ -188,7 +209,7 @@ const Report = () => {
   const fetchData = async () => {
     try {
       const columnsData = await getAllColumns();
-      console.log("Return value of columns: ", columnsData.data);
+      // console.log("Return value of columns: ", columnsData.data);
       setColumnNames(columnsData.data);
     } catch (error) {
       console.error("Error fetching columns data:", error.message);
@@ -217,126 +238,122 @@ const Report = () => {
     updateApiUrl();
   }, [formFilters]);
 
+  //via html2pdf
 
- 
-//via html2pdf
+  const generatePDF = () => {
+    const tableContainer = document.getElementById("table-container");
 
-const generatePDF = () => {
-  const tableContainer = document.getElementById('table-container');
+    html2pdf(tableContainer, {
+      margin: 10,
+      filename: "report.pdf",
+      image: { type: "jpeg", quality: 0.98 },
+      html2canvas: { scale: 2 },
+      jsPDF: { unit: "mm", format: "a4", orientation: "landscape" },
+    });
+  };
 
-  html2pdf(tableContainer, {
-    margin: 10,
-    filename: 'report.pdf',
-    image: { type: 'jpeg', quality: 0.98 },
-    html2canvas: { scale: 2 },
-    jsPDF: { unit: 'mm', format: 'a4', orientation: 'landscape' },
-  });
-};
+  //Table format
+  // const generatePDF = () => {
+  //   const doc = new jsPDF('landscape');
 
-//Table format
-// const generatePDF = () => {
-//   const doc = new jsPDF('landscape');
+  //   doc.setFont("helvetica", "bold");
+  //   doc.setFontSize(16);
+  //   doc.text("PUNE INSTITUTE OF COMPUTER TECHNOLOGY", 20, 20);
 
-//   doc.setFont("helvetica", "bold");
-//   doc.setFontSize(16);
-//   doc.text("PUNE INSTITUTE OF COMPUTER TECHNOLOGY", 20, 20);
+  //   doc.setFontSize(14);
+  //   doc.text(`Report on ${selectedTable}`, 20, 30);
 
-//   doc.setFontSize(14);
-//   doc.text(`Report on ${selectedTable}`, 20, 30);
+  //   doc.setFontSize(10);
 
-//   doc.setFontSize(10);
+  //   const tableRow = [];
+  //   let headersAdded = false;
 
-//   const tableRow = [];
-//   let headersAdded = false;
+  //   tableRows.forEach((row) => {
+  //     const rowData = columnNames.map((columnName) => row[columnName.Field]);
+  //     tableRow.push(rowData);
 
-//   tableRows.forEach((row) => {
-//     const rowData = columnNames.map((columnName) => row[columnName.Field]);
-//     tableRow.push(rowData);
+  //     if (!headersAdded) {
+  //       const tableHeader = columnNames.map((header) => {
+  //         const headerLines = doc.splitTextToSize(header.Field, 25);
+  //         return headerLines.join('\n');
+  //       });
+  //       tableRow.unshift(tableHeader);
+  //       headersAdded = true;
+  //     }
+  //   });
 
-//     if (!headersAdded) {
-//       const tableHeader = columnNames.map((header) => {
-//         const headerLines = doc.splitTextToSize(header.Field, 25);
-//         return headerLines.join('\n');
-//       });
-//       tableRow.unshift(tableHeader);
-//       headersAdded = true;
-//     }
-//   });
+  //   const columnWidths = tableRow[0].map(() => 25);
 
-//   const columnWidths = tableRow[0].map(() => 25);
+  //   // Rotate headers
+  //   const rotatedHeaders = columnNames.map((header) => {
+  //     const headerLines = doc.splitTextToSize(header.Field, 15);
+  //     return headerLines.join('\n');
+  //   });
 
-//   // Rotate headers
-//   const rotatedHeaders = columnNames.map((header) => {
-//     const headerLines = doc.splitTextToSize(header.Field, 15);
-//     return headerLines.join('\n');
-//   });
+  //   doc.autoTable({
+  //     head: [rotatedHeaders],
+  //     body: tableRow.slice(1),
+  //     startY: 40,
+  //     columnStyles: Object.fromEntries(columnWidths.map((width, index) => [index, { cellWidth: width }])),
+  //     headStyles: { fillColor: [200, 200, 200], textColor: [0, 0, 0], fontStyle: 'bold', angle: 90 },
+  //     theme: "striped",
+  //     styles: { overflow: "linebreak" },
+  //     didDrawPage: function (data) {
+  //       doc.setFontSize(8);
+  //       doc.text("Page " + data.pageNumber, data.settings.margin.left, doc.internal.pageSize.height - 5);
+  //     },
+  //   });
 
-//   doc.autoTable({
-//     head: [rotatedHeaders],
-//     body: tableRow.slice(1),
-//     startY: 40,
-//     columnStyles: Object.fromEntries(columnWidths.map((width, index) => [index, { cellWidth: width }])),
-//     headStyles: { fillColor: [200, 200, 200], textColor: [0, 0, 0], fontStyle: 'bold', angle: 90 },
-//     theme: "striped",
-//     styles: { overflow: "linebreak" },
-//     didDrawPage: function (data) {
-//       doc.setFontSize(8);
-//       doc.text("Page " + data.pageNumber, data.settings.margin.left, doc.internal.pageSize.height - 5);
-//     },
-//   });
+  //   doc.save("report.pdf");
+  // };
 
-//   doc.save("report.pdf");
-// };
+  //via keyvalue
 
+  // const generatePDF = () => {
+  //   const doc = new jsPDF();
 
-//via keyvalue
+  //   // Set background color to cream
+  //   doc.setFillColor(255, 255, 255);
+  //   doc.rect(0, 0, doc.internal.pageSize.width, doc.internal.pageSize.height, "F");
+  //   // Set font and styles
+  //   doc.setFont("helvetica", "bold");
+  //   doc.setFontSize(16);
 
-// const generatePDF = () => {
-//   const doc = new jsPDF();
- 
+  //   // Add a header with the institute name
+  //   doc.text("PUNE INSTITUTE OF COMPUTER TECHNOLOGY", 20, 20);
 
-//   // Set background color to cream
-//   doc.setFillColor(255, 255, 255);
-//   doc.rect(0, 0, doc.internal.pageSize.width, doc.internal.pageSize.height, "F");
-//   // Set font and styles
-//   doc.setFont("helvetica", "bold");
-//   doc.setFontSize(16);
+  //   // Add a title for the report
+  //   doc.setFontSize(14);
+  //   doc.text(`Report on ${selectedTable}`, 20, 30);
 
-//   // Add a header with the institute name
-//   doc.text("PUNE INSTITUTE OF COMPUTER TECHNOLOGY", 20, 20);
+  //   // Set font size and style for the report content
+  //   doc.setFontSize(12);
 
-//   // Add a title for the report
-//   doc.setFontSize(14);
-//   doc.text(`Report on ${selectedTable}`, 20, 30);
+  //   // Loop through each row in the table data
+  //   tableRows.forEach((row, rowIndex) => {
+  //     const keyValues = columnNames.map((column) => ({
+  //       key: column.Field,
+  //       value: row[column.Field],
+  //     }));
 
-//   // Set font size and style for the report content
-//   doc.setFontSize(12);
+  //     if (rowIndex > 0) {
+  //       doc.addPage(); // Add a new page for each row after the first row
+  //     }
 
-//   // Loop through each row in the table data
-//   tableRows.forEach((row, rowIndex) => {
-//     const keyValues = columnNames.map((column) => ({
-//       key: column.Field,
-//       value: row[column.Field],
-//     }));
+  //     // Loop through key-value pairs and add them to the PDF
+  //     keyValues.forEach(({ key, value }, index) => {
+  //       const yPosition = 40 + index * 10; // Adjust the vertical spacing as needed
 
-//     if (rowIndex > 0) {
-//       doc.addPage(); // Add a new page for each row after the first row
-//     }
+  //       // Add background color to alternate rows
+  //       if (index % 2 === 0) {
+  //         doc.setFillColor(240, 240, 240); // Light gray background color
+  //         doc.rect(10, yPosition - 2, 190, 10, "F"); // Rectangle to fill background
+  //       }
 
-//     // Loop through key-value pairs and add them to the PDF
-//     keyValues.forEach(({ key, value }, index) => {
-//       const yPosition = 40 + index * 10; // Adjust the vertical spacing as needed
-
-//       // Add background color to alternate rows
-//       if (index % 2 === 0) {
-//         doc.setFillColor(240, 240, 240); // Light gray background color
-//         doc.rect(10, yPosition - 2, 190, 10, "F"); // Rectangle to fill background
-//       }
-
-//       // Add key and value to the PDF
-//       doc.text(`${key}: ${value}`, 20, yPosition);
-//     });
-//   });
+  //       // Add key and value to the PDF
+  //       doc.text(`${key}: ${value}`, 20, yPosition);
+  //     });
+  //   });
 
 //   // Save the PDF with a filename
 //   doc.save("report.pdf");
@@ -398,12 +415,12 @@ const generateExcel = () => {
   const renderInputFields = () => {
     return columnNames.map((column) => (
       <div key={column.Field}>
-      {!column.Field.includes("Upload") && !column.Field.includes("Link") && (
-        <>
-          <label>{column.Field}</label>
-          {renderInputField(column)}
-        </>
-      )}
+        {!column.Field.includes("Upload") && !column.Field.includes("Link") && (
+          <>
+            <label>{column.Field}</label>
+            {renderInputField(column)}
+          </>
+        )}
       </div>
     ));
   };
@@ -412,8 +429,8 @@ const generateExcel = () => {
     const { Field, Type } = column;
 
     if (Type.includes("varchar") && Field.includes("Year")) {
-      const startYear = formFilters['Start_Year'] || currentYear;
-      const endYear = formFilters['End_Year'] || currentYear;
+      const startYear = formFilters["Start_Year"] || currentYear;
+      const endYear = formFilters["End_Year"] || currentYear;
       const startYearOptions = years.map((year) => (
         <Option key={year} value={year}>
           {year}
@@ -426,7 +443,7 @@ const generateExcel = () => {
             {year}
           </Option>
         ));
-    
+
       return (
         <div key={Field}>
           <div className="w-full md:w-1/2 px-4 mb-4">
@@ -443,7 +460,7 @@ const generateExcel = () => {
               {startYearOptions}
             </Select>
           </div>
-    
+
           <div className="w-full md:w-1/2 px-4 mb-4">
             <Select
               size="lg"
@@ -460,9 +477,11 @@ const generateExcel = () => {
           </div>
         </div>
       );
-    }
-    
-    else if (Type.includes("varchar") && Field.includes("Upload") == false && Field.includes("Link") == false) {
+    } else if (
+      Type.includes("varchar") &&
+      Field.includes("Upload") == false &&
+      Field.includes("Link") == false
+    ) {
       return (
         <div key={Field} className="mb-4 py-3 bg-white rounded-lg">
           {/* <label className="block mb-2">{Enter ${Field}}</label> */}
@@ -513,9 +532,10 @@ const generateExcel = () => {
   };
   const handleColumnSelection = (selectedColumns) => {
     setSelectedColumns(selectedColumns);
-  }
-return(
-  <>
+  };
+
+  return (
+    <>
       <Box sx={{}}>
         <div className="flex flex-col justify-center items-center gap-4">
           <label className="block text-gray-700 text-sm font-bold mb-2">
@@ -609,48 +629,56 @@ return(
 // New component for column selection
 const ColumnSelection = ({ columns, onSelectColumns }) => {
   const [selectedColumns, setSelectedColumns] = useState([]);
+  const [selectAll, setSelectAll] = useState(false);
 
   const handleColumnToggle = (column) => {
-    const isSelected = selectedColumns.some(
-      (selectedColumn) => selectedColumn.Field === column.Field
-    );
-  
-    if (isSelected) {
-      setSelectedColumns((prevSelected) =>
+    if (column.Field === "selectAll") {
+      setSelectAll(!selectAll);
+      setSelectedColumns(selectAll ? [] : columns);
+    } else {
+      const isSelected = selectedColumns.some(
+        (selectedColumn) => selectedColumn.Field === column.Field
+      );
+
+      if (isSelected) {
+        setSelectedColumns((prevSelected) =>
           prevSelected.filter(
             (selectedColumn) => selectedColumn.Field !== column.Field
           )
-      );
-    } else {
-      setSelectedColumns((prevSelected) => [...prevSelected, column]);
+        );
+      } else {
+        setSelectedColumns((prevSelected) => [...prevSelected, column]);
+      }
     }
   };
-  
 
   useEffect(() => {
     onSelectColumns(selectedColumns);
   }, [selectedColumns, onSelectColumns]);
 
   return (
-    <div className="mt-4">
+    <div className="m-4">
       <label className="block text-gray-700 text-sm font-bold mb-2">
         Select Columns:
       </label>
-      <div className="flex gap-4 flex-wrap">
+      <div className="flex gap-4 flex-wrap justify-left">
+        <Checkbox
+          id="selectAllCheckbox"
+          checked={selectAll}
+          onChange={() => handleColumnToggle({ Field: "selectAll" })}
+          label="Select All"
+        />
+
         {columns.map((column) => (
-          <div key={column.Field}>
-            <input
-              type="checkbox"
-              id={column.Field}
-              name={column.Field}
-              checked={selectedColumns.some(
-                (selectedColumn) => selectedColumn.Field === column.Field
-              )}
-              onChange={() => handleColumnToggle(column)}
-              className="mr-2"
-            />
-            <label htmlFor={column.Field}>{column.Field}</label>
-          </div>
+          <Checkbox
+            key={column.Field}
+            id={column.Field}
+            checked={selectedColumns.some(
+              (selectedColumn) => selectedColumn.Field === column.Field
+            )}
+            onChange={() => handleColumnToggle(column)}
+            label={column.Field}
+          />
         ))}
       </div>
     </div>

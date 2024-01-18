@@ -10,7 +10,7 @@ import {
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
-import { addRecordsTechnical } from "./API_Routes";
+import { addRecordsTechnicalStud } from "./API_Routes";
 
 export default function TechEvents() {
   const navigate = useNavigate();
@@ -56,7 +56,7 @@ export default function TechEvents() {
   //add new record
   const handleSubmit = async (e) => {
     e.preventDefault();
-    await axios.post(addRecordsTechnical, formData);
+    await axios.post(addRecordsTechnicalStud, formData);
     navigate("/s/data");
   };
 
