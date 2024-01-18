@@ -10,7 +10,7 @@ import {
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
-import { addRecordsResearch } from "./API_Routes";
+import { addRecordsResearchStud } from "./API_Routes";
 
 export default function Research() {
   const navigate = useNavigate();
@@ -63,7 +63,7 @@ export default function Research() {
   //add new record
   const handleSubmit = async (e) => {
     e.preventDefault();
-    await axios.post(addRecordsResearch, formData);
+    await axios.post(addRecordsResearchStud, formData);
     navigate("/s/data");
   };
 

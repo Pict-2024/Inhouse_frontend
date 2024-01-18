@@ -10,31 +10,31 @@ export const deleteRecordsInternship = `${BASE_URL}/student/internship-details/r
 export const updateRecordsInternship = `${BASE_URL}/student/internship-details/update`;
 
 // Research Publications Routes
-export const getAllRecordsResearch = `${BASE_URL}/student/research-pb/all`;
-export const getOneRecordsResearch = (username) => {
+export const getAllRecordsResearchStud = `${BASE_URL}/student/research-pb/all`;
+export const getOneRecordsResearchStud = (username) => {
   return `${BASE_URL}/student/research-pb/${username}`;
 };
-export const addRecordsResearch = `${BASE_URL}/student/research-pb/create-new`;
-export const deleteRecordsResearch = `${BASE_URL}/student/research-pb/remove`;
-export const updateRecordsResearch = `${BASE_URL}/student/research-pb/update`;
+export const addRecordsResearchStud = `${BASE_URL}/student/research-pb/create-new`;
+export const deleteRecordsResearchStud = `${BASE_URL}/student/research-pb/remove`;
+export const updateRecordsResearchStud = `${BASE_URL}/student/research-pb/update`;
 
 // Conference publication Routes
-export const getAllRecordsConference = `${BASE_URL}/student/conference-pb/all`;
-export const getOneRecordsConference = (username) => {
+export const getAllRecordsConferenceStud = `${BASE_URL}/student/conference-pb/all`;
+export const getOneRecordsConferenceStud = (username) => {
   return `${BASE_URL}/student/conference-pb/${username}`;
 };
-export const addRecordsConference = `${BASE_URL}/student/conference-pb/create-new`;
-export const deleteRecordsConference = `${BASE_URL}/student/conference-pb/remove`;
-export const updateRecordsConference = `${BASE_URL}/student/conference-pb/update`;
+export const addRecordsConferenceStud = `${BASE_URL}/student/conference-pb/create-new`;
+export const deleteRecordsConferenceStud = `${BASE_URL}/student/conference-pb/remove`;
+export const updateRecordsConferenceStud = `${BASE_URL}/student/conference-pb/update`;
 
 // Certificate_Courses Routes
-export const getAllRecordsCertificate = `${BASE_URL}/student/certificate-courses/all`;
-export const getOneRecordsCertificate = (username) => {
+export const getAllRecordsCertificateStud = `${BASE_URL}/student/certificate-courses/all`;
+export const getOneRecordsCertificateStud = (username) => {
   return `${BASE_URL}/student/certificate-courses/${username}`;
 };
-export const addRecordsCertificate = `${BASE_URL}/student/certificate-courses/create-new`;
-export const deleteRecordsCertificate = `${BASE_URL}/student/certificate-courses/remove`;
-export const updateRecordsCertificate = `${BASE_URL}/student/certificate-courses/update`;
+export const addRecordsCertificateStud = `${BASE_URL}/student/certificate-courses/create-new`;
+export const deleteRecordsCertificateStud = `${BASE_URL}/student/certificate-courses/remove`;
+export const updateRecordsCertificateStud = `${BASE_URL}/student/certificate-courses/update`;
 
 // Sport Data Routes
 export const getAllRecordsSport = `${BASE_URL}/student/sports-data/all`;
@@ -64,13 +64,13 @@ export const deleteRecordsOrganized = `${BASE_URL}/student/event-org/remove`;
 export const updateRecordsOrganized = `${BASE_URL}/student/event-org/update`;
 
 // Technical Events Routes
-export const getAllRecordsTechnical = `${BASE_URL}/student/tech-events/all`;
-export const getOneRecordsTechnical = (username) => {
+export const getAllRecordsTechnicalStud = `${BASE_URL}/student/tech-events/all`;
+export const getOneRecordsTechnicalStud = (username) => {
   return `${BASE_URL}/student/tech-events/${username}`;
 };
-export const addRecordsTechnical = `${BASE_URL}/student/tech-events/create-new`;
-export const deleteRecordsTechnical = `${BASE_URL}/student/tech-events/remove`;
-export const updateRecordsTechnical = `${BASE_URL}/student/tech-events/update`;
+export const addRecordsTechnicalStud = `${BASE_URL}/student/tech-events/create-new`;
+export const deleteRecordsTechnicalStud = `${BASE_URL}/student/tech-events/remove`;
+export const updateRecordsTechnicalStud = `${BASE_URL}/student/tech-events/update`;
 
 // Higher Education Routes
 export const getAllRecordsHigherEdu = `${BASE_URL}/student/higher-edu/all`;

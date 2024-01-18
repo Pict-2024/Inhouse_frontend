@@ -10,7 +10,7 @@ import {
 import { useSelector } from "react-redux";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import { addRecordsConference } from "./API_Routes";
+import { addRecordsConferenceStud } from "./API_Routes";
 
 export default function Conference() {
   const { currentUser } = useSelector((state) => state.user);
@@ -59,7 +59,7 @@ export default function Conference() {
   //Add records
   const handleSubmit = async (e) => {
     e.preventDefault();
-    await axios.post(addRecordsConference, formData);
+    await axios.post(addRecordsConferenceStud, formData);
     navigate("/s/data");
   };
 
