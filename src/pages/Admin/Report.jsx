@@ -38,8 +38,6 @@ import {
   getAllRecordsTechnical,
   getAllRecordsWebinar,
 } from "../../components/TModule/API_Routes";
-import { Option, Select } from "@material-tailwind/react";
-import html2pdf from "html2pdf.js";
 import {
   getAllRecordsInternship,
   getAllRecordsResearchStud,
@@ -51,6 +49,9 @@ import {
   getAllRecordsTechnicalStud,
   getAllRecordsHigherEdu,
 } from "./../../components/SModule/API_Routes";
+import { Option, Select } from "@material-tailwind/react";
+import html2pdf from 'html2pdf.js'; 
+import ExcelJS from 'exceljs';
 
 // Define the Report component
 const Report = () => {
@@ -118,7 +119,7 @@ const Report = () => {
       "8__students___technical_events": getAllRecordsTechnicalStud,
       "9__student___higher_education": getAllRecordsHigherEdu,
     };
-    // console.log("Returned table:", tableRoute[table]);
+    console.log("Returned table:", tableRoute[table]);
     return tableRoute[table];
   };
 
@@ -354,10 +355,36 @@ const Report = () => {
   //     });
   //   });
 
-  //   // Save the PDF with a filename
-  //   doc.save("report.pdf");
-  // };
+//   // Save the PDF with a filename
+//   doc.save("report.pdf");
+// };
+const generateExcel = () => {
+  const workbook = new ExcelJS.Workbook();
+  const worksheet = workbook.addWorksheet('Report');
 
+  // Add headers
+  const headerRow = worksheet.addRow(selectedColumns.map(column => column.Field));
+  
+  // Add data rows
+  tableRows.forEach(row => {
+    const dataRow = selectedColumns.map(column => row[column.Field]);
+    worksheet.addRow(dataRow);
+  });
+
+  // Save the workbook
+  workbook.xlsx.writeBuffer().then(buffer => {
+    const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'report.xlsx';
+    a.click();
+    window.URL.revokeObjectURL(url);
+  });
+};
+
+
+  
   const setTable = async (e) => {
     const selectedTableName = e.target.value;
     console.log("Selected Table is: ", selectedTableName);
@@ -588,6 +615,10 @@ const Report = () => {
 
           <Button variant="contained" onClick={generatePDF}>
             Generate PDF
+          </Button>
+
+          <Button variant="contained" onClick={generateExcel}>
+            Generate Excel
           </Button>
         </div>
       </Box>
