@@ -39,6 +39,7 @@ import {
 } from "../../components/TModule/API_Routes";
 import { Option, Select } from "@material-tailwind/react";
 import html2pdf from 'html2pdf.js'; 
+import ExcelJS from 'exceljs';
 
 // Define the Report component
 const Report = () => {
@@ -340,6 +341,31 @@ const generatePDF = () => {
 //   // Save the PDF with a filename
 //   doc.save("report.pdf");
 // };
+const generateExcel = () => {
+  const workbook = new ExcelJS.Workbook();
+  const worksheet = workbook.addWorksheet('Report');
+
+  // Add headers
+  const headerRow = worksheet.addRow(selectedColumns.map(column => column.Field));
+  
+  // Add data rows
+  tableRows.forEach(row => {
+    const dataRow = selectedColumns.map(column => row[column.Field]);
+    worksheet.addRow(dataRow);
+  });
+
+  // Save the workbook
+  workbook.xlsx.writeBuffer().then(buffer => {
+    const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'report.xlsx';
+    a.click();
+    window.URL.revokeObjectURL(url);
+  });
+};
+
 
   
   const setTable = async (e) => {
@@ -569,6 +595,10 @@ return(
 
           <Button variant="contained" onClick={generatePDF}>
             Generate PDF
+          </Button>
+
+          <Button variant="contained" onClick={generateExcel}>
+            Generate Excel
           </Button>
         </div>
       </Box>
