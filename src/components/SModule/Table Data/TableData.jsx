@@ -20,33 +20,33 @@ import axios from "axios";
 import PropTypes from "prop-types";
 import { useSelector } from "react-redux";
 import {
-  deleteRecordsCertificate,
-  deleteRecordsConference,
+  deleteRecordsCertificateStud,
+  deleteRecordsConferenceStud,
   deleteRecordsHigherEdu,
   deleteRecordsInternship,
   deleteRecordsOrganized,
   deleteRecordsParticipation,
-  deleteRecordsResearch,
+  deleteRecordsResearchStud,
   deleteRecordsSport,
-  deleteRecordsTechnical,
-  getOneRecordsCertificate,
-  getOneRecordsConference,
+  deleteRecordsTechnicalStud,
+  getOneRecordsCertificateStud,
+  getOneRecordsConferenceStud,
   getOneRecordsHigherEdu,
   getOneRecordsInternship,
   getOneRecordsOrganized,
   getOneRecordsParticipation,
-  getOneRecordsResearch,
+  getOneRecordsResearchStud,
   getOneRecordsSport,
-  getOneRecordsTechnical,
-  updateRecordsCertificate,
-  updateRecordsConference,
+  getOneRecordsTechnicalStud,
+  updateRecordsCertificateStud,
+  updateRecordsConferenceStud,
   updateRecordsHigherEdu,
   updateRecordsInternship,
   updateRecordsOrganized,
   updateRecordsParticipation,
-  updateRecordsResearch,
+  updateRecordsResearchStud,
   updateRecordsSport,
-  updateRecordsTechnical,
+  updateRecordsTechnicalStud,
 } from "../API_Routes";
 
 export default function TableData({ tableName }) {
@@ -60,13 +60,13 @@ export default function TableData({ tableName }) {
     // Define your API routes based on the table names
     const apiRoutes = {
       Internship: (username) => getOneRecordsInternship(username),
-      Research: (username) => getOneRecordsResearch(username),
-      "Conference Publication": (username) => getOneRecordsConference(username),
-      "Certificate Courses": (username) => getOneRecordsCertificate(username),
+      Research: (username) => getOneRecordsResearchStud(username),
+      "Conference Publication": (username) => getOneRecordsConferenceStud(username),
+      "Certificate Courses": (username) => getOneRecordsCertificateStud(username),
       "Sport Data": (username) => getOneRecordsSport(username),
       "Event Participated": (username) => getOneRecordsParticipation(username),
       "Event Organized": (username) => getOneRecordsOrganized(username),
-      "Technical Events": (username) => getOneRecordsTechnical(username),
+      "Technical Events": (username) => getOneRecordsTechnicalStud(username),
       "Higher Education": (username) => getOneRecordsHigherEdu(username),
     };
 
@@ -81,11 +81,11 @@ export default function TableData({ tableName }) {
       Internship: (username, S_ID) =>
         `${deleteRecordsInternship}?username=${username}&S_ID=${S_ID}`,
       Research: (username, S_ID) =>
-        `${deleteRecordsResearch}?username=${username}&S_ID=${S_ID}`,
+        `${deleteRecordsResearchStud}?username=${username}&S_ID=${S_ID}`,
       "Conference Publication": (username, S_ID) =>
-        `${deleteRecordsConference}?username=${username}&S_ID=${S_ID}`,
+        `${deleteRecordsConferenceStud}?username=${username}&S_ID=${S_ID}`,
       "Certificate Courses": (username, S_ID) =>
-        `${deleteRecordsCertificate}?username=${username}&S_ID=${S_ID}`,
+        `${deleteRecordsCertificateStud}?username=${username}&S_ID=${S_ID}`,
       "Sport Data": (username, S_ID) =>
         `${deleteRecordsSport}?username=${username}&S_ID=${S_ID}`,
 
@@ -94,7 +94,7 @@ export default function TableData({ tableName }) {
       "Event Organized": (username, S_ID) =>
         `${deleteRecordsOrganized}?username=${username}&S_ID=${S_ID}`,
       "Technical Events": (username, S_ID) =>
-        `${deleteRecordsTechnical}?username=${username}&S_ID=${S_ID}`,
+        `${deleteRecordsTechnicalStud}?username=${username}&S_ID=${S_ID}`,
       "Higher Education": (username, S_ID) =>
         `${deleteRecordsHigherEdu}?username=${username}&S_ID=${S_ID}`,
     };
@@ -108,11 +108,11 @@ export default function TableData({ tableName }) {
       Internship: (username, S_ID) =>
         `${updateRecordsInternship}?username=${username}&S_ID=${S_ID}`,
       Research: (username, S_ID) =>
-        `${updateRecordsResearch}?username=${username}&S_ID=${S_ID}`,
+        `${updateRecordsResearchStud}?username=${username}&S_ID=${S_ID}`,
       "Conference Publication": (username, S_ID) =>
-        `${updateRecordsConference}?username=${username}&S_ID=${S_ID}`,
+        `${updateRecordsConferenceStud}?username=${username}&S_ID=${S_ID}`,
       "Certificate Courses": (username, S_ID) =>
-        `${updateRecordsCertificate}?username=${username}&S_ID=${S_ID}`,
+        `${updateRecordsCertificateStud}?username=${username}&S_ID=${S_ID}`,
       "Sport Data": (username, S_ID) =>
         `${updateRecordsSport}?username=${username}&S_ID=${S_ID}`,
 
@@ -121,7 +121,7 @@ export default function TableData({ tableName }) {
       "Event Organized": (username, S_ID) =>
         `${updateRecordsOrganized}?username=${username}&S_ID=${S_ID}`,
       "Technical Events": (username, S_ID) =>
-        `${updateRecordsTechnical}?username=${username}&S_ID=${S_ID}`,
+        `${updateRecordsTechnicalStud}?username=${username}&S_ID=${S_ID}`,
       "Higher Education": (username, S_ID) =>
         `${updateRecordsHigherEdu}?username=${username}&S_ID=${S_ID}`,
     };
