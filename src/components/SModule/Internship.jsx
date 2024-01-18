@@ -7,18 +7,19 @@ import {
   Button,
   Typography,
 } from "@material-tailwind/react";
-// import axios from "axios";
-// import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
+import { addRecordsInternship } from "./API_Routes";
 
 export default function Internship() {
-  // const navigate = useNavigate();
+  const navigate = useNavigate();
   const { currentUser } = useSelector((state) => state.user);
   const options = Array.from({ length: 11 }, (_, index) => index + 1);
   const [formData, setFormData] = useState({
     S_ID: null,
     Academic_Year: "",
-    Student_Name: "",
+    Student_Name: currentUser?.Name,
     Roll_No: "",
     Department: "",
     Year: "",
@@ -29,8 +30,8 @@ export default function Internship() {
     Internship_Organizer: "",
     Internship_Company_Website_Address: "",
     Company_Address: "",
-    Mode: "",
     Duration: "",
+    Mode: "",
     Stipend: "",
     Internal_Mentor_Name: "",
     External_Mentor_Name: "",
@@ -53,8 +54,8 @@ export default function Internship() {
   //add new record
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // await axios.post(, formData);
-    // navigate("/t/data");
+    await axios.post(addRecordsInternship, formData);
+    navigate("/s/data");
   };
 
   return (

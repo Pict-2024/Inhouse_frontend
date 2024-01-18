@@ -7,12 +7,13 @@ import {
   Button,
   Typography,
 } from "@material-tailwind/react";
-// import axios from "axios";
-// import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
+import { addRecordsParticipation } from "./API_Routes";
 
 export default function EventParticipated() {
-  // const navigate = useNavigate();
+  const navigate = useNavigate();
   const { currentUser } = useSelector((state) => state.user);
   const [formData, setFormData] = useState({
     S_ID: null,
@@ -35,8 +36,8 @@ export default function EventParticipated() {
     Place: "",
     Start_Date: "",
     End_Date: "",
-    Award: "",
     Financial_Support_given_by_Institute_in_INR: "",
+    Award: "",
     Award_Prize_Money: "",
     Remarks: "",
     Geo_Tag_Photos: "",
@@ -54,8 +55,8 @@ export default function EventParticipated() {
   //add new record
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // await axios.post(, formData);
-    // navigate("/t/data");
+    await axios.post(addRecordsParticipation, formData);
+    navigate("/s/data");
   };
 
   return (
