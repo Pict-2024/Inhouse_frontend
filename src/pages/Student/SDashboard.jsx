@@ -1,9 +1,15 @@
 import { useState } from "react";
 import { Card, Input, Button, Typography } from "@material-tailwind/react";
 import { useSelector } from "react-redux";
+import { useLocation } from "react-router-dom";
 
-export default function SDashboard() {
+export default function SDashboard({ StudentId }) {
   const { currentUser } = useSelector((state) => state.user);
+  const location = useLocation();
+  const searchParams = new URLSearchParams(location.search);
+  const studentIds = searchParams.get("StudentId");
+
+  console.log("Student data is : ", studentIds);
   const [formData, setFormData] = useState({
     userProfile: {
       username: currentUser?.Name,

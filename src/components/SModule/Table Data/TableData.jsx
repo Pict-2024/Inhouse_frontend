@@ -58,12 +58,14 @@ export default function TableData({ tableName }) {
   // getRecords by username apis
   const getApiRoute = (tableName) => {
     // Define your API routes based on the table names
-    console.log("table name is getapiroute: ", tableName)
+    console.log("table name is getapiroute: ", tableName);
     const apiRoutes = {
       Internship: (username) => getOneRecordsInternship(username),
       Research: (username) => getOneRecordsResearchStud(username),
-      "Conference Publication": (username) => getOneRecordsConferenceStud(username),
-      "Certificate Courses": (username) => getOneRecordsCertificateStud(username),
+      "Conference Publication": (username) =>
+        getOneRecordsConferenceStud(username),
+      "Certificate Courses": (username) =>
+        getOneRecordsCertificateStud(username),
       "Sport Data": (username) => getOneRecordsSport(username),
       "Event Participated": (username) => getOneRecordsParticipation(username),
       "Event Organized": (username) => getOneRecordsOrganized(username),
@@ -71,6 +73,7 @@ export default function TableData({ tableName }) {
       "Higher Education": (username) => getOneRecordsHigherEdu(username),
     };
 
+    console.log("returned table :", tableName);
     const apiRoute = apiRoutes[tableName];
     console.log("apiRoute:", apiRoute);
     return apiRoute;
@@ -134,11 +137,10 @@ export default function TableData({ tableName }) {
   const getAllRecords = async () => {
     const user = currentUser.Username;
     console.log("User is : ", user);
-    console.log("table name is : ", tableName)
+    console.log("table name is : ", tableName);
     try {
-      
       const apiurl = getApiRoute(tableName)(user);
-      
+
       console.log("Table name:", tableName);
       console.log("apiRoute in getAllRecords:", apiurl);
       const response = await axios.get(apiurl, {
@@ -146,10 +148,10 @@ export default function TableData({ tableName }) {
           "Content-Type": "application/json", // Make sure this header is defined
         },
       });
-      // console.log("Rows : ", response.data.data);
-      // console.log("Response is : ", response?.data?.data)
+      console.log("Response : ", response);
+      console.log("Response is : ", response?.data?.data);
       const columnHeaders = Object.keys(response?.data?.data[0]);
-      // console.log("Columns:", columnHeaders);
+      console.log("Columns:", columnHeaders);
 
       setTableHead(columnHeaders);
 
@@ -168,7 +170,10 @@ export default function TableData({ tableName }) {
   //Handle delete records
   const onDelete = async (record) => {
     try {
-      const apiurl = deleteAPIRoute(tableName)(currentUser.Username, record.S_ID);
+      const apiurl = deleteAPIRoute(tableName)(
+        currentUser.Username,
+        record.S_ID
+      );
       // console.log("Deleting record with:", currentUser.Email, record.S_ID);
       // console.log("Table:", tableName);
 

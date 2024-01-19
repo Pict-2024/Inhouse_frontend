@@ -25,7 +25,7 @@ export default function HigherEdu() {
     Division: "",
     Department: "",
     Mobile_No: "",
-    Email_ID: currentUser?.Email,
+    Email_ID: currentUser?.Username,
     Parent_Mobile_No: "",
     Passing_Year: "",
     Qualifying_Exam_Attempted: "",
@@ -46,8 +46,9 @@ export default function HigherEdu() {
   //add new record
   const handleSubmit = async (e) => {
     e.preventDefault();
+    console.log("higherEdu:",formData);
     await axios.post(addRecordsHigherEdu, formData);
-    navigate("/s/data");
+    // navigate("/s/data");
   };
 
   return (

@@ -3,18 +3,29 @@ import axios from "axios";
 import Header from "../../components/AModule/Header";
 import { CheckCircleIcon, PencilIcon } from "@heroicons/react/24/outline";
 import { IconButton, Tooltip, Typography } from "@material-tailwind/react";
-import { toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
-import Select from 'react-select';
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import Select from "react-select";
+import TextField from "@mui/material/TextField";
+import Button from "@mui/material/Button";
+import SendIcon from "@mui/icons-material/Send";
+import { useNavigate } from "react-router-dom";
 
 export default function Teachers() {
+  const navigate = useNavigate();
   const [teachers, setTeachers] = useState([]);
   const [editingEmail, setEditingEmail] = useState(null);
   const [selectedTeacherAccess, setSelectedTeacherAccess] = useState([]);
   const [selectedStudentAccess, setSelectedStudentAccess] = useState([]);
   const [teacherTableAccess, setTeacherTableAccess] = useState([]);
   const [studentTableAccess, setStudentTableAccess] = useState([]);
+  const [teacherId, setTeacherId] = useState("");
 
+  const handleButtonClick = () => {
+    teacherId === ""
+      ? alert("Enter TeacherID...")
+      : navigate(`/a/teacherData?teacherId=${teacherId}`);
+  };
 
   const getAllTeachers = async () => {
     try {
@@ -26,7 +37,7 @@ export default function Teachers() {
       });
 
       setTeachers(response.data.data);
-      console.log("teachers are : ", teachers)
+      console.log("teachers are : ", teachers);
     } catch (error) {
       console.error("Error fetching teachers:", error);
     }
@@ -34,7 +45,8 @@ export default function Teachers() {
 
   const getAllTables = async () => {
     try {
-      const tablesUrl = "http://localhost:5000/api/v1/teacher/gettables/tables-stud-fact";
+      const tablesUrl =
+        "http://localhost:5000/api/v1/teacher/gettables/tables-stud-fact";
       const response = await axios.get(tablesUrl, {
         headers: {
           "Content-Type": "application/json",
@@ -55,7 +67,6 @@ export default function Teachers() {
     getAllTeachers();
     getAllTables();
   }, []);
-
 
   const handleEditClick = (Username) => {
     const teacher = teachers.find((teacher) => teacher.Username === Username);
@@ -78,10 +89,10 @@ export default function Teachers() {
         studentTables: selectedStudentAccess,
       };
 
-      console.log("data after submitting is : ", data)
+      console.log("data after submitting is : ", data);
 
-      console.log("Teacher access is :", selectedTeacherAccess)
-      console.log("Student access is :", selectedStudentAccess)
+      console.log("Teacher access is :", selectedTeacherAccess);
+      console.log("Student access is :", selectedStudentAccess);
 
       await axios.post(updateApiurl, data, {
         headers: {
@@ -120,17 +131,37 @@ export default function Teachers() {
   };
 
   const handleSpecialAccessSelectChange = (value, type) => {
-    if (type === 'teacher') {
+    if (type === "teacher") {
       setSelectedTeacherAccess(value.map((option) => option.value));
-    } else if (type === 'student') {
+    } else if (type === "student") {
       setSelectedStudentAccess(value.map((option) => option.value));
     }
   };
 
   return (
     <div className="container mx-auto">
-      <div>
-        <Header category="Page" title="Teacher" />
+      <div className="flex items-center justify-between gap-2">
+        <div>
+          <Header category="Page" title="Teacher" />
+        </div>
+        <div className="flex items-center justify-between gap-2">
+          <TextField
+            label="Enter Teacher ID"
+            variant="outlined"
+            value={teacherId}
+            className="w-80"
+            onChange={(e) => setTeacherId(e.target.value)}
+          />
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={handleButtonClick}
+            style={{ marginLeft: "10px" }}
+            endIcon={<SendIcon />}
+          >
+            View Teacher Data
+          </Button>
+        </div>
       </div>
       <div className="overflow-x-auto mx-4">
         <table className="mt-4 w-full min-w-max table-auto text-left">
@@ -179,39 +210,59 @@ export default function Teachers() {
               <tr key={teacher.Username} className="hover:bg-light-blue-50">
                 <td className="py-2 px-4 border-b">{teacher.Name}</td>
                 <td className="py-2 px-4 border-b">{teacher.Username}</td>
-                <td className={`py-2 px-4 border-b ${editingEmail === teacher.Username ? "editable" : ""}`}>
+                <td
+                  className={`py-2 px-4 border-b ${
+                    editingEmail === teacher.Username ? "editable" : ""
+                  }`}
+                >
                   {editingEmail === teacher.Username ? (
                     <>
                       <div className="mb-2">
                         <label>Special Access Teacher:</label>
                         <Select
                           isMulti
-                          options={teacherTableAccess.map(option => ({
+                          options={teacherTableAccess.map((option) => ({
                             value: option,
                             label: option,
                           }))}
-                          value={selectedTeacherAccess.map((option) => ({ value: option, label: option }))}
-                          onChange={(value) => handleSpecialAccessSelectChange(value, 'teacher')}
+                          value={selectedTeacherAccess.map((option) => ({
+                            value: option,
+                            label: option,
+                          }))}
+                          onChange={(value) =>
+                            handleSpecialAccessSelectChange(value, "teacher")
+                          }
                         />
                       </div>
                       <div>
                         <label>Special Access Student:</label>
                         <Select
                           isMulti
-                          options={studentTableAccess.map(option => ({
+                          options={studentTableAccess.map((option) => ({
                             value: option,
                             label: option,
                           }))}
-                          value={selectedStudentAccess.map((option) => ({ value: option, label: option }))}
-                          onChange={(value) => handleSpecialAccessSelectChange(value, 'student')}
+                          value={selectedStudentAccess.map((option) => ({
+                            value: option,
+                            label: option,
+                          }))}
+                          onChange={(value) =>
+                            handleSpecialAccessSelectChange(value, "student")
+                          }
                         />
                       </div>
                     </>
                   ) : (
                     <>
-                      <strong>Faculty:</strong> {teacher.SpecialAccess_Teacher ? teacher.SpecialAccess_Teacher : ""}
+                      <strong>Faculty:</strong>{" "}
+                      {teacher.SpecialAccess_Teacher
+                        ? teacher.SpecialAccess_Teacher
+                        : ""}
                       <br />
-                      <strong>Student:</strong> {teacher.SpecialAccess_Student ? teacher.SpecialAccess_Student : ""}
+                      <strong>Student:</strong>{" "}
+                      {teacher.SpecialAccess_Student
+                        ? teacher.SpecialAccess_Student
+                        : ""}
                     </>
                   )}
                 </td>

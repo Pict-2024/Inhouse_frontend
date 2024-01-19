@@ -50,13 +50,11 @@ import {
   getAllRecordsHigherEdu,
 } from "./../../components/SModule/API_Routes";
 import { Option, Select } from "@material-tailwind/react";
-import html2pdf from 'html2pdf.js'; 
-import ExcelJS from 'exceljs';
+import html2pdf from "html2pdf.js";
+import ExcelJS from "exceljs";
 import { useSelector } from "react-redux";
 
-
 const Report = () => {
-
   const { currentUser } = useSelector((state) => state.user);
 
   let tablename = "";
@@ -189,14 +187,14 @@ const Report = () => {
       );
       // const fetchedTableNames = response.data.data;
 
-      console.log("Response is : ", response.data.data)
+      console.log("Response is : ", response.data.data);
 
       const combinedArray = [
         ...response.data.data.SpecialAccess_Student,
-        ...response.data.data.SpecialAccess_Teacher
+        ...response.data.data.SpecialAccess_Teacher,
       ];
 
-      console.log("combined array is : ", combinedArray)
+      console.log("combined array is : ", combinedArray);
       setTableNames(combinedArray);
 
       //console.log("table names are : ", fetchedTableNames);
@@ -243,28 +241,29 @@ const Report = () => {
       .map(([key, value]) => `${key}=${encodeURIComponent(value)}`)
       .join("&");
 
-      const includesDate = Object.keys(formFilters).some((key) =>
-  key.toLowerCase().includes("date")
-);
-
-// Add dateColumn parameter if any key includes "date" as a substring
-  if (includesDate) {
-    const dateColumn = columnNames.find((column) =>
-      column.Field.toLowerCase().includes("date")
+    const includesDate = Object.keys(formFilters).some((key) =>
+      key.toLowerCase().includes("date")
     );
 
-    console.log("Date column is : ", dateColumn)
-    if (dateColumn) {
-      queryParameters += `&dateColumn=${encodeURIComponent(dateColumn.Field)}`;
-    }
-  }
+    // Add dateColumn parameter if any key includes "date" as a substring
+    if (includesDate) {
+      const dateColumn = columnNames.find((column) =>
+        column.Field.toLowerCase().includes("date")
+      );
 
-      
-      setApiUrl(
-        `http://localhost:5000/api/v1/teacher/${tableMapping[selectedTable]}/filter?${queryParameters}`
-        );
-        console.log("form filter is : ", formFilters)
-      console.log("Update api url is : ", apiUrl)
+      console.log("Date column is : ", dateColumn);
+      if (dateColumn) {
+        queryParameters += `&dateColumn=${encodeURIComponent(
+          dateColumn.Field
+        )}`;
+      }
+    }
+
+    setApiUrl(
+      `http://localhost:5000/api/v1/teacher/${tableMapping[selectedTable]}/filter?${queryParameters}`
+    );
+    console.log("form filter is : ", formFilters);
+    console.log("Update api url is : ", apiUrl);
   };
 
   useEffect(() => {
@@ -388,36 +387,38 @@ const Report = () => {
   //     });
   //   });
 
-//   // Save the PDF with a filename
-//   doc.save("report.pdf");
-// };
-const generateExcel = () => {
-  const workbook = new ExcelJS.Workbook();
-  const worksheet = workbook.addWorksheet('Report');
+  //   // Save the PDF with a filename
+  //   doc.save("report.pdf");
+  // };
+  const generateExcel = () => {
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet("Report");
 
-  // Add headers
-  const headerRow = worksheet.addRow(selectedColumns.map(column => column.Field));
-  
-  // Add data rows
-  tableRows.forEach(row => {
-    const dataRow = selectedColumns.map(column => row[column.Field]);
-    worksheet.addRow(dataRow);
-  });
+    // Add headers
+    const headerRow = worksheet.addRow(
+      selectedColumns.map((column) => column.Field)
+    );
 
-  // Save the workbook
-  workbook.xlsx.writeBuffer().then(buffer => {
-    const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-    const url = window.URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'report.xlsx';
-    a.click();
-    window.URL.revokeObjectURL(url);
-  });
-};
+    // Add data rows
+    tableRows.forEach((row) => {
+      const dataRow = selectedColumns.map((column) => row[column.Field]);
+      worksheet.addRow(dataRow);
+    });
 
+    // Save the workbook
+    workbook.xlsx.writeBuffer().then((buffer) => {
+      const blob = new Blob([buffer], {
+        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "report.xlsx";
+      a.click();
+      window.URL.revokeObjectURL(url);
+    });
+  };
 
-  
   const setTable = async (e) => {
     const selectedTableName = e.target.value;
     console.log("Selected Table is: ", selectedTableName);
@@ -540,7 +541,6 @@ const generateExcel = () => {
         </div>
       );
     } else if (Type === "date") {
-
       return (
         <div key={Field} className="mb-4 py-3 bg-white rounded-lg">
           {/* <label className="block mb-2">{${Field} Start Date}</label> */}
@@ -716,6 +716,6 @@ const ColumnSelection = ({ columns, onSelectColumns }) => {
       </div>
     </div>
   );
-}
+};
 
-export default Report
+export default Report;
