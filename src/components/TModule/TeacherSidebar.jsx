@@ -17,7 +17,7 @@ export default function TeacherSidebar() {
   const { currentUser } = useSelector((state) => state.user);
 
   return (
-    <div className="h-[90vh] lg:max-w-[20rem] w-1/24 sm:w-2/5 p-4 shadow-blue-gray-900/5 hidden sm:block">
+    <div className="h-[90vh] lg:max-w-[15rem] w-1/24 sm:w-2/5 p-4 shadow-blue-gray-900/5 hidden sm:block">
       <div className="mb-2 p-4">
         <Typography
           variant="h5"

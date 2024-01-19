@@ -412,6 +412,7 @@ const generateExcel = () => {
       .catch((error) => console.error("Error retrieving data", error));
   };
 
+  //render columns
   const renderInputFields = () => {
     return columnNames.map((column) => (
       <div key={column.Field}>
@@ -536,7 +537,7 @@ const generateExcel = () => {
 
   return (
     <>
-      <Box sx={{}}>
+      <Box >
         <div className="flex flex-col justify-center items-center gap-4">
           <label className="block text-gray-700 text-sm font-bold mb-2">
             Select Table:

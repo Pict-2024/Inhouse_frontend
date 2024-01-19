@@ -615,10 +615,7 @@ export const links = [
         name: "report",
         icon: <AiOutlineShoppingCart />,
       },
-      {
-        name: "UserData",
-        icon: <IoPerson />,
-      },
+   
     ],
   },
   {

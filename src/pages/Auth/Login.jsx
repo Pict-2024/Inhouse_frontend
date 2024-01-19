@@ -54,9 +54,9 @@ export default function Login() {
         dispatch(signInUserFailure(response.data));
         return;
       }
-      dispatch(signInUserSuccess(response.data.data.user));
+      dispatch(signInUserSuccess(response.data.data));
 
-      const currentUser = response.data.data.user;
+      const currentUser = response.data.data;
 
       var pathLink = "";
 

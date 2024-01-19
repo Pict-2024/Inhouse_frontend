@@ -2,18 +2,27 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import Header from "../../components/AModule/Header";
 import { CheckCircleIcon, PencilIcon } from "@heroicons/react/24/outline";
-import {
-  IconButton,
-  Tooltip,
-  Typography,
-} from "@material-tailwind/react";
-
-import { toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { IconButton, Tooltip, Typography } from "@material-tailwind/react";
+import TextField from "@mui/material/TextField";
+import Button from "@mui/material/Button";
+import SendIcon from "@mui/icons-material/Send";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { useNavigate } from "react-router-dom";
 
 export default function Teachers() {
+  const navigate = useNavigate();
   const [teachers, setTeachers] = useState([]);
   const [editingEmail, setEditingEmail] = useState(null);
+  const [teacherId, setTeacherId] = useState("");
+
+  const handleButtonClick = () => {
+    if (!teacherId.trim()) {
+      alert("Please enter a valid Teacher ID");
+    } else {
+      navigate(`/a/teacherData?teacherId=${teacherId}`);
+    }
+  };
 
   const getAllTeachers = async () => {
     try {
@@ -54,23 +63,21 @@ export default function Teachers() {
         },
       });
 
-      if(editedTeacher.SpecialAccess !== 'null')
-      {
-
-        toast.success(`Granted ${editedTeacher.SpecialAccess} Head Access to ${email}`, {
-          position: "top-right",
-          autoClose: 1500,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
-        });
-
-      }
-      else
-      {
+      if (editedTeacher.SpecialAccess !== "null") {
+        toast.success(
+          `Granted ${editedTeacher.SpecialAccess} Head Access to ${email}`,
+          {
+            position: "top-right",
+            autoClose: 1500,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "light",
+          }
+        );
+      } else {
         toast.warning(`Revoked Access from ${email}`, {
           position: "top-right",
           autoClose: 1500,
@@ -93,7 +100,6 @@ export default function Teachers() {
             : teacher
         )
       );
-
     } catch (error) {
       console.error("Error updating teacher:", error);
     }
@@ -109,8 +115,28 @@ export default function Teachers() {
 
   return (
     <div className="container mx-auto">
-      <div>
-        <Header category="Page" title="Teacher" />
+      <div className="flex items-center justify-between gap-2">
+        <div>
+          <Header category="Page" title="Teacher" />
+        </div>
+        <div className="flex items-center justify-between gap-2">
+          <TextField
+            label="Enter Teacher ID"
+            variant="outlined"
+            value={teacherId}
+            className="w-80"
+            onChange={(e) => setTeacherId(e.target.value)}
+          />
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={handleButtonClick}
+            style={{ marginLeft: "10px" }}
+            endIcon={<SendIcon />}
+          >
+            View Teacher Data
+          </Button>
+        </div>
       </div>
       <div className="overflow-x-auto mx-4">
         <table className="mt-4 w-full min-w-max table-auto text-left">

@@ -30,7 +30,7 @@ export default function Teacher() {
         <NavList />
         <div className="w-full flex font-poppins ">
           <TeacherSidebar />
-          <div className="border-l-2 w-full mx-0 px-0 overflow-x-auto">
+          <div className="border-l-2 w-full mx-0 px-0 overflow-x-auto  ">
             <Outlet />
           </div>
         </div>
