@@ -13,10 +13,10 @@ import {
 } from "../../components/SModule";
 
 export default function General() {
-  const [selectedOption, setSelectedOption] = useState("Internship Details");
+  const [selectedOption, setSelectedOption] = useState("Internship");
 
   const options = [
-    { value: "Internship Details", label: "Internship Details" },
+    { value: "Internship", label: "Internship Details" },
     { value: "Research", label: "Research Publication" },
     { value: "Conference publication", label: "Conference publication" },
     {
@@ -32,7 +32,7 @@ export default function General() {
 
   // A mapping of option values to their corresponding components
   const optionComponents = {
-    "Internship Details": Internship,
+    Internship: Internship,
     Research: Research,
     "Conference publication": Conference,
     "Certificate Course Attended": Certificate,

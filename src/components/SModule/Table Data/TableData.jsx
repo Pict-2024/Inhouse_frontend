@@ -58,11 +58,14 @@ export default function TableData({ tableName }) {
   // getRecords by username apis
   const getApiRoute = (tableName) => {
     // Define your API routes based on the table names
+    console.log("table name is getapiroute: ", tableName);
     const apiRoutes = {
       Internship: (username) => getOneRecordsInternship(username),
       Research: (username) => getOneRecordsResearchStud(username),
-      "Conference Publication": (username) => getOneRecordsConferenceStud(username),
-      "Certificate Courses": (username) => getOneRecordsCertificateStud(username),
+      "Conference Publication": (username) =>
+        getOneRecordsConferenceStud(username),
+      "Certificate Courses": (username) =>
+        getOneRecordsCertificateStud(username),
       "Sport Data": (username) => getOneRecordsSport(username),
       "Event Participated": (username) => getOneRecordsParticipation(username),
       "Event Organized": (username) => getOneRecordsOrganized(username),
@@ -70,6 +73,7 @@ export default function TableData({ tableName }) {
       "Higher Education": (username) => getOneRecordsHigherEdu(username),
     };
 
+    console.log("returned table :", tableName);
     const apiRoute = apiRoutes[tableName];
     console.log("apiRoute:", apiRoute);
     return apiRoute;
@@ -131,9 +135,12 @@ export default function TableData({ tableName }) {
 
   //get all records
   const getAllRecords = async () => {
-    const user = await currentUser.Email;
+    const user = currentUser.Username;
+    console.log("User is : ", user);
+    console.log("table name is : ", tableName);
     try {
       const apiurl = getApiRoute(tableName)(user);
+
       console.log("Table name:", tableName);
       console.log("apiRoute in getAllRecords:", apiurl);
       const response = await axios.get(apiurl, {
@@ -141,15 +148,16 @@ export default function TableData({ tableName }) {
           "Content-Type": "application/json", // Make sure this header is defined
         },
       });
-      // console.log("Rows : ", response.data.data);
-      const columnHeaders = Object.keys(response.data.data[0]);
-      // console.log("Columns:", columnHeaders);
+      console.log("Response : ", response);
+      console.log("Response is : ", response?.data?.data);
+      const columnHeaders = Object.keys(response?.data?.data[0]);
+      console.log("Columns:", columnHeaders);
 
       setTableHead(columnHeaders);
 
       // Filter records based on currentUser's name
       const userRecords = response.data.data.filter(
-        (record) => record.Username === currentUser.Email
+        (record) => record.Username === currentUser.Username
       );
       // console.log("UserRecords:", userRecords);
       setTableRows(userRecords);
@@ -162,7 +170,10 @@ export default function TableData({ tableName }) {
   //Handle delete records
   const onDelete = async (record) => {
     try {
-      const apiurl = deleteAPIRoute(tableName)(currentUser.Email, record.S_ID);
+      const apiurl = deleteAPIRoute(tableName)(
+        currentUser.Username,
+        record.S_ID
+      );
       // console.log("Deleting record with:", currentUser.Email, record.S_ID);
       // console.log("Table:", tableName);
 
@@ -171,7 +182,7 @@ export default function TableData({ tableName }) {
           "Content-Type": "application/json",
         },
         data: {
-          username: currentUser.Email,
+          username: currentUser.Username,
           S_ID: record.S_ID,
         },
       });
@@ -209,7 +220,7 @@ export default function TableData({ tableName }) {
       const updatedRecord = editableFields[tId];
       // console.log("Updated:", updatedRecord);
       // Send a PUT request to update the record in the backend
-      const apiurl = updateAPIRoute(tableName)(currentUser.Email, tId);
+      const apiurl = updateAPIRoute(tableName)(currentUser.Username, tId);
       // console.log("updating record with:", currentUser.Email, tId);
       // console.log("Table:", tableName);
       await axios.put(apiurl, updatedRecord, {
@@ -217,7 +228,7 @@ export default function TableData({ tableName }) {
           "Content-Type": "application/json",
         },
         data: {
-          username: currentUser.Email,
+          username: currentUser.Username,
           S_ID: tId,
         },
       });

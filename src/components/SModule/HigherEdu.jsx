@@ -18,14 +18,14 @@ export default function HigherEdu() {
   const options = Array.from({ length: 11 }, (_, index) => index + 1);
   const [formData, setFormData] = useState({
     S_ID: null,
-    Username: currentUser?.Email,
+    Username: currentUser?.Username,
     Academic_Year: "",
     Student_Name: currentUser?.Name,
     Roll_No: "",
     Division: "",
     Department: "",
     Mobile_No: "",
-    Email_ID: currentUser?.Email,
+    Email_ID: currentUser?.Username,
     Parent_Mobile_No: "",
     Passing_Year: "",
     Qualifying_Exam_Attempted: "",
@@ -46,8 +46,9 @@ export default function HigherEdu() {
   //add new record
   const handleSubmit = async (e) => {
     e.preventDefault();
+    console.log("higherEdu:",formData);
     await axios.post(addRecordsHigherEdu, formData);
-    navigate("/s/data");
+    // navigate("/s/data");
   };
 
   return (

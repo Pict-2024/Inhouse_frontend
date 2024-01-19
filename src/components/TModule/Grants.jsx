@@ -25,7 +25,7 @@ export default function Grants() {
   // Define state variables for form fields
   const [formData, setFormData] = useState({
     T_ID: null,
-    Username: currentUser?.Email,
+    Username: currentUser?.Username,
     Department: "",
     Principal_Investigator_Faculty_Name: "",
     Project_Title: "",

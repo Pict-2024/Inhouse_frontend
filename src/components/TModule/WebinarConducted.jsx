@@ -18,7 +18,7 @@ export default function WebinarConducted() {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     T_ID: null,
-    Username: currentUser?.Email,
+    Username: currentUser?.Username,
     Department: "",
     Activity_Event: "",
     Title: "",

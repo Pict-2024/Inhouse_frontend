@@ -1,17 +1,20 @@
 import { useState } from "react";
 import { Card, Input, Button, Typography } from "@material-tailwind/react";
 import { useSelector } from "react-redux";
-// import { useLocation } from "react-router";
+import { useLocation } from "react-router";
 
 export default function TDashboard({ teacherId }) {
   const { currentUser } = useSelector((state) => state.user);
+  const location = useLocation();
+  const searchParams = new URLSearchParams(location.search);
+  const teacherIds = searchParams.get("teacherId");
 
-  console.log("Teacher data is : ", teacherId);
-
+  console.log("Teacher id is : ", teacherIds);
+  
   const [formData, setFormData] = useState({
     userProfile: {
       username: currentUser?.Name,
-      email: currentUser?.Email,
+      email: currentUser?.Username,
     },
   });
 
@@ -277,7 +280,7 @@ export default function TDashboard({ teacherId }) {
 
   return (
     <>
-      {teacherId === undefined && (
+      {teacherIds === null  && (
         <>
           <Card
             color="transparent"
@@ -379,15 +382,7 @@ export default function TDashboard({ teacherId }) {
       </div> */}
 
       {/* All table data */}
-      <div className="flex flex-col space-y-11">
-        {tableData.map((table) => (
-          <TableComponent
-            key={table.name}
-            tableName={table.name}
-            tableData={table.data}
-          />
-        ))}
-      </div>
+     
     </>
   );
 }

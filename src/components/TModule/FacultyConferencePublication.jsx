@@ -24,7 +24,7 @@ export default function FacultyConferencePublication() {
 
   const [formData, setFormData] = useState({
     T_ID: null,
-    Username: currentUser?.Email,
+    Username: currentUser?.Username,
     Department: "",
     Title_of_the_Paper: "",
     Title_of_the_proceedings_of_the_conference: "",

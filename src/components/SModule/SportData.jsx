@@ -17,7 +17,7 @@ export default function SportData() {
   const { currentUser } = useSelector((state) => state.user);
   const [formData, setFormData] = useState({
     S_ID: null,
-    Username: currentUser?.Email,
+    Username: currentUser?.Username,
     Academic_Year: "",
     Student_Name: currentUser?.Name,
     Roll_No: "",
@@ -52,8 +52,9 @@ export default function SportData() {
   //add new record
   const handleSubmit = async (e) => {
     e.preventDefault();
+    console.log("Sprt data:", formData);
     await axios.post(addRecordsSport, formData);
-    navigate("/s/data");
+    // navigate("/s/data");
   };
 
   return (
@@ -117,10 +118,10 @@ export default function SportData() {
                 id="Year"
                 size="lg"
                 label="Year"
-                value={formData.Year_of_Study}
+                value={formData.Year}
                 onChange={(value) =>
                   handleOnChange({
-                    target: { id: "Year_of_Study", value },
+                    target: { id: "Year", value },
                   })
                 }
               >
@@ -329,13 +330,13 @@ export default function SportData() {
           <div className="mb-4 flex flex-wrap -mx-4">
             <div className="w-full md:w-1/2 px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
-                Remarkss
+                Remarks
               </Typography>
               <Input
-                id="Remarkss"
+                id="Remarks"
                 size="lg"
-                label="Remarkss"
-                value={formData.Remarkss}
+                label="Remarks"
+                value={formData.Remarks}
                 onChange={handleOnChange}
               />
             </div>

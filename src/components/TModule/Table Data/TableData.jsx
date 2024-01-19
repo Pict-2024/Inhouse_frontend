@@ -117,8 +117,9 @@ export default function TableData({ tableName }) {
       "Contribution to BoS": (username) => getOneRecordsContribution(username),
     };
 
+    console.log("returned table :", tableName);
     const apiRoute = apiRoutes[tableName];
-    // console.log("apiRoute:", apiRoute); // Add this line
+    console.log("apiRoute:", apiRoute); // Add this line
     return apiRoute;
   };
 
@@ -224,10 +225,10 @@ export default function TableData({ tableName }) {
 
   //get all records
   const getAllRecords = async () => {
-    const user = await currentUser.Email;
+    const user = await currentUser.Username;
     try {
       const apiurl = getApiRoute(tableName)(user);
-      // console.log("apiRoute in getAllRecords:", apiurl);
+      console.log("apiRoute in getAllRecords teacher:", apiurl);
       const response = await axios.get(apiurl, {
         headers: {
           "Content-Type": "application/json", // Make sure this header is defined
@@ -235,13 +236,13 @@ export default function TableData({ tableName }) {
       });
       // console.log("Rows : ", response.data.data);
       const columnHeaders = Object.keys(response.data.data[0]);
-      // console.log("Columns:", columnHeaders);
+      console.log("Columns:", columnHeaders);
 
       setTableHead(columnHeaders);
 
       // Filter records based on currentUser's name
       const userRecords = response.data.data.filter(
-        (record) => record.Username === currentUser.Email
+        (record) => record.Username === currentUser.Username
       );
       // console.log("UserRecords:", userRecords);
       setTableRows(userRecords);
@@ -254,7 +255,10 @@ export default function TableData({ tableName }) {
   //Handle delete records
   const onDelete = async (record) => {
     try {
-      const apiurl = deleteAPIRoute(tableName)(currentUser.Email, record.T_ID);
+      const apiurl = deleteAPIRoute(tableName)(
+        currentUser.Username,
+        record.T_ID
+      );
       // console.log("Deleting record with:", currentUser.Email, record.T_ID);
       // console.log("Table:", tableName);
 
@@ -263,7 +267,7 @@ export default function TableData({ tableName }) {
           "Content-Type": "application/json",
         },
         data: {
-          username: currentUser.Email,
+          username: currentUser.Username,
           T_ID: record.T_ID,
         },
       });
@@ -309,7 +313,7 @@ export default function TableData({ tableName }) {
           "Content-Type": "application/json",
         },
         data: {
-          username: currentUser.Email,
+          username: currentUser.Username,
           T_ID: tId,
         },
       });

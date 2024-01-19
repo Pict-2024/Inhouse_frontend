@@ -19,7 +19,7 @@ export default function TechnicalCompetitions() {
 
   const [formData, setFormData] = useState({
     T_ID: null,
-    Username: currentUser?.Email,
+    Username: currentUser?.Username,
     Department: "",
     Name_of_Competition: "",
     No_of_participants: "",

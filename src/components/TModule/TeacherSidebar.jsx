@@ -29,7 +29,7 @@ export default function TeacherSidebar() {
           </div>
           <div>
             <p className="font-semibold"> {currentUser.Name} </p>
-            <p className="text-xs font-normal"> {currentUser.Email} </p>
+            <p className="text-xs font-normal"> {currentUser.Username} </p>
           </div>
         </Typography>
       </div>

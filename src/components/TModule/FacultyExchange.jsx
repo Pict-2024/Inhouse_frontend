@@ -25,7 +25,7 @@ export default function FacultyExchange() {
   // Define state variables for form fields
   const [formData, setFormData] = useState({
     T_ID: null,
-    Username: currentUser?.Email,
+    Username: currentUser?.Username,
     MoU_Collaboration_linkage_Name: "",
     Name_of_the_collaboration: "",
     Faculty_coordinator: "",

@@ -50,8 +50,8 @@ import {
   getAllRecordsHigherEdu,
 } from "./../../components/SModule/API_Routes";
 import { Option, Select } from "@material-tailwind/react";
-import html2pdf from 'html2pdf.js'; 
-import ExcelJS from 'exceljs';
+import html2pdf from "html2pdf.js";
+import ExcelJS from "exceljs";
 
 // Define the Report component
 const Report = () => {
@@ -224,14 +224,34 @@ const Report = () => {
   };
 
   const updateApiUrl = () => {
-    const queryParameters = Object.entries(formFilters)
+    var queryParameters = Object.entries(formFilters)
       .filter(([key, value]) => value !== undefined && value !== "")
       .map(([key, value]) => `${key}=${encodeURIComponent(value)}`)
       .join("&");
 
+    const includesDate = Object.keys(formFilters).some((key) =>
+      key.toLowerCase().includes("date")
+    );
+
+    // Add dateColumn parameter if any key includes "date" as a substring
+    if (includesDate) {
+      const dateColumn = columnNames.find((column) =>
+        column.Field.toLowerCase().includes("date")
+      );
+
+      console.log("Date column is : ", dateColumn);
+      if (dateColumn) {
+        queryParameters += `&dateColumn=${encodeURIComponent(
+          dateColumn.Field
+        )}`;
+      }
+    }
+
     setApiUrl(
       `http://localhost:5000/api/v1/teacher/${tableMapping[selectedTable]}/filter?${queryParameters}`
     );
+    console.log("form filter is : ", formFilters);
+    console.log("Update api url is : ", apiUrl);
   };
 
   useEffect(() => {
@@ -355,36 +375,38 @@ const Report = () => {
   //     });
   //   });
 
-//   // Save the PDF with a filename
-//   doc.save("report.pdf");
-// };
-const generateExcel = () => {
-  const workbook = new ExcelJS.Workbook();
-  const worksheet = workbook.addWorksheet('Report');
+  //   // Save the PDF with a filename
+  //   doc.save("report.pdf");
+  // };
+  const generateExcel = () => {
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet("Report");
 
-  // Add headers
-  const headerRow = worksheet.addRow(selectedColumns.map(column => column.Field));
-  
-  // Add data rows
-  tableRows.forEach(row => {
-    const dataRow = selectedColumns.map(column => row[column.Field]);
-    worksheet.addRow(dataRow);
-  });
+    // Add headers
+    const headerRow = worksheet.addRow(
+      selectedColumns.map((column) => column.Field)
+    );
 
-  // Save the workbook
-  workbook.xlsx.writeBuffer().then(buffer => {
-    const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-    const url = window.URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'report.xlsx';
-    a.click();
-    window.URL.revokeObjectURL(url);
-  });
-};
+    // Add data rows
+    tableRows.forEach((row) => {
+      const dataRow = selectedColumns.map((column) => row[column.Field]);
+      worksheet.addRow(dataRow);
+    });
 
+    // Save the workbook
+    workbook.xlsx.writeBuffer().then((buffer) => {
+      const blob = new Blob([buffer], {
+        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "report.xlsx";
+      a.click();
+      window.URL.revokeObjectURL(url);
+    });
+  };
 
-  
   const setTable = async (e) => {
     const selectedTableName = e.target.value;
     console.log("Selected Table is: ", selectedTableName);
@@ -537,7 +559,7 @@ const generateExcel = () => {
 
   return (
     <>
-      <Box >
+      <Box>
         <div className="flex flex-col justify-center items-center gap-4">
           <label className="block text-gray-700 text-sm font-bold mb-2">
             Select Table:
@@ -550,9 +572,9 @@ const generateExcel = () => {
               <option
                 className="py-2 hover:bg-blue-100"
                 key={index}
-                value={table.Tables_in_inhouse}
+                value={table.Tables_in_inhouse_hod}
               >
-                {table.Tables_in_inhouse}
+                {table.Tables_in_inhouse_hod}
               </option>
             ))}
           </select>

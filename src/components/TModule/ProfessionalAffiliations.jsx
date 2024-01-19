@@ -11,7 +11,7 @@ export default function ProfessionalAffiliations() {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     T_ID: null,
-    Username: currentUser?.Email,
+    Username: currentUser?.Username,
     Professional_Affiliation: "",
     Membership_Number_ID: "",
     Finance_Support_By_PICT: "",

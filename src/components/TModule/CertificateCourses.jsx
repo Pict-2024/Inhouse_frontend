@@ -13,12 +13,16 @@ import { useNavigate } from "react-router-dom";
 
 import { addRecordsCertificate } from "./API_Routes";
 
+
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 export default function CertificateCourses() {
   const { currentUser } = useSelector((state) => state.user);
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     T_ID: null,
-    UserName: currentUser?.Email,
+    UserName: currentUser?.UserName,
     Department: "",
     Additional_Certificate_Programs: "",
     Year_of_offering: "",
@@ -48,6 +52,18 @@ export default function CertificateCourses() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     await axios.post(addRecordsCertificate, formData);
+
+    toast.success('Record Added Successfully', {
+      position: "top-right",
+      autoClose: 1500,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "light",
+    });
+
     navigate("/t/data");
   };
 
