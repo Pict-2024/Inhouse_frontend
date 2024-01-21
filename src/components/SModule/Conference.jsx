@@ -10,6 +10,9 @@ import {
 import { useSelector } from "react-redux";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
 import { addRecordsConferenceStud } from "./API_Routes";
 
 export default function Conference() {
@@ -60,6 +63,16 @@ export default function Conference() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     await axios.post(addRecordsConferenceStud, formData);
+    toast.success("Record Added Successfully", {
+      position: "top-right",
+      autoClose: 1500,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "light",
+    });
     navigate("/s/data");
   };
 
@@ -182,16 +195,16 @@ export default function Conference() {
           <div className="mb-4 flex flex-wrap -mx-4">
             <div className="w-full md:w-1/2 px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
-                Level_International_National
+                Level
               </Typography>
               <Select
-                id="Level_International_National"
+                id="Level"
                 size="lg"
-                label="Select Level_International_National"
-                value={formData.Level_International_National}
+                label="Select"
+                value={formData.Level}
                 onChange={(value) =>
                   handleOnChange({
-                    target: { id: "Level_International_National", value },
+                    target: { id: "Level", value },
                   })
                 }
                 // onChange={handleOnChange}
@@ -205,9 +218,9 @@ export default function Conference() {
                 Conference Name
               </Typography>
               <Input
-                id=" Conference_Name"
+                id="Conference_Name"
                 size="lg"
-                label=" Conference Name"
+                label="Conference Name"
                 value={formData.Conference_Name}
                 onChange={handleOnChange}
               />
@@ -247,14 +260,14 @@ export default function Conference() {
                 Year_of_Publication
               </Typography>
               <Select
-                id="Year_of_Publication"
+                id="Publication_Year"
                 size="lg"
                 label="Select Year_of_Publication"
                 color="light-gray"
-                value={formData.Year_of_Publication}
+                value={formData.Publication_Year}
                 onChange={(value) =>
                   handleOnChange({
-                    target: { id: "Year_of_Publication", value },
+                    target: { id: "Publication_Year", value },
                   })
                 }
                 // onChange={handleOnChange}
@@ -271,7 +284,7 @@ export default function Conference() {
                 Conference Venue and Organizer
               </Typography>
               <Input
-                id=" Conference_Venue_and_Organizer"
+                id="Conference_Venue_and_Organizer"
                 size="lg"
                 label="Conference Venue and Organizer"
                 value={formData.Conference_Venue_and_Organizer}
@@ -286,7 +299,7 @@ export default function Conference() {
                 Paper Link
               </Typography>
               <Input
-                id=" Paper_Link"
+                id="Paper_Link"
                 size="lg"
                 type="text"
                 label="Paper Link"
@@ -313,7 +326,7 @@ export default function Conference() {
                 Financial support given by institute (INR)
               </Typography>
               <Input
-                id="Financial_support_given_by_institute_in_IN"
+                id="Financial_support_given_by_institute_in_INR"
                 size="lg"
                 value={formData.Financial_support_given_by_institute_in_INR}
                 label="Financial support given by institute"
@@ -322,14 +335,14 @@ export default function Conference() {
             </div>
             <div className="w-full md:w-1/2 px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
-                DOI
+              Date_of_Conference
               </Typography>
               <Input
-                id="DOI"
+                id="Date_of_Conference"
                 size="lg"
                 type="date"
-                value={formData.DOI}
-                label="DOI"
+                value={formData.Date_of_Conference}
+                label="Date_of_Conference"
                 onChange={handleOnChange}
               />
             </div>

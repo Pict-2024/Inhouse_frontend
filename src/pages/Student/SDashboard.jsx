@@ -1,15 +1,10 @@
 import { useState } from "react";
 import { Card, Input, Button, Typography } from "@material-tailwind/react";
 import { useSelector } from "react-redux";
-import { useLocation } from "react-router-dom";
 
-export default function SDashboard({ StudentId }) {
+export default function SDashboard() {
   const { currentUser } = useSelector((state) => state.user);
-  const location = useLocation();
-  const searchParams = new URLSearchParams(location.search);
-  const studentIds = searchParams.get("StudentId");
 
-  console.log("Student data is : ", studentIds);
   const [formData, setFormData] = useState({
     userProfile: {
       username: currentUser?.Name,
@@ -17,21 +12,21 @@ export default function SDashboard({ StudentId }) {
     },
   });
 
-  // const publications = [
-  //   { type: "Book Publication", count: 20 },
-  //   { type: "Research Publication", count: 3 },
-  //   { type: "Research Publication", count: 3 },
-  //   { type: "Research Publication", count: 3 },
-  //   { type: "Research Publication", count: 3 },
-  //   { type: "Research Publication", count: 3 },
-  //   { type: "Research Publication", count: 3 },
-  //   { type: "Research Publication", count: 3 },
-  //   { type: "Research Publication", count: 3 },
-  //   { type: "Research Publication", count: 3 },
-  //   { type: "Research Publication", count: 3 },
-  //   { type: "Research Publication", count: 3 },
-  //   // Add more publications here
-  // ];
+  const publications = [
+    { type: "Internship", count: 2 },
+    { type: "Research Publication", count: 1 },
+    { type: "Sport", count: 2 },
+    { type: "Research Publication", count: 3 },
+    { type: "Research Publication", count: 3 },
+    { type: "Research Publication", count: 3 },
+    { type: "Research Publication", count: 3 },
+    { type: "Research Publication", count: 3 },
+    { type: "Research Publication", count: 3 },
+    { type: "Research Publication", count: 3 },
+    { type: "Research Publication", count: 3 },
+    { type: "Research Publication", count: 3 },
+    // Add more publications here
+  ];
 
   const handleUserProfileChange = (e) => {
     setFormData({
@@ -104,7 +99,7 @@ export default function SDashboard({ StudentId }) {
           </Button>
         </form>
       </Card>
-      {/* <div className="flex justify-around gap-2 flex-wrap -mx-4">
+      <div className="flex justify-around gap-2 flex-wrap -mx-4">
         {publications.map((publication, index) => (
           <div
             key={index}
@@ -136,7 +131,7 @@ export default function SDashboard({ StudentId }) {
             </div>
           </div>
         ))}
-      </div> */}
+      </div> 
     </>
   );
 }

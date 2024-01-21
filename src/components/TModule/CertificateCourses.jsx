@@ -10,12 +10,11 @@ import {
 import { useSelector } from "react-redux";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 import { addRecordsCertificate } from "./API_Routes";
 
-
-import { toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
 
 export default function CertificateCourses() {
   const { currentUser } = useSelector((state) => state.user);

@@ -9,9 +9,7 @@ import {
   Card,
   CardHeader,
   Typography,
-  Button,
   CardBody,
-  CardFooter,
   IconButton,
   Tooltip,
   Input,
@@ -262,7 +260,7 @@ export default function TableData({ tableName }) {
   };
 
   return (
-    <Card className="h-full w-full">
+    <Card className="h-full w-full p-3">
       <CardHeader floated={false} shadow={false} className="rounded-none">
         <div className="flex items-center justify-between gap-8 mt-2">
           <div>
@@ -383,19 +381,6 @@ export default function TableData({ tableName }) {
           </table>
         </div>
       </CardBody>
-      <CardFooter className="flex items-center justify-between border-t border-blue-gray-50 p-4">
-        <Typography variant="small" color="blue-gray" className="font-normal">
-          Page 1 of 10
-        </Typography>
-        <div className="flex gap-2">
-          <Button variant="outlined" size="sm">
-            Previous
-          </Button>
-          <Button variant="outlined" size="sm">
-            Next
-          </Button>
-        </div>
-      </CardFooter>
     </Card>
   );
 }
