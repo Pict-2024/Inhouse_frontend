@@ -10,6 +10,9 @@ import {
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
 import { addRecordsResearchStud } from "./API_Routes";
 
 export default function Research() {
@@ -24,7 +27,7 @@ export default function Research() {
     S_ID: null,
     Username: currentUser?.Username,
     Academic_Year: "",
-    Student_Name: "",
+    Student_Name: currentUser?.Name,
     Roll_No: "",
     Department: "",
     Year_of_Study: "",
@@ -64,6 +67,16 @@ export default function Research() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     await axios.post(addRecordsResearchStud, formData);
+    toast.success("Record Added Successfully", {
+      position: "top-right",
+      autoClose: 1500,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "light",
+    });
     navigate("/s/data");
   };
 
@@ -254,7 +267,7 @@ export default function Research() {
                 size="lg"
                 label="Date"
                 type="date"
-                name="Date"
+                id="Date"
                 value={formData.Date}
                 onChange={handleOnChange}
               />
@@ -266,35 +279,7 @@ export default function Research() {
               <Input
                 size="lg"
                 label="Author"
-                name="Author"
-                value={formData.Author}
-                onChange={handleOnChange}
-              />
-            </div>
-          </div>
-
-          <div className="mb-4 flex flex-wrap -mx-4">
-            <div className="w-full md:w-1/2 px-4 mb-4">
-              <Typography variant="h6" color="blue-gray" className="mb-3">
-                Date
-              </Typography>
-              <Input
-                size="lg"
-                label="Date"
-                type="date"
-                name="Date"
-                value={formData.Date}
-                onChange={handleOnChange}
-              />
-            </div>
-            <div className="w-full md:w-1/2 px-4 mb-4">
-              <Typography variant="h6" color="blue-gray" className="mb-3">
-                Author
-              </Typography>
-              <Input
-                size="lg"
-                label="Author"
-                name="Author"
+                id="Author"
                 value={formData.Author}
                 onChange={handleOnChange}
               />
@@ -480,8 +465,8 @@ export default function Research() {
               </Typography>
               <Input
                 size="lg"
-                label="Article_Link"
-                id="Article Link"
+                label="Article Link"
+                id="Article_Link"
                 value={formData.Article_Link}
                 onChange={handleOnChange}
               />

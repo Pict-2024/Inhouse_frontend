@@ -10,6 +10,9 @@ import {
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
 import { addRecordsOrganized } from "./API_Routes";
 
 export default function EventOrganized() {
@@ -23,7 +26,7 @@ export default function EventOrganized() {
     Roll_No: "",
     Department: "",
     Year: "",
-    Email_ID: currentUser?.Email,
+    Email_ID: currentUser?.Username,
     Mobile_No: "",
     Extension_Activity_Name: "",
     Name_of_Sub_Activity: "",
@@ -53,6 +56,16 @@ export default function EventOrganized() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     await axios.post(addRecordsOrganized, formData);
+    toast.success("Record Added Successfully", {
+      position: "top-right",
+      autoClose: 1500,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "light",
+    });
     navigate("/s/data");
   };
 
@@ -117,10 +130,10 @@ export default function EventOrganized() {
                 id="Year"
                 size="lg"
                 label="Year"
-                value={formData.Year_of_Study}
+                value={formData.Year}
                 onChange={(value) =>
                   handleOnChange({
-                    target: { id: "Year_of_Study", value },
+                    target: { id: "Year", value },
                   })
                 }
               >

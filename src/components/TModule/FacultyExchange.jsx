@@ -10,6 +10,8 @@ import {
 import { useSelector } from "react-redux";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 import { addRecordsMous } from "./API_Routes";
 
@@ -51,6 +53,16 @@ export default function FacultyExchange() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     await axios.post(addRecordsMous, formData);
+    toast.success("Record Added Successfully", {
+      position: "top-right",
+      autoClose: 1500,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "light",
+    });
     navigate("/t/data");
   };
 

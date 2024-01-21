@@ -10,6 +10,9 @@ import {
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
 import { addRecordsParticipation } from "./API_Routes";
 
 export default function EventParticipated() {
@@ -22,7 +25,7 @@ export default function EventParticipated() {
     Student_Name: currentUser?.Name,
     Roll_No: "",
     Department: "",
-    Email_ID: currentUser?.Email,
+    Email_ID: currentUser?.Username,
     Mobile_No: "",
     Year: "",
     Participant_or_Organizer: "",
@@ -56,6 +59,16 @@ export default function EventParticipated() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     await axios.post(addRecordsParticipation, formData);
+    toast.success("Record Added Successfully", {
+      position: "top-right",
+      autoClose: 1500,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "light",
+    });
     navigate("/s/data");
   };
 
@@ -120,10 +133,10 @@ export default function EventParticipated() {
                 id="Year"
                 size="lg"
                 label="Year"
-                value={formData.Year_of_Study}
+                value={formData.Year}
                 onChange={(value) =>
                   handleOnChange({
-                    target: { id: "Year_of_Study", value },
+                    target: { id: "Year", value },
                   })
                 }
               >

@@ -2,7 +2,8 @@
 import Box from "@mui/material/Box";
 import Header from "../../components/AModule/Header";
 import { useState, useEffect } from "react";
-import { Checkbox } from "@material-tailwind/react";
+import { Checkbox, Input } from "@material-tailwind/react";
+import FilterAltIcon from "@mui/icons-material/FilterAlt";
 import moment from "moment";
 import {
   Table,
@@ -479,8 +480,8 @@ const Report = () => {
         ));
 
       return (
-        <div key={Field}>
-          <div className="w-full md:w-1/2 px-4 mb-4">
+        <div key={Field} className="flex items-center gap-3 mt-3">
+          <div className="w-full md:w-1/2 ">
             <Select
               size="lg"
               label="Start Year"
@@ -495,7 +496,7 @@ const Report = () => {
             </Select>
           </div>
 
-          <div className="w-full md:w-1/2 px-4 mb-4">
+          <div className="w-full md:w-1/2 ">
             <Select
               size="lg"
               label="End Year"
@@ -519,9 +520,9 @@ const Report = () => {
       return (
         <div key={Field} className="mb-4 py-3 bg-white rounded-lg">
           {/* <label className="block mb-2">{Enter ${Field}}</label> */}
-          <input
+          <Input
             type="text"
-            placeholder={`Enter ${Field}`}
+            label={`Enter ${Field}`}
             value={formFilters[Field] || ""}
             onChange={(e) => handleInputChange(Field, e.target.value)}
             className="w-full  py-2 border border-black rounded-md "
@@ -532,9 +533,10 @@ const Report = () => {
       return (
         <div key={Field} className="mb-4 py-3 bg-white rounded-lg">
           {/* <label className="block mb-2">{Enter ${Field}}</label> */}
-          <input
+          <Input
             type="number"
             value={formFilters[Field] || ""}
+            label={`Enter ${Field}`}
             onChange={(e) => handleInputChange(Field, e.target.value)}
             className="w-full py-2 border border-black rounded-md "
           />
@@ -542,18 +544,20 @@ const Report = () => {
       );
     } else if (Type === "date") {
       return (
-        <div key={Field} className="mb-4 py-3 bg-white rounded-lg">
+        <div key={Field} className="mb-4 py-3 bg-white rounded-lg flex gap-3">
           {/* <label className="block mb-2">{${Field} Start Date}</label> */}
-          <input
+          <Input
             type="date"
             value={formFilters["startDate"] || ""}
+            label={`Enter ${Field}`}
             onChange={(e) => handleInputChange("startDate", e.target.value)}
             className="w-full mb-2  py-2 border border-black rounded-md "
           />
           {/* <label className="block mb-2">{${Field} End Date}</label> */}
-          <input
+          <Input
             type="date"
             value={formFilters["endDate"] || ""}
+            label={`Enter ${Field}`}
             onChange={(e) => handleInputChange("endDate", e.target.value)}
             className="w-full  py-2 border border-black rounded-md "
           />
@@ -571,7 +575,7 @@ const Report = () => {
     <>
       <Box sx={{}}>
         <div className="flex flex-col justify-center items-center gap-4">
-          <label className="block text-gray-700 text-sm font-bold mb-2">
+          <label className="block text-gray-700 text-sm font-bold mb-2 m-2">
             Select Table:
           </label>
           <select
@@ -589,14 +593,21 @@ const Report = () => {
             ))}
           </select>
 
-          <label>Select Filters:</label>
+          <label className="block text-gray-700 text-sm font-bold mb-2">
+            Select Filters:
+          </label>
 
           <div className="flex flex-col justify-end align-items-center m-2 p-4">
             <div className="flex flex-row  gap-4 flex-wrap">
               {renderInputFields()}
             </div>
-            <Button variant="contained" className="w-20" onClick={handleSubmit}>
-              Submit
+            <Button
+              variant="contained"
+              className="w-20"
+              onClick={handleSubmit}
+              endIcon={<FilterAltIcon />}
+            >
+              Filter
             </Button>
           </div>
 

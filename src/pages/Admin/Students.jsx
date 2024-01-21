@@ -1,11 +1,10 @@
 import { useEffect, useState } from "react";
 import Header from "../../components/AModule/Header";
 import TextField from "@mui/material/TextField";
-import Button from "@mui/material/Button";
 import SendIcon from "@mui/icons-material/Send";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import { Typography } from "@material-tailwind/react";
+import { Typography, Button } from "@material-tailwind/react";
 
 export default function Students() {
   const navigate = useNavigate();
@@ -15,7 +14,7 @@ export default function Students() {
   const handleButtonClick = () => {
     StudentId === ""
       ? alert("Enter StudentID...")
-      : navigate(`/a/teacherData?StudentId=${StudentId}`);
+      : navigate(`/a/viewInfo?StudentId=${StudentId}`);
   };
 
   const getAllStudents = async () => {

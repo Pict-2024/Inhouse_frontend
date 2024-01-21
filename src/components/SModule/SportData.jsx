@@ -10,6 +10,9 @@ import {
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
 import { addRecordsSport } from "./API_Routes";
 
 export default function SportData() {
@@ -52,9 +55,19 @@ export default function SportData() {
   //add new record
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Sprt data:", formData);
+    console.log("Sport data:", formData);
     await axios.post(addRecordsSport, formData);
-    // navigate("/s/data");
+    toast.success("Record Added Successfully", {
+      position: "top-right",
+      autoClose: 1500,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "light",
+    });
+    navigate("/s/data");
   };
 
   return (

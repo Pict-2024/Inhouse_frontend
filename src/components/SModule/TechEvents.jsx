@@ -10,6 +10,9 @@ import {
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
 import { addRecordsTechnicalStud } from "./API_Routes";
 
 export default function TechEvents() {
@@ -57,6 +60,16 @@ export default function TechEvents() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     await axios.post(addRecordsTechnicalStud, formData);
+    toast.success("Record Added Successfully", {
+      position: "top-right",
+      autoClose: 1500,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "light",
+    });
     navigate("/s/data");
   };
 
@@ -85,6 +98,7 @@ export default function TechEvents() {
                 id="Department"
                 size="lg"
                 label="Department"
+                required
                 value={formData.Department}
                 onChange={(value) =>
                   handleOnChange({
@@ -105,6 +119,7 @@ export default function TechEvents() {
               <Input
                 id="Academic_Year"
                 size="lg"
+                required
                 label="Eg.2022-2023"
                 value={formData.Academic_Year}
                 onChange={handleOnChange}
@@ -121,10 +136,10 @@ export default function TechEvents() {
                 id="Year"
                 size="lg"
                 label="Year"
-                value={formData.Year_of_Study}
+                value={formData.Year}
                 onChange={(value) =>
                   handleOnChange({
-                    target: { id: "Year_of_Study", value },
+                    target: { id: "Year", value },
                   })
                 }
               >

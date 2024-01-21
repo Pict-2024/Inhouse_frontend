@@ -3,7 +3,7 @@ import { useLocation } from "react-router";
 import axios from "axios";
 import { Card, Typography } from "@material-tailwind/react";
 
-const TeacherData = () => {
+const ViewInfo = () => {
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
   const teacherId = searchParams.get("teacherId");
@@ -34,7 +34,7 @@ const TeacherData = () => {
     "14_extension_activity": "14_extension_activity",
     "15_tech_comp_fest": "15_tech_comp_fest",
     "16_faculty_achievements": "16_faculty_achievements",
-    "17_indusvisitstoursfiledtrip": "17_indusvisitstoursfiledtrip",
+    "17_indusvisitstoursfieldtrip": "17_indusvisitstoursfieldtrip",
     "18_contribution_to_bos": "18_contribution_to_bos",
     // Add more teacher tables if needed
   };
@@ -186,8 +186,9 @@ const TeacherData = () => {
         {teacherId === null ? (
           <>
             <button
-              className="bg-blue-500 text-white px-4 py-2 mt-4 rounded-md focus:outline-none focus:ring focus:border-blue-300 transition duration-300"
+              className=" text-white px-4 py-2 mt-4 rounded-md focus:outline-none focus:ring focus:border-blue-300 transition duration-300"
               onClick={() => openModal("student")}
+              style={{ backgroundColor: "#1565C0" }}
             >
               Open Student Table Selection
             </button>
@@ -195,8 +196,9 @@ const TeacherData = () => {
         ) : (
           <>
             <button
-              className="bg-blue-500 text-white px-4 py-2 mt-4 rounded-md focus:outline-none focus:ring focus:border-blue-300 transition duration-300"
+              className=" text-white px-4 py-2 mt-4 rounded-md focus:outline-none focus:ring focus:border-blue-300 transition duration-300"
               onClick={() => openModal("teacher")}
+              style={{ backgroundColor: "#1565C0" }}
             >
               Open Teacher Table Selection
             </button>
@@ -247,18 +249,19 @@ const TeacherData = () => {
                 ))
               : null}
 
-            <div className="flex justify-end">
-              <button
-                className="bg-blue-600 rounded-md text-white px-4 py-2 mr-2"
-                onClick={applyChanges}
-              >
-                Apply
-              </button>
+            <div className="flex justify-end gap-3">
               <button
                 className="bg-red-400 text-white rounded-md px-4 py-2"
                 onClick={closeModal}
               >
                 Cancel
+              </button>
+              <button
+                className=" rounded-md text-white px-4 py-2 mr-2"
+                onClick={applyChanges}
+                style={{ backgroundColor: "#1565C0" }}
+              >
+                Apply
               </button>
             </div>
           </div>
@@ -270,4 +273,4 @@ const TeacherData = () => {
   );
 };
 
-export default TeacherData;
+export default ViewInfo;

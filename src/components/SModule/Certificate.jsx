@@ -10,14 +10,17 @@ import {
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
-import {  addRecordsCertificateStud } from "./API_Routes";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
+import { addRecordsCertificateStud } from "./API_Routes";
 
 export default function Certificate() {
   const navigate = useNavigate();
   const { currentUser } = useSelector((state) => state.user);
   const [formData, setFormData] = useState({
     S_ID: null,
-    Username: currentUser?.Email,
+    Username: currentUser?.Username,
     Academic_Year: "",
     Student_Name: currentUser?.Name,
     Roll_No: "",
@@ -47,7 +50,18 @@ export default function Certificate() {
   //add new record
   const handleSubmit = async (e) => {
     e.preventDefault();
+    console.log(formData);
     await axios.post(addRecordsCertificateStud, formData);
+    toast.success("Record Added Successfully", {
+      position: "top-right",
+      autoClose: 1500,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "light",
+    });
     navigate("/s/data");
   };
 
@@ -111,11 +125,11 @@ export default function Certificate() {
               <Select
                 id="Year"
                 size="lg"
-                label="Year"
-                value={formData.Year_of_Study}
+                label="Year of study"
+                value={formData.Year}
                 onChange={(value) =>
                   handleOnChange({
-                    target: { id: "Year_of_Study", value },
+                    target: { id: "Year", value },
                   })
                 }
               >

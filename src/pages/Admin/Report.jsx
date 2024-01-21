@@ -2,7 +2,8 @@
 import Box from "@mui/material/Box";
 import Header from "../../components/AModule/Header";
 import { useState, useEffect } from "react";
-import { Checkbox } from "@material-tailwind/react";
+import FilterAltIcon from "@mui/icons-material/FilterAlt";
+import { Checkbox, Input } from "@material-tailwind/react";
 import moment from "moment";
 import {
   Table,
@@ -58,66 +59,66 @@ const Report = () => {
   let tablename = "";
 
   const tableMapping = {
-    "10_mous": "number-of_mous",
-    "11_certcourses": "cert-courses",
-    "12_prof_affiliation": "prof-aff",
-    "13_resource_person": "facultyresource",
-    "14_extension_activity": "extension-act",
-    "15_tech_comp_fest": "techfest-org",
-    "16_faculty_achievements": "faculty-achievement",
-    "17_indusvisitstoursfieldtrip": "visit-tours",
-    "18_contribution_to_bos": "contribution-bos",
-    "1_student__internship_details": "",
-    "1_research_publication": "research-pb",
-    "2_student__research_publication": "",
-    "2_book_publication": "book-pb",
-    "3_student__conference_publication": "",
-    "3_faculty_conference_publication": "faculty-pb",
-    "4_student__certificate_course_attended": "",
-    "4_grants": "grants",
-    "5_students__sports_data": "",
-    "5_consultancy_report": "cons-rep",
-    "6_students__event_participated": "",
-    "6_patent_publication": "patent-pb",
-    "7_students__event_organized": "",
-    "7_confsemworkshops": "con-sem",
-    "8_students__technical_events": "",
-    "8_sttp_fdp_conf_attended": "sf-ws",
-    "9_student__higher_education": "",
-    "9_webinarguestlec": "web-guest",
-    login_details: "",
-    register: "",
+    'mous': "number-of_mous",
+    "certificate_courses": "cert-courses",
+    "professional_affiliation": "prof-aff",
+    "resource_person": "facultyresource",
+    "extension_activity": "extension-act",
+    "technical_competition_fest": "techfest-org",
+    "faculty_achievements": "faculty-achievement",
+    "industrial_fields_tour": "visit-tours",
+    "contribution_to_bos": "contribution-bos",
+    "student_internship_details": "",
+    "research_publication": "research-pb",
+    "student_research_publication": "",
+    "book_publication": "book-pb",
+    "student_conference_publication": "",
+    "faculty_conference_publication": "faculty-pb",
+    "student_certificate_course": "",
+    "grants": "grants",
+    "student_sports_data": "",
+    "consultancy_report": "cons-rep",
+    "student_event_participated": "",
+    "patent_publication": "patent-pb",
+    "student_event_organized": "",
+    "conference_seminar_workshops": "con-sem",
+    "student_technical_events": "",
+    "sttp_fdp_conference_attended": "sf-ws",
+    "student_higher_education": "",
+    "webinar_guest_lectures": "web-guest",
+    "login_details": "",
+    "register": "",
   };
 
   const tableRoutesMapping = (table) => {
     const tableRoute = {
-      "1_research_publication": getAllRecordsResearch,
-      "2_book_publication": getAllRecordsBook,
-      "3_faculty_conference_publication": getAllRecordsFaculty,
-      "4_grants": getAllRecordsGrants,
-      "5_consultancy_report": getAllRecordsConsultancy,
-      "6_patent_publication": getAllRecordsPatent,
-      "7_confsemworkshops": getAllRecordsConference,
-      "8_sttp_fdp_conf_attended": getAllRecordsAttended,
-      "9_webinarguestlec": getAllRecordsWebinar,
-      "10_mous": getAllRecordsMous,
-      "11_certcourses": getAllRecordsCertificate,
-      "12_prof_affiliation": getAllRecordsProfessional,
-      "13_resource_person": getAllRecordsResource,
-      "14_extension_activity": getAllRecordsExtension,
-      "15_tech_comp_fest": getAllRecordsTechnical,
-      "16_faculty_achievements": getAllRecordsAchievements,
-      "17_indusvisitstoursfieldtrip": getAllRecordsIndustrial,
-      "18_contribution_to_bos": getAllRecordsContribution,
-      "1__student___internship_details": getAllRecordsInternship,
-      "2__student___research_publication": getAllRecordsResearchStud,
-      "3__student___conference_publication": getAllRecordsConferenceStud,
-      "4__student___certificate_course_attended": getAllRecordsCertificateStud,
-      "5__students___sports_data": getAllRecordsSport,
-      "6__students___event_participated": getAllRecordsParticipation,
-      "7__students___event_organized": getAllRecordsOrganized,
-      "8__students___technical_events": getAllRecordsTechnicalStud,
-      "9__student___higher_education": getAllRecordsHigherEdu,
+      "research_publication": getAllRecordsResearch,
+      "book_publication": getAllRecordsBook,
+      "faculty_conference_publication": getAllRecordsFaculty,
+      "grants": getAllRecordsGrants,
+      "consultancy_report": getAllRecordsConsultancy,
+      "patent_publication": getAllRecordsPatent,
+      "conference_seminar_workshops": getAllRecordsConference,
+      "sttp_fdp_conference_attended": getAllRecordsAttended,
+      "webinar_guest_lectures": getAllRecordsWebinar,
+      "mous": getAllRecordsMous,
+      "certificate_courses": getAllRecordsCertificate,
+      "professional_affiliation": getAllRecordsProfessional,
+      "resource_person": getAllRecordsResource,
+      "extension_activity": getAllRecordsExtension,
+      "technical_competition_fest": getAllRecordsTechnical,
+      "faculty_achievements": getAllRecordsAchievements,
+      "industrial_fields_tour": getAllRecordsIndustrial,
+      "contribution_to_bos": getAllRecordsContribution,
+      "student_internship_details": getAllRecordsInternship,
+      "student_research_publication": getAllRecordsResearchStud,
+      "student_conference_publication": getAllRecordsConferenceStud,
+      "student_certificate_course": getAllRecordsCertificateStud,
+      "student_sports_data": getAllRecordsSport,
+      "student_event_participated": getAllRecordsParticipation,
+      "student_event_organized": getAllRecordsOrganized,
+      "student_technical_events": getAllRecordsTechnicalStud,
+      "student_higher_education": getAllRecordsHigherEdu,
     };
     console.log("Returned table:", tableRoute[table]);
     return tableRoute[table];
@@ -246,10 +247,15 @@ const Report = () => {
         )}`;
       }
     }
+    // console.log(selectedTable);
+    // const tablePrefix = selectedTable.startsWith("student")
+    //   ? "student"
+    //   : "teacher";
 
     setApiUrl(
       `http://localhost:5000/api/v1/teacher/${tableMapping[selectedTable]}/filter?${queryParameters}`
     );
+
     console.log("form filter is : ", formFilters);
     console.log("Update api url is : ", apiUrl);
   };
@@ -468,8 +474,8 @@ const Report = () => {
         ));
 
       return (
-        <div key={Field}>
-          <div className="w-full md:w-1/2 px-4 mb-4">
+        <div key={Field} className="flex items-center gap-3 mt-3">
+          <div className="w-full md:w-1/2">
             <Select
               size="lg"
               label="Start Year"
@@ -484,7 +490,7 @@ const Report = () => {
             </Select>
           </div>
 
-          <div className="w-full md:w-1/2 px-4 mb-4">
+          <div className="w-full md:w-1/2  ">
             <Select
               size="lg"
               label="End Year"
@@ -508,12 +514,12 @@ const Report = () => {
       return (
         <div key={Field} className="mb-4 py-3 bg-white rounded-lg">
           {/* <label className="block mb-2">{Enter ${Field}}</label> */}
-          <input
+          <Input
             type="text"
-            placeholder={`Enter ${Field}`}
+            label={`Enter ${Field}`}
             value={formFilters[Field] || ""}
             onChange={(e) => handleInputChange(Field, e.target.value)}
-            className="w-full  py-2 border border-black rounded-md "
+            className="w-full  py-2 border rounded-md "
           />
         </div>
       );
@@ -521,9 +527,10 @@ const Report = () => {
       return (
         <div key={Field} className="mb-4 py-3 bg-white rounded-lg">
           {/* <label className="block mb-2">{Enter ${Field}}</label> */}
-          <input
+          <Input
             type="number"
             value={formFilters[Field] || ""}
+            label={`Enter ${Field}`}
             onChange={(e) => handleInputChange(Field, e.target.value)}
             className="w-full py-2 border border-black rounded-md "
           />
@@ -532,18 +539,20 @@ const Report = () => {
     } else if (Type === "date") {
       //  setApiUrlapi + dateColumn=${Field}
       return (
-        <div key={Field} className="mb-4 py-3 bg-white rounded-lg">
+        <div key={Field} className="mb-4 py-3 bg-white rounded-lg flex gap-3">
           {/* <label className="block mb-2">{${Field} Start Date}</label> */}
-          <input
+          <Input
             type="date"
             value={formFilters["startDate"] || ""}
+            label={`Enter ${Field}`}
             onChange={(e) => handleInputChange("startDate", e.target.value)}
             className="w-full mb-2  py-2 border border-black rounded-md "
           />
           {/* <label className="block mb-2">{${Field} End Date}</label> */}
-          <input
+          <Input
             type="date"
             value={formFilters["endDate"] || ""}
+            label={`Enter ${Field}`}
             onChange={(e) => handleInputChange("endDate", e.target.value)}
             className="w-full  py-2 border border-black rounded-md "
           />
@@ -560,13 +569,16 @@ const Report = () => {
   return (
     <>
       <Box>
-        <div className="flex flex-col justify-center items-center gap-4">
-          <label className="block text-gray-700 text-sm font-bold mb-2">
+        <div className="flex justify-start mx-2 w-32 absolute">
+          <Header category="Page" title="Report" />
+        </div>
+        <div className="flex flex-col justify-center items-center gap-4 m-2 ">
+          <label className="block text-gray-700 text-md font-bold  m-2">
             Select Table:
           </label>
           <select
             onChange={(e) => setTable(e)}
-            className="border border-gray-300 rounded-md p-2 w-200 focus:outline-none focus:ring focus:border-blue-300 transition-all duration-300 ease-in-out"
+            className="border border-gray-300 rounded-md p-2 w-200 focus:outline-none focus:ring focus:border-blue-300 transition-all duration-300 ease-in-out custom-select"
           >
             {tableNames.map((table, index) => (
               <option
@@ -579,14 +591,21 @@ const Report = () => {
             ))}
           </select>
 
-          <label>Select Filters:</label>
+          <label className="block text-gray-700 text-md font-bold  m-2">
+            Select Filters:
+          </label>
 
           <div className="flex flex-col justify-end align-items-center m-2 p-4">
-            <div className="flex flex-row  gap-4 flex-wrap">
+            <div className="flex   gap-4 flex-wrap  p-3 w-full">
               {renderInputFields()}
             </div>
-            <Button variant="contained" className="w-20" onClick={handleSubmit}>
-              Submit
+            <Button
+              variant="contained"
+              className="w-25 p-3"
+              onClick={handleSubmit}
+              endIcon={<FilterAltIcon />}
+            >
+              Filter
             </Button>
           </div>
 
@@ -681,7 +700,7 @@ const ColumnSelection = ({ columns, onSelectColumns }) => {
 
   return (
     <div className="m-4">
-      <label className="block text-gray-700 text-sm font-bold mb-2">
+      <label className="block text-gray-700 text-md font-bold  m-2">
         Select Columns:
       </label>
       <div className="flex gap-4 flex-wrap justify-left">
@@ -692,7 +711,7 @@ const ColumnSelection = ({ columns, onSelectColumns }) => {
           label="Select All"
         />
 
-        {columns.map((column) => (
+        {columns?.map((column) => (
           <Checkbox
             key={column.Field}
             id={column.Field}

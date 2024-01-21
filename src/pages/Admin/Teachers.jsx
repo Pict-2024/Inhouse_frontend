@@ -1,15 +1,98 @@
+/* eslint-disable react/prop-types */
 import { useEffect, useState } from "react";
 import axios from "axios";
 import Header from "../../components/AModule/Header";
-import { CheckCircleIcon, PencilIcon } from "@heroicons/react/24/outline";
-import { IconButton, Tooltip, Typography } from "@material-tailwind/react";
+import {
+  CheckCircleIcon,
+  PencilIcon,
+  TrashIcon,
+} from "@heroicons/react/24/outline";
+import {
+  IconButton,
+  Tooltip,
+  Typography,
+  Button,
+} from "@material-tailwind/react";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Select from "react-select";
 import TextField from "@mui/material/TextField";
-import Button from "@mui/material/Button";
 import SendIcon from "@mui/icons-material/Send";
 import { useNavigate } from "react-router-dom";
+
+const SimpleModal = ({
+  teacherUsername,
+  teacherAccess,
+  onRemoveAccess,
+  onClose,
+  specialAccessTeacherTables,
+  specialAccessStudentTables,
+}) => {
+  const handleRemoveAccess = () => {
+    onRemoveAccess(teacherUsername);
+  };
+
+  const teacherTableOptions =
+    specialAccessTeacherTables?.map((option) => ({
+      value: option,
+      label: option,
+    })) || [];
+
+  const studentTableOptions =
+    specialAccessStudentTables?.map((option) => ({
+      value: option,
+      label: option,
+    })) || [];
+
+  return (
+    <div className="simple-modal m-2 shadow-md border-2 p-3 ">
+      <div className="modal-content">
+        <Typography color="blue" className="text-xl font-bold">
+          Remove Access for {teacherUsername}
+        </Typography>
+
+        <div className="mt-4">
+          <label className="block text-gray-700">Teacher Tables:</label>
+          <Select
+            options={teacherTableOptions}
+            isMulti
+            value={
+              teacherAccess?.teacherTables?.map((option) => ({
+                value: option,
+                label: option,
+              })) || []
+            }
+            disabled
+          />
+        </div>
+
+        <div className="mt-4">
+          <label className="block text-gray-700">Student Tables:</label>
+          <Select
+            options={studentTableOptions}
+            isMulti
+            value={
+              teacherAccess?.studentTables?.map((option) => ({
+                value: option,
+                label: option,
+              })) || []
+            }
+            disabled
+          />
+        </div>
+
+        <div className="mt-4 flex justify-end gap-3">
+          <Button color="red" onClick={handleRemoveAccess}>
+            Remove Access
+          </Button>
+          <Button color="blue" onClick={onClose}>
+            Cancel
+          </Button>
+        </div>
+      </div>
+    </div>
+  );
+};
 
 export default function Teachers() {
   const navigate = useNavigate();
@@ -20,11 +103,22 @@ export default function Teachers() {
   const [teacherTableAccess, setTeacherTableAccess] = useState([]);
   const [studentTableAccess, setStudentTableAccess] = useState([]);
   const [teacherId, setTeacherId] = useState("");
+  const [removingAccessTeacher, setRemovingAccessTeacher] = useState(null);
+  const [removingAccess, setRemovingAccess] = useState({
+    teacherTables: [],
+    studentTables: [],
+  });
+  const [specialAccessTeacherTables, setSpecialAccessTeacherTables] = useState(
+    []
+  );
+  const [specialAccessStudentTables, setSpecialAccessStudentTables] = useState(
+    []
+  );
 
   const handleButtonClick = () => {
     teacherId === ""
       ? alert("Enter TeacherID...")
-      : navigate(`/a/teacherData?teacherId=${teacherId}`);
+      : navigate(`/a/viewInfo?teacherId=${teacherId}`);
   };
 
   const getAllTeachers = async () => {
@@ -37,7 +131,6 @@ export default function Teachers() {
       });
 
       setTeachers(response.data.data);
-      console.log("teachers are : ", teachers);
     } catch (error) {
       console.error("Error fetching teachers:", error);
     }
@@ -55,9 +148,13 @@ export default function Teachers() {
 
       const { Teacher_Tables, Student_Tables } = response.data.data;
 
-      // Set the teacher and student table access arrays from the backend data
+      // Set the regular teacher and student table access arrays
       setTeacherTableAccess(Teacher_Tables || []);
       setStudentTableAccess(Student_Tables || []);
+
+      // Set the special access teacher and student table arrays
+      setSpecialAccessTeacherTables(Teacher_Tables || []);
+      setSpecialAccessStudentTables(Student_Tables || []);
     } catch (error) {
       console.error("Error fetching tables:", error);
     }
@@ -88,11 +185,6 @@ export default function Teachers() {
         teacherTables: selectedTeacherAccess,
         studentTables: selectedStudentAccess,
       };
-
-      console.log("data after submitting is : ", data);
-
-      console.log("Teacher access is :", selectedTeacherAccess);
-      console.log("Student access is :", selectedStudentAccess);
 
       await axios.post(updateApiurl, data, {
         headers: {
@@ -125,6 +217,9 @@ export default function Teachers() {
             : teacher
         )
       );
+      setTimeout(() => {
+        window.location.reload();
+      }, 2000);
     } catch (error) {
       console.error("Error updating teacher:", error);
     }
@@ -138,9 +233,79 @@ export default function Teachers() {
     }
   };
 
+  const getTeacherAccess = async (Username) => {
+    try {
+      // Fetch the current special access for the user
+      const accessUrl = `http://localhost:5000/api/v1/general/get-spec-cols?username=${Username}`;
+      const accessResponse = await axios.post(accessUrl, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      // Set the special access tables in the removingAccess state
+      setRemovingAccess({
+        teacherTables: accessResponse.data.data.SpecialAccess_Teacher || [],
+        studentTables: accessResponse.data.data.SpecialAccess_Student || [],
+      });
+
+      setRemovingAccessTeacher(Username);
+    } catch (error) {
+      console.error("Error fetching teacher access:", error);
+    }
+  };
+
+  const handleRemoveAccessClick = async (Username) => {
+    try {
+      console.log(
+        "Before removing access - Teacher Tables:",
+        removingAccess.teacherTables
+      );
+      console.log(
+        "Before removing access - Student Tables:",
+        removingAccess.studentTables
+      );
+      const removeAccessApiurl = `http://localhost:5000/api/v1/general/remove-spec-cols`;
+
+      // Modify the data to be sent to the backend
+      const data = {
+        username: Username,
+        teacherTables: removingAccess.teacherTables,
+        studentTables: removingAccess.studentTables,
+      };
+
+      await axios.post(removeAccessApiurl, data, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      console.log("Access removed successfully!");
+
+      toast.success(`Access removed for ${Username}`, {
+        position: "top-right",
+        autoClose: 1500,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+
+      // Close the remove access modal
+      setRemovingAccessTeacher(null);
+      setTimeout(() => {
+        window.location.reload();
+      }, 2000);
+    } catch (error) {
+      console.error("Error removing access:", error);
+    }
+  };
+
   return (
     <div className="container mx-auto">
-      <div className="flex items-center justify-between gap-2">
+      <div className="flex items-center justify-between gap-2 mx-2">
         <div>
           <Header category="Page" title="Teacher" />
         </div>
@@ -221,7 +386,7 @@ export default function Teachers() {
                         <label>Special Access Teacher:</label>
                         <Select
                           isMulti
-                          options={teacherTableAccess.map((option) => ({
+                          options={specialAccessTeacherTables.map((option) => ({
                             value: option,
                             label: option,
                           }))}
@@ -238,7 +403,7 @@ export default function Teachers() {
                         <label>Special Access Student:</label>
                         <Select
                           isMulti
-                          options={studentTableAccess.map((option) => ({
+                          options={specialAccessStudentTables.map((option) => ({
                             value: option,
                             label: option,
                           }))}
@@ -277,14 +442,24 @@ export default function Teachers() {
                       </IconButton>
                     </Tooltip>
                   ) : (
-                    <Tooltip content="Edit Data">
-                      <IconButton
-                        onClick={() => handleEditClick(teacher.Username)}
-                        variant="text"
-                      >
-                        <PencilIcon className="h-4 w-4 text-blue-500" />
-                      </IconButton>
-                    </Tooltip>
+                    <>
+                      <Tooltip content="Edit Data">
+                        <IconButton
+                          onClick={() => handleEditClick(teacher.Username)}
+                          variant="text"
+                        >
+                          <PencilIcon className="h-4 w-4 text-blue-500" />
+                        </IconButton>
+                      </Tooltip>
+                      <Tooltip content="Remove Access">
+                        <IconButton
+                          onClick={() => getTeacherAccess(teacher.Username)}
+                          variant="text"
+                        >
+                          <TrashIcon className="h-4 w-4 text-red-500" />
+                        </IconButton>
+                      </Tooltip>
+                    </>
                   )}
                 </td>
               </tr>
@@ -292,6 +467,16 @@ export default function Teachers() {
           </tbody>
         </table>
       </div>
+      {removingAccessTeacher && (
+        <SimpleModal
+          teacherUsername={removingAccessTeacher}
+          teacherAccess={removingAccess} // Pass removingAccess instead of teacherAccess
+          onRemoveAccess={handleRemoveAccessClick}
+          onClose={() => setRemovingAccessTeacher(null)}
+          specialAccessTeacherTables={specialAccessTeacherTables}
+          specialAccessStudentTables={specialAccessStudentTables}
+        />
+      )}
     </div>
   );
 }

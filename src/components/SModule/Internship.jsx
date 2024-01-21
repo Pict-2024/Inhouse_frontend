@@ -73,7 +73,7 @@ export default function Internship() {
       progress: undefined,
       theme: "light",
     });
-    // navigate("/s/data");
+    navigate("/s/data");
   };
 
   return (
