@@ -170,22 +170,39 @@ export const ADashBoard = () => {
           <Typography variant="h4" color="blue-gray" className="mb-2">
             Teacher Records
           </Typography>
-          <div className="flex flex-wrap gap-4 m-2" style={{ width: "90%" }}>
+          <div
+            className="flex justify-around gap-2 flex-wrap -mx-4"
+            style={{ width: "90%" }}
+          >
             {tableData?.teachers?.map((table, index) => (
               <div
                 key={index}
-                className="w-full sm:w-1/2 md:w-1/2 lg:w-1/4 xl:w-1/4"
+                className="w-full sm:w-1/2 md:w-1/2 lg:w-1/3 xl:w-1/4 px-4 py-1 my-2 transition duration-300 relative group"
               >
-                <Card className="border-2 shadow-md p-4">
+                <Card
+                  className="w-full h-full rounded-lg p-4"
+                  style={{
+                    backgroundColor: index % 2 !== 0 ? "#F0F0F0" : "#D6EAF8",
+                    transition: "transform 0.3s ease-out",
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.transform = "scale(1.05)";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.transform = "scale(1)";
+                  }}
+                >
                   <CardBody>
                     <Typography
                       variant="h6"
                       color="blue-gray"
-                      className="mb-2 break-words"
+                      className=" text-center mb-2 break-words"
                     >
                       {table.label}
                     </Typography>
-                    <Typography variant="body2">{table.value}</Typography>
+                    <Typography variant="body2" className="text-center">
+                      {table.value}
+                    </Typography>
                   </CardBody>
                 </Card>
               </div>
@@ -198,22 +215,39 @@ export const ADashBoard = () => {
           <Typography variant="h4" color="blue-gray" className="mb-2">
             Student Records
           </Typography>
-          <div className="flex flex-wrap gap-4 m-2" style={{ width: "90%" }}>
+          <div
+            className="flex justify-around gap-2 flex-wrap -mx-4"
+            style={{ width: "90%" }}
+          >
             {tableData?.students?.map((table, index) => (
               <div
                 key={index}
-                className="w-full sm:w-1/2 md:w-1/2 lg:w-1/4 xl:w-1/4"
+                className="w-full sm:w-1/2 md:w-1/2 lg:w-1/3 xl:w-1/4 px-4 py-1 my-2 transition duration-300 relative group"
               >
-                <Card className="border-2 shadow-md p-4">
+                <Card
+                  className="w-full h-full rounded-lg p-4"
+                  style={{
+                    backgroundColor: index % 2 !== 0 ? "#F0F0F0" : "#D6EAF8",
+                    transition: "transform 0.3s ease-out",
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.transform = "scale(1.05)";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.transform = "scale(1)";
+                  }}
+                >
                   <CardBody>
                     <Typography
                       variant="h6"
                       color="blue-gray"
-                      className="mb-2 break-words"
+                      className="text-center mb-2 break-words"
                     >
                       {table.label}
                     </Typography>
-                    <Typography variant="body2">{table.value}</Typography>
+                    <Typography variant="body2" className="text-center">
+                      {table.value}
+                    </Typography>
                   </CardBody>
                 </Card>
               </div>

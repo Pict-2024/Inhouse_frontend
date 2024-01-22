@@ -13,7 +13,7 @@ import {
 } from "@material-tailwind/react";
 import axios from "axios";
 import moment from "moment";
-
+var arr = new Array();
 export default function TDashboard() {
   const { currentUser } = useSelector((state) => state.user);
 
@@ -29,22 +29,6 @@ export default function TDashboard() {
     return currentDate.toISOString().split("T")[0];
   };
 
-  const publications = [
-    { type: "Book Publication", count: 20 },
-    { type: "Research Publication", count: 3 },
-    { type: "Research Publication", count: 3 },
-    { type: "Research Publication", count: 3 },
-    { type: "Research Publication", count: 3 },
-    { type: "Research Publication", count: 3 },
-    { type: "Research Publication", count: 3 },
-    { type: "Research Publication", count: 3 },
-    { type: "Research Publication", count: 3 },
-    { type: "Research Publication", count: 3 },
-    { type: "Research Publication", count: 3 },
-    { type: "Research Publication", count: 3 },
-    // Add more publications here
-  ];
-
   const [notifications, setNotifications] = useState([]);
   const [notificationData, setNotificationData] = useState({
     Username: currentUser?.Username,
@@ -56,9 +40,6 @@ export default function TDashboard() {
 
   const [isNotificationModalOpen, setNotificationModalOpen] = useState(false);
   const [isSendModalOpen, setSendModalOpen] = useState(false);
-  const [tableData, setTableData] = useState({
-    teachers: [],
-  });
 
   const handleUserProfileChange = (e) => {
     setFormData({
@@ -128,40 +109,32 @@ export default function TDashboard() {
     setSendModalOpen(false);
   };
 
-  const fetchAllTablesData = async () => {
+  const [userCounts, setUserCounts] = useState([]);
+
+  const fetchData = async () => {
     try {
-      const apiUrl = "http://localhost:5000/api/v1/general/get-count-tables";
-      const response = await axios.post(apiUrl);
-      console.log("Tables response", response.data.data);
-      // Update the state with fetched table data
+      const apiUrl = "http://localhost:5000/api/v1/general/get-count-user";
+      console.log(currentUser?.Username);
+      const response = await axios.post(apiUrl, {
+        username: currentUser?.Username,
+      });
+      arr = response.data.data.Tables;
+      const formattedStudentData = arr.map((table) => {
+        const tableName = Object.keys(table)[0];
+        const count = table[tableName];
+        return { label: tableName, value: count };
+      });
 
-      // const teacherTablesData = response?.data?.data?.Teacher_Tables || [];
-
-      // const formattedStudentData = studentTablesData.map((table) => {
-      //   const tableName = Object.keys(table)[0];
-      //   const count = table[tableName];
-      //   return { label: tableName, value: count };
-      // });
-
-      // const formattedTeacherData = teacherTablesData.map((table) => {
-      //   const tableName = Object.keys(table)[0];
-      //   const count = table[tableName];
-      //   return { label: tableName, value: count };
-      // });
-
-      // setTableData({
-      //   students: formattedStudentData,
-      //   teachers: formattedTeacherData,
-      //   // Add other roles as needed
-      // });
-      // console.log("Table data:", tableData);
+      console.log("User counts:", arr);
+      setUserCounts(formattedStudentData);
+      console.log(userCounts); // Assuming the API response is an array of user counts
     } catch (error) {
-      console.log(error.message);
+      console.error("Error fetching data from the API:", error);
     }
   };
-  // useEffect(() => {
-  //   fetchAllTablesData();
-  // }, []);
+  useEffect(() => {
+    fetchData();
+  }, []);
 
   return (
     <>
@@ -241,12 +214,13 @@ export default function TDashboard() {
         </form>
       </Card>
 
-      <div className="flex justify-around gap-2 flex-wrap -mx-4 border border-gray-300 w-full p-3 my-2 rounded-md overflow-x-hidden">
-        {publications.map((publication, index) => (
+      <div className="flex justify-around gap-2 flex-wrap -mx-4">
+        {userCounts?.map((userCount, index) => (
           <div
             key={index}
             className="w-full sm:w-1/2 md:w-1/2 lg:w-1/3 xl:w-1/4 px-4 py-1 my-2 transition duration-300 relative group"
           >
+            {/* User Counts Display Content */}
             <div
               className="w-full h-full rounded-lg p-4"
               style={{
@@ -265,10 +239,10 @@ export default function TDashboard() {
                 color="dark"
                 className="text-center mb-3 text-wrap"
               >
-                {publication.type}
+                {userCount.label}
               </Typography>
               <Typography variant="h5" color="dark" className="text-center">
-                {publication.count}
+                {userCount.value}
               </Typography>
             </div>
           </div>

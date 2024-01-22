@@ -18,39 +18,37 @@ const ViewInfo = () => {
   const [selectedTable, setSelectedTable] = useState(null);
 
   const teacherTables = {
-    "1_Research_Publication": "1_Research_Publication",
-    "2_Book_Publication": "2_Book_Publication",
-    "3_faculty_conference_publication": "3_faculty_conference_publication",
-    "4_grants": "4_grants",
-    "5_consultancy_report": "5_consultancy_report",
-    "6_patent_publication": "6_patent_publication",
-    "7_confsemworkshops": "7_confsemworkshops",
-    "8_sttp_fdp_conf_attended": "8_sttp_fdp_conf_attended",
-    "9_webinarguestlec": "9_webinarguestlec",
-    "10_mous": "10_mous",
-    "11_certcourses": "11_certcourses",
-    "12_prof_affiliation": "12_prof_affiliation",
-    "13_resource_person": "13_resource_person",
-    "14_extension_activity": "14_extension_activity",
-    "15_tech_comp_fest": "15_tech_comp_fest",
-    "16_faculty_achievements": "16_faculty_achievements",
-    "17_indusvisitstoursfieldtrip": "17_indusvisitstoursfieldtrip",
-    "18_contribution_to_bos": "18_contribution_to_bos",
+    'mous': "mous",
+    "certificate_courses": "professional_affiliation",
+    "professional_affiliation": "professional_affiliation",
+    "resource_person": "resource_person",
+    "extension_activity": "extension_activity",
+    "technical_competition_fest": "technical_competition_fest",
+    "faculty_achievements": "faculty_achievements",
+    "industrial_fields_tour": "industrial_fields_tour",
+    "contribution_to_bos": "contribution_to_bos",
+    "research_publication": "research_publication",
+    "book_publication": "book_publication",
+    "faculty_conference_publication": "faculty_conference_publication",
+    "grants": "grants",
+    "consultancy_report": "consultancy_report",
+    "patent_publication": "patent_publication",
+    "conference_seminar_workshops": "conference_seminar_workshops",
+    "sttp_fdp_conference_attended": "sttp_fdp_conference_attended",
+    "webinar_guest_lectures": "webinar_guest_lectures",
     // Add more teacher tables if needed
   };
 
   const studentTables = {
-    "1__student___internship_details": "1__student___internship_details",
-    "2__student___research_publication": "2__student___research_publication",
-    "3__student___conference_publication":
-      "3__student___conference_publication",
-    "4__student___certificate_course_attended":
-      "4__student___certificate_course_attended",
-    "5__student___sports_data": "5__student___sports_data",
-    "6__student___event_participated": "6__student___event_participated",
-    "7__student___event_organized": "7__student___event_organized",
-    "8__student___technical_events": "8__student___technical_events",
-    "9__student___higher_education": "9__student___higher_education",
+    "student_internship_details": "student_internship_details",
+    "student_research_publication": "student_research_publication",
+    "student_conference_publication": "student_conference_publication",
+    "student_certificate_course": "student_certificate_course",
+    "student_sports_data": "student_sports_data",
+    "student_event_participated": "student_event_participated",
+    "student_event_organized": "student_event_organized",
+    "student_technical_events": "student_technical_events",
+    "student_higher_education": "student_higher_education",
     // Add more student tables if needed
   };
 
