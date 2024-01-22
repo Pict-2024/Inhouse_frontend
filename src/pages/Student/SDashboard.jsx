@@ -1,7 +1,9 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Card, Input, Button, Typography } from "@material-tailwind/react";
 import { useSelector } from "react-redux";
+import axios from "axios";
 
+var arr = new Array();
 export default function SDashboard() {
   const { currentUser } = useSelector((state) => state.user);
 
@@ -12,21 +14,32 @@ export default function SDashboard() {
     },
   });
 
-  const publications = [
-    { type: "Internship", count: 2 },
-    { type: "Research Publication", count: 1 },
-    { type: "Sport", count: 2 },
-    { type: "Research Publication", count: 3 },
-    { type: "Research Publication", count: 3 },
-    { type: "Research Publication", count: 3 },
-    { type: "Research Publication", count: 3 },
-    { type: "Research Publication", count: 3 },
-    { type: "Research Publication", count: 3 },
-    { type: "Research Publication", count: 3 },
-    { type: "Research Publication", count: 3 },
-    { type: "Research Publication", count: 3 },
-    // Add more publications here
-  ];
+  const [userCounts, setUserCounts] = useState([]);
+
+  const fetchData = async () => {
+    try {
+      const apiUrl = "http://localhost:5000/api/v1/general/get-count-user";
+      console.log(currentUser?.Username);
+      const response = await axios.post(apiUrl, {
+        username: currentUser?.Username,
+      });
+      arr = response.data.data.Tables;
+      const formattedStudentData = arr.map((table) => {
+        const tableName = Object.keys(table)[0];
+        const count = table[tableName];
+        return { label: tableName, value: count };
+      });
+
+      console.log("User counts:", arr);
+      setUserCounts(formattedStudentData);
+      console.log(userCounts); // Assuming the API response is an array of user counts
+    } catch (error) {
+      console.error("Error fetching data from the API:", error);
+    }
+  };
+  useEffect(() => {
+    fetchData();
+  }, []);
 
   const handleUserProfileChange = (e) => {
     setFormData({
@@ -100,11 +113,12 @@ export default function SDashboard() {
         </form>
       </Card>
       <div className="flex justify-around gap-2 flex-wrap -mx-4">
-        {publications.map((publication, index) => (
+        {userCounts?.map((userCount, index) => (
           <div
             key={index}
             className="w-full sm:w-1/2 md:w-1/2 lg:w-1/3 xl:w-1/4 px-4 py-1 my-2 transition duration-300 relative group"
           >
+            {/* User Counts Display Content */}
             <div
               className="w-full h-full rounded-lg p-4"
               style={{
@@ -123,15 +137,15 @@ export default function SDashboard() {
                 color="dark"
                 className="text-center mb-3 text-wrap"
               >
-                {publication.type}
+                {userCount.label}
               </Typography>
               <Typography variant="h5" color="dark" className="text-center">
-                {publication.count}
+                {userCount.value}
               </Typography>
             </div>
           </div>
         ))}
-      </div> 
+      </div>
     </>
   );
 }

@@ -146,6 +146,8 @@ export default function Teachers() {
         },
       });
 
+      console.log("Response:", response);
+
       const { Teacher_Tables, Student_Tables } = response.data.data;
 
       // Set the regular teacher and student table access arrays
@@ -242,6 +244,7 @@ export default function Teachers() {
           "Content-Type": "application/json",
         },
       });
+      console.log("AccessReponse",accessResponse);
 
       // Set the special access tables in the removingAccess state
       setRemovingAccess({
