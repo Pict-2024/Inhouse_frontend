@@ -83,12 +83,9 @@ const AdminSidebar = () => {
           </Typography>
         </div>
         <div>
-          <List className="mt-2">
+          <List className="mt-2 p-4">
             {links.map((item) => (
               <div key={item.title}>
-                <ListItem className="text-blue-gray-900 underline m-3 mt-2 uppercase w-full hover:bg-transparent">
-                  {item.title}
-                </ListItem>
                 {item.links.map((link) => (
                   <Link
                     to={`/a/${link.name}`}

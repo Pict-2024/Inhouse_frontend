@@ -152,23 +152,6 @@ export default function TDashboard() {
           >
             User Profile
           </Typography>
-          <div
-            className="mr-3 "
-            style={{ position: "absolute", top: "0", right: "0" }}
-          >
-            <Tooltip
-              content="Notifications"
-              placement="left"
-              animate={{
-                mount: { scale: 1, y: 0 },
-                unmount: { scale: 0, y: 0 },
-              }}
-            >
-              <IconButton color="primary" onClick={handleOpenNotificationModal}>
-                <NotificationsActiveIcon color="warning" />
-              </IconButton>
-            </Tooltip>
-          </div>
         </div>
 
         {/* User Profile Form */}

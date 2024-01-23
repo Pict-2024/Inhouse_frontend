@@ -92,19 +92,19 @@ export default function StudentSidebar() {
   const { currentUser } = useSelector((state) => state.user);
 
   return (
-    <div className="h-auto lg:max-w-[15rem] w-1/24 sm:w-2/5 p-4 shadow-blue-gray-900/5  hidden sm:block">
+    <div className="h-auto lg:max-w-[18rem] w-1/24 sm:w-2/5 p-4 shadow-blue-gray-900/5  hidden sm:block">
       <div className="mb-2 p-4">
         <Typography
           variant="h5"
           color="blue-gray"
           className="flex justify-start items-center gap-4"
         >
-          <div className="rounded-full bg-gray-400 w-10 h-10 flex items-center justify-center text-dark font-bold">
+          <div className="rounded-full px-4 bg-gray-400 w-10 h-10 flex items-center justify-center text-dark font-bold">
             {currentUser.Name ? currentUser.Name[0] : "A"}
           </div>
           <div>
-            <p className="font-semibold"> {currentUser.Name} </p>
-            <p className="text-xs font-normal"> {currentUser.Username} </p>
+            <p className="font-semibold text-ellipsis overflow-hidden"> {currentUser.Name} </p>
+            <p className="text-xs font-normal text-ellipsis overflow-hidden"> {currentUser.Username} </p>
           </div>
         </Typography>
       </div>

@@ -1,14 +1,21 @@
 import { useState } from "react";
 import { Card, Input, Button, Typography } from "@material-tailwind/react";
 import axios from "axios";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 export default function Register() {
+
+  const navigate = useNavigate();
+
   const [formData, setFormData] = useState({
     name: "",
     gmail: "",
     password: "",
     newPassword: "",
+    pro_email: ""
   });
   // const [name, setName] = useState("");
   // const [gmail, setGmail] = useState("");
@@ -17,6 +24,7 @@ export default function Register() {
   const [verified, setVerified] = useState(false);
   const [error, setError] = useState(null);
   const [register, setRegister] = useState(false);
+  const [role, setRole] = useState(null);
 
   const handleVerify = async () => {
     try {
@@ -26,12 +34,22 @@ export default function Register() {
         // password
         gmail: formData.gmail,
         password: formData.password
-
-
       });
-
-      if (response.data === "Email and Password verified") {
+      // console.log("Response is = ", response)
+      if (response.data.success === true) {
+        setRole(response.data.role)
+        console.log("Role = ", role)
         setVerified(true);
+        toast.success("Verification Successful", {
+          position: "top-left",
+          autoClose: 1500,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+        });
         setError(null);
       } else {
         setError("Invalid Credentials");
@@ -61,14 +79,27 @@ export default function Register() {
         const registerResponse = await axios.post(
           "http://localhost:5000/api/v1/auth/register",
           { name: formData.name, 
-            gmail: formData.gmail, 
-            password: formData.newPassword 
+            pro_email: formData.pro_email, 
+            password: formData.newPassword ,
+            gmail: formData.gmail
           }
         );
         console.log(registerResponse?.data);
 
         setError(null);
         setRegister(true);
+        toast.success("Registration Successful", {
+          position: "top-left",
+          autoClose: 1500,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+        });
+        navigate("/auth/login")
+        
       } else {
         setError("Please verify your email and password first.");
       }
@@ -79,11 +110,11 @@ export default function Register() {
   };
 
   return (
-    <div className="flex justify-center items-center h-[100vh]">
+    <div className="flex justify-center items-center h-[100vh]" style={{backgroundImage:`url('../../src/assets/loginbg.jpg')`,backgroundSize:'cover',opacity:'0.9'}}>
       <Card
         color="transparent"
         shadow={true}
-        className="border bg-white border-gray-300 w-1/3 h-3/5 p-6 rounded-md"
+        className="border bg-white border-gray-300 w-5/6 sm:w-1/2 md:w-1/2 lg:w-1/4 mb-20 h-150 p-6 rounded-md"
       >
         <Typography
           variant="h4"
@@ -95,14 +126,12 @@ export default function Register() {
 
         <form className="mt-2" onSubmit={handleSubmit}>
           <div className="mb-4">
-            <Typography variant="h6" color="blue-gray">
-              Name
-            </Typography>
+            
             <Input
               size="lg"
               name="name"
               value={formData.name}
-              placeholder="Name"
+              label="Name"
               className="border-t-blue-gray-200 focus-border-t-gray-900"
               // onChange={(e) => setName(e.target.value)}
               onChange={handleInputChange}
@@ -110,29 +139,25 @@ export default function Register() {
           </div>
 
           <div className="mb-4">
-            <Typography variant="h6" color="blue-gray">
-              Gmail
-            </Typography>
+           
             <Input
               size="lg"
               name="gmail"
               value={formData.gmail}
-              placeholder="gmail"
+              label="gmail"
               className="border-t-blue-gray-200 focus-border-t-gray-900"
               // onChange={(e) => setGmail(e.target.value)}
               onChange={handleInputChange}
             />
           </div>
           <div className="mb-4">
-            <Typography variant="h6" color="blue-gray">
-              Password
-            </Typography>
+        
             <Input
               size="lg"
               name="password"
               value={formData.password}
               type="password"
-              placeholder="Password"
+              label="Password"
               className="border-t-blue-gray-200 focus-border-t-gray-900"
               // onChange={(e) => setPassword(e.target.value)}
               onChange={handleInputChange}
@@ -149,6 +174,21 @@ export default function Register() {
 
           {verified && (
             <>
+            { role === 2 && 
+
+              <div className="mb-4 mt-4">
+                <Input
+                  size="lg"
+                  name="pro_email"
+                  value={formData.pro_email}
+                  label="Personal Email"
+                  className="border-t-blue-gray-200 focus-border-t-gray-900"
+                  // onChange={(e) => setGmail(e.target.value)}
+                  onChange={handleInputChange}
+                />
+              </div>
+            }
+
               <div className="mb-4">
                 <Typography variant="h6" color="blue-gray">
                   New Password
@@ -158,7 +198,8 @@ export default function Register() {
                   name="newPassword"
                   value={formData.newPassword}
                   type="password"
-                  placeholder="New Password"
+                  label="New Password"
+
                   className="border-t-blue-gray-200 focus-border-t-gray-900"
                   // onChange={(e) => setNewPassword(e.target.value)}
                   onChange={handleInputChange}
@@ -180,15 +221,7 @@ export default function Register() {
             </span>
         </div>
 
-        {verified && (
-          <p className="text-green-500 mt-2">
-            Email and Password verified! You can now set your new password.
-          </p>
-        )}
         {error && <p className="text-red-500 text-center mt-2">{error}</p>}
-        {register && (
-          <p className="text-green-500 mt-2">Registered Successfully!</p>
-        )}
       </Card>
     </div>
   );
