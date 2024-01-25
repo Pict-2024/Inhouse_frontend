@@ -115,9 +115,9 @@ export default function Login() {
           <div className="mb-4 flex justify-between items-center">
             <div className="w-full">
               <div className="flex justify-between">
-                {/**<Typography variant="h6" color="blue-gray">
+                {/* <Typography variant="h6" color="blue-gray">
                   Gmail
-  </Typography> **/}
+                </Typography> */}
               </div>
               <Input
                 size="lg"
@@ -130,9 +130,9 @@ export default function Login() {
           </div>
 
           <div className="mb-4">
-            {/**<Typography variant="h6" color="blue-gray">
+            {/* <Typography variant="h6" color="blue-gray">
               Password
-</Typography> **/}
+            </Typography> */}
             <Input
               size="lg"
               name="password"

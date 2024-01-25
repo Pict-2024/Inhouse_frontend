@@ -17,18 +17,22 @@ import { addRecordsIndustrial } from "./API_Routes";
 
 export default function IndustrialVisit() {
   const { currentUser } = useSelector((state) => state.user);
+  const [isFinancialSupport, setIsFinancialSupport] = useState(false);
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     T_ID: null,
     Username: currentUser?.Username,
+    Name:currentUser?.Name,
     Department: "",
     Name_Of_Industry_Visited: "",
     Purpose_of_the_visit: "",
     No_of_Students: "",
+    List_of_Students: null,
     Date_of_visit: "",
     Coordinator: "",
     Finance_Support_By_PICT: "",
-    Report: "",
+    Evidence: null,
+    Upload_Report: "",
   });
 
   const handleChange = (e) => {
@@ -61,7 +65,7 @@ export default function IndustrialVisit() {
       <Card
         color="transparent"
         shadow={false}
-        className="border border-gray-300 w-85 mx-auto p-2 my-2 rounded-md"
+        className="border border-gray-300 w-85 mx-auto p-2 my-2 rounded-md overflow-x-hidden"
       >
         <Typography
           variant="h4"
@@ -126,17 +130,18 @@ export default function IndustrialVisit() {
           <div className="mb-4 flex flex-wrap -mx-4">
             <div className="w-full md:w-1/2 px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
-                No. of Students
+                Coordinator(s)
               </Typography>
               <Input
                 size="lg"
-                name="No_of_Students"
-                value={formData.No_of_Students}
-                label="No. of Students"
-                type="number"
+                name="Coordinator"
+                type="text"
+                value={formData.Coordinator}
+                label="Coordinator(s)"
                 onChange={handleChange}
               />
             </div>
+
             <div className="w-full md:w-1/2 px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
                 Date of visit (DD-MM-YYYY)
@@ -155,41 +160,101 @@ export default function IndustrialVisit() {
           <div className="mb-4 flex flex-wrap -mx-4">
             <div className="w-full md:w-1/2 px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
-                Coordinator(s)
+                No. of Students
               </Typography>
               <Input
                 size="lg"
-                name="Coordinator"
-                value={formData.Coordinator}
-                label="Coordinator(s)"
+                name="No_of_Students"
+                value={formData.No_of_Students}
+                label="No. of Students"
+                type="number"
                 onChange={handleChange}
               />
             </div>
             <div className="w-full md:w-1/2 px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
-                Financial support from PICT
+                List of Students
               </Typography>
               <Input
                 size="lg"
-                name="Finance_Support_By_PICT"
-                value={formData.Finance_Support_By_PICT}
-                label="Financial support from PICT"
+                name="List_of_Students"
+                value={formData.List_of_Students}
+                type="file"
+                label="List of Students"
                 onChange={handleChange}
               />
             </div>
           </div>
 
-          <div className="mb-4">
-            <Typography variant="h6" color="blue-gray" className="mb-3">
-              Report with approval application
-            </Typography>
-            <Input
-              size="lg"
-              name="Report"
-              value={formData.Report}
-              label="Report with approval application"
-              onChange={handleChange}
-            />
+          <div className="mb-4 flex flex-wrap -mx-4">
+            <div className="w-full">
+              <div className="px-4 mb-4 flex gap-40">
+                <Typography variant="h6" color="blue-gray" className="mb-3">
+                  Financial support from institute in INR
+                </Typography>
+                <div className="flex gap-3">
+                  <label className="mx-2">
+                    <input
+                      type="radio"
+                      name="financialSupport"
+                      value="yes"
+                      checked={isFinancialSupport}
+                      onChange={() => setIsFinancialSupport(true)}
+                    />
+                    Yes
+                  </label>
+                  <label>
+                    <input
+                      type="radio"
+                      name="financialSupport"
+                      value="no"
+                      checked={!isFinancialSupport}
+                      onChange={() => setIsFinancialSupport(false)}
+                    />
+                    No
+                  </label>
+                </div>
+              </div>
+              <div className="flex justify-between">
+                <div className="w-full md:w-1/2 px-4 mb-4">
+                  <Input
+                    size="lg"
+                    label="Amount in INR"
+                    name="Finance_support_amount_INR"
+                    type="number"
+                    value={formData.Finance_support_amount_INR}
+                    onChange={handleChange}
+                    disabled={!isFinancialSupport}
+                  />
+                </div>
+                <div className="w-full md:w-1/2 px-4 mb-4">
+                  <Input
+                    size="lg"
+                    label="Evidence Document"
+                    name="Evidence"
+                    type="file"
+                    value={formData.Evidence}
+                    onChange={handleChange}
+                    disabled={!isFinancialSupport}
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="mb-4 flex flex-wrap -mx-4">
+            <div className="w-full px-4 mb-4">
+              <Typography variant="h6" color="blue-gray" className="mb-3">
+                Report with approval application
+              </Typography>
+              <Input
+                size="lg"
+                name="Upload_Report"
+                type="file"
+                value={formData.Upload_Report}
+                label="Report with approval application"
+                onChange={handleChange}
+              />
+            </div>
           </div>
 
           <Button className="mt-4" fullWidth type="submit">

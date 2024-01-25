@@ -21,6 +21,7 @@ export default function ConsultancyReport() {
   const [formData, setFormData] = useState({
     T_ID: null,
     Username: currentUser?.Username,
+    Name:currentUser?.Name,
     Name_of_Department: "",
     Role: "",
     Client_Organisation: "",
@@ -35,7 +36,7 @@ export default function ConsultancyReport() {
     Link_to_evidence: "",
     Status: "",
     Outcome: "",
-    Upload_Docs: "",
+    Upload_Paper: "",
   });
 
   const handleChange = (e) => {
@@ -110,6 +111,7 @@ export default function ConsultancyReport() {
               <Input
                 size="lg"
                 name="Role"
+                type="text"
                 value={formData.Role}
                 label="Role"
                 onChange={handleChange}
@@ -121,6 +123,7 @@ export default function ConsultancyReport() {
               </Typography>
               <Input
                 size="lg"
+                type="text"
                 name="Client_Organisation"
                 value={formData.Client_Organisation}
                 label="Client Organisation"
@@ -136,6 +139,7 @@ export default function ConsultancyReport() {
               <Input
                 size="lg"
                 name="Chief_Consultant"
+                type="text"
                 value={formData.Chief_Consultant}
                 label="Chief Consultant"
                 onChange={handleChange}
@@ -148,6 +152,7 @@ export default function ConsultancyReport() {
               <Input
                 size="lg"
                 name="Title_of_Work_domain"
+                type="text"
                 value={formData.Title_of_Work_domain}
                 label="Title of Work domain"
                 onChange={handleChange}
@@ -157,7 +162,7 @@ export default function ConsultancyReport() {
           <div className="mb-4 flex flex-wrap -mx-4">
             <div className="w-full md:w-1/2 px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
-                Type (Paid/Unpaid)
+                Type
               </Typography>
               <Select
                 size="lg"
@@ -180,6 +185,7 @@ export default function ConsultancyReport() {
               <Input
                 size="lg"
                 name="Amount"
+                type="number"
                 value={formData.Amount}
                 label="Amount"
                 onChange={handleChange}
@@ -242,35 +248,35 @@ export default function ConsultancyReport() {
             </div>
           </div>
           <div className="mb-4 flex flex-wrap -mx-4">
-            <div className="w-full md:w-1/2 px-4 mb-4">
+            <div className="w-full px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
-                Link to evidence
+                Document evidence for amount deposited in PICT account (bank
+                statement)
+              </Typography>
+              <Input
+                size="lg"
+                name="Amt_Deposited"
+                type="file"
+                value={formData.Amt_Deposited}
+                onChange={handleChange}
+                label="Document evidence for amount deposited in PICT account"
+              />
+            </div>
+          </div>
+          <div className="mb-4 flex flex-wrap -mx-4"> 
+            <div className="w-full px-4 mb-4">
+              <Typography variant="h6" color="blue-gray" className="mb-3">
+                Document evidence for amount sanctioned from funding agency (for
+                current A.Y.)
               </Typography>
               <Input
                 size="lg"
                 name="Link_to_evidence"
+                type="file"
                 value={formData.Link_to_evidence}
-                label="Link to evidence"
                 onChange={handleChange}
+                label=" Document evidence for amount sanctioned "
               />
-            </div>
-            <div className="w-full md:w-1/2 px-4 mb-4">
-              <Typography variant="h6" color="blue-gray" className="mb-3">
-                Status (Completed/Ongoing)
-              </Typography>
-              <Select
-                size="lg"
-                name="Status"
-                value={formData.Status}
-                label="Select Status"
-                // onChange={handleChange}
-                onChange={(value) =>
-                  handleChange({ target: { name: "Status", value } })
-                }
-              >
-                <Option value="Completed">Completed</Option>
-                <Option value="Ongoing">Ongoing</Option>
-              </Select>
             </div>
           </div>
           <div className="mb-4 flex flex-wrap -mx-4">
@@ -281,6 +287,7 @@ export default function ConsultancyReport() {
               <Input
                 size="lg"
                 name="Outcome"
+                type="text"
                 value={formData.Outcome}
                 label="Outcome"
                 onChange={handleChange}
@@ -292,10 +299,10 @@ export default function ConsultancyReport() {
               </Typography>
               <Input
                 size="lg"
-                type="text"
-                name="Upload_Docs"
-                value={formData.Upload_Docs}
-                label="Upload PDF Documents(Add drive link)"
+                type="file"
+                name="Upload_Paper"
+                value={formData.Upload_Paper}
+                label="Upload PDF Documents"
                 onChange={handleChange}
               />
             </div>

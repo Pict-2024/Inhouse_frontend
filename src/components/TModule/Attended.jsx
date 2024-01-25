@@ -17,11 +17,13 @@ import { addRecordsAttended } from "./API_Routes";
 
 export default function Attended() {
   const { currentUser } = useSelector((state) => state.user);
+  const [isFinancialSupport, setIsFinancialSupport] = useState(false);
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
     T_ID: null,
     UserName: currentUser?.UserName,
+    Name: currentUser?.Name,
     Department: "",
     Title_of_the_Event: "",
     Type_Nature: "",
@@ -32,8 +34,28 @@ export default function Attended() {
     Mode_Online_Physical: "",
     Duration_in_Days: "",
     Financial_Support_By_PICT: "",
+    Evidence: null,
     Upload_Certificate: null,
   });
+
+  // const handleFileUpload = async (file) => {
+  //   try {
+  //     const formDataForFile = new FormData();
+  //     formDataForFile.append("file", file);
+  //     formDataForFile.append("username", currentUser?.Username);
+  //     formDataForFile.append("role", currentUser?.Role);
+  //     formDataForFile.append("tableName", "book_publication");
+
+  //     const response = await axios.post(uploadRecordsBook, formDataForFile);
+  //     console.log("file response:", response.data.filePath);
+
+  //     // Assuming the file upload API returns the file path in response.data.path
+  //     setFileUploadPath(response.data.filePath);
+  //   } catch (error) {
+  //     console.error("Error uploading file:", error);
+  //     // Handle error as needed
+  //   }
+  // };
 
   const handleOnChange = (e) => {
     const { id, value, type, files } = e.target;
@@ -65,7 +87,7 @@ export default function Attended() {
       <Card
         color="transparent"
         shadow={false}
-        className="border border-gray-300 w-85 mx-auto p-2 my-2 rounded-md"
+        className="border border-gray-300 w-85 mx-auto p-2 my-2 rounded-md overflow-x-hidden"
       >
         <Typography
           variant="h4"
@@ -108,6 +130,7 @@ export default function Attended() {
               <Input
                 id="Title_of_the_Event"
                 size="lg"
+                type="text"
                 label="Title of the Event"
                 value={formData.Title_of_the_Event}
                 onChange={handleOnChange}
@@ -146,6 +169,7 @@ export default function Attended() {
               <Input
                 id="Organizer_Institute_Name"
                 size="lg"
+                type="text"
                 label="Organizing Institute"
                 value={formData.Organizer_Institute_Name}
                 onChange={handleOnChange}
@@ -153,12 +177,13 @@ export default function Attended() {
             </div>
             <div className="w-full md:w-1/2 px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
-                Name of the coordinator(s)
+                Name of the coordinator from organizing Institute
               </Typography>
               <Input
                 id="Name_of_Coordinators"
                 size="lg"
-                label="Coordinator(s)"
+                type="text"
+                label="Name of the coordinator"
                 value={formData.Name_of_Coordinators}
                 onChange={handleOnChange}
               />
@@ -214,11 +239,12 @@ export default function Attended() {
             </div>
             <div className="w-full md:w-1/2 px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
-                Duration in Days
+                Duration in Hours
               </Typography>
               <Input
                 id="Duration_in_Days"
                 size="lg"
+                type="text"
                 label="Duration"
                 value={formData.Duration_in_Days}
                 onChange={handleOnChange}
@@ -226,27 +252,86 @@ export default function Attended() {
             </div>
           </div>
 
-          <div className="mb-4 flex flex-wrap -mx-4">
-            <div className="w-full md:w-1/2 px-4 mb-4">
-              <Typography variant="h6" color="blue-gray" className="mb-3">
-                Finance Support Received from PICT
-              </Typography>
-              <Input
-                id="Financial_Support_By_PICT"
-                size="lg"
-                label="Finance Support Received from PICT"
-                value={formData.Financial_Support_By_PICT}
-                onChange={handleOnChange}
-              />
+          <div className="mb-4 flex flex-wrap -mx-4 ">
+            <div className="w-full">
+              <div className="px-4 mb-4 flex gap-40 ">
+                <Typography variant="h6" color="blue-gray" className="mb-3">
+                  Financial support from institute in INR
+                </Typography>
+                <div className="flex gap-3 ">
+                  <label className="mx-2">
+                    <input
+                      type="radio"
+                      name="financialSupport"
+                      value="yes"
+                      checked={isFinancialSupport}
+                      onChange={() => setIsFinancialSupport(true)}
+                    />
+                    Yes
+                  </label>
+                  <label>
+                    <input
+                      type="radio"
+                      name="financialSupport"
+                      value="no"
+                      checked={!isFinancialSupport}
+                      onChange={() => setIsFinancialSupport(false)}
+                    />
+                    No
+                  </label>
+                </div>
+              </div>
+              <div className="flex justify-between border-2">
+                <div className="w-full md:w-1/2 px-4 mb-4">
+                  <Input
+                    size="lg"
+                    label="Amount in INR"
+                    name="Financial_support_amount_INR"
+                    type="number"
+                    value={formData.Financial_Support_By_PICT}
+                    onChange={handleOnChange}
+                    disabled={!isFinancialSupport}
+                  />
+                </div>
+                {/* <div className="w-full md:w-1/2 px-4 mb-4">
+                  <Input
+                    size="lg"
+                    label="Evidence Document"
+                    name="Evidence"
+                    type="file"
+                    value={formData.Evidence}
+                    onChange={handleChange}
+                    disabled={!isFinancialSupport}
+                  />
+                </div> */}
+                <div className="w-full md:w-1/2 px-4 mb-4 flex gap-4">
+                  <Input
+                    size="lg"
+                    label="Evidence Document"
+                    name="Evidence"
+                    type="file"
+                    value={formData.Evidence}
+                    onChange={handleOnChange}
+                    disabled={!isFinancialSupport}
+                  />
+                  <Button color="dark" size="md">
+                    Upload
+                  </Button>
+                </div>
+              </div>
             </div>
-            <div className="w-full md:w-1/2 px-4 mb-4">
+          </div>
+
+          <div className="mb-4 flex flex-wrap -mx-4">
+            <div className="w-full px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
-                Upload Upload_Certificate(Add drive link)
+                Upload Certificate
               </Typography>
               <Input
                 id="Upload_Certificate"
+                label="Upload certificate"
                 size="lg"
-                type="text"
+                type="file"
                 onChange={handleOnChange}
               />
             </div>

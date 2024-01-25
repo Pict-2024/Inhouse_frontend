@@ -17,6 +17,8 @@ import { addRecordsFaculty } from "./API_Routes";
 
 export default function FacultyConferencePublication() {
   const { currentUser } = useSelector((state) => state.user);
+
+  const [isFinancialSupport, setIsFinancialSupport] = useState(false);
   const navigate = useNavigate();
   const currentYear = new Date().getFullYear();
   const years = Array.from(
@@ -27,6 +29,7 @@ export default function FacultyConferencePublication() {
   const [formData, setFormData] = useState({
     T_ID: null,
     Username: currentUser?.Username,
+    Name:currentUser?.Name,
     Department: "",
     Title_of_the_Paper: "",
     Title_of_the_proceedings_of_the_conference: "",
@@ -40,10 +43,11 @@ export default function FacultyConferencePublication() {
     Link_to_paper: "",
     Upload_Paper: null,
     Financial_support_given_by_institute_in_INR: "",
+    Evidence:null,
     DOI: "",
     Presented_Yes_No: "",
     Any_Achievements: "",
-    Upload_Achievement_Document: "",
+    Upload_DOA: "",
   });
 
   const handleInputChange = (e) => {
@@ -77,7 +81,7 @@ export default function FacultyConferencePublication() {
       <Card
         color="transparent"
         shadow={false}
-        className="border border-gray-300 w-85 mx-auto p-2 my-2 rounded-md"
+        className="border border-gray-300 w-85 mx-auto p-2 my-2 rounded-md overflow-x-hidden"
       >
         <Typography
           variant="h4"
@@ -119,6 +123,7 @@ export default function FacultyConferencePublication() {
               <Input
                 size="lg"
                 label="Title of the Paper"
+                type="text"
                 onChange={handleInputChange}
                 name="Title_of_the_Paper"
                 value={formData.Title_of_the_Paper}
@@ -131,6 +136,7 @@ export default function FacultyConferencePublication() {
               <Input
                 size="lg"
                 label="Title of the proceedings of the conference"
+                type="text"
                 onChange={handleInputChange}
                 name="Title_of_the_proceedings_of_the_conference"
                 value={formData.Title_of_the_proceedings_of_the_conference}
@@ -145,6 +151,7 @@ export default function FacultyConferencePublication() {
               <Input
                 size="lg"
                 label="Name of the conference"
+                type="text"
                 onChange={handleInputChange}
                 name="Name_of_the_conference"
                 value={formData.Name_of_the_conference}
@@ -152,11 +159,11 @@ export default function FacultyConferencePublication() {
             </div>
             <div className="w-full md:w-1/2 px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
-                National / International
+                Level
               </Typography>
               <Select
                 size="lg"
-                label="Select National/International"
+                label="Select level"
                 // onChange={handleInputChange}
                 onChange={(value) =>
                   handleInputChange({
@@ -179,6 +186,7 @@ export default function FacultyConferencePublication() {
               <Input
                 size="lg"
                 type="date"
+                label="date of conference "
                 onChange={handleInputChange}
                 name="Date_of_conference"
                 value={formData.Date_of_conference}
@@ -192,6 +200,7 @@ export default function FacultyConferencePublication() {
                 size="lg"
                 label="Conference Venue and Organizer"
                 onChange={handleInputChange}
+                type="text"
                 name="Conference_Venue_and_Organizer"
                 value={formData.Conference_Venue_and_Organizer}
               />
@@ -246,7 +255,8 @@ export default function FacultyConferencePublication() {
                 onChange={handleInputChange}
                 name="Affiliating_Institute_at_the_time_of_publication"
                 value={
-                  formData.Affiliating_Institute_at_the_time_of_publication
+                  formData.Affiliating_Institute_at_the_time_of_publication ||
+                  "PICT"
                 }
               />
             </div>
@@ -257,6 +267,7 @@ export default function FacultyConferencePublication() {
               <Input
                 size="lg"
                 label="Link to paper"
+                type="file"
                 onChange={handleInputChange}
                 name="Link_to_paper"
                 value={formData.Link_to_paper}
@@ -264,30 +275,74 @@ export default function FacultyConferencePublication() {
             </div>
           </div>
           <div className="mb-4 flex flex-wrap -mx-4">
-            <div className="w-full md:w-1/2 px-4 mb-4">
+            <div className="w-full px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
                 Upload Paper
               </Typography>
               <Input
                 size="lg"
-                type="text"
+                type="file"
                 label="Upload Paper"
                 onChange={handleInputChange}
                 name="Upload_Paper"
                 value={formData.Upload_Paper}
               />
             </div>
-            <div className="w-full md:w-1/2 px-4 mb-4">
-              <Typography variant="h6" color="blue-gray" className="mb-3">
-                Financial support given by institute in INR
-              </Typography>
-              <Input
-                size="lg"
-                label="Financial support given by institute in INR"
-                onChange={handleInputChange}
-                name="Financial_support_given_by_institute_in_INR"
-                value={formData.Financial_support_given_by_institute_in_INR}
-              />
+          </div>
+
+          <div className="mb-4 flex flex-wrap -mx-4">
+            <div className="w-full">
+              <div className="px-4 mb-4 flex gap-40">
+                <Typography variant="h6" color="blue-gray" className="mb-3">
+                  Financial support from institute in INR
+                </Typography>
+                <div className="flex gap-3">
+                  <label className="mx-2">
+                    <input
+                      type="radio"
+                      name="financialSupport"
+                      value="yes"
+                      checked={isFinancialSupport}
+                      onChange={() => setIsFinancialSupport(true)}
+                    />
+                    Yes
+                  </label>
+                  <label>
+                    <input
+                      type="radio"
+                      name="financialSupport"
+                      value="no"
+                      checked={!isFinancialSupport}
+                      onChange={() => setIsFinancialSupport(false)}
+                    />
+                    No
+                  </label>
+                </div>
+              </div>
+              <div className="flex justify-between">
+                <div className="w-full md:w-1/2 px-4 mb-4">
+                  <Input
+                    size="lg"
+                    label="Amount in INR"
+                    name="Financial_support_given_by_institute_in_INR"
+                    type="number"
+                    value={formData.Financial_support_given_by_institute_in_INR}
+                    onChange={handleInputChange}
+                    disabled={!isFinancialSupport}
+                  />
+                </div>
+                <div className="w-full md:w-1/2 px-4 mb-4">
+                  <Input
+                    size="lg"
+                    label="Evidence Document"
+                    name="Evidence"
+                    type="file"
+                    value={formData.Evidence}
+                    onChange={handleInputChange}
+                    disabled={!isFinancialSupport}
+                  />
+                </div>
+              </div>
             </div>
           </div>
           <div className="mb-4 flex flex-wrap -mx-4">
@@ -347,15 +402,15 @@ export default function FacultyConferencePublication() {
             </div>
             <div className="w-full md:w-1/2 px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
-                Upload Achievement Document(Add drive link)
+                Upload Achievement Document
               </Typography>
               <Input
                 size="lg"
-                type="text"
+                type="file"
                 label="Upload Achievement Document"
                 onChange={handleInputChange}
-                name="Upload_Achievement_Document"
-                value={formData.Upload_Achievement_Document}
+                name="Upload_DOA"
+                value={formData.Upload_DOA}
               />
             </div>
           </div>

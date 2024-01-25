@@ -17,25 +17,31 @@ import { addRecordsPatent } from "./API_Routes";
 
 export default function PatentPublication() {
   const { currentUser } = useSelector((state) => state.user);
+  const [isFinancialSupport, setIsFinancialSupport] = useState(false);
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     T_ID: null,
     Username: currentUser?.Username,
+    Name: currentUser?.Name,
     Name_of_the_Department: "",
     Patent_Application_No: "",
     Status_of_Patent_Pub: "",
-    Inventor_s_Name: "",
+    Inventor_Name: "",
     Title_of_the_Patent: "",
-    Applicant_s_Name: "",
+    Co_Inventors_Name: "",
     Patent_Filed_Date: "",
-    Patent_Pub_Grant_date: "",
+    Patent_Granted_Date: "",
+    Patent_Pub_Date: "",
     Patent_Pub_Number: "",
-    Assignees_Name: "",
+    Institute_Affiliation: "",
     Financial_Support_By_PICT: "",
+    Evidence: "",
     URL_Web_Links: "",
     Type_of_the_Patent: "",
+    Approval_Letter: null,
     Country: "",
     Upload_Patent_Document: null,
+    Upload_Patent_Grant: null,
   });
 
   const handleChange = (e) => {
@@ -110,6 +116,7 @@ export default function PatentPublication() {
               <Input
                 size="lg"
                 name="Patent_Application_No"
+                type="text"
                 value={formData.Patent_Application_No}
                 onChange={handleChange}
                 label="Patent Application No."
@@ -117,7 +124,7 @@ export default function PatentPublication() {
             </div>
             <div className="w-full md:w-1/2 px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
-                Status of Patent (Published / Granted)
+                Status of Patent
               </Typography>
               <Select
                 name="Status_of_Patent_Pub"
@@ -132,6 +139,7 @@ export default function PatentPublication() {
               >
                 <Option value="Published">Published</Option>
                 <Option value="Granted">Granted</Option>
+                <Option value="Filed">Filed</Option>
               </Select>
             </div>
           </div>
@@ -142,8 +150,9 @@ export default function PatentPublication() {
               </Typography>
               <Input
                 size="lg"
-                name="Inventor_s_Name"
-                value={formData.Inventor_s_Name}
+                name="Inventor_Name"
+                type="text"
+                value={formData.Inventor_Name}
                 onChange={handleChange}
                 label="Inventor's Name"
               />
@@ -155,6 +164,7 @@ export default function PatentPublication() {
               <Input
                 size="lg"
                 name="Title_of_the_Patent"
+                type="text"
                 value={formData.Title_of_the_Patent}
                 onChange={handleChange}
                 label="Title of the Patent"
@@ -164,14 +174,14 @@ export default function PatentPublication() {
           <div className="mb-4 flex flex-wrap -mx-4">
             <div className="w-full md:w-1/2 px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
-                Applicants Name
+                Co-Inventors name
               </Typography>
               <Input
                 size="lg"
-                name="Applicant_s_Name"
-                value={formData.Applicant_s_Name}
+                name="Co_Inventors_Name"
+                value={formData.Co_Inventors_Name}
                 onChange={handleChange}
-                label="Applicant's Name"
+                label="Co-Inventors name"
               />
             </div>
             <div className="w-full md:w-1/2 px-4 mb-4">
@@ -191,17 +201,33 @@ export default function PatentPublication() {
           <div className="mb-4 flex flex-wrap -mx-4">
             <div className="w-full md:w-1/2 px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
-                Patent Published Date / Granted Date
+                Patent Published Date
               </Typography>
               <Input
                 size="lg"
-                name="Patent_Pub_Grant_date"
-                value={formData.Patent_Pub_Grant_date}
+                name="Patent_Pub_Date"
+                value={formData.Patent_Pub_Date}
                 onChange={handleChange}
                 type="date"
-                label="Patent Published Date / Granted Date (DD/MM/YYYY)"
+                label="Patent Published Date"
               />
             </div>
+            <div className="w-full md:w-1/2 px-4 mb-4">
+              <Typography variant="h6" color="blue-gray" className="mb-3">
+                Patent Granted Date
+              </Typography>
+              <Input
+                size="lg"
+                name="Patent_Granted_Date"
+                value={formData.Patent_Granted_Date}
+                onChange={handleChange}
+                type="date"
+                label="Patent Granted Date"
+              />
+            </div>
+          </div>
+
+          <div className="mb-4 flex flex-wrap -mx-4">
             <div className="w-full md:w-1/2 px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
                 Patent Publication Number / Patent Granted Number
@@ -209,35 +235,81 @@ export default function PatentPublication() {
               <Input
                 size="lg"
                 name="Patent_Pub_Number"
+                type="text"
                 value={formData.Patent_Pub_Number}
                 onChange={handleChange}
                 label="Patent Publication Number / Patent Granted Number"
               />
             </div>
+            <div className="w-full md:w-1/2 px-4 mb-4">
+              <Typography variant="h6" color="blue-gray" className="mb-3">
+                Institute Affiliation at the time of Application
+              </Typography>
+              <Input
+                size="lg"
+                type="text"
+                name="Institute_Affiliation"
+                value={formData.Institute_Affiliation || "PICT"}
+                onChange={handleChange}
+                label="Institute Affiliation"
+              />
+            </div>
           </div>
-          <div className="mb-4">
-            <Typography variant="h6" color="blue-gray" className="mb-3">
-              Assignees Name (Institute Affiliation at the time of Application)
-            </Typography>
-            <Input
-              size="lg"
-              name="Assignees_Name"
-              value={formData.Assignees_Name}
-              onChange={handleChange}
-              label="Assignee's Name"
-            />
-          </div>
-          <div className="mb-4">
-            <Typography variant="h6" color="blue-gray" className="mb-3">
-              Financial Support by PICT Amount in Rs
-            </Typography>
-            <Input
-              size="lg"
-              name="Financial_Support_By_PICT"
-              value={formData.Financial_Support_By_PICT}
-              onChange={handleChange}
-              label="Financial Support by PICT Amount in Rs"
-            />
+
+          <div className="mb-4 flex flex-wrap -mx-4">
+            <div className="w-full">
+              <div className="px-4 mb-4 flex gap-40">
+                <Typography variant="h6" color="blue-gray" className="mb-3">
+                  Financial support from institute in INR
+                </Typography>
+                <div className="flex gap-3">
+                  <label className="mx-2">
+                    <input
+                      type="radio"
+                      name="financialSupport"
+                      value="yes"
+                      checked={isFinancialSupport}
+                      onChange={() => setIsFinancialSupport(true)}
+                    />
+                    Yes
+                  </label>
+                  <label>
+                    <input
+                      type="radio"
+                      name="financialSupport"
+                      value="no"
+                      checked={!isFinancialSupport}
+                      onChange={() => setIsFinancialSupport(false)}
+                    />
+                    No
+                  </label>
+                </div>
+              </div>
+              <div className="flex justify-between">
+                <div className="w-full md:w-1/2 px-4 mb-4">
+                  <Input
+                    size="lg"
+                    label="Amount in INR"
+                    name="Financial_Support_By_PICT"
+                    type="number"
+                    value={formData.Financial_Support_By_PICT}
+                    onChange={handleChange}
+                    disabled={!isFinancialSupport}
+                  />
+                </div>
+                <div className="w-full md:w-1/2 px-4 mb-4">
+                  <Input
+                    size="lg"
+                    label="Evidence Document"
+                    name="Evidence"
+                    type="file"
+                    value={formData.Evidence}
+                    onChange={handleChange}
+                    disabled={!isFinancialSupport}
+                  />
+                </div>
+              </div>
+            </div>
           </div>
           <div className="mb-4 flex flex-wrap -mx-4">
             <div className="w-full md:w-1/2 px-4 mb-4">
@@ -268,26 +340,54 @@ export default function PatentPublication() {
           <div className="mb-4 flex flex-wrap -mx-4">
             <div className="w-full md:w-1/2 px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
+                Approval Letter for financial Support
+              </Typography>
+              <Input
+                size="lg"
+                name="Approval_Letter"
+                type="file"
+                value={formData.Approval_Letter}
+                onChange={handleChange}
+                label="Approval Letter for financial Support"
+              />
+            </div>
+            <div className="w-full md:w-1/2 px-4 mb-4">
+              <Typography variant="h6" color="blue-gray" className="mb-3">
                 Country
               </Typography>
               <Input
                 size="lg"
                 name="Country"
+                type="text"
                 value={formData.Country}
                 onChange={handleChange}
                 label="Country"
               />
             </div>
+          </div>
+          <div className="mb-4 flex flex-wrap -mx-4">
             <div className="w-full md:w-1/2 px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
-                Upload Patent Document(Add drive link)
+                Upload Patent Publication document
               </Typography>
               <Input
                 size="lg"
                 name="Upload_Patent_Document"
                 onChange={handleChange}
-                type="text"
+                type="file"
                 label="Upload Patent Document"
+              />
+            </div>
+            <div className="w-full md:w-1/2 px-4 mb-4">
+              <Typography variant="h6" color="blue-gray" className="mb-3">
+                Upload Patent grant document
+              </Typography>
+              <Input
+                size="lg"
+                name="Upload_Patent_Grant"
+                onChange={handleChange}
+                type="file"
+                label="Upload Patent grant document"
               />
             </div>
           </div>

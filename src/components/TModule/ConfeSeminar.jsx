@@ -21,20 +21,27 @@ export default function ConfeSeminar() {
   const [formData, setFormData] = useState({
     T_ID: null,
     Username: currentUser?.Username,
+    Name:currentUser?.Name,
     Department: "",
     Title: "",
-    University: "",
-    Activity_Event_FDP_STTP_Workshop: "",
+    Level: "",
+    Activity_Event: "",
     Sponsoring_Authority: "",
     No_of_Participants: "",
-    Start_Date_DD_MM_YYYY: "",
-    End_Date_DD_MM_YYYY: "",
+    Start_Date: "",
+    End_Date: "",
+    Mode: "",
     List_of_Resource_Persons: "",
     Name_of_the_Coordinators: "",
     Remarks: "",
     Sponsorship_Amount: "",
-    Number_of_participants_from_PICT: "",
-    Number_of_participants_from_outside_PICT: "",
+    Evidence: "",
+    NoOf_PICT_Participants: "",
+    List_of_Students: "",
+    NoOf_Non_PICT_Participants: "",
+    List_of_Students_Outside: "",
+    Sample_Certificate: null,
+    Report: null,
   });
 
   const handleOnChange = (e) => {
@@ -66,7 +73,7 @@ export default function ConfeSeminar() {
       <Card
         color="transparent"
         shadow={false}
-        className="border border-gray-300 w-85 mx-auto p-2 my-2 rounded-md"
+        className="border border-gray-300 w-85 mx-auto p-2 my-2 rounded-md overflow-x-hidden"
       >
         <Typography
           variant="h4"
@@ -101,15 +108,27 @@ export default function ConfeSeminar() {
             </div>
             <div className="w-full md:w-1/2 px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
-                Activity/Event/FDP/STTP/Workshop
+                Activity
               </Typography>
-              <Input
-                id="Activity_Event_FDP_STTP_Workshop"
+              <Select
+                id="Activity_Event"
+                value={formData.Activity_Event}
+                color="blueGray"
                 size="lg"
-                label="Activity_Event_FDP_STTP_Workshop"
-                value={formData.Activity_Event_FDP_STTP_Workshop}
-                onChange={handleOnChange}
-              />
+                label="Select an activity"
+                onChange={(value) =>
+                  handleOnChange({
+                    target: { id: "Activity_Event", value },
+                  })
+                }
+              >
+                <Option value="Conference">Conference</Option>
+                <Option value="Seminar">Seminar</Option>
+                <Option value="Webinar">Webinar</Option>
+                <Option value="STTP">STTP</Option>
+                <Option value="FDP">FDP</Option>
+                <Option value="FOP">FOP</Option>
+              </Select>
             </div>
           </div>
 
@@ -128,17 +147,17 @@ export default function ConfeSeminar() {
             </div>
             <div className="w-full md:w-1/2 px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
-                University
+                Level
               </Typography>
               <Select
-                id="University"
+                id="Level"
                 size="lg"
-                label="Select University"
-                value={formData.University}
+                label="Select Level"
+                value={formData.Level}
                 onChange={(value) =>
                   handleOnChange({
                     target: {
-                      id: "University",
+                      id: "Level",
                       value,
                     },
                   })
@@ -150,6 +169,7 @@ export default function ConfeSeminar() {
                 <Option value="State">State</Option>
                 <Option value="University">University</Option>
                 <Option value="Department">Department</Option>
+                <Option value="College">College</Option>
               </Select>
             </div>
           </div>
@@ -188,11 +208,11 @@ export default function ConfeSeminar() {
                 Start Date(DD-MM-YYYY)
               </Typography>
               <Input
-                id="Start_Date_DD_MM_YYYY"
+                id="Start_Date"
                 size="lg"
                 label="Start Date"
                 type="date"
-                value={formData.Start_Date_DD_MM_YYYY}
+                value={formData.Start_Date}
                 onChange={handleOnChange}
               />
             </div>
@@ -201,27 +221,43 @@ export default function ConfeSeminar() {
                 End Date(DD-MM-YYYY)
               </Typography>
               <Input
-                id="End_Date_DD_MM_YYYY"
+                id="End_Date"
                 size="lg"
                 label="End Date"
                 type="date"
-                value={formData.End_Date_DD_MM_YYYY}
+                value={formData.End_Date}
                 onChange={handleOnChange}
               />
             </div>
           </div>
-
-          <div className="mb-4">
-            <Typography variant="h6" color="blue-gray" className="mb-3">
-              List of Resource Persons
-            </Typography>
-            <Input
-              id="List_of_Resource_Persons"
-              size="lg"
-              label="List of Resource Persons"
-              value={formData.List_of_Resource_Persons}
-              onChange={handleOnChange}
-            />
+          <div className="mb-4 flex flex-wrap -mx-4">
+            <div className="w-full md:w-1/2 px-4 mb-4">
+              <Typography variant="h6" color="blue-gray" className="mb-3">
+                List of Resource Persons
+              </Typography>
+              <Input
+                id="List_of_Resource_Persons"
+                size="lg"
+                label="List of Resource Persons"
+                value={formData.List_of_Resource_Persons}
+                onChange={handleOnChange}
+              />
+            </div>
+            <div className="w-full md:w-1/2 px-4 mb-4">
+              <Typography variant="h6" color="blue-gray" className="mb-3">
+                Mode
+              </Typography>
+              <Select
+                id="Mode"
+                size="lg"
+                label="Select mode"
+                value={formData.Mode}
+                onChange={handleOnChange}
+              >
+                <Option value="Online">Online</Option>
+                <Option value="Offline">Offline</Option>
+              </Select>
+            </div>
           </div>
 
           <div className="mb-4 flex flex-wrap -mx-4">
@@ -266,31 +302,103 @@ export default function ConfeSeminar() {
             </div>
             <div className="w-full md:w-1/2 px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
-                Number of Participants from PICT
+                Evidence of sponsor amount
               </Typography>
               <Input
-                id="Number_of_participants_from_PICT"
+                id="Evidence"
                 size="lg"
-                label="Number of Participants from PICT"
-                type="number"
-                value={formData.Number_of_participants_from_PICT}
+                label="Evidence of sponsor amount"
+                value={formData.Evidence}
                 onChange={handleOnChange}
               />
             </div>
           </div>
 
-          <div className="mb-4">
-            <Typography variant="h6" color="blue-gray" className="mb-3">
-              Number of Participants from outside PICT
-            </Typography>
-            <Input
-              id="Number_of_participants_from_outside_PICT"
-              size="lg"
-              label="Number of Participants from outside PICT"
-              type="number"
-              value={formData.Number_of_participants_from_outside_PICT}
-              onChange={handleOnChange}
-            />
+          <div className="mb-4 flex flex-wrap -mx-4">
+            <div className="w-full md:w-1/2 px-4 mb-4">
+              <Typography variant="h6" color="blue-gray" className="mb-3">
+                Number of Participants from PICT
+              </Typography>
+              <Input
+                id="NoOf_PICT_Participants"
+                size="lg"
+                label="Number of Participants from PICT"
+                type="number"
+                value={formData.NoOf_PICT_Participants}
+                onChange={handleOnChange}
+              />
+            </div>
+            <div className="w-full md:w-1/2 px-4 mb-4">
+              <Typography variant="h6" color="blue-gray" className="mb-3">
+                List of no of students from PICT
+              </Typography>
+              <Input
+                id="List_of_Students"
+                size="lg"
+                type="file"
+                label=" List of no of students"
+                value={formData.List_of_Students}
+                onChange={handleOnChange}
+              />
+            </div>
+          </div>
+
+          <div className="mb-4 flex flex-wrap -mx-4">
+            <div className="w-full md:w-1/2 px-4 mb-4">
+              <Typography variant="h6" color="blue-gray" className="mb-3">
+                Number of Participants from outside PICT
+              </Typography>
+              <Input
+                id="NoOf_Non_PICT_Participants"
+                size="lg"
+                label="Number of Participants from outside PICT"
+                type="number"
+                value={formData.NoOf_Non_PICT_Participants}
+                onChange={handleOnChange}
+              />
+            </div>
+            <div className="w-full md:w-1/2 px-4 mb-4">
+              <Typography variant="h6" color="blue-gray" className="mb-3">
+                List of no of students
+              </Typography>
+              <Input
+                id="List_of_Students_Outside"
+                size="lg"
+                type="file"
+                label=" List of no of students"
+                value={formData.List_of_Students_Outside}
+                onChange={handleOnChange}
+              />
+            </div>
+          </div>
+
+          <div className="mb-4 flex flex-wrap -mx-4">
+            <div className="w-full md:w-1/2 px-4 mb-4">
+              <Typography variant="h6" color="blue-gray" className="mb-3">
+                Sample Certificate document
+              </Typography>
+              <Input
+                id="Sample_Certificate"
+                size="lg"
+                label="Sample Certificate document"
+                type="file"
+                value={formData.Sample_Certificate}
+                onChange={handleOnChange}
+              />
+            </div>
+            <div className="w-full md:w-1/2 px-4 mb-4">
+              <Typography variant="h6" color="blue-gray" className="mb-3">
+                List of no of students outside PICT
+              </Typography>
+              <Input
+                id="List_of_Students_Outside"
+                size="lg"
+                type="file"
+                label=" List of no of students"
+                value={formData.List_of_Students_Outside}
+                onChange={handleOnChange}
+              />
+            </div>
           </div>
 
           <Button className="mt-4" type="submit" fullWidth>
