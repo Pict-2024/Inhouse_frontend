@@ -134,8 +134,6 @@ const Report = () => {
     "http://localhost:5000/api/v1/general/allcolumns"
   );
   const [tableRows, setTableRows] = useState([]);
-  const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(5);
   const [selectedColumns, setSelectedColumns] = useState([]); // New state to track selected columns
 
   const currentYear = new Date().getFullYear();
@@ -144,14 +142,7 @@ const Report = () => {
     (_, index) => currentYear - index
   );
 
-  const handleChangePage = (event, newPage) => {
-    setPage(newPage);
-  };
-
-  const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(+event.target.value);
-    setPage(0);
-  };
+  
 
   //get all records
   const getAllRecords = async () => {
@@ -483,7 +474,7 @@ const Report = () => {
           <div className="w-full md:w-1/2 ">
             <Select
               size="lg"
-              label="Start Year"
+              // label="Start Year"
               color="light-gray"
               name="Start_Year"
               value={startYear}
@@ -498,7 +489,7 @@ const Report = () => {
           <div className="w-full md:w-1/2 ">
             <Select
               size="lg"
-              label="End Year"
+              // label="End Year"
               color="light-gray"
               name="End_Year"
               value={endYear}
@@ -521,7 +512,7 @@ const Report = () => {
           {/* <label className="block mb-2">{Enter ${Field}}</label> */}
           <Input
             type="text"
-            label={`Enter ${Field}`}
+            // label={`Enter ${Field}`}
             value={formFilters[Field] || ""}
             onChange={(e) => handleInputChange(Field, e.target.value)}
             className="w-full  py-2 border border-black rounded-md "
@@ -535,7 +526,7 @@ const Report = () => {
           <Input
             type="number"
             value={formFilters[Field] || ""}
-            label={`Enter ${Field}`}
+            // label={`Enter ${Field}`}
             onChange={(e) => handleInputChange(Field, e.target.value)}
             className="w-full py-2 border border-black rounded-md "
           />
@@ -548,7 +539,7 @@ const Report = () => {
           <Input
             type="date"
             value={formFilters["startDate"] || ""}
-            label={`Enter ${Field}`}
+            // label={`Enter ${Field}`}
             onChange={(e) => handleInputChange("startDate", e.target.value)}
             className="w-full mb-2  py-2 border border-black rounded-md "
           />
@@ -556,7 +547,7 @@ const Report = () => {
           <Input
             type="date"
             value={formFilters["endDate"] || ""}
-            label={`Enter ${Field}`}
+            // label={`Enter ${Field}`}
             onChange={(e) => handleInputChange("endDate", e.target.value)}
             className="w-full  py-2 border border-black rounded-md "
           />
@@ -592,29 +583,44 @@ const Report = () => {
             ))}
           </select>
 
-          <label className="block text-gray-700 text-sm font-bold mb-2">
-            Select Filters:
-          </label>
-
-          <div className="flex flex-col justify-end align-items-center m-2 p-4">
-            <div className="flex flex-row  gap-4 flex-wrap">
+          {selectedTable !== "" && 
+          <div>
+            <label className="block text-gray-700 text-md font-bold  m-2 px-4">Select Filters:</label>
+            
+            <div className="flex flex-col justify-end align-items-center m-2 p-4">
+              <div className="flex justify-start gap-4 flex-wrap  p-3 w-full">
               {renderInputFields()}
-            </div>
-            <Button
+              </div>
+              <Button
               variant="contained"
-              className="w-20"
+              className="w-25 p-3"
               onClick={handleSubmit}
               endIcon={<FilterAltIcon />}
-            >
+              >
               Filter
-            </Button>
-          </div>
+              </Button>
+            </div>
 
-          {/* New component for column selection */}
-          <ColumnSelection
+            {/* New component for column selection */}
+            <div className="border">
+            <ColumnSelection
             columns={columnNames}
             onSelectColumns={handleColumnSelection}
-          />
+            />
+            
+            <div className="flex gap-4 px-4">
+              <Button variant="contained" onClick={generatePDF}>
+              Generate PDF
+              </Button>
+              
+              <Button variant="contained" onClick={generateExcel}>
+              Generate Excel
+              </Button>
+            </div>
+            </div>
+
+          </div>
+      }
 
           <TableContainer id="table-container" component={Paper}>
             <Table>
@@ -628,7 +634,6 @@ const Report = () => {
               <TableBody>
                 {tableRows &&
                   tableRows
-                    .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                     .map((row, rowIndex) => (
                       <TableRow key={rowIndex}>
                         {selectedColumns.map((column) => (
@@ -644,25 +649,10 @@ const Report = () => {
             </Table>
           </TableContainer>
 
-          <TablePagination
-            rowsPerPageOptions={[10, 25, 50]}
-            component="div"
-            count={tableRows ? tableRows.length : 0}
-            rowsPerPage={rowsPerPage}
-            page={page}
-            onPageChange={handleChangePage}
-            onRowsPerPageChange={handleChangeRowsPerPage}
-          />
+          
 
           <TableContainer component={Paper}></TableContainer>
 
-          <Button variant="contained" onClick={generatePDF}>
-            Generate PDF
-          </Button>
-
-          <Button variant="contained" onClick={generateExcel}>
-            Generate Excel
-          </Button>
         </div>
       </Box>
     </>

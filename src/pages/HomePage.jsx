@@ -3,9 +3,11 @@ import "../App.css"
 // import { Carousel } from "@material-tailwind/react";
 export const HomePage = () => {
   return (
-    <div className="bg-cover bg-center custom-bg-image">
-    <NavList/>
-    
+    <div className="">
+      <NavList/>
+      <div className="w-full h-full">
+        <img src="../../src/assets/loginbg.jpg" alt="" className=""/>
+      </div>
     </div>
   );
 };

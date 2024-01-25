@@ -8,7 +8,6 @@ import {
 
 export const links = [
   {
-    title: "dashboard",
     links: [
       {
         name: "dashboard",
@@ -18,7 +17,6 @@ export const links = [
   },
 
   {
-    title: "Pages",
     links: [
       {
         name: "teachers",
