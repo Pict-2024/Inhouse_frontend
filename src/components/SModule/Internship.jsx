@@ -397,7 +397,7 @@ export default function Internship() {
                 id="Completion_Certificate"
                 size="lg"
                 label="Completion Certificate"
-                type="text"
+                type="file"
                 value={formData.Completion_Certificate}
                 onChange={handleOnChange}
               />
@@ -409,7 +409,7 @@ export default function Internship() {
               <Input
                 id="Internship_Report"
                 size="lg"
-                type="text"
+                type="file"
                 label="Internship Report"
                 value={formData.Internship_Report}
                 onChange={handleOnChange}

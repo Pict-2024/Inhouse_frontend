@@ -17,6 +17,9 @@ import { addRecordsResearchStud } from "./API_Routes";
 
 export default function Research() {
   const navigate = useNavigate();
+
+  const [isFinancialSupport, setIsFinancialSupport] = useState(false);
+
   const { currentUser } = useSelector((state) => state.user);
   const currentYear = new Date().getFullYear();
   const years = Array.from(
@@ -49,6 +52,7 @@ export default function Research() {
     Year: "",
     DOI: "",
     Financial_support_from_institute_in_INR: "",
+    Evidence: "",
     Article_Link: "",
     Upload_paper: null,
     Achievements: "",
@@ -431,30 +435,71 @@ export default function Research() {
             </div>
           </div>
 
+          <div className="w-full  mb-4">
+            <Typography variant="h6" color="blue-gray" className="mb-3">
+              DOI
+            </Typography>
+            <Input
+              size="lg"
+              label="DOI"
+              id="DOI"
+              value={formData.DOI}
+              onChange={handleOnChange}
+            />
+          </div>
           <div className="mb-4 flex flex-wrap -mx-4">
-            <div className="w-full md:w-1/2 px-4 mb-4">
-              <Typography variant="h6" color="blue-gray" className="mb-3">
-                DOI
-              </Typography>
-              <Input
-                size="lg"
-                label="DOI"
-                id="DOI"
-                value={formData.DOI}
-                onChange={handleOnChange}
-              />
-            </div>
-            <div className="w-full md:w-1/2 px-4 mb-4">
-              <Typography variant="h6" color="blue-gray" className="mb-3">
-                Financial support from institute in INR
-              </Typography>
-              <Input
-                size="lg"
-                label="Financial support from institute in INR"
-                id="Financial_support_from_institute_in_INR"
-                value={formData.Financial_support_from_institute_in_INR}
-                onChange={handleOnChange}
-              />
+            <div className="w-full">
+              <div className="px-4 mb-4 flex justify-start items-center gap-4">
+                <Typography variant="h6" color="blue-gray" className="">
+                  Financial support from institute in INR
+                </Typography>
+                <div className="flex gap-3">
+                  <label className="mx-2">
+                    <input
+                      type="radio"
+                      name="financialSupport"
+                      value="yes"
+                      checked={isFinancialSupport}
+                      onChange={() => setIsFinancialSupport(true)}
+                    />
+                    Yes
+                  </label>
+                  <label>
+                    <input
+                      type="radio"
+                      name="financialSupport"
+                      value="no"
+                      checked={!isFinancialSupport}
+                      onChange={() => setIsFinancialSupport(false)}
+                    />
+                    No
+                  </label>
+                </div>
+              </div>
+              <div className="flex justify-between  flex-col md:flex-row">
+                <div className="w-full md:w-1/2 px-4 mb-4">
+                  <Input
+                    size="lg"
+                    label="Amount in INR"
+                    name="Financial_support_from_institute_in_INR"
+                    type="number"
+                    value={formData.Financial_support_from_institute_in_INR}
+                    onChange={handleOnChange}
+                    disabled={!isFinancialSupport}
+                  />
+                </div>
+                <div className="w-full md:w-1/2 px-4 mb-4">
+                  <Input
+                    size="lg"
+                    label="Evidence Document"
+                    name="Evidence"
+                    type="file"
+                    value={formData.Evidence}
+                    onChange={handleOnChange}
+                    disabled={!isFinancialSupport}
+                  />
+                </div>
+              </div>
             </div>
           </div>
 
@@ -477,8 +522,8 @@ export default function Research() {
               </Typography>
               <Input
                 size="lg"
-                type="text"
-                label="Upload Paper"
+                type="file"
+                label=""
                 className="border-t-blue-gray-200 focus:border-t-gray-900"
                 id="Upload_Paper"
                 value={formData.Upload_Paper}
@@ -507,8 +552,8 @@ export default function Research() {
               </Typography>
               <Input
                 size="lg"
-                type="text"
-                label="Upload Document of Achievement "
+                type="file"
+                label=""
                 className="border-t-blue-gray-200 focus:border-t-gray-900"
                 id="Upload_Document_of_Achievement"
                 value={formData.Upload_Document_of_Achievement}
