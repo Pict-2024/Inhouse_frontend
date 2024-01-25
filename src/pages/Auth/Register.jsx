@@ -9,6 +9,7 @@ export default function Register() {
     gmail: "",
     password: "",
     newPassword: "",
+    pro_email: "",
   });
   // const [name, setName] = useState("");
   // const [gmail, setGmail] = useState("");
@@ -17,20 +18,24 @@ export default function Register() {
   const [verified, setVerified] = useState(false);
   const [error, setError] = useState(null);
   const [register, setRegister] = useState(false);
+  const [role, setRole] = useState(null);
 
   const handleVerify = async () => {
     try {
-      const response = await axios.post("http://localhost:5000/api/v1/auth/verify", {
-        // eslint-disable-next-line no-undef
-        // gmail,
-        // password
-        gmail: formData.gmail,
-        password: formData.password
-
-
-      });
-
-      if (response.data === "Email and Password verified") {
+      const response = await axios.post(
+        "http://localhost:5000/api/v1/auth/verify",
+        {
+          // eslint-disable-next-line no-undef
+          // gmail,
+          // password
+          gmail: formData.gmail,
+          password: formData.password,
+        }
+      );
+      // console.log("Response is = ", response)
+      if (response.data.success === true) {
+        setRole(response.data.role);
+        console.log("Role = ", role);
         setVerified(true);
         setError(null);
       } else {
@@ -60,9 +65,11 @@ export default function Register() {
         // Proceed with registration
         const registerResponse = await axios.post(
           "http://localhost:5000/api/v1/auth/register",
-          { name: formData.name, 
-            gmail: formData.gmail, 
-            password: formData.newPassword 
+          {
+            name: formData.name,
+            pro_email: formData.pro_email,
+            password: formData.newPassword,
+            gmail: formData.gmail,
           }
         );
         console.log(registerResponse?.data);
@@ -79,11 +86,18 @@ export default function Register() {
   };
 
   return (
-    <div className="flex justify-center items-center h-[100vh]">
+    <div
+      className="flex justify-center items-center h-[100vh]"
+      style={{
+        backgroundImage: `url("../../src/assets/loginbg.jpg")`,
+        backgroundSize: "cover",
+        opacity: "0.9",
+      }}
+    >
       <Card
         color="transparent"
         shadow={true}
-        className="border bg-white border-gray-300 w-1/3 h-3/5 p-6 rounded-md"
+        className="border bg-white border-gray-300 w-5/6 sm:w-1/2 md:w-1/2 lg:w-1/4 mb-20 h-150 p-6 rounded-md"
       >
         <Typography
           variant="h4"
@@ -95,14 +109,11 @@ export default function Register() {
 
         <form className="mt-2" onSubmit={handleSubmit}>
           <div className="mb-4">
-            <Typography variant="h6" color="blue-gray">
-              Name
-            </Typography>
             <Input
               size="lg"
               name="name"
               value={formData.name}
-              placeholder="Name"
+              label="Name"
               className="border-t-blue-gray-200 focus-border-t-gray-900"
               // onChange={(e) => setName(e.target.value)}
               onChange={handleInputChange}
@@ -110,29 +121,23 @@ export default function Register() {
           </div>
 
           <div className="mb-4">
-            <Typography variant="h6" color="blue-gray">
-              Gmail
-            </Typography>
             <Input
               size="lg"
               name="gmail"
               value={formData.gmail}
-              placeholder="gmail"
+              label="gmail"
               className="border-t-blue-gray-200 focus-border-t-gray-900"
               // onChange={(e) => setGmail(e.target.value)}
               onChange={handleInputChange}
             />
           </div>
           <div className="mb-4">
-            <Typography variant="h6" color="blue-gray">
-              Password
-            </Typography>
             <Input
               size="lg"
               name="password"
               value={formData.password}
               type="password"
-              placeholder="Password"
+              label="Password"
               className="border-t-blue-gray-200 focus-border-t-gray-900"
               // onChange={(e) => setPassword(e.target.value)}
               onChange={handleInputChange}
@@ -149,6 +154,20 @@ export default function Register() {
 
           {verified && (
             <>
+              {role === 2 && (
+                <div className="mb-4 mt-4">
+                  <Input
+                    size="lg"
+                    name="pro_email"
+                    value={formData.pro_email}
+                    label="Professional_Email"
+                    className="border-t-blue-gray-200 focus-border-t-gray-900"
+                    // onChange={(e) => setGmail(e.target.value)}
+                    onChange={handleInputChange}
+                  />
+                </div>
+              )}
+
               <div className="mb-4">
                 <Typography variant="h6" color="blue-gray">
                   New Password
@@ -158,7 +177,7 @@ export default function Register() {
                   name="newPassword"
                   value={formData.newPassword}
                   type="password"
-                  placeholder="New Password"
+                  label="New Password"
                   className="border-t-blue-gray-200 focus-border-t-gray-900"
                   // onChange={(e) => setNewPassword(e.target.value)}
                   onChange={handleInputChange}
@@ -172,12 +191,12 @@ export default function Register() {
         </form>
 
         <div className="text-center mt-2">
-            <span className="text-gray-700 mt-2 text-sm">
-              Have an account ?
-              <Link to={"/auth/login"} className="text-blue-500 mx-2">
-                login
-              </Link>
-            </span>
+          <span className="text-gray-700 mt-2 text-sm">
+            Have an account ?
+            <Link to={"/auth/login"} className="text-blue-500 mx-2">
+              login
+            </Link>
+          </span>
         </div>
 
         {verified && (

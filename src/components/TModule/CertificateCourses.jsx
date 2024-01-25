@@ -15,13 +15,13 @@ import "react-toastify/dist/ReactToastify.css";
 
 import { addRecordsCertificate } from "./API_Routes";
 
-
 export default function CertificateCourses() {
   const { currentUser } = useSelector((state) => state.user);
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     T_ID: null,
     UserName: currentUser?.UserName,
+    Name:currentUser?.Name,
     Department: "",
     Additional_Certificate_Programs: "",
     Year_of_offering: "",
@@ -31,13 +31,31 @@ export default function CertificateCourses() {
     End_Date: "",
     Students_enrolled: "",
     Students_Completing_the_Course: "",
-    Name_of_speakers: "",
+    Names_of_speakers: "",
     Speaker_details: "",
     Upload_Report: "",
     PSOs_Attained: "",
     Fund_Generated: "",
     Sponsorship_collaboration: "",
+    Sample_Certificate:null,
+    Report:null
   });
+
+  const generateAcademicYearOptions = () => {
+    const currentYear = new Date().getFullYear();
+    const Options = [];
+
+    for (let year = 2023; year <= currentYear; year++) {
+      const academicYearStart = `${year}-${year + 1}`;
+      Options.push(
+        <Option key={academicYearStart} value={academicYearStart}>
+          {academicYearStart}
+        </Option>
+      );
+    }
+
+    return Options;
+  };
 
   const handleOnChange = (e) => {
     const { id, value, type } = e.target;
@@ -52,7 +70,7 @@ export default function CertificateCourses() {
     e.preventDefault();
     await axios.post(addRecordsCertificate, formData);
 
-    toast.success('Record Added Successfully', {
+    toast.success("Record Added Successfully", {
       position: "top-right",
       autoClose: 1500,
       hideProgressBar: false,
@@ -71,7 +89,7 @@ export default function CertificateCourses() {
       <Card
         color="transparent"
         shadow={false}
-        className="border border-gray-300 w-85 mx-auto p-2 my-2 rounded-md"
+        className="border border-gray-300 w-85 mx-auto p-2 my-2 rounded-md overflow-x-hidden"
       >
         <Typography
           variant="h4"
@@ -121,16 +139,22 @@ export default function CertificateCourses() {
             </div>
             <div className="w-full md:w-1/2 px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
-                Year of Offering
+                Academic Year
               </Typography>
-              <Input
+              <Select
                 id="Year_of_offering"
                 size="lg"
-                label="Year of Offering"
+                label="Academic Year"
                 type="number"
                 value={formData.Year_of_offering}
-                onChange={handleOnChange}
-              />
+                onChange={(value) =>
+                  handleOnChange({
+                    target: { id: "Year_of_offering", value },
+                  })
+                }
+              >
+                {generateAcademicYearOptions()}
+              </Select>
             </div>
           </div>
 
@@ -150,7 +174,7 @@ export default function CertificateCourses() {
             </div>
             <div className="w-full md:w-1/2 px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
-                Duration of Course
+                Duration of Course (in Hours)
               </Typography>
               <Input
                 id="Duration_of_course"
@@ -225,10 +249,10 @@ export default function CertificateCourses() {
               Names of Speakers
             </Typography>
             <Input
-              id="Name_of_speakers"
+              id="Names_of_speakers"
               size="lg"
               label="Names of Speakers"
-              value={formData.Name_of_speakers}
+              value={formData.Names_of_speakers}
               onChange={handleOnChange}
             />
           </div>
@@ -295,6 +319,35 @@ export default function CertificateCourses() {
                 size="lg"
                 label="Sponsorship/Collaboration"
                 value={formData.Sponsorship_collaboration}
+                onChange={handleOnChange}
+              />
+            </div>
+          </div>
+
+          <div className="mb-4 flex flex-wrap -mx-4">
+            <div className="w-full md:w-1/2 px-4 mb-4">
+              <Typography variant="h6" color="blue-gray" className="mb-3">
+                Final Report
+              </Typography>
+              <Input
+                id="Report"
+                size="lg"
+                label="Final Report"
+                type="file"
+                value={formData.Report}
+                onChange={handleOnChange}
+              />
+            </div>
+            <div className="w-full md:w-1/2 px-4 mb-4">
+              <Typography variant="h6" color="blue-gray" className="mb-3">
+                Sample Certificate
+              </Typography>
+              <Input
+                id="Sample_Certificate"
+                size="lg"
+                type="file"
+                label="Sample Certificate"
+                value={formData.Sample_Certificate}
                 onChange={handleOnChange}
               />
             </div>

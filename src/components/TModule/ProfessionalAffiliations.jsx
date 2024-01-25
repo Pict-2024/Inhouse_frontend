@@ -1,5 +1,12 @@
 import { useState } from "react";
-import { Card, Input, Button, Typography } from "@material-tailwind/react";
+import {
+  Card,
+  Input,
+  Button,
+  Typography,
+  Select,
+  Option,
+} from "@material-tailwind/react";
 import { useSelector } from "react-redux";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
@@ -14,9 +21,12 @@ export default function ProfessionalAffiliations() {
   const [formData, setFormData] = useState({
     T_ID: null,
     Username: currentUser?.Username,
+    Name:currentUser?.Name,
     Professional_Affiliation: "",
     Membership_Number_ID: "",
+    Membership_Evidence: null,
     Finance_Support_By_PICT: "",
+    Evidence: null,
   });
 
   const handleChange = (e) => {
@@ -49,7 +59,7 @@ export default function ProfessionalAffiliations() {
       <Card
         color="transparent"
         shadow={false}
-        className="border border-gray-300 w-85 mx-auto p-2 my-2 rounded-md"
+        className="border border-gray-300 w-85 mx-auto p-2 my-2 rounded-md overflow-x-hidden"
       >
         <Typography
           variant="h4"
@@ -59,20 +69,33 @@ export default function ProfessionalAffiliations() {
           Professional Affiliations
         </Typography>
 
+        <div className="mb-4 flex flex-wrap -mx-4">
+          <div className="w-full px-4 mb-4">
+            <Typography variant="h6" color="blue-gray" className="mb-3">
+              Professional Affiliation
+            </Typography>
+            <Select
+              size="lg"
+              name="Professional_Affiliation"
+              value={formData.Professional_Affiliation}
+              label="Select Affiliation"
+              onChange={(value) =>
+                handleChange({
+                  target: { name: "Professional_Affiliation", value },
+                })
+              }
+            >
+              <Option value="IEEE">IEEE</Option>
+              <Option value="CSI">CSI</Option>
+              <Option value="ACM">ACM</Option>
+              <Option value="ITE">ITE</Option>
+              <Option value="ISTE">ISTE</Option>
+            </Select>
+          </div>
+        </div>
+
         <form className="mt-8 mb-2" onSubmit={handleSubmit}>
           <div className="mb-4 flex flex-wrap -mx-4">
-            <div className="w-full md:w-1/2 px-4 mb-4">
-              <Typography variant="h6" color="blue-gray" className="mb-3">
-                Professional Affiliation
-              </Typography>
-              <Input
-                size="lg"
-                name="Professional_Affiliation"
-                value={formData.Professional_Affiliation}
-                label="Professional Affiliation"
-                onChange={handleChange}
-              />
-            </div>
             <div className="w-full md:w-1/2 px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
                 Membership Number/ID
@@ -81,22 +104,53 @@ export default function ProfessionalAffiliations() {
                 size="lg"
                 name="Membership_Number_ID"
                 value={formData.Membership_Number_ID}
+                type="text"
                 label="Membership Number/ID"
                 onChange={handleChange}
               />
             </div>
+            <div className="w-full md:w-1/2 px-4 mb-4">
+              <Typography variant="h6" color="blue-gray" className="mb-3">
+                Membership Evidence document
+              </Typography>
+              <Input
+                size="lg"
+                name="Membership_Evidence"
+                type="file"
+                value={formData.Membership_Evidence}
+                label="Membership Evidence"
+                onChange={handleChange}
+              />
+            </div>
           </div>
-          <div className="mb-4">
-            <Typography variant="h6" color="blue-gray" className="mb-3">
-              Financial Support from PICT
-            </Typography>
-            <Input
-              size="lg"
-              name="Finance_Support_By_PICT"
-              value={formData.Finance_Support_By_PICT}
-              label="Financial Support from PICT"
-              onChange={handleChange}
-            />
+
+          <div className="mb-4 flex flex-wrap -mx-4">
+            <div className="w-full md:w-1/2 px-4 mb-4">
+              <Typography variant="h6" color="blue-gray" className="mb-3">
+                Financial Support from PICT
+              </Typography>
+              <Input
+                size="lg"
+                name="Finance_Support_By_PICT"
+                type="number"
+                value={formData.Finance_Support_By_PICT}
+                label="Financial Support from PICT"
+                onChange={handleChange}
+              />
+            </div>
+            <div className="w-full md:w-1/2 px-4 mb-4">
+              <Typography variant="h6" color="blue-gray" className="mb-3">
+                Document of Evidence
+              </Typography>
+              <Input
+                size="lg"
+                name="Evidence"
+                type="file"
+                value={formData.Evidence}
+                label="Document Of evidence"
+                onChange={handleChange}
+              />
+            </div>
           </div>
           <Button className="mt-4" fullWidth type="submit">
             Add Changes

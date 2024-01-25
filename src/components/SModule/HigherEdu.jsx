@@ -25,17 +25,22 @@ export default function HigherEdu() {
     Academic_Year: "",
     Student_Name: currentUser?.Name,
     Roll_No: "",
-    Division: "",
+    Div: "",
     Department: "",
     Mobile_No: "",
     Email_ID: currentUser?.Username,
     Parent_Mobile_No: "",
     Passing_Year: "",
-    Qualifying_Exam_Attempted: "",
     Upload_Score_Card_as_Evidence: null,
     Name_of_university_admitted_for_higher_studies: "",
     Name_of_enrolled_Branch_Specialization: "",
     Upload_ID_card_or_Proof_of_Admission: null,
+
+
+    
+    Qualifying_Exam_Attempted: "",
+    Other_Exam: "",
+    Upload_Proof_of_Qualifying_Exam: null,
   });
 
   const handleOnChange = (e) => {
@@ -45,6 +50,22 @@ export default function HigherEdu() {
       [id]: type === "file" ? files[0] : value,
     });
   };
+
+  const handleQualifyingExamChange = (value) => {
+    setFormData({
+      ...formData,
+      Qualifying_Exam_Attempted: value,
+      Other_Exam: "", // Reset Other_Exam when the main Qualifying_Exam_Attempted changes
+    });
+  };
+
+  const handleOtherExamChange = (e) => {
+    setFormData({
+      ...formData,
+      Other_Exam: e.target.value,
+    });
+  };
+
 
   //add new record
   const handleSubmit = async (e) => {
@@ -104,7 +125,7 @@ export default function HigherEdu() {
             </div>
             <div className="w-full md:w-1/2 px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
-                Academic Year
+                Academic Year of Higher Education
               </Typography>
               <Input
                 id="Academic_Year"
@@ -131,7 +152,7 @@ export default function HigherEdu() {
             </div>
             <div className="w-full md:w-1/2 px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
-                Roll No
+                Roll No (Final Year)
               </Typography>
               <Input
                 id="Roll_No"
@@ -158,16 +179,16 @@ export default function HigherEdu() {
             </div>
             <div className="w-full md:w-1/2 px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
-                Division
+                Div
               </Typography>
               <Select
-                id="Division"
+                id="Div"
                 label="Eg.11"
                 size="lg"
-                value={formData.Division}
+                value={formData.Div}
                 onChange={(value) =>
                   handleOnChange({
-                    target: { id: "Division", value },
+                    target: { id: "Div", value },
                   })
                 }
               >
@@ -207,71 +228,101 @@ export default function HigherEdu() {
             </div>
           </div>
 
-          <div className="mb-4 flex flex-wrap -mx-4">
-            <div className="w-full md:w-1/2 px-4 mb-4">
-              <Typography variant="h6" color="blue-gray" className="mb-3">
-                Qualifying Exam Attempted
-              </Typography>
+          <div className="mb-4 flex flex-wrap -mx-4 ">
+          <div className="w-full md:w-1/2 px-4 mb-4 flex flex-col gap-1">
+            <Typography variant="h6" color="blue-gray" className="mb-3">
+              Qualifying Exam Attempted
+            </Typography>
+            <Select
+              id="Qualifying_Exam_Attempted"
+              size="lg"
+              label="Qualifying Exam Attempted"
+              value={formData.Qualifying_Exam_Attempted}
+              onChange={(value) => handleQualifyingExamChange(value)}
+            >
+              <Option value="GRE">GRE</Option>
+              <Option value="GATE">GATE</Option>
+              <Option value="CAT">CAT</Option>
+              <Option value="CAT">TOEFL</Option>
+              <Option value="Other">Other</Option>
+            </Select>
+            <div>
+            {formData.Qualifying_Exam_Attempted === "Other" && (
               <Input
-                id="Qualifying_Exam_Attempted"
-                size="lg"
-                label="Qualifying Exam Attempted"
-                value={formData.Qualifying_Exam_Attempted}
-                onChange={handleOnChange}
+              id="Other_Exam"
+              size="lg"
+              label="Other Exam Name"
+              value={formData.Other_Exam}
+              onChange={handleOtherExamChange}
               />
-            </div>
-            <div className="w-full md:w-1/2 px-4 mb-4">
-              <Typography variant="h6" color="blue-gray" className="mb-3">
-                Name of university admitted for higher studies
-              </Typography>
-              <Input
-                id="Name_of_university_admitted_for_higher_studies"
-                size="lg"
-                label="Name of university admitted for higher studies"
-                value={formData.Name_of_university_admitted_for_higher_studies}
-                onChange={handleOnChange}
-              />
-            </div>
-          </div>
-
-          <div className="mb-4 flex flex-wrap -mx-4">
-            <div className="w-full px-4 mb-4">
-              <Typography variant="h6" color="blue-gray" className="mb-3">
-                Name of enrolled Branch Specialization in Months
-              </Typography>
-              <Input
-                id="Name_of_enrolled_Branch_Specialization"
-                size="lg"
-                label="Name of enrolled Branch Specialization"
-                value={formData.Name_of_enrolled_Branch_Specialization}
-                onChange={handleOnChange}
-              />
+              )}
             </div>
           </div>
+          <div className="w-full md:w-1/2 px-4 mb-4">
+            <Typography variant="h6" color="blue-gray" className="mb-3">
+              Upload Proof of Qualifying Exam
+            </Typography>
+            <Input
+              id="Upload_Proof_of_Qualifying_Exam"
+              size="lg"
+              type="file"
+              label=""
+              onChange={handleOnChange}
+            />
+          </div>
+        </div>
+        <div className="mb-4 flex flex-wrap -mx-4">
+          <div className="w-full md:w-1/2 px-4 mb-4">
+            <Typography variant="h6" color="blue-gray" className="mb-3">
+              Name of university admitted for higher studies
+            </Typography>
+            <Input
+              id="Name_of_university_admitted_for_higher_studies"
+              size="lg"
+              type="text"
+              label="Name of university admitted for higher studies"
+              value={formData.Name_of_university_admitted_for_higher_studies}
+              onChange={handleOnChange}
+            />
+          </div>
+
+          <div className="w-full md:w-1/2 px-4 mb-4">
+            <Typography variant="h6" color="blue-gray" className="mb-3">
+              Name of enrolled Branch Specialization in Months
+            </Typography>
+            <Input
+              id="Name_of_enrolled_Branch_Specialization"
+              size="lg"
+              label="Name of enrolled Branch Specialization"
+              value={formData.Name_of_enrolled_Branch_Specialization}
+              onChange={handleOnChange}
+            />
+          </div>
+        </div>
 
           <div className="mb-4 flex flex-wrap -mx-4">
             <div className="w-full md:w-1/2 px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
-                Upload ID card or Proof of Admission (drive link)
+                Upload ID card or Proof of Admission
               </Typography>
               <Input
                 id="Upload_ID_card_or_Proof_of_Admission"
                 size="lg"
-                label="Upload_ID_card_"
-                type="text"
+                label=""
+                type="file"
                 value={formData.Upload_ID_card_or_Proof_of_Admission}
                 onChange={handleOnChange}
               />
             </div>
             <div className="w-full md:w-1/2 px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
-                Upload Score Card as Evidence (drive link)
+                Upload Score Card as Evidence
               </Typography>
               <Input
                 id="Upload_Score_Card_as_Evidence"
                 size="lg"
-                type="text"
-                label="Upload Score Card as Evidence"
+                type="file"
+                label=""
                 value={formData.Upload_Score_Card_as_Evidence}
                 onChange={handleOnChange}
               />

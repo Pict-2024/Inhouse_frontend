@@ -28,10 +28,11 @@ export default function Grants() {
   const [formData, setFormData] = useState({
     T_ID: null,
     Username: currentUser?.Username,
+    Name:currentUser?.Name,
     Department: "",
     Principal_Investigator_Faculty_Name: "",
     Project_Title: "",
-    Faculty_Department: "",
+    Number_of_CO_PI: "",
     Names_of_CO_PI: "",
     Department_of_CO_PI: "",
     Project_Type_Government_Non_Government: "",
@@ -42,6 +43,7 @@ export default function Grants() {
     Start_Date: "",
     End_Date: "",
     Amount_deposited_to_PICT_account: "",
+    Evidence_Document: null,
     Transaction_date: "",
     Status_Ongoing_Completed: "",
     Duration: "",
@@ -119,6 +121,7 @@ export default function Grants() {
               </Typography>
               <Input
                 size="lg"
+                type="text"
                 name="Principal_Investigator_Faculty_Name"
                 value={formData.Principal_Investigator_Faculty_Name}
                 onChange={handleChange}
@@ -132,6 +135,7 @@ export default function Grants() {
               <Input
                 size="lg"
                 name="Project_Title"
+                type="text"
                 value={formData.Project_Title}
                 onChange={handleChange}
                 label="Project Title"
@@ -140,28 +144,17 @@ export default function Grants() {
           </div>
 
           <div className="mb-4 flex flex-wrap -mx-4">
-            <div className="w-full md:w-1/2 px-4 mb-4">
+            <div className="w-full  px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
-                Faculty Department
-              </Typography>
-              <Input
-                size="lg"
-                name="Faculty_Department"
-                value={formData.Faculty_Department}
-                onChange={handleChange}
-                label="Faculty Department"
-              />
-            </div>
-            <div className="w-full md:w-1/2 px-4 mb-4">
-              <Typography variant="h6" color="blue-gray" className="mb-3">
-                Name(s) of CO-PI
+                Names of CO-PI
               </Typography>
               <Input
                 size="lg"
                 name="Names_of_CO_PI"
+                type="text"
                 value={formData.Names_of_CO_PI}
                 onChange={handleChange}
-                label="Name(s) of CO-PI"
+                label="Name(s) of CO-PI for multiple values use comma separated names"
               />
             </div>
           </div>
@@ -174,6 +167,7 @@ export default function Grants() {
               <Input
                 size="lg"
                 name="Department_of_CO_PI"
+                type="text"
                 value={formData.Department_of_CO_PI}
                 onChange={handleChange}
                 label="Department of CO-PI"
@@ -181,7 +175,7 @@ export default function Grants() {
             </div>
             <div className="w-full md:w-1/2 px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
-                Project Type (Government/Non Government)
+                Project Type
               </Typography>
               <Select
                 size="lg"
@@ -212,6 +206,7 @@ export default function Grants() {
               <Input
                 size="lg"
                 name="Name_of_Funding_Agency"
+                type="text"
                 value={formData.Name_of_Funding_Agency}
                 onChange={handleChange}
                 label="Name of Funding Agency"
@@ -224,6 +219,7 @@ export default function Grants() {
               <Input
                 size="lg"
                 name="Name_of_the_Scheme"
+                type="text"
                 value={formData.Name_of_the_Scheme}
                 onChange={handleChange}
                 label="Name of the Scheme"
@@ -234,14 +230,15 @@ export default function Grants() {
           <div className="mb-4 flex flex-wrap -mx-4">
             <div className="w-full md:w-1/2 px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
-                Amount Sanctioned
+                Amount deposited to PICT account in current year
               </Typography>
               <Input
                 size="lg"
                 name="Amount_Sanctioned"
+                type="number"
                 value={formData.Amount_Sanctioned}
                 onChange={handleChange}
-                label="Amount Sanctioned"
+                label="Amount deposited to PICT account in current year"
               />
             </div>
             <div className="w-full md:w-1/2 px-4 mb-4">
@@ -301,25 +298,48 @@ export default function Grants() {
           </div>
 
           <div className="mb-4 flex flex-wrap -mx-4">
-            <div className="w-full md:w-1/2 px-4 mb-4">
+            <div className="w-full px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
-                Amount deposited to PICT account
+                Document evidence for amount sanctioned from funding agency (for
+                current A.Y.)
               </Typography>
               <Input
                 size="lg"
                 name="Amount_deposited_to_PICT_account"
+                type="file"
                 value={formData.Amount_deposited_to_PICT_account}
                 onChange={handleChange}
                 label="Amount deposited to PICT account"
               />
             </div>
-            <div className="w-full md:w-1/2 px-4 mb-4">
+          </div>
+
+          <div className="mb-4 flex flex-wrap -mx-4">
+            <div className="w-full px-4 mb-4">
+              <Typography variant="h6" color="blue-gray" className="mb-3">
+                Document evidence for amount deposited in PICT account (bank
+                statement)
+              </Typography>
+              <Input
+                size="lg"
+                name="Evidence_Document"
+                type="file"
+                value={formData.Evidence_Document}
+                onChange={handleChange}
+                label="Document evidence for amount deposited in PICT account"
+              />
+            </div>
+          </div>
+
+          <div className="mb-4 flex flex-wrap -mx-4">
+            <div className="w-full px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
                 Transaction date
               </Typography>
               <Input
                 size="lg"
                 name="Transaction_date"
+                label="Transaction date"
                 value={formData.Transaction_date}
                 onChange={handleChange}
                 type="date"
@@ -330,7 +350,7 @@ export default function Grants() {
           <div className="mb-4 flex flex-wrap -mx-4">
             <div className="w-full md:w-1/2 px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
-                Status (Ongoing/ Completed)
+                Status
               </Typography>
               <Select
                 size="lg"
@@ -350,11 +370,12 @@ export default function Grants() {
             </div>
             <div className="w-full md:w-1/2 px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
-                Duration
+                Duration in months
               </Typography>
               <Input
                 size="lg"
                 name="Duration"
+                type="text"
                 value={formData.Duration}
                 onChange={handleChange}
                 label="Duration"
@@ -370,6 +391,7 @@ export default function Grants() {
               <Input
                 size="lg"
                 name="Outcome"
+                type="text"
                 value={formData.Outcome}
                 onChange={handleChange}
                 label="Outcome"

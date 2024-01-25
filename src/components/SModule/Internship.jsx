@@ -54,6 +54,8 @@ export default function Internship() {
       ...formData,
       [id]: type === "file" ? files[0] : value,
     });
+
+    console.log("formdata = ", formData)
   };
 
   //add new record
@@ -61,6 +63,22 @@ export default function Internship() {
     console.log("handle submit api hit");
     console.log("Form data is : ", formData);
     e.preventDefault();
+
+    if (formData.PPO_Offer === "Yes" && formData.Proof_Of_Evidence) {
+      // Assuming you have an API route for uploading files
+      const proofOfEvidenceFormData = new FormData();
+      proofOfEvidenceFormData.append(
+        "file",
+        formData.Proof_Of_Evidence,
+        formData.Proof_Of_Evidence.name
+      );
+
+      // Call your API to upload the file
+      // await axios.post(uploadProofOfEvidenceAPI, proofOfEvidenceFormData);
+    }
+
+    console.log("Formdata is = ", formData)
+
     await axios.post(addRecordsInternship, formData);
 
     toast.success("Record Added Successfully", {
@@ -295,7 +313,7 @@ export default function Internship() {
             </div>
             <div className="w-full md:w-1/2 px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
-                Year of Study
+                Year of Engineering
               </Typography>
               <Select
                 id="Year"
@@ -379,7 +397,7 @@ export default function Internship() {
                 id="Completion_Certificate"
                 size="lg"
                 label="Completion Certificate"
-                type="text"
+                type="file"
                 value={formData.Completion_Certificate}
                 onChange={handleOnChange}
               />
@@ -391,7 +409,7 @@ export default function Internship() {
               <Input
                 id="Internship_Report"
                 size="lg"
-                type="text"
+                type="file"
                 label="Internship Report"
                 value={formData.Internship_Report}
                 onChange={handleOnChange}
@@ -400,18 +418,39 @@ export default function Internship() {
           </div>
 
           <div className="mb-4 flex flex-wrap -mx-4">
+          <div className="w-full md:w-1/2 px-4 mb-4">
+            <Typography variant="h6" color="blue-gray" className="mb-3">
+              PPO Offer
+            </Typography>
+            <Select
+              id="PPO_Offer"
+              size="lg"
+              label="PPO Offer"
+              value={formData.PPO_Offer}
+              onChange={(value) =>
+                handleOnChange({
+                  target: { id: "PPO_Offer", value },
+                })
+              }
+            >
+              <Option value="Yes">Yes</Option>
+              <Option value="No">No</Option>
+            </Select>
+          </div>
+          {formData.PPO_Offer === "Yes" && (
             <div className="w-full md:w-1/2 px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
-                PPO Offer
+                Proof of Evidence
               </Typography>
               <Input
-                id="PPO_Offer"
+                id="Proof_Of_Evidence"
                 size="lg"
-                label="PPO Offer"
-                value={formData.PPO_Offer}
+                label="Proof of Evidence"
+                type="file"
                 onChange={handleOnChange}
               />
             </div>
+          )}
             <div className="w-full md:w-1/2 px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
                 Remark

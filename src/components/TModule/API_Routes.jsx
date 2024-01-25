@@ -8,6 +8,7 @@ export const getOneRecordsResearch = (username) => {
 export const addRecordsResearch = `${BASE_URL}/teacher/research-pb/create-new`;
 export const deleteRecordsResearch = `${BASE_URL}/teacher/research-pb/remove`;
 export const updateRecordsResearch = `${BASE_URL}/teacher/research-pb/update`;
+export const uploadRecordsResearch = `${BASE_URL}/teacher/research-pb/upload-file`;
 
 // Book publication Routes
 export const getAllRecordsBook = `${BASE_URL}/teacher/book-pb/all`;
@@ -17,6 +18,7 @@ export const getOneRecordsBook = (username) => {
 export const addRecordsBook = `${BASE_URL}/teacher/book-pb/create-new`;
 export const deleteRecordsBook = `${BASE_URL}/teacher/book-pb/remove`;
 export const updateRecordsBook = `${BASE_URL}/teacher/book-pb/update`;
+export const uploadRecordsBook = `${BASE_URL}/teacher/book-pb/upload-file`;
 
 //FacultyConference publication Routes
 export const getAllRecordsFaculty = `${BASE_URL}/teacher/faculty-pb/all`;
@@ -26,6 +28,7 @@ export const getOneRecordsFaculty = (username) => {
 export const addRecordsFaculty = `${BASE_URL}/teacher/faculty-pb/create-new`;
 export const deleteRecordsFaculty = `${BASE_URL}/teacher/faculty-pb/remove`;
 export const updateRecordsFaculty = `${BASE_URL}/teacher/faculty-pb/update`;
+export const uploadRecordsFaculty = `${BASE_URL}/teacher/faculty-pb/upload-file`;
 
 // Grants Routes
 export const getAllRecordsGrants = `${BASE_URL}/teacher/grants/all`;
@@ -35,6 +38,7 @@ export const getOneRecordsGrants = (username) => {
 export const addRecordsGrants = `${BASE_URL}/teacher/grants/create-new`;
 export const deleteRecordsGrants = `${BASE_URL}/teacher/grants/remove`;
 export const updateRecordsGrants = `${BASE_URL}/teacher/grants/update`;
+export const uploadRecordsGrants = `${BASE_URL}/teacher/grants/upload-file`;
 
 //Consultancy Report
 export const getAllRecordsConsultancy = `${BASE_URL}/teacher/cons-rep/all`;
@@ -44,6 +48,7 @@ export const getOneRecordsConsultancy = (username) => {
 export const addRecordsConsultancy = `${BASE_URL}/teacher/cons-rep/create-new`;
 export const deleteRecordsConsultancy = `${BASE_URL}/teacher/cons-rep/remove`;
 export const updateRecordsConsultancy = `${BASE_URL}/teacher/cons-rep/update`;
+export const uploadRecordsConsultancy = `${BASE_URL}/teacher/cons-rep/upload-file`;
 
 // Patent Publication Routes
 export const getAllRecordsPatent = `${BASE_URL}/teacher/patent-pb/all`;
@@ -53,6 +58,7 @@ export const getOneRecordsPatent = (username) => {
 export const addRecordsPatent = `${BASE_URL}/teacher/patent-pb/create-new`;
 export const deleteRecordsPatent = `${BASE_URL}/teacher/patent-pb/remove`;
 export const updateRecordsPatent = `${BASE_URL}/teacher/patent-pb/update`;
+export const uploadRecordsPatent = `${BASE_URL}/teacher/patent-pb/upload-file`;
 
 // ConferenceSeminars Routes
 export const getAllRecordsConference = `${BASE_URL}/teacher/con-sem/all`;
@@ -62,6 +68,7 @@ export const getOneRecordsConference = (username) => {
 export const addRecordsConference = `${BASE_URL}/teacher/con-sem/create-new`;
 export const deleteRecordsConference = `${BASE_URL}/teacher/con-sem/remove`;
 export const updateRecordsConference = `${BASE_URL}/teacher/con-sem/update`;
+export const uploadRecordsConference = `${BASE_URL}/teacher/con-sem/upload-file`;
 
 // SSTP_FDP_Workshop Attended Routes
 export const getAllRecordsAttended = `${BASE_URL}/teacher/sf-ws/all`;
@@ -71,6 +78,7 @@ export const getOneRecordsAttended = (username) => {
 export const addRecordsAttended = `${BASE_URL}/teacher/sf-ws/create-new`;
 export const deleteRecordsAttended = `${BASE_URL}/teacher/sf-ws/remove`;
 export const updateRecordsAttended = `${BASE_URL}/teacher/sf-ws/update`;
+export const uploadRecordsAttended = `${BASE_URL}/teacher/sf-ws/upload-file`;
 
 //  Webinar_Guest_Lecture Routes
 export const getAllRecordsWebinar = `${BASE_URL}/teacher/web-guest/all`;
@@ -80,6 +88,7 @@ export const getOneRecordsWebinar = (username) => {
 export const addRecordsWebinar = `${BASE_URL}/teacher/web-guest/create-new`;
 export const deleteRecordsWebinar = `${BASE_URL}/teacher/web-guest/remove`;
 export const updateRecordsWebinar = `${BASE_URL}/teacher/web-guest/update`;
+export const uploadRecordsWebinar = `${BASE_URL}/teacher/web-guest/upload-file`;
 
 //Number_Of_Mous Routes
 export const getAllRecordsMous = `${BASE_URL}/teacher/number-of_mous/all`;
@@ -89,6 +98,7 @@ export const getOneRecordsMous = (username) => {
 export const addRecordsMous = `${BASE_URL}/teacher/number-of_mous/create-new`;
 export const deleteRecordsMous = `${BASE_URL}/teacher/number-of_mous/remove`;
 export const updateRecordsMous = `${BASE_URL}/teacher/number-of_mous/update`;
+export const uploadRecordsMous = `${BASE_URL}/teacher/number-of_mous/upload-file`;
 
 //  Certificate_Courses Routes
 export const getAllRecordsCertificate = `${BASE_URL}/teacher/cert-courses/all`;

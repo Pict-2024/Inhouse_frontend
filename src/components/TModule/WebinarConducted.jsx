@@ -21,18 +21,22 @@ export default function WebinarConducted() {
   const [formData, setFormData] = useState({
     T_ID: null,
     Username: currentUser?.Username,
+    Name:currentUser?.Name,
     Department: "",
     Activity_Event: "",
     Title: "",
     Speaker_Resource_Person: "",
     Resource_Person_Affiliation: "",
     No_of_Participants: "",
-    Remarks: "",
+    List_of_Students: "",
     Start_Date: "",
     End_Date: "",
     Name_of_Coordinators: "",
     Targeted_Audience: "",
+    Evidence:null,
+    Report:null,
     Duration_in_Hrs: "",
+    Remarks: "",
     Renumeration_Paid: "",
   });
 
@@ -67,7 +71,7 @@ export default function WebinarConducted() {
       <Card
         color="transparent"
         shadow={false}
-        className="border border-gray-300 w-85 mx-auto p-2 my-2 rounded-md"
+        className="border border-gray-300 w-85 mx-auto p-2 my-2 rounded-md overflow-x-hidden"
       >
         <Typography
           variant="h4"
@@ -109,13 +113,26 @@ export default function WebinarConducted() {
               <Typography variant="h6" color="blue-gray" className="mb-3">
                 Activity/Event
               </Typography>
-              <Input
+              <Select
                 size="lg"
-                label="Activity/Event"
                 name="Activity_Event"
-                onChange={handleInputChange}
+                label="Select Activity/Event"
                 value={formData.Activity_Event}
-              />
+                onChange={(value) =>
+                  handleInputChange({
+                    target: { name: "Activity_Event", value },
+                  })
+                }
+              >
+                <Option value="FDP">FDP</Option>
+                <Option value="Workshop">Workshop</Option>
+                <Option value="Guest Expert Lecture">
+                  Guest Expert Lecture
+                </Option>
+                <Option value="Webinar">Webinar</Option>
+                <Option value="Video Conference">Video Conference</Option>
+                <Option value="Others">Others</Option>
+              </Select>
             </div>
             <div className="w-full md:w-1/2 px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
@@ -174,14 +191,15 @@ export default function WebinarConducted() {
             </div>
             <div className="w-full md:w-1/2 px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
-                Remarks
+                List of Students
               </Typography>
               <Input
                 size="lg"
-                label="Remarks"
-                name="Remarks"
+                name="List_of_Students"
+                value={formData.List_of_Students}
+                type="file"
+                label="List of Students"
                 onChange={handleInputChange}
-                value={formData.Remarks}
               />
             </div>
           </div>
@@ -245,7 +263,7 @@ export default function WebinarConducted() {
               >
                 <Option value="Faculty">Faculty</Option>
                 <Option value="Student">Student</Option>
-                <Option value="Other">Other</Option>
+                <Option value="Both">Both</Option>
               </Select>
             </div>
           </div>
@@ -271,8 +289,52 @@ export default function WebinarConducted() {
                 size="lg"
                 label="Financial Details/Remuneration Paid"
                 name="Renumeration_Paid"
+                type="number"
                 onChange={handleInputChange}
                 value={formData.Renumeration_Paid}
+              />
+            </div>
+          </div>
+          <div className="mb-4 flex flex-wrap -mx-4">
+            <div className="w-full md:w-1/2 px-4 mb-4">
+              <Typography variant="h6" color="blue-gray" className="mb-3">
+                Evidence document
+              </Typography>
+              <Input
+                size="lg"
+                label="Evidence document"
+                name="Evidence"
+                type="file"
+                onChange={handleInputChange}
+                value={formData.Evidence}
+              />
+            </div>
+            <div className="w-full md:w-1/2 px-4 mb-4">
+              <Typography variant="h6" color="blue-gray" className="mb-3">
+                Report
+              </Typography>
+              <Input
+                size="lg"
+                label="Report"
+                name="Report"
+                type="file"
+                onChange={handleInputChange}
+                value={formData.Report}
+              />
+            </div>
+          </div>
+          <div className="mb-4 flex flex-wrap -mx-4">
+            <div className="w-full px-4 mb-4">
+              <Typography variant="h6" color="blue-gray" className="mb-3">
+                Remarks
+              </Typography>
+              <Input
+                size="lg"
+                label="Remarks"
+                name="Remarks"
+                type="text"
+                onChange={handleInputChange}
+                value={formData.Remarks}
               />
             </div>
           </div>

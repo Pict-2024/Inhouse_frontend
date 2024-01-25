@@ -21,9 +21,9 @@ export default function FacultyResource() {
   const [formData, setFormData] = useState({
     T_ID: null,
     Username: currentUser?.Username,
-    Department: "",
+    Name:currentUser?.Name,
+    Dept_Name: "",
     FDP_Workshop_Name: "",
-    eventName: "",
     Level: "",
     Topic: "",
     Organizer: "",
@@ -60,7 +60,7 @@ export default function FacultyResource() {
       <Card
         color="transparent"
         shadow={false}
-        className="border border-gray-300 w-85 mx-auto p-2 my-2 rounded-md"
+        className="border border-gray-300 w-85 mx-auto p-2 my-2 rounded-md overflow-x-hidden"
       >
         <Typography
           variant="h4"
@@ -78,12 +78,12 @@ export default function FacultyResource() {
               </Typography>
               <Select
                 size="lg"
-                name="Department"
+                name="Dept_Name"
                 label="Department"
-                value={formData.Department}
+                value={formData.Dept_Name}
                 onChange={(value) =>
                   handleChange({
-                    target: { name: "Department", value },
+                    target: { name: "Dept_Name", value },
                   })
                 }
               >
@@ -98,15 +98,28 @@ export default function FacultyResource() {
           <div className="mb-4 flex flex-wrap -mx-4">
             <div className="w-full md:w-1/2 px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
-                Name of FDP / Workshop / Other
+                Type of event
               </Typography>
-              <Input
+              <Select
                 size="lg"
-                name="FDP_Workshop_Name"
-                value={formData.FDP_Workshop_Name}
-                label="Name of FDP / Workshop / Other"
-                onChange={handleChange}
-              />
+                name="eventType"
+                value={formData.eventType}
+                label="Select Type"
+                onChange={(value) =>
+                  handleChange({
+                    target: { name: "eventType", value },
+                  })
+                }
+              >
+                <Option value="FDP">FDP</Option>
+                <Option value="Workshop">Workshop</Option>
+                <Option value="Guest Expert Lecture">
+                  Guest Expert Lecture
+                </Option>
+                <Option value="Webinar">Webinar</Option>
+                <Option value="Video Conference">Video Conference</Option>
+                <Option value="Others">Others</Option>
+              </Select>
             </div>
             <div className="w-full md:w-1/2 px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
@@ -131,7 +144,8 @@ export default function FacultyResource() {
                 <Option value="National">National</Option>
                 <Option value="State">State</Option>
                 <Option value="University">University</Option>
-                <Option value="Department">College</Option>
+                <Option value="College">College</Option>
+                <Option value="Department">Department</Option>
               </Select>
             </div>
           </div>

@@ -17,6 +17,8 @@ import { addRecordsTechnicalStud } from "./API_Routes";
 
 export default function TechEvents() {
   const navigate = useNavigate();
+  const [isFinancialSupport, setIsFinancialSupport] = useState(false);
+
   const { currentUser } = useSelector((state) => state.user);
   const [formData, setFormData] = useState({
     S_ID: null,
@@ -40,7 +42,8 @@ export default function TechEvents() {
     Place: "",
     Start_Date: "",
     End_Date: "",
-    Financial_Support_given_by_Institute_in_INR: "",
+    Financial_support_amount_INR: "",
+    Evidence: "",
     Award: "",
     Award_Prize_Money: "",
     Remarks: "",
@@ -279,7 +282,7 @@ export default function TechEvents() {
           </div>
 
           <div className="mb-4 flex flex-wrap -mx-4">
-            <div className="w-full md:w-1/2 px-4 mb-4">
+            <div className="w-full md:w-1/2 lg:w-1/3 px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
                 Level
               </Typography>
@@ -300,22 +303,8 @@ export default function TechEvents() {
                 <Option value="State">Others</Option>
               </Select>
             </div>
-            <div className="w-full md:w-1/2 px-4 mb-4">
-              <Typography variant="h6" color="blue-gray" className="mb-3">
-                Place
-              </Typography>
-              <Input
-                id="Place"
-                size="lg"
-                label="Place"
-                value={formData.Place}
-                onChange={handleOnChange}
-              />
-            </div>
-          </div>
-
-          <div className="mb-4 flex flex-wrap -mx-4">
-            <div className="w-full px-4 mb-4">
+            
+            <div className="w-full md:w-1/2 lg:w-1/3 px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
                 Mode
               </Typography>
@@ -334,6 +323,23 @@ export default function TechEvents() {
                 <Option value="Offline">Offline</Option>
               </Select>
             </div>
+            
+            <div className="w-full md:w-1/2 lg:w-1/3 px-4 mb-4">
+            <Typography variant="h6" color="blue-gray" className="mb-3">
+              Place
+            </Typography>
+            <Input
+              id="Place"
+              size="lg"
+              label="Place"
+              value={formData.Place}
+              onChange={handleOnChange}
+            />
+          </div>
+          </div>
+
+          <div className="mb-4 flex flex-wrap -mx-4">
+                
           </div>
           <div className="mb-4 flex flex-wrap -mx-4">
             <div className="w-full md:w-1/2 px-4 mb-4">
@@ -365,18 +371,61 @@ export default function TechEvents() {
           </div>
 
           <div className="mb-4 flex flex-wrap -mx-4">
-            <div className="w-full md:w-1/2 px-4 mb-4">
+          <div className="w-full">
+            <div className="px-4 mb-4 flex justify-start items-center gap-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
-                Financial Support given by Institute_in_INR
+                Financial support from institute in INR
               </Typography>
-              <Input
-                id="Financial_Support_given_by_Institute_in_INR"
-                size="lg"
-                label="Financial Support given by Institute_in_INR"
-                value={formData.Financial_Support_given_by_Institute_in_INR}
-                onChange={handleOnChange}
-              />
+              <div className="flex gap-3">
+                <label className="mx-2">
+                  <input
+                    type="radio"
+                    name="financialSupport"
+                    value="yes"
+                    checked={isFinancialSupport}
+                    onChange={() => setIsFinancialSupport(true)}
+                  />
+                  Yes
+                </label>
+                <label>
+                  <input
+                    type="radio"
+                    name="financialSupport"
+                    value="no"
+                    checked={!isFinancialSupport}
+                    onChange={() => setIsFinancialSupport(false)}
+                  />
+                  No
+                </label>
+              </div>
             </div>
+            <div className="flex justify-between  flex-col md:flex-row">
+              <div className="w-full md:w-1/2 px-4 mb-4">
+                <Input
+                  size="lg"
+                  label="Amount in INR"
+                  name="Financial_support_amount_INR"
+                  type="number"
+                  value={formData.Financial_support_amount_INR}
+                  onChange={handleOnChange}
+                  disabled={!isFinancialSupport}
+                />
+              </div>
+              <div className="w-full md:w-1/2 px-4 mb-4">
+                <Input
+                  size="lg"
+                  label="Evidence Document"
+                  name="Evidence"
+                  type="file"
+                  value={formData.Evidence}
+                  onChange={handleOnChange}
+                  disabled={!isFinancialSupport}
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+          <div className="mb-4 flex flex-wrap -mx-4">
             <div className="w-full md:w-1/2 px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
                 Award
@@ -389,21 +438,7 @@ export default function TechEvents() {
                 onChange={handleOnChange}
               />
             </div>
-          </div>
-
-          <div className="mb-4 flex flex-wrap -mx-4">
-            <div className="w-full md:w-1/2 px-4 mb-4">
-              <Typography variant="h6" color="blue-gray" className="mb-3">
-                Remarks
-              </Typography>
-              <Input
-                id="Remarks"
-                size="lg"
-                label="Remarks"
-                value={formData.Remarks}
-                onChange={handleOnChange}
-              />
-            </div>
+            
             <div className="w-full md:w-1/2 px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
                 Award_Prize_Money
@@ -418,16 +453,17 @@ export default function TechEvents() {
             </div>
           </div>
 
+
           <div className="mb-4 flex flex-wrap -mx-4">
             <div className="w-full md:w-1/2 px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
-                Completion Certificate (drive link)
+                Completion Certificate
               </Typography>
               <Input
                 id="Certificate_Link"
                 size="lg"
-                label="Completion Certificate"
-                type="text"
+                label=""
+                type="file"
                 value={formData.Certificate_Link}
                 onChange={handleOnChange}
               />
@@ -441,6 +477,22 @@ export default function TechEvents() {
                 size="lg"
                 label="Geo Tag Photos"
                 value={formData.Geo_Tag_Photos}
+                onChange={handleOnChange}
+              />
+            </div>
+          </div>
+
+          
+          <div className="mb-4 flex flex-wrap -mx-4">
+            <div className="w-full  px-4 mb-4">
+              <Typography variant="h6" color="blue-gray" className="mb-3">
+                Remarks
+              </Typography>
+              <Input
+                id="Remarks"
+                size="lg"
+                label="Remarks"
+                value={formData.Remarks}
                 onChange={handleOnChange}
               />
             </div>

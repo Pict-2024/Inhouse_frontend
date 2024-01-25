@@ -28,6 +28,7 @@ export default function FacultyExchange() {
   const [formData, setFormData] = useState({
     T_ID: null,
     Username: currentUser?.Username,
+    Name:currentUser?.Name,
     MoU_Collaboration_linkage_Name: "",
     Name_of_the_collaboration: "",
     Faculty_coordinator: "",
@@ -166,7 +167,7 @@ export default function FacultyExchange() {
             </div>
             <div className="w-full md:w-1/2 px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
-                Duration of MoU / Collaboration / Linkage
+                Duration of MoU / Collaboration / Linkage in hours
               </Typography>
               <Input
                 size="lg"
@@ -219,12 +220,12 @@ export default function FacultyExchange() {
             </div>
             <div className="w-full md:w-1/2 px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
-                Report (Add drive link)
+                Report
               </Typography>
               <Input
                 size="lg"
                 name="Upload_Report"
-                type="text"
+                type="file"
                 onChange={handleChange}
               />
             </div>

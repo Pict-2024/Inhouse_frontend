@@ -16,6 +16,9 @@ import "react-toastify/dist/ReactToastify.css";
 import { addRecordsCertificateStud } from "./API_Routes";
 
 export default function Certificate() {
+
+  const [isFinancialSupport, setIsFinancialSupport] = useState(false);
+  
   const navigate = useNavigate();
   const { currentUser } = useSelector((state) => state.user);
   const [formData, setFormData] = useState({
@@ -33,7 +36,8 @@ export default function Certificate() {
     Duration: "",
     Start_Date: "",
     End_Date: "",
-    Financial_Support_given_by_Institute_in_INR: "",
+    Evidence: "",
+    Financial_support_given_by_institute_in_INR: "",
     Award: "",
     Award_Prize_Money: "",
     Certificates: null,
@@ -259,18 +263,62 @@ export default function Certificate() {
           </div>
 
           <div className="mb-4 flex flex-wrap -mx-4">
-            <div className="w-full md:w-1/2 px-4 mb-4">
+          <div className="w-full">
+            <div className="px-4 mb-4 flex justify-start items-center gap-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
-                Financial Support given by Institute_in_INR
+                Financial support from institute in INR
               </Typography>
-              <Input
-                id="Financial_Support_given_by_Institute_in_INR"
-                size="lg"
-                label="Financial Support given by Institute_in_INR"
-                value={formData.Financial_Support_given_by_Institute_in_INR}
-                onChange={handleOnChange}
-              />
+              <div className="flex gap-3">
+                <label className="mx-2">
+                  <input
+                    type="radio"
+                    name="financialSupport"
+                    value="yes"
+                    checked={isFinancialSupport}
+                    onChange={() => setIsFinancialSupport(true)}
+                  />
+                  Yes
+                </label>
+                <label>
+                  <input
+                    type="radio"
+                    name="financialSupport"
+                    value="no"
+                    checked={!isFinancialSupport}
+                    onChange={() => setIsFinancialSupport(false)}
+                  />
+                  No
+                </label>
+              </div>
             </div>
+            <div className="flex justify-between  flex-col md:flex-row">
+              <div className="w-full md:w-1/2 px-4 mb-4">
+                <Input
+                  size="lg"
+                  label="Amount in INR"
+                  name="Financial_support_given_by_institute_in_INR"
+                  type="number"
+                  value={formData.Financial_support_given_by_institute_in_INR}
+                  onChange={handleOnChange}
+                  disabled={!isFinancialSupport}
+                />
+              </div>
+              <div className="w-full md:w-1/2 px-4 mb-4">
+                <Input
+                  size="lg"
+                  label="Evidence Document"
+                  name="Evidence"
+                  type="file"
+                  value={formData.Evidence}
+                  onChange={handleOnChange}
+                  disabled={!isFinancialSupport}
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+
+          <div className="mb-4 flex flex-wrap -mx-4">
             <div className="w-full md:w-1/2 px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
                 Award
@@ -280,22 +328,6 @@ export default function Certificate() {
                 size="lg"
                 label="Award"
                 value={formData.Award}
-                onChange={handleOnChange}
-              />
-            </div>
-          </div>
-
-          <div className="mb-4 flex flex-wrap -mx-4">
-            <div className="w-full md:w-1/2 px-4 mb-4">
-              <Typography variant="h6" color="blue-gray" className="mb-3">
-                Completion Certificate (drive link)
-              </Typography>
-              <Input
-                id="Certificates"
-                size="lg"
-                label="Completion Certificate"
-                type="text"
-                value={formData.Certificates}
                 onChange={handleOnChange}
               />
             </div>
@@ -312,6 +344,21 @@ export default function Certificate() {
               />
             </div>
           </div>
+
+          
+          <div className="w-full md:w-1/2 mb-4">
+          <Typography variant="h6" color="blue-gray" className="mb-3">
+            Completion Certificate
+          </Typography>
+          <Input
+            id="Certificates"
+            size="lg"
+            label=""
+            type="file"
+            value={formData.Certificates}
+            onChange={handleOnChange}
+          />
+        </div>
 
           <Button type="submit" className="mt-4" fullWidth>
             Add Changes

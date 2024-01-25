@@ -54,9 +54,9 @@ export default function Login() {
         dispatch(signInUserFailure(response.data));
         return;
       }
-      dispatch(signInUserSuccess(response.data.data));
+      dispatch(signInUserSuccess(response.data.data.user));
 
-      const currentUser = response.data.data;
+      const currentUser = response.data.data.user;
 
       var pathLink = "";
 
@@ -88,11 +88,18 @@ export default function Login() {
   };
 
   return (
-    <div className="flex justify-center items-center h-[100vh]">
+    <div
+      className="flex justify-center items-center h-[100vh] "
+      style={{
+        backgroundImage: `url('../../src/assets/loginbg.jpg')`,
+        backgroundSize: "cover",
+        opacity: "0.9",
+      }}
+    >
       <Card
         color="transparent"
         shadow={true}
-        className="border bg-white border-gray-300 w-1/3 h-1/2 p-6 rounded-md flex flex-col justify-between"
+        className="border bg-white border-gray-300 w-1/4 mb-12 h-1/2 p-6 rounded-md flex flex-col justify-between"
       >
         <Typography
           variant="h4"
@@ -109,9 +116,9 @@ export default function Login() {
           <div className="mb-4 flex justify-between items-center">
             <div className="w-full">
               <div className="flex justify-between">
-                {/**<Typography variant="h6" color="blue-gray">
+                {/* <Typography variant="h6" color="blue-gray">
                   Gmail
-  </Typography> **/}
+                </Typography> */}
               </div>
               <Input
                 size="lg"
@@ -124,9 +131,9 @@ export default function Login() {
           </div>
 
           <div className="mb-4">
-            {/**<Typography variant="h6" color="blue-gray">
+            {/* <Typography variant="h6" color="blue-gray">
               Password
-</Typography> **/}
+            </Typography> */}
             <Input
               size="lg"
               name="password"
