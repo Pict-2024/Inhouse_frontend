@@ -21,18 +21,21 @@ export default function ExtensionActivity() {
   const [formData, setFormData] = useState({
     T_ID: null,
     Username: currentUser?.Username,
+    Name:currentUser?.Name,
     Dept_Name: "",
     Title: "",
+    Title_of_extension_activity: "",
     Start_Date: "",
     End_Date: "",
-    Title_of_extension_activity: "",
     Scheme_Name: "",
     Role: "",
     Purpose: "",
     NoOf_Student_Participants: "",
+    List_of_Students: null,
     NoOf_Faculty_Participants: "",
     PSOs_Attained: "",
     Place: "",
+    Report: null,
   });
 
   const handleChange = (e) => {
@@ -65,7 +68,7 @@ export default function ExtensionActivity() {
       <Card
         color="transparent"
         shadow={false}
-        className="border border-gray-300 w-85 mx-auto p-2 my-2 rounded-md"
+        className="border border-gray-300 w-85 mx-auto p-2 my-2 rounded-md overflow-x-hidden"
       >
         <Typography
           variant="h4"
@@ -108,11 +111,28 @@ export default function ExtensionActivity() {
               <Input
                 size="lg"
                 name="Title"
+                type="text"
                 value={formData.Title}
                 label="Title"
                 onChange={handleChange}
               />
             </div>
+            <div className="w-full md:w-1/2 px-4 mb-4">
+              <Typography variant="h6" color="blue-gray" className="mb-3">
+                Title of extension activity
+              </Typography>
+              <Input
+                size="lg"
+                name="Title_of_extension_activity"
+                type="text"
+                value={formData.Title_of_extension_activity}
+                label="Title of extension activity"
+                onChange={handleChange}
+              />
+            </div>
+          </div>
+
+          <div className="mb-4 flex flex-wrap -mx-4">
             <div className="w-full md:w-1/2 px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
                 Start Date
@@ -126,9 +146,6 @@ export default function ExtensionActivity() {
                 onChange={handleChange}
               />
             </div>
-          </div>
-
-          <div className="mb-4 flex flex-wrap -mx-4">
             <div className="w-full md:w-1/2 px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
                 End Date
@@ -142,18 +159,6 @@ export default function ExtensionActivity() {
                 onChange={handleChange}
               />
             </div>
-            <div className="w-full md:w-1/2 px-4 mb-4">
-              <Typography variant="h6" color="blue-gray" className="mb-3">
-                Title of extension activity
-              </Typography>
-              <Input
-                size="lg"
-                name="Title_of_extension_activity"
-                value={formData.Title_of_extension_activity}
-                label="Title of extension activity"
-                onChange={handleChange}
-              />
-            </div>
           </div>
 
           <div className="mb-4 flex flex-wrap -mx-4">
@@ -164,6 +169,7 @@ export default function ExtensionActivity() {
               <Input
                 size="lg"
                 name="Scheme_Name"
+                type="text"
                 value={formData.Scheme_Name}
                 label="Name of the scheme"
                 onChange={handleChange}
@@ -184,7 +190,7 @@ export default function ExtensionActivity() {
           </div>
 
           <div className="mb-4 flex flex-wrap -mx-4">
-            <div className="w-full md:w-1/2 px-4 mb-4">
+            <div className="w-full  px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
                 Purpose of activity
               </Typography>
@@ -196,6 +202,9 @@ export default function ExtensionActivity() {
                 onChange={handleChange}
               />
             </div>
+          </div>
+
+          <div className="mb-4 flex flex-wrap -mx-4">
             <div className="w-full md:w-1/2 px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
                 No. of student participant
@@ -206,6 +215,19 @@ export default function ExtensionActivity() {
                 value={formData.NoOf_Student_Participants}
                 label="No. of student participant"
                 type="number"
+                onChange={handleChange}
+              />
+            </div>
+            <div className="w-full md:w-1/2 px-4 mb-4">
+              <Typography variant="h6" color="blue-gray" className="mb-3">
+                List of Students
+              </Typography>
+              <Input
+                size="lg"
+                name="List_of_Students"
+                value={formData.List_of_Students}
+                type="file"
+                label="List of Students"
                 onChange={handleChange}
               />
             </div>
@@ -238,17 +260,32 @@ export default function ExtensionActivity() {
               />
             </div>
           </div>
-          <div className="mb-4">
-            <Typography variant="h6" color="blue-gray" className="mb-3">
-              Place of the extension activity
-            </Typography>
-            <Input
-              size="lg"
-              name="Place"
-              value={formData.Place}
-              label="Place of the extension activity"
-              onChange={handleChange}
-            />
+          <div className="mb-4 flex flex-wrap -mx-4">
+            <div className="w-full md:w-1/2 px-4 mb-4">
+              <Typography variant="h6" color="blue-gray" className="mb-3">
+                Place of the extension activity
+              </Typography>
+              <Input
+                size="lg"
+                name="Place"
+                value={formData.Place}
+                label="Place of the extension activity"
+                onChange={handleChange}
+              />
+            </div>
+            <div className="w-full md:w-1/2 px-4 mb-4">
+              <Typography variant="h6" color="blue-gray" className="mb-3">
+                Final Report
+              </Typography>
+              <Input
+                size="lg"
+                name="Report"
+                value={formData.Report}
+                type="file"
+                label="Report"
+                onChange={handleChange}
+              />
+            </div>
           </div>
           <Button type="submit" className="mt-4" fullWidth>
             Add Changes

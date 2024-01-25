@@ -68,26 +68,24 @@ const Report = () => {
     "faculty_achievements": "faculty-achievement",
     "industrial_fields_tour": "visit-tours",
     "contribution_to_bos": "contribution-bos",
-    "student_internship_details": "",
+    "student_internship_details": "internship-details",
     "research_publication": "research-pb",
-    "student_research_publication": "",
+    "student_research_publication": "research-pb",
     "book_publication": "book-pb",
-    "student_conference_publication": "",
+    "student_conference_publication": "conference-pb",
     "faculty_conference_publication": "faculty-pb",
-    "student_certificate_course": "",
+    "student_certificate_course": "certificate-courses",
     "grants": "grants",
-    "student_sports_data": "",
+    "student_sports_data": "sports-data",
     "consultancy_report": "cons-rep",
-    "student_event_participated": "",
+    "student_event_participated": "event-participation",
     "patent_publication": "patent-pb",
-    "student_event_organized": "",
+    "student_event_organized": "event-org",
     "conference_seminar_workshops": "con-sem",
-    "student_technical_events": "",
+    "student_technical_events": "tech-events",
     "sttp_fdp_conference_attended": "sf-ws",
-    "student_higher_education": "",
+    "student_higher_education": "higher-edu",
     "webinar_guest_lectures": "web-guest",
-    "login_details": "",
-    "register": "",
   };
 
   const tableRoutesMapping = (table) => {
@@ -248,12 +246,12 @@ const Report = () => {
       }
     }
     // console.log(selectedTable);
-    // const tablePrefix = selectedTable.startsWith("student")
-    //   ? "student"
-    //   : "teacher";
+    const tablePrefix = selectedTable.startsWith("student")
+      ? "student"
+      : "teacher";
 
     setApiUrl(
-      `http://localhost:5000/api/v1/teacher/${tableMapping[selectedTable]}/filter?${queryParameters}`
+      `http://localhost:5000/api/v1/${tablePrefix}/${tableMapping[selectedTable]}/filter?${queryParameters}`
     );
 
     console.log("form filter is : ", formFilters);

@@ -21,6 +21,7 @@ export default function FacultyAchievements() {
   const [formData, setFormData] = useState({
     T_ID: null,
     Username: currentUser?.Username,
+    Name:currentUser?.Name,
     Department: "",
     Achievement_Details: "",
     Name_of_Event: "",
@@ -28,6 +29,7 @@ export default function FacultyAchievements() {
     Level: "",
     Award_Type: "",
     Award_Prize_Money: "",
+    Certificate: null,
   });
 
   const handleInputChange = (e) => {
@@ -59,7 +61,7 @@ export default function FacultyAchievements() {
       <Card
         color="transparent"
         shadow={false}
-        className="border border-gray-300 w-85  p-2 mt-2 rounded-md"
+        className="border border-gray-300 w-85  p-2 mt-2 rounded-md overflow-x-hidden"
       >
         <Typography
           variant="h4"
@@ -97,25 +99,27 @@ export default function FacultyAchievements() {
           <div className="mb-4 flex flex-wrap -mx-4">
             <div className="w-full md:w-1/2 px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
-                Achievement / Awards Details
-              </Typography>
-              <Input
-                size="lg"
-                name="Achievement_Details"
-                value={formData.Achievement_Details}
-                label="Achievement / Awards Details"
-                onChange={handleInputChange}
-              />
-            </div>
-            <div className="w-full md:w-1/2 px-4 mb-4">
-              <Typography variant="h6" color="blue-gray" className="mb-3">
                 Name of Event
               </Typography>
               <Input
                 size="lg"
                 name="Name_of_Event"
                 value={formData.Name_of_Event}
+                type="text"
                 label="Name of Event"
+                onChange={handleInputChange}
+              />
+            </div>
+            <div className="w-full md:w-1/2 px-4 mb-4">
+              <Typography variant="h6" color="blue-gray" className="mb-3">
+                Name of Organizer
+              </Typography>
+              <Input
+                size="lg"
+                name="Name_of_Organiser"
+                type="text"
+                value={formData.Name_of_Organiser}
+                label="Name of Organizer"
                 onChange={handleInputChange}
               />
             </div>
@@ -124,13 +128,14 @@ export default function FacultyAchievements() {
           <div className="mb-4 flex flex-wrap -mx-4">
             <div className="w-full md:w-1/2 px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
-                Name of Organiser
+                Achievement / Awards Details
               </Typography>
               <Input
                 size="lg"
-                name="Name_of_Organiser"
-                value={formData.Name_of_Organiser}
-                label="Name of Organiser"
+                name="Achievement_Details"
+                type="text"
+                value={formData.Achievement_Details}
+                label="Achievement / Awards Details"
                 onChange={handleInputChange}
               />
             </div>
@@ -145,7 +150,7 @@ export default function FacultyAchievements() {
                 label="Select Level"
                 onChange={(value) =>
                   handleInputChange({
-                    target: { id: "Level", value },
+                    target: { name: "Level", value },
                   })
                 }
                 // onChange={handleInputChange}
@@ -163,7 +168,7 @@ export default function FacultyAchievements() {
           <div className="mb-4 flex flex-wrap -mx-4">
             <div className="w-full md:w-1/2 px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
-                Award Type (Winner, Runner, Consolation, Appreciation)
+                Award Type
               </Typography>
               <Select
                 size="lg"
@@ -172,7 +177,7 @@ export default function FacultyAchievements() {
                 label="Select Award Type"
                 onChange={(value) =>
                   handleInputChange({
-                    target: { id: "Award_Type", value },
+                    target: { name: "Award_Type", value },
                   })
                 }
                 // onChange={handleInputChange}
@@ -192,6 +197,22 @@ export default function FacultyAchievements() {
                 name="Award_Prize_Money"
                 value={formData.Award_Prize_Money}
                 label="Award/Prize Money"
+                onChange={handleInputChange}
+              />
+            </div>
+          </div>
+
+          <div className="mb-4 flex flex-wrap -mx-4">
+            <div className="w-full  px-4 mb-4">
+              <Typography variant="h6" color="blue-gray" className="mb-3">
+                Upload Certificate
+              </Typography>
+              <Input
+                size="lg"
+                name="Certificate"
+                type="file"
+                value={formData.Certificate}
+                label="Certificate"
                 onChange={handleInputChange}
               />
             </div>

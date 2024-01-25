@@ -17,14 +17,17 @@ import { addRecordsTechnical } from "./API_Routes";
 
 export default function TechnicalCompetitions() {
   const { currentUser } = useSelector((state) => state.user);
+  const [isFinancialSupport, setIsFinancialSupport] = useState(false);
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
     T_ID: null,
     Username: currentUser?.Username,
+    Name:currentUser?.Name,
     Department: "",
     Name_of_Competition: "",
     No_of_participants: "",
+    List_of_Students: null,
     Duration: "",
     Achievement_Obtained: "",
     Start_Date: "",
@@ -32,7 +35,9 @@ export default function TechnicalCompetitions() {
     Names_of_Participants: "",
     Level: "",
     Sponsorship: "",
+    Sponsorship_Document: null,
     Finance_Support_By_PICT: "",
+    Evidence: null,
   });
 
   const handleChange = (e) => {
@@ -65,7 +70,7 @@ export default function TechnicalCompetitions() {
       <Card
         color="transparent"
         shadow={false}
-        className="border border-gray-300 w-85 mx-auto p-2 my-2 rounded-md"
+        className="border border-gray-300 w-85 mx-auto p-2 my-2 rounded-md overflow-x-hidden"
       >
         <Typography
           variant="h4"
@@ -109,6 +114,7 @@ export default function TechnicalCompetitions() {
               <Input
                 size="lg"
                 label="Name of Competition"
+                type="text"
                 name="Name_of_Competition"
                 value={formData.Name_of_Competition}
                 onChange={handleChange}
@@ -119,26 +125,27 @@ export default function TechnicalCompetitions() {
           <div className="mb-4 flex flex-wrap -mx-4">
             <div className="w-full md:w-1/2 px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
-                Duration
+                Names of Participants
+              </Typography>
+              <Input
+                size="lg"
+                type="text"
+                label="Names of Participants"
+                name="Names_of_Participants"
+                value={formData.Names_of_Participants}
+                onChange={handleChange}
+              />
+            </div>
+            <div className="w-full md:w-1/2 px-4 mb-4">
+              <Typography variant="h6" color="blue-gray" className="mb-3">
+                Duration in Months
               </Typography>
               <Input
                 size="lg"
                 label="Duration"
+                type="text"
                 name="Duration"
                 value={formData.Duration}
-                onChange={handleChange}
-              />
-            </div>
-
-            <div className="w-full md:w-1/2 px-4 mb-4">
-              <Typography variant="h6" color="blue-gray" className="mb-3">
-                No of Participants
-              </Typography>
-              <Input
-                size="lg"
-                label="No of Participants"
-                name="No_of_participants"
-                value={formData.No_of_participants}
                 onChange={handleChange}
               />
             </div>
@@ -152,6 +159,7 @@ export default function TechnicalCompetitions() {
               <Input
                 size="lg"
                 label="Achievements Obtained"
+                type="text"
                 name="Achievement_Obtained"
                 value={formData.Achievement_Obtained}
                 onChange={handleChange}
@@ -190,23 +198,36 @@ export default function TechnicalCompetitions() {
           </div>
 
           <div className="mb-4 flex flex-wrap -mx-4">
-            <div className="w-full px-4 mb-4">
+            <div className="w-full md:w-1/2 px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
-                Names of Participants
+                No of Participants
               </Typography>
               <Input
                 size="lg"
-                type="date"
-                label="Names of Participants"
-                name="Names_of_Participants"
-                value={formData.Names_of_Participants}
+                label="No of Participants"
+                type="number"
+                name="No_of_participants"
+                value={formData.No_of_participants}
+                onChange={handleChange}
+              />
+            </div>
+            <div className="w-full md:w-1/2 px-4 mb-4">
+              <Typography variant="h6" color="blue-gray" className="mb-3">
+                List of Students
+              </Typography>
+              <Input
+                size="lg"
+                name="List_of_Students"
+                value={formData.List_of_Students}
+                type="file"
+                label="List of Students"
                 onChange={handleChange}
               />
             </div>
           </div>
 
           <div className="mb-4 flex flex-wrap -mx-4">
-            <div className="w-full md:w-1/2 px-4 mb-4">
+            <div className="w-full px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
                 Level
               </Typography>
@@ -218,7 +239,7 @@ export default function TechnicalCompetitions() {
                 // onChange={handleChange}
                 onChange={(value) =>
                   handleChange({
-                    target: { id: "Level", value },
+                    target: { name: "Level", value },
                   })
                 }
               >
@@ -228,33 +249,89 @@ export default function TechnicalCompetitions() {
                 <Option value="International">International</Option>
               </Select>
             </div>
+          </div>
 
+          <div className="mb-4 flex flex-wrap -mx-4">
             <div className="w-full md:w-1/2 px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
-                Sponsorship
+                Sponsorship (if any)
               </Typography>
               <Input
                 size="lg"
                 label="Sponsorship"
+                type="text"
                 name="Sponsorship"
                 value={formData.Sponsorship}
                 onChange={handleChange}
               />
             </div>
-          </div>
-
-          <div className="mb-4 flex flex-wrap -mx-4">
-            <div className="w-full px-4">
+            <div className="w-full md:w-1/2 px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
-                Finance_Support_By_PICT
+                Sponsorship Document
               </Typography>
               <Input
                 size="lg"
-                label="Finance_Support_By_PICT"
-                name="Finance_Support_By_PICT"
-                value={formData.Finance_Support_By_PICT}
+                label="Sponsorship Document"
+                type="file"
+                name="Sponsorship_Document"
+                value={formData.Sponsorship_Document}
                 onChange={handleChange}
               />
+            </div>
+          </div>
+          <div className="mb-4 flex flex-wrap -mx-4">
+            <div className="w-full">
+              <div className="px-4 mb-4 flex gap-40">
+                <Typography variant="h6" color="blue-gray" className="mb-3">
+                  Financial support from institute in INR
+                </Typography>
+                <div className="flex gap-3">
+                  <label className="mx-2">
+                    <input
+                      type="radio"
+                      name="financialSupport"
+                      value="yes"
+                      checked={isFinancialSupport}
+                      onChange={() => setIsFinancialSupport(true)}
+                    />
+                    Yes
+                  </label>
+                  <label>
+                    <input
+                      type="radio"
+                      name="financialSupport"
+                      value="no"
+                      checked={!isFinancialSupport}
+                      onChange={() => setIsFinancialSupport(false)}
+                    />
+                    No
+                  </label>
+                </div>
+              </div>
+              <div className="flex justify-between">
+                <div className="w-full md:w-1/2 px-4 mb-4">
+                  <Input
+                    size="lg"
+                    label="Amount in INR"
+                    name="Finance_support_amount_INR"
+                    type="number"
+                    value={formData.Finance_support_amount_INR}
+                    onChange={handleChange}
+                    disabled={!isFinancialSupport}
+                  />
+                </div>
+                <div className="w-full md:w-1/2 px-4 mb-4">
+                  <Input
+                    size="lg"
+                    label="Evidence Document"
+                    name="Evidence"
+                    type="file"
+                    value={formData.Evidence}
+                    onChange={handleChange}
+                    disabled={!isFinancialSupport}
+                  />
+                </div>
+              </div>
             </div>
           </div>
 

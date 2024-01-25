@@ -18,6 +18,8 @@ import { addRecordsConferenceStud } from "./API_Routes";
 export default function Conference() {
   const { currentUser } = useSelector((state) => state.user);
 
+  const [isFinancialSupport, setIsFinancialSupport] = useState(false);
+
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     S_ID: null,
@@ -38,6 +40,7 @@ export default function Conference() {
     Paper_Link: null,
     Upload_Paper: null,
     Financial_support_given_by_institute_in_INR: "",
+    Evidence: "",
     DOI: "",
     Presented: "",
     Achievements: "",
@@ -313,26 +316,71 @@ export default function Conference() {
               <Input
                 id="Upload_Paper"
                 size="lg"
-                type="text"
-                label="Upload Paper"
+                type="file"
+                label=""
                 onChange={handleOnChange}
               />
             </div>
           </div>
 
           <div className="mb-4 flex flex-wrap -mx-4">
-            <div className="w-full md:w-1/2 px-4 mb-4">
+          <div className="w-full">
+            <div className="px-4 mb-4 flex justify-start items-center gap-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
-                Financial support given by institute (INR)
+                Financial support from institute in INR
               </Typography>
-              <Input
-                id="Financial_support_given_by_institute_in_INR"
-                size="lg"
-                value={formData.Financial_support_given_by_institute_in_INR}
-                label="Financial support given by institute"
-                onChange={handleOnChange}
-              />
+              <div className="flex gap-3">
+                <label className="mx-2">
+                  <input
+                    type="radio"
+                    name="financialSupport"
+                    value="yes"
+                    checked={isFinancialSupport}
+                    onChange={() => setIsFinancialSupport(true)}
+                  />
+                  Yes
+                </label>
+                <label>
+                  <input
+                    type="radio"
+                    name="financialSupport"
+                    value="no"
+                    checked={!isFinancialSupport}
+                    onChange={() => setIsFinancialSupport(false)}
+                  />
+                  No
+                </label>
+              </div>
             </div>
+            <div className="flex justify-between  flex-col md:flex-row">
+              <div className="w-full md:w-1/2 px-4 mb-4">
+                <Input
+                  size="lg"
+                  label="Amount in INR"
+                  name="Financial_support_given_by_institute_in_INR"
+                  type="number"
+                  value={formData.Financial_support_given_by_institute_in_INR}
+                  onChange={handleOnChange}
+                  disabled={!isFinancialSupport}
+                />
+              </div>
+              <div className="w-full md:w-1/2 px-4 mb-4">
+                <Input
+                  size="lg"
+                  label="Evidence Document"
+                  name="Evidence"
+                  type="file"
+                  value={formData.Evidence}
+                  onChange={handleOnChange}
+                  disabled={!isFinancialSupport}
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+            
+            <div className="mb-4 flex flex-wrap -mx-4">
+            
             <div className="w-full md:w-1/2 px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
               Date_of_Conference
@@ -346,9 +394,7 @@ export default function Conference() {
                 onChange={handleOnChange}
               />
             </div>
-          </div>
 
-          <div className="mb-4 flex flex-wrap -mx-4">
             <div className="w-full md:w-1/2 px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
                 Presented
@@ -361,33 +407,33 @@ export default function Conference() {
                 onChange={handleOnChange}
               />
             </div>
-            <div className="w-full md:w-1/2 px-4 mb-4">
-              <Typography variant="h6" color="blue-gray" className="mb-3">
-                Achievements
-              </Typography>
-              <Input
-                id="Achievements"
-                size="lg"
-                value={formData.Achievements}
-                label="Achievements"
-                onChange={handleOnChange}
-              />
-            </div>
           </div>
-          <div className="mb-4 flex flex-wrap -mx-4">
-            <div className="w-full px-4 mb-4">
-              <Typography variant="h6" color="blue-gray" className="mb-3">
-                Upload Achievement Document (drive link)
-              </Typography>
-              <Input
-                id="Upload_Achievement_Document"
-                size="lg"
-                type="text"
-                label="Upload Achievement Document"
-                onChange={handleOnChange}
-              />
+            <div className="mb-4 flex flex-wrap -mx-4">
+              <div className="w-full md:w-1/2 px-4 mb-4">
+                <Typography variant="h6" color="blue-gray" className="mb-3">
+                  Achievements
+                </Typography>
+                <Input
+                  id="Achievements"
+                  size="lg"
+                  value={formData.Achievements}
+                  label="Achievements"
+                  onChange={handleOnChange}
+                />
+              </div>
+              <div className="w-full md:w-1/2 px-4 mb-4">
+                <Typography variant="h6" color="blue-gray" className="mb-3">
+                  Upload Achievement Document
+                </Typography>
+                <Input
+                  id="Upload_Achievement_Document"
+                  size="lg"
+                  type="file"
+                  label=""
+                  onChange={handleOnChange}
+                />
+              </div>
             </div>
-          </div>
 
           <Button type="submit" className="mt-4" fullWidth>
             Add Changes

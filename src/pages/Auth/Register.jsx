@@ -213,12 +213,12 @@ export default function Register() {
         </form>
 
         <div className="text-center mt-2">
-            <span className="text-gray-700 mt-2 text-sm">
-              Have an account ?
-              <Link to={"/auth/login"} className="text-blue-500 mx-2">
-                login
-              </Link>
-            </span>
+          <span className="text-gray-700 mt-2 text-sm">
+            Have an account ?
+            <Link to={"/auth/login"} className="text-blue-500 mx-2">
+              login
+            </Link>
+          </span>
         </div>
 
         {error && <p className="text-red-500 text-center mt-2">{error}</p>}

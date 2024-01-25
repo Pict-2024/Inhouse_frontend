@@ -11,13 +11,14 @@ import { useSelector } from "react-redux";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
-import { toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 import { addRecordsResearch } from "./API_Routes";
 
 export default function Research() {
   const { currentUser } = useSelector((state) => state.user);
+  const [isFinancialSupport, setIsFinancialSupport] = useState(false);
   const navigate = useNavigate();
   const currentYear = new Date().getFullYear();
   const years = Array.from(
@@ -28,6 +29,7 @@ export default function Research() {
   const [formData, setFormData] = useState({
     T_ID: null,
     Username: currentUser?.Username,
+    Name: currentUser?.Name,
     Department: "",
     Title_of_Research_Article: "",
     Type_Research_Review: "",
@@ -47,10 +49,11 @@ export default function Research() {
     Year: "",
     DOI: "",
     Financial_support_from_institute_in_INR: "",
-    LInk_to_article_paper_abstract_of_the_article: "",
+    Evidence: "",
+    Link_To_Paper: "",
     Achievements_if_any: "",
-    Upload_the_Paper: null,
-    Upload_Document_of_Achievement: null,
+    Upload_Paper: null,
+    Upload_DOA: null,
   });
 
   const handleChange = (e) => {
@@ -66,7 +69,7 @@ export default function Research() {
     e.preventDefault();
     await axios.post(addRecordsResearch, formData);
 
-    toast.success('Record Added Successfully', {
+    toast.success("Record Added Successfully", {
       position: "top-right",
       autoClose: 1500,
       hideProgressBar: false,
@@ -85,7 +88,7 @@ export default function Research() {
       <Card
         color="transparent"
         shadow={false}
-        className="border border-gray-300 w-85 mx-auto p-2 my-2 rounded-md"
+        className="border border-gray-300 w-85 mx-auto p-2 my-2 rounded-md overflow-x-hidden"
       >
         <Typography
           variant="h4"
@@ -129,6 +132,7 @@ export default function Research() {
               <Input
                 size="lg"
                 label="Title of Research Article"
+                type="text"
                 name="Title_of_Research_Article"
                 value={formData.Title_of_Research_Article}
                 onChange={handleChange}
@@ -141,6 +145,7 @@ export default function Research() {
               <Input
                 size="lg"
                 label="Type (Research/Review)"
+                type="text"
                 name="Type_Research_Review"
                 value={formData.Type_Research_Review}
                 onChange={handleChange}
@@ -221,6 +226,7 @@ export default function Research() {
               <Input
                 size="lg"
                 label="Author"
+                type="text"
                 name="Author"
                 value={formData.Author}
                 onChange={handleChange}
@@ -251,7 +257,6 @@ export default function Research() {
                 color="light-gray"
                 name="Role_First_Author_Second_Author_Third_Author"
                 value={formData.Role_First_Author_Second_Author_Third_Author}
-                // onChange={handleChange}
                 onChange={(value) =>
                   handleChange({
                     target: {
@@ -264,6 +269,9 @@ export default function Research() {
                 <Option value="First Author">First Author</Option>
                 <Option value="Second Author">Second Author</Option>
                 <Option value="Third Author">Third Author</Option>
+                <Option value="Fourth Author">Fourth Author</Option>
+                <Option value="Fifth Author">Fifth Author</Option>
+                <Option value="Sixth Author">Sixth Author</Option>
               </Select>
             </div>
           </div>
@@ -276,6 +284,7 @@ export default function Research() {
               <Input
                 size="lg"
                 label="Publisher"
+                type="text"
                 name="Publisher"
                 value={formData.Publisher}
                 onChange={handleChange}
@@ -288,6 +297,7 @@ export default function Research() {
               <Input
                 size="lg"
                 label="Co-Author"
+                type="text"
                 name="Co_Authors"
                 value={formData.Co_Authors}
                 onChange={handleChange}
@@ -303,6 +313,7 @@ export default function Research() {
               <Input
                 size="lg"
                 label="Journal Name"
+                type="text"
                 name="Journal_Name"
                 value={formData.Journal_Name}
                 onChange={handleChange}
@@ -315,6 +326,7 @@ export default function Research() {
               <Input
                 size="lg"
                 label="ISSN"
+                type="text"
                 name="ISSN"
                 value={formData.ISSN}
                 onChange={handleChange}
@@ -330,6 +342,7 @@ export default function Research() {
               <Input
                 size="lg"
                 label="Volume"
+                type="number"
                 name="Volume"
                 value={formData.Volume}
                 onChange={handleChange}
@@ -342,6 +355,7 @@ export default function Research() {
               <Input
                 size="lg"
                 label="Page Numbers"
+                type="text"
                 name="Page_Numbers"
                 value={formData.Page_Numbers}
                 onChange={handleChange}
@@ -357,6 +371,7 @@ export default function Research() {
               <Input
                 size="lg"
                 label="Issue"
+                type="number"
                 name="Issue"
                 value={formData.Issue}
                 onChange={handleChange}
@@ -386,28 +401,86 @@ export default function Research() {
             </div>
           </div>
 
+          <div className="mb-4 flex flex-wrap -mx-4 ">
+            <div className="w-full">
+              <div className="px-4 mb-4 flex gap-40 ">
+                <Typography variant="h6" color="blue-gray" className="mb-3">
+                  Financial support from institute in INR
+                </Typography>
+                <div className="flex gap-3 ">
+                  <label className="mx-2">
+                    <input
+                      type="radio"
+                      name="financialSupport"
+                      value="yes"
+                      checked={isFinancialSupport}
+                      onChange={() => setIsFinancialSupport(true)}
+                    />
+                    Yes
+                  </label>
+                  <label>
+                    <input
+                      type="radio"
+                      name="financialSupport"
+                      value="no"
+                      checked={!isFinancialSupport}
+                      onChange={() => setIsFinancialSupport(false)}
+                    />
+                    No
+                  </label>
+                </div>
+              </div>
+              <div className="flex justify-between border-2">
+                <div className="w-full md:w-1/2 px-4 mb-4">
+                  <Input
+                    size="lg"
+                    label="Amount in INR"
+                    name="Financial_support_amount_INR"
+                    type="number"
+                    value={formData.Financial_support_amount_INR}
+                    onChange={handleChange}
+                    disabled={!isFinancialSupport}
+                  />
+                </div>
+                {/* <div className="w-full md:w-1/2 px-4 mb-4">
+                  <Input
+                    size="lg"
+                    label="Evidence Document"
+                    name="Evidence"
+                    type="file"
+                    value={formData.Evidence}
+                    onChange={handleChange}
+                    disabled={!isFinancialSupport}
+                  />
+                </div> */}
+                <div className="w-full md:w-1/2 px-4 mb-4 flex gap-4">
+                  <Input
+                    size="lg"
+                    label="Evidence Document"
+                    name="Evidence"
+                    type="file"
+                    value={formData.Evidence}
+                    onChange={handleChange}
+                    disabled={!isFinancialSupport}
+                  />
+                  <Button color="dark" size="md">
+                    Upload
+                  </Button>
+                </div>
+              </div>
+            </div>
+          </div>
           <div className="mb-4 flex flex-wrap -mx-4">
-            <div className="w-full md:w-1/2 px-4 mb-4">
+            <div className="w-full  px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
                 DOI
               </Typography>
               <Input
                 size="lg"
                 label="DOI"
+                type="text"
                 name="DOI"
                 value={formData.DOI}
-                onChange={handleChange}
-              />
-            </div>
-            <div className="w-full md:w-1/2 px-4 mb-4">
-              <Typography variant="h6" color="blue-gray" className="mb-3">
-                Financial support from institute in INR
-              </Typography>
-              <Input
-                size="lg"
-                label="Financial support from institute in INR"
-                name="Financial_support_from_institute_in_INR"
-                value={formData.Financial_support_from_institute_in_INR}
                 onChange={handleChange}
               />
             </div>
@@ -420,22 +493,23 @@ export default function Research() {
               <Input
                 size="lg"
                 label="Link to article / paper / abstract of the article"
-                name="LInk_to_article_paper_abstract_of_the_article"
-                value={formData.LInk_to_article_paper_abstract_of_the_article}
+                type="text"
+                name="Link_To_Paper"
+                value={formData.Link_To_Paper}
                 onChange={handleChange}
               />
             </div>
-            <div className="w-full md:w-1/2 px-4 mb-4">
+            <div className="w-full md:w-1/2 px-4 mb-4 ">
               <Typography variant="h6" color="blue-gray" className="mb-3">
                 Upload the Paper
               </Typography>
               <Input
                 size="lg"
-                type="text"
-                label="Financial support from institute in INR "
+                type="file"
+                label="Upload the Paper"
                 className="border-t-blue-gray-200 focus:border-t-gray-900"
-                name="Upload_the_Paper"
-                value={formData.Upload_the_Paper}
+                name="Upload_Paper"
+                value={formData.Upload_Paper}
                 onChange={handleChange}
               />
             </div>
@@ -447,7 +521,8 @@ export default function Research() {
               </Typography>
               <Input
                 size="lg"
-                label="Achievements if any  "
+                label="Achievements if any"
+                type="text"
                 className="border-t-blue-gray-200 focus:border-t-gray-900"
                 name="Achievements_if_any"
                 value={formData.Achievements_if_any}
@@ -460,11 +535,11 @@ export default function Research() {
               </Typography>
               <Input
                 size="lg"
-                type="text"
+                type="file"
                 label="Financial support from institute in INR "
                 className="border-t-blue-gray-200 focus:border-t-gray-900"
-                name="Upload_Document_of_Achievement"
-                value={formData.Upload_Document_of_Achievement}
+                name="Upload_DOA"
+                value={formData.Upload_DOA}
                 onChange={handleChange}
               />
             </div>
