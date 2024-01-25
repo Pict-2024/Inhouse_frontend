@@ -13,15 +13,18 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-import { addRecordsContribution } from "./API_Routes";
+import {
+  addRecordsContribution,
+  uploadRecordsContribution,
+} from "./API_Routes";
 
 export default function Contribution() {
   const { currentUser } = useSelector((state) => state.user);
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     T_ID: null,
+    Name: currentUser?.Name,
     Username: currentUser?.Username,
-    Name:currentUser?.Name,
     Department: "",
     Academic_Year: "",
     Role: "",
@@ -31,9 +34,12 @@ export default function Contribution() {
   });
 
   const handleOnChange = (e) => {
+    const { name, value, type, files } = e.target;
+
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value,
+      [name]:
+        type === "file" ? (files && files.length > 0 ? files[0] : null) : value,
     });
   };
 
@@ -53,21 +59,113 @@ export default function Contribution() {
     return Options;
   };
 
+  const handleFileUpload = async (file) => {
+    try {
+      console.log("file as:", file);
+      // if (!file || !file.length) {
+      //   // If file is null, display a toast alert
+
+      // }
+
+      const formDataForFile = new FormData();
+      formDataForFile.append("file", file);
+      formDataForFile.append("username", currentUser?.Username);
+      formDataForFile.append("role", currentUser?.Role);
+      formDataForFile.append("tableName", "contribution_to_bos");
+
+      const response = await axios.post(uploadRecordsContribution, formDataForFile);
+      // console.log(response);
+      // console.log("file response:", response.data.filePath);
+
+      return response.data.filePath;
+    } catch (error) {
+      console.error("Error uploading file:", error);
+      // Handle error as needed
+    }
+  };
+
   //add new record
   const handleSubmit = async (e) => {
     e.preventDefault();
-    await axios.post(addRecordsContribution, formData);
-    toast.success("Record Added Successfully", {
-      position: "top-right",
-      autoClose: 1500,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-      theme: "light",
-    });
-    navigate("/t/data");
+    console.log(formData);
+
+    var pathUpload;
+    console.log(formData.Evidence);
+    try {
+      if (formData.Evidence !== null) {
+        console.log("hello");
+        pathUpload = await handleFileUpload(formData.Evidence);
+
+        console.log("Upload path = ", pathUpload);
+      } else {
+        toast.error("Please select a file for upload", {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+        });
+        return;
+      }
+
+      // If file upload is successful, continue with the form submission
+      const formDataWithFilePath = {
+        ...formData,
+        Evidence: pathUpload, // Use an empty string as a default if fileUploadPath is undefined
+      };
+      if (pathUpload === "") {
+        // If file is null, display a toast alert
+        toast.error("Some e rror occurred while uploading file", {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+        });
+        return;
+      }
+
+      console.log("Final data:", formDataWithFilePath);
+
+      // Send a POST request to the addRecordsBook API endpoint
+      await axios.post(addRecordsContribution, formDataWithFilePath);
+
+      // Display a success toast
+      toast.success("Record Added Successfully", {
+        position: "top-right",
+        autoClose: 1500,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+
+      // Navigate to "/t/data" after successful submission
+      navigate("/t/data");
+    } catch (error) {
+      // Handle file upload error
+      console.error("File upload error:", error);
+
+      // Display an error toast
+      toast.error("File upload failed. Please try again.", {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+    }
   };
 
   return (
@@ -185,14 +283,13 @@ export default function Contribution() {
             </div>
             <div className="w-full md:w-1/2 px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
-                Evidence document (pdf size 1mb max)
+                Evidence document
               </Typography>
               <Input
-                size="lg"
                 name="Evidence"
+                size="lg"
                 type="file"
-                value={formData.Evidence}
-                label="Evidence document"
+                label="Evidence Document"
                 onChange={handleOnChange}
               />
             </div>
