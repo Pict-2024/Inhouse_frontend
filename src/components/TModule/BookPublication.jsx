@@ -43,21 +43,11 @@ export default function BookPublication() {
 
   const handleFileUpload = async (file) => {
     try {
-      // console.log("file as:", file);
-      if (!file || !file.length) {
-        // If file is null, display a toast alert
-        toast.error("Please select a file for upload", {
-          position: "top-right",
-          autoClose: 3000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
-        });
-        return;
-      }
+      console.log("file as:", file);
+      // if (!file || !file.length) {
+      //   // If file is null, display a toast alert
+
+      // }
 
       const formDataForFile = new FormData();
       formDataForFile.append("file", file);
@@ -89,26 +79,18 @@ export default function BookPublication() {
   //Add records
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // console.log(formData);
+    console.log(formData);
 
     var pathUpload;
+    console.log(formData.Upload_Paper);
     try {
-      if (formData.Upload_Paper === null) {
+      if (formData.Upload_Paper !== null) {
+        console.log("hello");
         pathUpload = await handleFileUpload(formData.Upload_Paper);
-        if (pathUpload === undefined) {
-          return;
-        }
-        // console.log("Upload path = ", pathUpload);
-      }
-
-      // If file upload is successful, continue with the form submission
-      const formDataWithFilePath = {
-        ...formData,
-        Upload_Paper: pathUpload, // Use an empty string as a default if fileUploadPath is undefined
-      };
-      if (pathUpload === "") {
-        // If file is null, display a toast alert
-        toast.error("Some error occurred while uploading file", {
+       
+        console.log("Upload path = ", pathUpload);
+      } else {
+        toast.error("Please select a file for upload", {
           position: "top-right",
           autoClose: 3000,
           hideProgressBar: false,
@@ -121,7 +103,27 @@ export default function BookPublication() {
         return;
       }
 
-      // console.log("Final data:", formDataWithFilePath);
+      // If file upload is successful, continue with the form submission
+      const formDataWithFilePath = {
+        ...formData,
+        Upload_Paper: pathUpload, // Use an empty string as a default if fileUploadPath is undefined
+      };
+      if (pathUpload === "") {
+        // If file is null, display a toast alert
+        toast.error("Some e rror occurred while uploading file", {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+        });
+        return;
+      }
+
+      console.log("Final data:", formDataWithFilePath);
 
       // Send a POST request to the addRecordsBook API endpoint
       await axios.post(addRecordsBook, formDataWithFilePath);
@@ -157,9 +159,6 @@ export default function BookPublication() {
       });
     }
   };
-  // useEffect(() => {
-  //   console.log("file path:", fileUploadPath);
-  // }, [fileUploadPath]);
 
   return (
     <>

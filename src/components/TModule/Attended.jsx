@@ -13,7 +13,7 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-import { addRecordsAttended } from "./API_Routes";
+import { addRecordsAttended, uploadRecordsAttended } from "./API_Routes";
 
 export default function Attended() {
   const { currentUser } = useSelector((state) => state.user);
@@ -22,8 +22,8 @@ export default function Attended() {
 
   const [formData, setFormData] = useState({
     T_ID: null,
-    UserName: currentUser?.UserName,
     Name: currentUser?.Name,
+    UserName: currentUser?.Username,
     Department: "",
     Title_of_the_Event: "",
     Type_Nature: "",
@@ -33,53 +33,129 @@ export default function Attended() {
     End_Date: "",
     Mode_Online_Physical: "",
     Duration_in_Days: "",
-    Financial_Support_By_PICT: "",
-    Evidence: null,
+    Finance_Support_By_PICT: "",
     Upload_Certificate: null,
+    Evidence: null,
   });
-
-  // const handleFileUpload = async (file) => {
-  //   try {
-  //     const formDataForFile = new FormData();
-  //     formDataForFile.append("file", file);
-  //     formDataForFile.append("username", currentUser?.Username);
-  //     formDataForFile.append("role", currentUser?.Role);
-  //     formDataForFile.append("tableName", "book_publication");
-
-  //     const response = await axios.post(uploadRecordsBook, formDataForFile);
-  //     console.log("file response:", response.data.filePath);
-
-  //     // Assuming the file upload API returns the file path in response.data.path
-  //     setFileUploadPath(response.data.filePath);
-  //   } catch (error) {
-  //     console.error("Error uploading file:", error);
-  //     // Handle error as needed
-  //   }
-  // };
 
   const handleOnChange = (e) => {
     const { id, value, type, files } = e.target;
+
     setFormData({
       ...formData,
-      [id]: type === "file" ? files[0] : value,
+      [id]:
+        type === "file" ? (files && files.length > 0 ? files[0] : null) : value,
     });
+  };
+
+  const handleFileUpload = async (file) => {
+    try {
+      // console.log("file as:", file);
+
+      const formDataForFile = new FormData();
+      formDataForFile.append("file", file);
+      formDataForFile.append("username", currentUser?.Username);
+      formDataForFile.append("role", currentUser?.Role);
+      formDataForFile.append("tableName", "sttp_fdp_conference_attended");
+
+      const response = await axios.post(uploadRecordsAttended, formDataForFile);
+      console.log(response);
+      // console.log("file response:", response.data.filePath);
+
+      return response.data.filePath;
+    } catch (error) {
+      console.error("Error uploading file:", error);
+      // Handle error as needed
+    }
   };
 
   //add new record
   const handleSubmit = async (e) => {
     e.preventDefault();
-    await axios.post(addRecordsAttended, formData);
-    toast.success("Record Added Successfully", {
-      position: "top-right",
-      autoClose: 1500,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-      theme: "light",
-    });
-    navigate("/t/data");
+    console.log(formData);
+
+    var pathEvidence, pathStudent;
+    // console.log(formData.Upload_Certificate);
+    try {
+      if (formData.Evidence !== null && formData.Upload_Certificate !== null) {
+        // console.log("2");
+        pathEvidence = await handleFileUpload(formData.Evidence);
+        // console.log("3");
+        pathStudent = await handleFileUpload(formData.Upload_Certificate);
+        // console.log("4");
+
+        // console.log("Upload path = ", pathUpload);
+      } else {
+        toast.error("Please select a file for upload", {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+        });
+        return;
+      }
+
+      // If file upload is successful, continue with the form submission
+      const formDataWithFilePath = {
+        ...formData,
+
+        Evidence: pathEvidence,
+        Upload_Certificate: pathStudent,
+      };
+      if (pathEvidence === "" && pathStudent === "") {
+        // If file is null, display a toast alert
+        toast.error("Some error occurred while uploading file", {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+        });
+        return;
+      }
+
+      console.log("Final data:", formDataWithFilePath);
+
+      // Send a POST request to the addRecordsBook API endpoint
+      await axios.post(addRecordsAttended, formDataWithFilePath);
+
+      // Display a success toast
+      toast.success("Record Added Successfully", {
+        position: "top-right",
+        autoClose: 1500,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+
+      // Navigate to "/t/data" after successful submission
+      navigate("/t/data");
+    } catch (error) {
+      // Handle file upload error
+      console.error("File upload error:", error);
+
+      // Display an error toast
+      toast.error("File upload failed. Please try again.", {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+    }
   };
 
   return (
@@ -262,7 +338,7 @@ export default function Attended() {
                   <label className="mx-2">
                     <input
                       type="radio"
-                      name="financialSupport"
+                      id="financialSupport"
                       value="yes"
                       checked={isFinancialSupport}
                       onChange={() => setIsFinancialSupport(true)}
@@ -272,7 +348,7 @@ export default function Attended() {
                   <label>
                     <input
                       type="radio"
-                      name="financialSupport"
+                      id="financialSupport"
                       value="no"
                       checked={!isFinancialSupport}
                       onChange={() => setIsFinancialSupport(false)}
@@ -286,37 +362,22 @@ export default function Attended() {
                   <Input
                     size="lg"
                     label="Amount in INR"
-                    name="Financial_support_amount_INR"
+                    id="Finance_Support_By_PICT"
                     type="number"
-                    value={formData.Financial_Support_By_PICT}
+                    value={formData.Finance_Support_By_PICT}
                     onChange={handleOnChange}
                     disabled={!isFinancialSupport}
                   />
                 </div>
-                {/* <div className="w-full md:w-1/2 px-4 mb-4">
-                  <Input
-                    size="lg"
-                    label="Evidence Document"
-                    name="Evidence"
-                    type="file"
-                    value={formData.Evidence}
-                    onChange={handleChange}
-                    disabled={!isFinancialSupport}
-                  />
-                </div> */}
                 <div className="w-full md:w-1/2 px-4 mb-4 flex gap-4">
                   <Input
                     size="lg"
                     label="Evidence Document"
-                    name="Evidence"
+                    id="Evidence"
                     type="file"
-                    value={formData.Evidence}
                     onChange={handleOnChange}
                     disabled={!isFinancialSupport}
                   />
-                  <Button color="dark" size="md">
-                    Upload
-                  </Button>
                 </div>
               </div>
             </div>

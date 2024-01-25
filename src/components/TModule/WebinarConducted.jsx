@@ -13,57 +13,157 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-import { addRecordsWebinar } from "./API_Routes";
+import { addRecordsWebinar, uploadRecordsWebinar } from "./API_Routes";
 
 export default function WebinarConducted() {
   const { currentUser } = useSelector((state) => state.user);
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     T_ID: null,
+    Name: currentUser?.Name,
     Username: currentUser?.Username,
-    Name:currentUser?.Name,
     Department: "",
     Activity_Event: "",
     Title: "",
     Speaker_Resource_Person: "",
     Resource_Person_Affiliation: "",
     No_of_Participants: "",
-    List_of_Students: "",
+    Remarks: "",
     Start_Date: "",
     End_Date: "",
     Name_of_Coordinators: "",
     Targeted_Audience: "",
-    Evidence:null,
-    Report:null,
     Duration_in_Hrs: "",
-    Remarks: "",
     Renumeration_Paid: "",
+    List_of_Students: "",
+    Evidence: null,
+    Report: null,
   });
 
   const handleInputChange = (e) => {
-    const { name, value, type } = e.target;
+    const { name, value, type, files } = e.target;
 
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: type === "number" ? parseInt(value, 10) : value,
-    }));
+    setFormData({
+      ...formData,
+      [name]:
+        type === "file" ? (files && files.length > 0 ? files[0] : null) : value,
+    });
+  };
+
+  const handleFileUpload = async (file) => {
+    try {
+      // console.log("file as:", file);
+
+      const formDataForFile = new FormData();
+      formDataForFile.append("file", file);
+      formDataForFile.append("username", currentUser?.Username);
+      formDataForFile.append("role", currentUser?.Role);
+      formDataForFile.append("tableName", "webinar_guest_lectures");
+
+      const response = await axios.post(uploadRecordsWebinar, formDataForFile);
+      console.log(response);
+      // console.log("file response:", response.data.filePath);
+
+      return response.data.filePath;
+    } catch (error) {
+      console.error("Error uploading file:", error);
+      // Handle error as needed
+    }
   };
 
   //add new record
   const handleSubmit = async (e) => {
     e.preventDefault();
-    await axios.post(addRecordsWebinar, formData);
-    toast.success("Record Added Successfully", {
-      position: "top-right",
-      autoClose: 1500,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-      theme: "light",
-    });
-    navigate("/t/data");
+    console.log(formData);
+
+    var pathReport, pathEvidence, pathStudent;
+    // console.log(formData.Sample_Certificate);
+    try {
+      if (
+        formData.Report !== null &&
+        formData.List_of_Students !== null &&
+        formData.Evidence !== null
+      ) {
+        // console.log("2");
+        pathReport = await handleFileUpload(formData.Report);
+        // console.log("3");
+        pathStudent = await handleFileUpload(formData.List_of_Students);
+        pathEvidence = await handleFileUpload(formData.Evidence);
+        // console.log("4");
+
+        // console.log("Upload path = ", pathUpload);
+      } else {
+        toast.error("Please select a file for upload", {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+        });
+        return;
+      }
+
+      // If file upload is successful, continue with the form submission
+      const formDataWithFilePath = {
+        ...formData,
+
+        Report: pathReport,
+        List_of_Students: pathStudent,
+        Evidence: pathEvidence,
+      };
+      if (pathReport === "" && pathStudent === ""  && formData.Evidence === "") {
+        // If file is null, display a toast alert
+        toast.error("Some error occurred while uploading file", {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+        });
+        return;
+      }
+
+      console.log("Final data:", formDataWithFilePath);
+
+      // Send a POST request to the addRecordsBook API endpoint
+      await axios.post(addRecordsWebinar, formDataWithFilePath);
+
+      // Display a success toast
+      toast.success("Record Added Successfully", {
+        position: "top-right",
+        autoClose: 1500,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+
+      // Navigate to "/t/data" after successful submission
+      navigate("/t/data");
+    } catch (error) {
+      // Handle file upload error
+      console.error("File upload error:", error);
+
+      // Display an error toast
+      toast.error("File upload failed. Please try again.", {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+    }
   };
 
   return (
@@ -196,7 +296,6 @@ export default function WebinarConducted() {
               <Input
                 size="lg"
                 name="List_of_Students"
-                value={formData.List_of_Students}
                 type="file"
                 label="List of Students"
                 onChange={handleInputChange}
@@ -289,7 +388,7 @@ export default function WebinarConducted() {
                 size="lg"
                 label="Financial Details/Remuneration Paid"
                 name="Renumeration_Paid"
-                type="number"
+                type="text"
                 onChange={handleInputChange}
                 value={formData.Renumeration_Paid}
               />
@@ -306,7 +405,6 @@ export default function WebinarConducted() {
                 name="Evidence"
                 type="file"
                 onChange={handleInputChange}
-                value={formData.Evidence}
               />
             </div>
             <div className="w-full md:w-1/2 px-4 mb-4">
@@ -319,7 +417,6 @@ export default function WebinarConducted() {
                 name="Report"
                 type="file"
                 onChange={handleInputChange}
-                value={formData.Report}
               />
             </div>
           </div>

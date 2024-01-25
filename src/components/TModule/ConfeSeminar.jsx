@@ -13,19 +13,19 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-import { addRecordsConference } from "./API_Routes";
+import { addRecordsConference, uploadRecordsConference } from "./API_Routes";
 
 export default function ConfeSeminar() {
   const { currentUser } = useSelector((state) => state.user);
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     T_ID: null,
+    Name: currentUser?.Name,
     Username: currentUser?.Username,
-    Name:currentUser?.Name,
     Department: "",
+    Activity_Event: "",
     Title: "",
     Level: "",
-    Activity_Event: "",
     Sponsoring_Authority: "",
     No_of_Participants: "",
     Start_Date: "",
@@ -35,37 +35,150 @@ export default function ConfeSeminar() {
     Name_of_the_Coordinators: "",
     Remarks: "",
     Sponsorship_Amount: "",
-    Evidence: "",
+    List_of_Students: null,
+    List_of_Students_Outside: null,
     NoOf_PICT_Participants: "",
-    List_of_Students: "",
     NoOf_Non_PICT_Participants: "",
-    List_of_Students_Outside: "",
     Sample_Certificate: null,
+    Evidence: null,
     Report: null,
   });
 
   const handleOnChange = (e) => {
+    const { id, value, type, files } = e.target;
+
     setFormData({
       ...formData,
-      [e.target.id]: e.target.value,
+      [id]:
+        type === "file" ? (files && files.length > 0 ? files[0] : null) : value,
     });
+  };
+  const handleFileUpload = async (file) => {
+    try {
+      // console.log("file as:", file);
+
+      const formDataForFile = new FormData();
+      formDataForFile.append("file", file);
+      formDataForFile.append("username", currentUser?.Username);
+      formDataForFile.append("role", currentUser?.Role);
+      formDataForFile.append("tableName", "conference_seminar_workshops");
+
+      const response = await axios.post(
+        uploadRecordsConference,
+        formDataForFile
+      );
+      console.log(response);
+      // console.log("file response:", response.data.filePath);
+
+      return response.data.filePath;
+    } catch (error) {
+      console.error("Error uploading file:", error);
+      // Handle error as needed
+    }
   };
 
   //add new record
   const handleSubmit = async (e) => {
     e.preventDefault();
-    await axios.post(addRecordsConference, formData);
-    toast.success("Record Added Successfully", {
-      position: "top-right",
-      autoClose: 1500,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-      theme: "light",
-    });
-    navigate("/t/data");
+    console.log(formData);
+
+    var pathReport, pathCert, pathEvidence, pathOutside, pathPICT;
+    // console.log(formData.Sample_Certificate);
+    try {
+      if (
+        formData.Report !== null &&
+        formData.Sample_Certificate !== null &&
+        formData.Evidence !== null &&
+        formData.List_of_Students_Outside !== null &&
+        formData.List_of_Students !== null
+      ) {
+        // console.log("2");
+        pathReport = await handleFileUpload(formData.Report);
+        pathCert = await handleFileUpload(formData.Sample_Certificate);
+        pathEvidence = await handleFileUpload(formData.Evidence);
+        pathOutside = await handleFileUpload(formData.List_of_Students_Outside);
+        pathPICT = await handleFileUpload(formData.List_of_Students);
+
+        // console.log("Upload path = ", pathUpload);
+      } else {
+        toast.error("Please select a file for upload", {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+        });
+        return;
+      }
+
+      // If file upload is successful, continue with the form submission
+      const formDataWithFilePath = {
+        ...formData,
+        Report: pathReport,
+        Sample_Certificate: pathCert,
+        Evidence: pathEvidence,
+        List_of_Students_Outside: pathOutside,
+        List_of_Students: pathPICT,
+      };
+      if (
+        pathReport === "" &&
+        pathCert === "" &&
+        pathEvidence === "" &&
+        pathOutside === "" &&
+        pathPICT === ""
+      ) {
+        // If file is null, display a toast alert
+        toast.error("Some error occurred while uploading file", {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+        });
+        return;
+      }
+
+      console.log("Final data:", formDataWithFilePath);
+
+      // Send a POST request to the addRecordsBook API endpoint
+      await axios.post(addRecordsConference, formDataWithFilePath);
+
+      // Display a success toast
+      toast.success("Record Added Successfully", {
+        position: "top-right",
+        autoClose: 1500,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+
+      // Navigate to "/t/data" after successful submission
+      navigate("/t/data");
+    } catch (error) {
+      // Handle file upload error
+      console.error("File upload error:", error);
+
+      // Display an error toast
+      toast.error("File upload failed. Please try again.", {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+    }
   };
 
   return (
@@ -252,7 +365,14 @@ export default function ConfeSeminar() {
                 size="lg"
                 label="Select mode"
                 value={formData.Mode}
-                onChange={handleOnChange}
+                onChange={(value) =>
+                  handleOnChange({
+                    target: {
+                      id: "Mode",
+                      value,
+                    },
+                  })
+                }
               >
                 <Option value="Online">Online</Option>
                 <Option value="Offline">Offline</Option>
@@ -307,8 +427,8 @@ export default function ConfeSeminar() {
               <Input
                 id="Evidence"
                 size="lg"
+                type="file"
                 label="Evidence of sponsor amount"
-                value={formData.Evidence}
                 onChange={handleOnChange}
               />
             </div>
@@ -337,7 +457,6 @@ export default function ConfeSeminar() {
                 size="lg"
                 type="file"
                 label=" List of no of students"
-                value={formData.List_of_Students}
                 onChange={handleOnChange}
               />
             </div>
@@ -359,14 +478,13 @@ export default function ConfeSeminar() {
             </div>
             <div className="w-full md:w-1/2 px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
-                List of no of students
+                List of no of students outside PICT
               </Typography>
               <Input
                 id="List_of_Students_Outside"
                 size="lg"
                 type="file"
                 label=" List of no of students"
-                value={formData.List_of_Students_Outside}
                 onChange={handleOnChange}
               />
             </div>
@@ -382,20 +500,18 @@ export default function ConfeSeminar() {
                 size="lg"
                 label="Sample Certificate document"
                 type="file"
-                value={formData.Sample_Certificate}
                 onChange={handleOnChange}
               />
             </div>
             <div className="w-full md:w-1/2 px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
-                List of no of students outside PICT
+                Report
               </Typography>
               <Input
-                id="List_of_Students_Outside"
+                id="Report"
                 size="lg"
                 type="file"
-                label=" List of no of students"
-                value={formData.List_of_Students_Outside}
+                label="Complete Report"
                 onChange={handleOnChange}
               />
             </div>

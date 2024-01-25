@@ -13,54 +13,151 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-import { addRecordsExtension } from "./API_Routes";
+import { addRecordsExtension, uploadRecordsExtension } from "./API_Routes";
 
 export default function ExtensionActivity() {
   const { currentUser } = useSelector((state) => state.user);
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     T_ID: null,
+    Name: currentUser?.Name,
     Username: currentUser?.Username,
-    Name:currentUser?.Name,
     Dept_Name: "",
     Title: "",
-    Title_of_extension_activity: "",
     Start_Date: "",
     End_Date: "",
+    Title_of_extension_activity: "",
     Scheme_Name: "",
     Role: "",
     Purpose: "",
     NoOf_Student_Participants: "",
-    List_of_Students: null,
     NoOf_Faculty_Participants: "",
     PSOs_Attained: "",
     Place: "",
+    List_of_Students: null,
     Report: null,
   });
-
   const handleChange = (e) => {
-    const { name, value } = e.target;
+    const { name, value, type, files } = e.target;
+
     setFormData({
       ...formData,
-      [name]: value,
+      [name]:
+        type === "file" ? (files && files.length > 0 ? files[0] : null) : value,
     });
+  };
+
+  const handleFileUpload = async (file) => {
+    try {
+      console.log("file as:", file);
+
+      const formDataForFile = new FormData();
+      formDataForFile.append("file", file);
+      formDataForFile.append("username", currentUser?.Username);
+      formDataForFile.append("role", currentUser?.Role);
+      formDataForFile.append("tableName", "extension_activity");
+
+      const response = await axios.post(
+        uploadRecordsExtension,
+        formDataForFile
+      );
+      console.log(response);
+      // console.log("file response:", response.data.filePath);
+
+      return response.data.filePath;
+    } catch (error) {
+      console.error("Error uploading file:", error);
+      // Handle error as needed
+    }
   };
 
   //add new record
   const handleSubmit = async (e) => {
     e.preventDefault();
-    await axios.post(addRecordsExtension, formData);
-    toast.success("Record Added Successfully", {
-      position: "top-right",
-      autoClose: 1500,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-      theme: "light",
-    });
-    navigate("/t/data");
+    console.log(formData);
+
+    var pathReport, pathStudent;
+    // console.log(formData.Evidence);
+    try {
+      if (formData.Report !== null && formData.List_of_Students !== null) {
+        // console.log("2");
+        pathReport = await handleFileUpload(formData.Report);
+        // console.log("3");
+        pathStudent = await handleFileUpload(formData.List_of_Students);
+        // console.log("4");
+
+        // console.log("Upload path = ", pathUpload);
+      } else {
+        toast.error("Please select a file for upload", {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+        });
+        return;
+      }
+
+      // If file upload is successful, continue with the form submission
+      const formDataWithFilePath = {
+        ...formData,
+
+        Report: pathReport,
+        List_of_Students: pathStudent,
+      };
+      if (pathReport === "" && pathStudent === "") {
+        // If file is null, display a toast alert
+        toast.error("Some error occurred while uploading file", {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+        });
+        return;
+      }
+
+      console.log("Final data:", formDataWithFilePath);
+
+      // Send a POST request to the addRecordsBook API endpoint
+      await axios.post(addRecordsExtension, formDataWithFilePath);
+
+      // Display a success toast
+      toast.success("Record Added Successfully", {
+        position: "top-right",
+        autoClose: 1500,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+
+      // Navigate to "/t/data" after successful submission
+      navigate("/t/data");
+    } catch (error) {
+      // Handle file upload error
+      console.error("File upload error:", error);
+
+      // Display an error toast
+      toast.error("File upload failed. Please try again.", {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+    }
   };
 
   return (
@@ -225,7 +322,6 @@ export default function ExtensionActivity() {
               <Input
                 size="lg"
                 name="List_of_Students"
-                value={formData.List_of_Students}
                 type="file"
                 label="List of Students"
                 onChange={handleChange}
@@ -280,7 +376,6 @@ export default function ExtensionActivity() {
               <Input
                 size="lg"
                 name="Report"
-                value={formData.Report}
                 type="file"
                 label="Report"
                 onChange={handleChange}

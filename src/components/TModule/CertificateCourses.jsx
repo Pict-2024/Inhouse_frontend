@@ -13,15 +13,15 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-import { addRecordsCertificate } from "./API_Routes";
+import { addRecordsCertificate, uploadRecordsCertificate } from "./API_Routes";
 
 export default function CertificateCourses() {
   const { currentUser } = useSelector((state) => state.user);
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     T_ID: null,
-    UserName: currentUser?.UserName,
-    Name:currentUser?.Name,
+    Name: currentUser?.Name,
+    UserName: currentUser?.Username,
     Department: "",
     Additional_Certificate_Programs: "",
     Year_of_offering: "",
@@ -37,8 +37,8 @@ export default function CertificateCourses() {
     PSOs_Attained: "",
     Fund_Generated: "",
     Sponsorship_collaboration: "",
-    Sample_Certificate:null,
-    Report:null
+    Sample_Certificate: null,
+    Report: null,
   });
 
   const generateAcademicYearOptions = () => {
@@ -58,30 +58,126 @@ export default function CertificateCourses() {
   };
 
   const handleOnChange = (e) => {
-    const { id, value, type } = e.target;
+    const { id, value, type, files } = e.target;
+
     setFormData({
       ...formData,
-      [id]: type === "number" ? parseFloat(value) : value,
+      [id]:
+        type === "file" ? (files && files.length > 0 ? files[0] : null) : value,
     });
+  };
+
+  const handleFileUpload = async (file) => {
+    try {
+      // console.log("file as:", file);
+
+      const formDataForFile = new FormData();
+      formDataForFile.append("file", file);
+      formDataForFile.append("username", currentUser?.Username);
+      formDataForFile.append("role", currentUser?.Role);
+      formDataForFile.append("tableName", "certificate_courses");
+
+      const response = await axios.post(
+        uploadRecordsCertificate,
+        formDataForFile
+      );
+      console.log(response);
+      // console.log("file response:", response.data.filePath);
+
+      return response.data.filePath;
+    } catch (error) {
+      console.error("Error uploading file:", error);
+      // Handle error as needed
+    }
   };
 
   //add new record
   const handleSubmit = async (e) => {
     e.preventDefault();
-    await axios.post(addRecordsCertificate, formData);
+    console.log(formData);
 
-    toast.success("Record Added Successfully", {
-      position: "top-right",
-      autoClose: 1500,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-      theme: "light",
-    });
+    var pathReport, pathStudent;
+    // console.log(formData.Sample_Certificate);
+    try {
+      if (formData.Report !== null && formData.Sample_Certificate !== null) {
+        // console.log("2");
+        pathReport = await handleFileUpload(formData.Report);
+        // console.log("3");
+        pathStudent = await handleFileUpload(formData.Sample_Certificate);
+        // console.log("4");
 
-    navigate("/t/data");
+        // console.log("Upload path = ", pathUpload);
+      } else {
+        toast.error("Please select a file for upload", {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+        });
+        return;
+      }
+
+      // If file upload is successful, continue with the form submission
+      const formDataWithFilePath = {
+        ...formData,
+
+        Report: pathReport,
+        Sample_Certificate: pathStudent,
+      };
+      if (pathReport === "" && pathStudent === "") {
+        // If file is null, display a toast alert
+        toast.error("Some error occurred while uploading file", {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+        });
+        return;
+      }
+
+      console.log("Final data:", formDataWithFilePath);
+
+      // Send a POST request to the addRecordsBook API endpoint
+      await axios.post(addRecordsCertificate, formDataWithFilePath);
+
+      // Display a success toast
+      toast.success("Record Added Successfully", {
+        position: "top-right",
+        autoClose: 1500,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+
+      // Navigate to "/t/data" after successful submission
+      navigate("/t/data");
+    } catch (error) {
+      // Handle file upload error
+      console.error("File upload error:", error);
+
+      // Display an error toast
+      toast.error("File upload failed. Please try again.", {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+    }
   };
 
   return (
@@ -334,7 +430,6 @@ export default function CertificateCourses() {
                 size="lg"
                 label="Final Report"
                 type="file"
-                value={formData.Report}
                 onChange={handleOnChange}
               />
             </div>
@@ -347,7 +442,6 @@ export default function CertificateCourses() {
                 size="lg"
                 type="file"
                 label="Sample Certificate"
-                value={formData.Sample_Certificate}
                 onChange={handleOnChange}
               />
             </div>
