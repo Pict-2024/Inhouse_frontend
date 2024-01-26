@@ -74,16 +74,27 @@ export default function IndustrialVisit() {
     e.preventDefault();
     console.log(formData);
 
-    var pathEvidence, pathReport, pathStudent;
-    // console.log(formData.Evidence);
+    var pathEvidence=null, pathReport, pathStudent;
+    console.log(isFinancialSupport);
+    console.log(formData.Evidence);
+    // Check if evidence upload is required
+    if (isFinancialSupport && formData.Evidence === null) {
+      alert("Upload Evidence document");
+      return;
+    }
+
     try {
+      if (isFinancialSupport ) {
+        console.log("hi");
+        // Handle evidence upload only if financial support is selected
+        pathEvidence = await handleFileUpload(formData.Evidence);
+      }
       if (
-        formData.Evidence !== null &&
         formData.Upload_Report !== null &&
         formData.List_of_Students !== null
       ) {
         console.log("1");
-        pathEvidence = await handleFileUpload(formData.Evidence);
+
         console.log("2");
         pathReport = await handleFileUpload(formData.Upload_Report);
         console.log("3");
@@ -104,10 +115,12 @@ export default function IndustrialVisit() {
         });
         return;
       }
-
+      // console.log("Evidence path:",pathEvidence);
       // If file upload is successful, continue with the form submission
+     
       const formDataWithFilePath = {
         ...formData,
+
         Evidence: pathEvidence,
         Upload_Report: pathReport,
         List_of_Students: pathStudent,
