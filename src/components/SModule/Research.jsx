@@ -13,7 +13,7 @@ import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-import { addRecordsResearchStud } from "./API_Routes";
+import { addRecordsResearchStud, uploadRecordsResearchStud } from "./API_Routes";
 
 export default function Research() {
   const navigate = useNavigate();
@@ -33,7 +33,7 @@ export default function Research() {
     Student_Name: currentUser?.Name,
     Roll_No: "",
     Department: "",
-    Year_of_Study: "",
+    Year_of_study: "",
     Research_Article_Title: "",
     Research_Type: "",
     Level: "",
@@ -43,7 +43,7 @@ export default function Research() {
     Affiliation: "",
     Role_of_Authors: "",
     Publisher: "",
-    Co_Authors: "",
+    Co_Author: "",
     Journal_Name: "",
     ISSN: "",
     Volume: "",
@@ -52,37 +52,153 @@ export default function Research() {
     Year: "",
     DOI: "",
     Financial_support_from_institute_in_INR: "",
-    Evidence: "",
     Article_Link: "",
-    Upload_paper: null,
+    Upload_Paper: null,
     Achievements: "",
     Upload_Document_of_Achievement: null,
+    Evidence: null,
   });
 
   const handleOnChange = (e) => {
-    const { id, value, type, files } = e.target;
+   const { id, value, type, files } = e.target;
+
     setFormData({
       ...formData,
-      [id]: type === "file" ? files[0] : value,
+      [id]:
+        type === "file" ? (files && files.length > 0 ? files[0] : null) : value,
     });
   };
+
+  const handleFileUpload = async (file) => {
+    try {
+      console.log("file as:", file);
+
+      const formDataForFile = new FormData();
+      formDataForFile.append("file", file);
+      formDataForFile.append("username", currentUser?.Username);
+      formDataForFile.append("role", currentUser?.Role);
+      formDataForFile.append("tableName", "student_research_publication");
+
+      const response = await axios.post(uploadRecordsResearchStud, formDataForFile);
+      console.log(response);
+      // console.log("file response:", response.data.filePath);
+
+      return response.data.filePath;
+    } catch (error) {
+      console.error("Error uploading file:", error);
+      // Handle error as needed
+    }
+  };
+
 
   //add new record
   const handleSubmit = async (e) => {
     e.preventDefault();
-    await axios.post(addRecordsResearchStud, formData);
-    toast.success("Record Added Successfully", {
-      position: "top-right",
-      autoClose: 1500,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-      theme: "light",
-    });
-    navigate("/s/data");
+    console.log(formData);
+
+    var pathEvidence=null, pathReport, pathStudent;
+    console.log(isFinancialSupport);
+    console.log(formData.Evidence);
+    // Check if evidence upload is required
+    if (isFinancialSupport && formData.Evidence === null) {
+      alert("Upload Evidence document");
+      return;
+    }
+
+    try {
+      if (isFinancialSupport ) {
+        console.log("hi");
+        // Handle evidence upload only if financial support is selected
+        pathEvidence = await handleFileUpload(formData.Evidence);
+      }
+      if (
+        formData.Upload_Paper !== null &&
+        formData.Upload_Document_of_Achievement !== null
+      ) {
+        console.log("1");
+
+        console.log("2");
+        pathReport = await handleFileUpload(formData.Upload_Paper);
+        console.log("3");
+        pathStudent = await handleFileUpload(formData.Upload_Document_of_Achievement);
+        console.log("4");
+
+        // console.log("Upload path = ", pathUpload);
+      } else {
+        toast.error("Please select a file for upload", {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+        });
+        return;
+      }
+      // console.log("Evidence path:",pathEvidence);
+      // If file upload is successful, continue with the form submission
+     
+      const formDataWithFilePath = {
+        ...formData,
+
+        Evidence: pathEvidence,
+        Upload_Paper: pathReport,
+        Upload_Document_of_Achievement: pathStudent,
+      };
+      if (pathEvidence === "" && pathReport === "" && pathStudent === "") {
+        // If file is null, display a toast alert
+        toast.error("Some error occurred while uploading file", {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+        });
+        return;
+      }
+
+      console.log("Final data:", formDataWithFilePath);
+
+      // Send a POST request to the addRecordsBook API endpoint
+      await axios.post(addRecordsResearchStud, formDataWithFilePath);
+
+      // Display a success toast
+      toast.success("Record Added Successfully", {
+        position: "top-right",
+        autoClose: 1500,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+
+      // Navigate to "/t/data" after successful submission
+      navigate("/s/data");
+    } catch (error) {
+      // Handle file upload error
+      console.error("File upload error:", error);
+
+      // Display an error toast
+      toast.error("File upload failed. Please try again.", {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+    }
   };
+
 
   return (
     <>
@@ -169,13 +285,13 @@ export default function Research() {
                 Year of Study
               </Typography>
               <Select
-                id="Year"
+                id="Year_of_study"
                 size="lg"
                 label="Year"
-                value={formData.Year_of_Study}
+                value={formData.Year_of_study}
                 onChange={(value) =>
                   handleOnChange({
-                    target: { id: "Year_of_Study", value },
+                    target: { id: "Year_of_study", value },
                   })
                 }
               >
@@ -337,8 +453,8 @@ export default function Research() {
               <Input
                 size="lg"
                 label="Co-Authors"
-                id="Co_Authors"
-                value={formData.Co_Authors}
+                id="Co_Author"
+                value={formData.Co_Author}
                 onChange={handleOnChange}
               />
             </div>
@@ -481,7 +597,7 @@ export default function Research() {
                   <Input
                     size="lg"
                     label="Amount in INR"
-                    name="Financial_support_from_institute_in_INR"
+                    id="Financial_support_from_institute_in_INR"
                     type="number"
                     value={formData.Financial_support_from_institute_in_INR}
                     onChange={handleOnChange}
@@ -492,9 +608,8 @@ export default function Research() {
                   <Input
                     size="lg"
                     label="Evidence Document"
-                    name="Evidence"
+                    id="Evidence"
                     type="file"
-                    value={formData.Evidence}
                     onChange={handleOnChange}
                     disabled={!isFinancialSupport}
                   />
@@ -526,7 +641,6 @@ export default function Research() {
                 label=""
                 className="border-t-blue-gray-200 focus:border-t-gray-900"
                 id="Upload_Paper"
-                value={formData.Upload_Paper}
                 onChange={handleOnChange}
               />
             </div>
@@ -556,7 +670,6 @@ export default function Research() {
                 label=""
                 className="border-t-blue-gray-200 focus:border-t-gray-900"
                 id="Upload_Document_of_Achievement"
-                value={formData.Upload_Document_of_Achievement}
                 onChange={handleOnChange}
               />
             </div>

@@ -13,7 +13,7 @@ import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-import { addRecordsTechnicalStud } from "./API_Routes";
+import { addRecordsTechnicalStud, uploadRecordsTechincalStud } from "./API_Routes";
 
 export default function TechEvents() {
   const navigate = useNavigate();
@@ -42,38 +42,150 @@ export default function TechEvents() {
     Place: "",
     Start_Date: "",
     End_Date: "",
-    Financial_support_amount_INR: "",
-    Evidence: "",
+    Financial_support_given_by_Institute_in_INR: "",
     Award: "",
     Award_Prize_Money: "",
     Remarks: "",
     Geo_Tag_Photos: "",
     Certificate_Link: null,
+    Evidence: null,
   });
 
   const handleOnChange = (e) => {
     const { id, value, type, files } = e.target;
+
     setFormData({
       ...formData,
-      [id]: type === "file" ? files[0] : value,
+      [id]:
+        type === "file" ? (files && files.length > 0 ? files[0] : null) : value,
     });
+  };
+  const handleFileUpload = async (file) => {
+    try {
+      console.log("file as:", file);
+
+      const formDataForFile = new FormData();
+      formDataForFile.append("file", file);
+      formDataForFile.append("username", currentUser?.Username);
+      formDataForFile.append("role", currentUser?.Role);
+      formDataForFile.append("tableName", "student_technical_events");
+
+      const response = await axios.post(uploadRecordsTechincalStud, formDataForFile);
+      console.log(response);
+      // console.log("file response:", response.data.filePath);
+
+      return response.data.filePath;
+    } catch (error) {
+      console.error("Error uploading file:", error);
+      // Handle error as needed
+    }
   };
 
   //add new record
   const handleSubmit = async (e) => {
     e.preventDefault();
-    await axios.post(addRecordsTechnicalStud, formData);
-    toast.success("Record Added Successfully", {
-      position: "top-right",
-      autoClose: 1500,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-      theme: "light",
-    });
-    navigate("/s/data");
+    console.log(formData);
+
+    var pathEvidence=null, pathReport;
+    console.log(isFinancialSupport);
+    console.log(formData.Evidence);
+    // Check if evidence upload is required
+    if (isFinancialSupport && formData.Evidence === null) {
+      alert("Upload Evidence document");
+      return;
+    }
+
+    try {
+      if (isFinancialSupport ) {
+        console.log("hi");
+        // Handle evidence upload only if financial support is selected
+        pathEvidence = await handleFileUpload(formData.Evidence);
+      }
+      if (
+        formData.Certificate_Link !== null 
+       
+      ) {
+        console.log("1");
+
+        console.log("2");
+        pathReport = await handleFileUpload(formData.Certificate_Link);
+        console.log("3");
+        console.log("4");
+
+        // console.log("Upload path = ", pathUpload);
+      } else {
+        toast.error("Please select a file for upload", {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+        });
+        return;
+      }
+      // console.log("Evidence path:",pathEvidence);
+      // If file upload is successful, continue with the form submission
+     
+      const formDataWithFilePath = {
+        ...formData,
+
+        Evidence: pathEvidence,
+        Certificate_Link: pathReport,
+      };
+      if (pathEvidence === "" || pathReport === "" ) {
+        // If file is null, display a toast alert
+        toast.error("Some error occurred while uploading file", {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+        });
+        return;
+      }
+
+      console.log("Final data:", formDataWithFilePath);
+      
+      // Send a POST request to the addRecordsBook API endpoint
+      const res = await axios.post(addRecordsTechnicalStud, formDataWithFilePath);
+      console.log("Response = ", res)
+
+      // Display a success toast
+      toast.success("Record Added Successfully", {
+        position: "top-right",
+        autoClose: 1500,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+
+      // Navigate to "/t/data" after successful submission
+      navigate("/s/data");
+    } catch (error) {
+      // Handle file upload error
+      console.error("File upload error:", error);
+
+      // Display an error toast
+      toast.error("File upload failed. Please try again.", {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+    }
   };
 
   return (
@@ -174,7 +286,7 @@ export default function TechEvents() {
               <Input
                 id="Technical_Event_Name"
                 size="lg"
-                label="Organized Byr"
+                label="Technical_Event_Name "
                 value={formData.Technical_Event_Name}
                 onChange={handleOnChange}
               />
@@ -338,9 +450,7 @@ export default function TechEvents() {
           </div>
           </div>
 
-          <div className="mb-4 flex flex-wrap -mx-4">
-                
-          </div>
+        
           <div className="mb-4 flex flex-wrap -mx-4">
             <div className="w-full md:w-1/2 px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
@@ -404,9 +514,9 @@ export default function TechEvents() {
                 <Input
                   size="lg"
                   label="Amount in INR"
-                  name="Financial_support_amount_INR"
+                  id="Financial_support_given_by_Institute_in_INR"
                   type="number"
-                  value={formData.Financial_support_amount_INR}
+                  value={formData.Financial_support_given_by_Institute_in_INR}
                   onChange={handleOnChange}
                   disabled={!isFinancialSupport}
                 />
@@ -415,9 +525,8 @@ export default function TechEvents() {
                 <Input
                   size="lg"
                   label="Evidence Document"
-                  name="Evidence"
-                  type="file"
-                  value={formData.Evidence}
+                  id="Evidence"
+                  type="file" 
                   onChange={handleOnChange}
                   disabled={!isFinancialSupport}
                 />
@@ -464,7 +573,6 @@ export default function TechEvents() {
                 size="lg"
                 label=""
                 type="file"
-                value={formData.Certificate_Link}
                 onChange={handleOnChange}
               />
             </div>

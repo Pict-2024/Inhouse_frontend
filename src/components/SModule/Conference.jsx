@@ -13,7 +13,7 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-import { addRecordsConferenceStud } from "./API_Routes";
+import { addRecordsConferenceStud, uploadRecordsConferenceStud } from "./API_Routes";
 
 export default function Conference() {
   const { currentUser } = useSelector((state) => state.user);
@@ -40,7 +40,7 @@ export default function Conference() {
     Paper_Link: null,
     Upload_Paper: null,
     Financial_support_given_by_institute_in_INR: "",
-    Evidence: "",
+    Evidence: null,
     DOI: "",
     Presented: "",
     Achievements: "",
@@ -56,27 +56,143 @@ export default function Conference() {
 
   const handleOnChange = (e) => {
     const { id, value, type, files } = e.target;
+
     setFormData({
       ...formData,
-      [id]: type === "file" ? files[0] : value,
+      [id]:
+        type === "file" ? (files && files.length > 0 ? files[0] : null) : value,
     });
+  };
+
+  const handleFileUpload = async (file) => {
+    try {
+      console.log("file as:", file);
+
+      const formDataForFile = new FormData();
+      formDataForFile.append("file", file);
+      formDataForFile.append("username", currentUser?.Username);
+      formDataForFile.append("role", currentUser?.Role);
+      formDataForFile.append("tableName", "student_conference_publication");
+
+      const response = await axios.post(uploadRecordsConferenceStud, formDataForFile);
+      console.log(response);
+      // console.log("file response:", response.data.filePath);
+
+      return response.data.filePath;
+    } catch (error) {
+      console.error("Error uploading file:", error);
+      // Handle error as needed
+    }
   };
 
   //Add records
   const handleSubmit = async (e) => {
     e.preventDefault();
-    await axios.post(addRecordsConferenceStud, formData);
-    toast.success("Record Added Successfully", {
-      position: "top-right",
-      autoClose: 1500,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-      theme: "light",
-    });
-    navigate("/s/data");
+    console.log(formData);
+
+    var pathEvidence=null, pathReport, pathStudent,pathLink;
+    console.log(isFinancialSupport);
+    console.log(formData.Evidence);
+    // Check if evidence upload is required
+    if (isFinancialSupport && formData.Evidence === null) {
+      alert("Upload Evidence document");
+      return;
+    }
+
+    try {
+      if (isFinancialSupport ) {
+        console.log("hi");
+        // Handle evidence upload only if financial support is selected
+        pathEvidence = await handleFileUpload(formData.Evidence);
+      }
+      if (
+        formData.Upload_Paper !== null &&
+        formData.Upload_Achievement_Document !== null &&
+        formData.Paper_Link !== null
+      ) {
+        console.log("1");
+
+        console.log("2");
+        pathLink = await handleFileUpload(formData.Paper_Link)
+        pathReport = await handleFileUpload(formData.Upload_Paper);
+        console.log("3");
+        pathStudent = await handleFileUpload(formData.Upload_Achievement_Document);
+        console.log("4");
+
+        // console.log("Upload path = ", pathUpload);
+      } else {
+        toast.error("Please select a file for upload", {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+        });
+        return;
+      }
+      // console.log("Evidence path:",pathEvidence);
+      // If file upload is successful, continue with the form submission
+     
+      const formDataWithFilePath = {
+        ...formData,
+        Paper_Link: pathLink,
+        Evidence: pathEvidence,
+        Upload_Paper: pathReport,
+        Upload_Achievement_Document: pathStudent,
+      };
+      if (pathEvidence === "" && pathReport === "" && pathStudent === "" && pathLink === "") {
+        // If file is null, display a toast alert
+        toast.error("Some error occurred while uploading file", {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+        });
+        return;
+      }
+
+      console.log("Final data:", formDataWithFilePath);
+
+      // Send a POST request to the addRecordsBook API endpoint
+      await axios.post(addRecordsConferenceStud, formDataWithFilePath);
+
+      // Display a success toast
+      toast.success("Record Added Successfully", {
+        position: "top-right",
+        autoClose: 1500,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+
+      // Navigate to "/t/data" after successful submission
+      navigate("/s/data");
+    } catch (error) {
+      // Handle file upload error
+      console.error("File upload error:", error);
+
+      // Display an error toast
+      toast.error("File upload failed. Please try again.", {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+    }
   };
 
   return (
@@ -304,7 +420,7 @@ export default function Conference() {
               <Input
                 id="Paper_Link"
                 size="lg"
-                type="text"
+                type="file"
                 label="Paper Link"
                 onChange={handleOnChange}
               />
@@ -357,7 +473,7 @@ export default function Conference() {
                 <Input
                   size="lg"
                   label="Amount in INR"
-                  name="Financial_support_given_by_institute_in_INR"
+                  id="Financial_support_given_by_institute_in_INR"
                   type="number"
                   value={formData.Financial_support_given_by_institute_in_INR}
                   onChange={handleOnChange}
@@ -368,9 +484,8 @@ export default function Conference() {
                 <Input
                   size="lg"
                   label="Evidence Document"
-                  name="Evidence"
+                  id="Evidence"
                   type="file"
-                  value={formData.Evidence}
                   onChange={handleOnChange}
                   disabled={!isFinancialSupport}
                 />

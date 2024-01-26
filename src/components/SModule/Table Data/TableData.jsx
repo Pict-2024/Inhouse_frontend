@@ -133,7 +133,7 @@ export default function TableData({ tableName }) {
 
   //get all records
   const getAllRecords = async () => {
-    const user = currentUser.Username;
+    const user = currentUser?.Username;
     console.log("User is : ", user);
     console.log("table name is : ", tableName);
     try {

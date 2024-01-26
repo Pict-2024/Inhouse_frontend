@@ -10,13 +10,16 @@ import {
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
-import { addRecordsInternship } from "./API_Routes";
+import { addRecordsInternship, uploadRecordsInternship } from "./API_Routes";
 
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 export default function Internship() {
   const navigate = useNavigate();
+
+  const [isPPO, setIsPPO] = useState("No");
+
   const { currentUser } = useSelector((state) => state.user);
   console.log("currentuser:", currentUser);
   const options = Array.from({ length: 11 }, (_, index) => index + 1);
@@ -44,7 +47,7 @@ export default function Internship() {
     External_Mentor_Mobile: "",
     Completion_Certificate: null,
     Internship_Report: null,
-    PPO_Offer: "",
+    PPO_Offer: null,
     Remark: "",
   });
 
@@ -52,10 +55,31 @@ export default function Internship() {
     const { id, value, type, files } = e.target;
     setFormData({
       ...formData,
-      [id]: type === "file" ? files[0] : value,
+      [id]:
+        type === "file" ? (files && files.length > 0 ? files[0] : null) : value,
     });
-
     console.log("formdata = ", formData)
+  };
+
+  const handleFileUpload = async (file) => {
+    try {
+      console.log("file as:", file);
+
+      const formDataForFile = new FormData();
+      formDataForFile.append("file", file);
+      formDataForFile.append("username", currentUser?.Username);
+      formDataForFile.append("role", currentUser?.Role);
+      formDataForFile.append("tableName", "student_internship_details");
+
+      const response = await axios.post(uploadRecordsInternship, formDataForFile);
+      console.log(response);
+      // console.log("file response:", response.data.filePath);
+
+      return response.data.filePath;
+    } catch (error) {
+      console.error("Error uploading file:", error);
+      // Handle error as needed
+    }
   };
 
   //add new record
@@ -64,34 +88,97 @@ export default function Internship() {
     console.log("Form data is : ", formData);
     e.preventDefault();
 
-    if (formData.PPO_Offer === "Yes" && formData.Proof_Of_Evidence) {
-      // Assuming you have an API route for uploading files
-      const proofOfEvidenceFormData = new FormData();
-      proofOfEvidenceFormData.append(
-        "file",
-        formData.Proof_Of_Evidence,
-        formData.Proof_Of_Evidence.name
-      );
-
-      // Call your API to upload the file
-      // await axios.post(uploadProofOfEvidenceAPI, proofOfEvidenceFormData);
+    var completionPath, internshipPath, ppoPath = null;
+    if (isPPO === "Yes" && formData.PPO_Offer === null) {
+      alert("Upload PPO evidence");
+      return;
     }
 
-    console.log("Formdata is = ", formData)
+    try {
 
-    await axios.post(addRecordsInternship, formData);
+      if(isPPO === "Yes")
+      {
+        ppoPath = await handleFileUpload(formData.PPO_Offer);
+      }
 
-    toast.success("Record Added Successfully", {
-      position: "top-right",
-      autoClose: 1500,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-      theme: "light",
-    });
-    navigate("/s/data");
+      if(formData.Completion_Certificate !== null && formData.Internship_Report !== null)
+      {
+        completionPath = await handleFileUpload(formData.Completion_Certificate);
+        internshipPath = await handleFileUpload(formData.Internship_Report);
+      }
+      else
+      {
+        toast.error("Please select a file for upload", {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+        });
+        return;
+      }
+
+      const formDataWithFilePath = {
+        ...formData,
+
+        Completion_Certificate: completionPath,
+        Internship_Report: internshipPath,
+        PPO_Offer: ppoPath,
+      };
+      if (completionPath === "" || internshipPath === "" ) {
+        // If file is null, display a toast alert
+        toast.error("Some error occurred while uploading file", {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+        });
+        return;
+      }
+
+      console.log("Final data:", formDataWithFilePath);
+      
+      // Send a POST request to the addRecordsBook API endpoint
+      const res = await axios.post(addRecordsInternship, formDataWithFilePath);
+      console.log("Response = ", res)
+
+      toast.success("Record Added Successfully", {
+        position: "top-right",
+        autoClose: 1500,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+
+      navigate("/s/data")
+      
+    } catch (error) {
+      
+      console.error("File upload error:", error);
+
+      // Display an error toast
+      toast.error("File upload failed. Please try again.", {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+    }
+
   };
 
   return (
@@ -391,27 +478,25 @@ export default function Internship() {
           <div className="mb-4 flex flex-wrap -mx-4">
             <div className="w-full md:w-1/2 px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
-                Completion Certificate (drive link)
+                Completion Certificate
               </Typography>
               <Input
                 id="Completion_Certificate"
                 size="lg"
-                label="Completion Certificate"
+                label=""
                 type="file"
-                value={formData.Completion_Certificate}
                 onChange={handleOnChange}
               />
             </div>
             <div className="w-full md:w-1/2 px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
-                Internship Report (drive link)
+                Internship Report
               </Typography>
               <Input
                 id="Internship_Report"
                 size="lg"
                 type="file"
-                label="Internship Report"
-                value={formData.Internship_Report}
+                label=""
                 onChange={handleOnChange}
               />
             </div>
@@ -423,27 +508,23 @@ export default function Internship() {
               PPO Offer
             </Typography>
             <Select
-              id="PPO_Offer"
+              id="PPO"
               size="lg"
               label="PPO Offer"
-              value={formData.PPO_Offer}
-              onChange={(value) =>
-                handleOnChange({
-                  target: { id: "PPO_Offer", value },
-                })
-              }
+              value={isPPO}
+              onChange={(value) => setIsPPO(value)}
             >
               <Option value="Yes">Yes</Option>
               <Option value="No">No</Option>
             </Select>
           </div>
-          {formData.PPO_Offer === "Yes" && (
+          {isPPO === "Yes" && (
             <div className="w-full md:w-1/2 px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
                 Proof of Evidence
               </Typography>
               <Input
-                id="Proof_Of_Evidence"
+                id="PPO_Offer"
                 size="lg"
                 label="Proof of Evidence"
                 type="file"

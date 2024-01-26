@@ -329,9 +329,9 @@ export default function NavList() {
   }
 
   return (
-    <nav className=" block w-full rounded-xl border  border-white/80 bg-white bg-opacity-80 py-2 px-2 text-white shadow-md backdrop-blur-2xl backdrop-saturate-200 lg:px-4 lg:py-2">
+    <nav className=" block w-full rounded-xl border  border-white/80 bg-white bg-opacity-80 py-2 px-2 text-white shadow-md backdrop-blur-2xl backdrop-saturate-200 lg:px-2 lg:py-2">
       <div>
-        <div className="w-full flex items-center px-4 gap-x-2 justify-between text-gray-900">
+        <div className="w-full flex items-center px-2 gap-x-2 justify-between text-gray-900">
           <img src="../../src/assets/pictlogo.png" className="w-16 h-16" />
           <Link
             to={"/"}
@@ -346,7 +346,7 @@ export default function NavList() {
 
             <Link to={"/auth/login"} className=" w-full flex items-center justify-end">
               <button
-                className=" rounded-lg bg-gradient-to-tr bg-blue-500 py-2 px-4 font-sans text-xs font-bold uppercase text-white shadow-md shadow-blue-500/20 transition-all hover:shadow-lg hover:shadow-blue-500/40 active:opacity-[0.85] disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none "
+                className=" rounded-lg bg-gradient-to-tr px-4 bg-blue-500 py-2  font-sans text-xs font-bold uppercase text-white shadow-md shadow-blue-500/20 transition-all hover:shadow-lg hover:shadow-blue-500/40 active:opacity-[0.85] disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none "
                 type="button"
                 data-ripple-light="true"
               >
@@ -367,7 +367,7 @@ export default function NavList() {
                   <NotificationsActiveIcon color="warning" />
                 </IconButton>
               </Tooltip>
-              <div className="mx-2 w-full flex items-center justify-end">
+              <div className=" w-full flex items-center justify-end">
                 <i className="fa-solid fa-user"></i>
                 <ProfileMenu currUser={pathLink} />
               </div>

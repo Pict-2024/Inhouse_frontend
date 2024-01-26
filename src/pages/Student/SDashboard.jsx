@@ -61,23 +61,16 @@ export default function SDashboard() {
       <Card
         color="transparent"
         shadow={false}
-        className="border border-gray-300 w-full p-2 my-2 rounded-md "
+        className="w-full p-2 my-2 rounded-md "
       >
-        <Typography
-          variant="h4"
-          color="blue-gray"
-          className="mx-auto underline underline-offset-2"
-        >
-          User Profile
-        </Typography>
 
         <form
           className="mt-8 mb-2 w-full flex flex-col"
           onSubmit={handleSubmit}
         >
-          <div className="mb-4 flex flex-wrap -mx-4">
+          <div className="mb-4 flex flex-wrap ">
             <div className="w-full px-4">
-              <div className="mb-2 flex flex-col sm:flex-row">
+              <div className="mb-2 flex flex-col gap-4 md:flex-row">
                 <div className="w-full px-2">
                   <Typography variant="h6" color="blue-gray" className="mb-3">
                     Username
@@ -86,7 +79,7 @@ export default function SDashboard() {
                     size="lg"
                     name="username"
                     value={formData.userProfile.username}
-                    label="Username"
+                    label=""
                     onChange={handleUserProfileChange}
                   />
                 </div>
@@ -98,7 +91,7 @@ export default function SDashboard() {
                     size="lg"
                     name="email"
                     value={formData.userProfile.email}
-                    label="Email"
+                    label=""
                     onChange={handleUserProfileChange}
                   />
                 </div>
@@ -106,17 +99,18 @@ export default function SDashboard() {
               {/* Add more profile fields here */}
             </div>
           </div>
-
+  
+          {/** 
           <Button type="submit" className="mt-4" fullWidth>
             Save Changes
-          </Button>
+          </Button>*/}
         </form>
       </Card>
-      <div className="flex justify-around gap-2 flex-wrap -mx-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 px-4">
         {userCounts?.map((userCount, index) => (
           <div
             key={index}
-            className="w-full sm:w-1/2 md:w-1/2 lg:w-1/3 xl:w-1/4 px-4 py-1 my-2 transition duration-300 relative group"
+            className="w-full px-4 py-1 transition duration-300 relative group"
           >
             {/* User Counts Display Content */}
             <div
