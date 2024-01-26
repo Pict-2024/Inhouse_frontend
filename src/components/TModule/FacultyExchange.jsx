@@ -13,7 +13,7 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-import { addRecordsMous } from "./API_Routes";
+import { addRecordsMous, uploadRecordsMous } from "./API_Routes";
 
 export default function FacultyExchange() {
   const { currentUser } = useSelector((state) => state.user);
@@ -27,8 +27,8 @@ export default function FacultyExchange() {
   // Define state variables for form fields
   const [formData, setFormData] = useState({
     T_ID: null,
+    Name: currentUser?.Name,
     Username: currentUser?.Username,
-    Name:currentUser?.Name,
     MoU_Collaboration_linkage_Name: "",
     Name_of_the_collaboration: "",
     Faculty_coordinator: "",
@@ -44,27 +44,118 @@ export default function FacultyExchange() {
   // Add new record
   const handleChange = (e) => {
     const { name, value, type, files } = e.target;
+
     setFormData({
       ...formData,
-      [name]: type === "file" ? files[0] : value,
+      [name]:
+        type === "file" ? (files && files.length > 0 ? files[0] : null) : value,
     });
+  };
+
+  const handleFileUpload = async (file) => {
+    try {
+      // console.log("file as:", file);
+
+      const formDataForFile = new FormData();
+      formDataForFile.append("file", file);
+      formDataForFile.append("username", currentUser?.Username);
+      formDataForFile.append("role", currentUser?.Role);
+      formDataForFile.append("tableName", "mous");
+
+      const response = await axios.post(uploadRecordsMous, formDataForFile);
+      console.log(response);
+      // console.log("file response:", response.data.filePath);
+
+      return response.data.filePath;
+    } catch (error) {
+      console.error("Error uploading file:", error);
+      // Handle error as needed
+    }
   };
 
   // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
-    await axios.post(addRecordsMous, formData);
-    toast.success("Record Added Successfully", {
-      position: "top-right",
-      autoClose: 1500,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-      theme: "light",
-    });
-    navigate("/t/data");
+    console.log(formData);
+
+    var pathUpload_Report;
+    // console.log(formData.Sample_Certificate);
+    try {
+      if (formData.Upload_Report !== null) {
+        // console.log("2");
+        pathUpload_Report = await handleFileUpload(formData.Upload_Report);
+
+        // console.log("Upload path = ", pathUpload);
+      } else {
+        toast.error("Please select a file for upload", {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+        });
+        return;
+      }
+
+      // If file upload is successful, continue with the form submission
+      const formDataWithFilePath = {
+        ...formData,
+
+        Upload_Report: pathUpload_Report,
+      };
+      if (pathUpload_Report === "") {
+        // If file is null, display a toast alert
+        toast.error("Some error occurred while uploading file", {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+        });
+        return;
+      }
+
+      console.log("Final data:", formDataWithFilePath);
+
+      // Send a POST request to the addRecordsBook API endpoint
+      await axios.post(addRecordsMous, formDataWithFilePath);
+
+      // Display a success toast
+      toast.success("Record Added Successfully", {
+        position: "top-right",
+        autoClose: 1500,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+
+      // Navigate to "/t/data" after successful submission
+      navigate("/t/data");
+    } catch (error) {
+      // Handle file upload error
+      console.error("File upload error:", error);
+
+      // Display an error toast
+      toast.error("File upload failed. Please try again.", {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+    }
   };
 
   return (
@@ -174,7 +265,7 @@ export default function FacultyExchange() {
                 name="Duration"
                 value={formData.Duration}
                 onChange={handleChange}
-                label="Duration (in years)"
+                label="Duration "
               />
             </div>
           </div>
@@ -220,7 +311,7 @@ export default function FacultyExchange() {
             </div>
             <div className="w-full md:w-1/2 px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
-                Report
+                Upload_Report
               </Typography>
               <Input
                 size="lg"

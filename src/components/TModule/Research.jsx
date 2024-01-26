@@ -442,17 +442,6 @@ export default function Research() {
                     disabled={!isFinancialSupport}
                   />
                 </div>
-                {/* <div className="w-full md:w-1/2 px-4 mb-4">
-                  <Input
-                    size="lg"
-                    label="Evidence Document"
-                    name="Evidence"
-                    type="file"
-                    value={formData.Evidence}
-                    onChange={handleChange}
-                    disabled={!isFinancialSupport}
-                  />
-                </div> */}
                 <div className="w-full md:w-1/2 px-4 mb-4 flex gap-4">
                   <Input
                     size="lg"
@@ -463,9 +452,6 @@ export default function Research() {
                     onChange={handleChange}
                     disabled={!isFinancialSupport}
                   />
-                  <Button color="dark" size="md">
-                    Upload
-                  </Button>
                 </div>
               </div>
             </div>

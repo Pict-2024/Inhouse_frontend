@@ -108,6 +108,7 @@ export const getOneRecordsCertificate = (username) => {
 export const addRecordsCertificate = `${BASE_URL}/teacher/cert-courses/create-new`;
 export const deleteRecordsCertificate = `${BASE_URL}/teacher/cert-courses/remove`;
 export const updateRecordsCertificate = `${BASE_URL}/teacher/cert-courses/update`;
+export const uploadRecordsCertificate = `${BASE_URL}/teacher/cert-courses/upload-file`;
 
 //  Prof_Affiliations Routes
 export const getAllRecordsProfessional = `${BASE_URL}/teacher/prof-aff/all`;
@@ -117,6 +118,7 @@ export const getOneRecordsProfessional = (username) => {
 export const addRecordsProfessional = `${BASE_URL}/teacher/prof-aff/create-new`;
 export const deleteRecordsProfessional = `${BASE_URL}/teacher/prof-aff/remove`;
 export const updateRecordsProfessional = `${BASE_URL}/teacher/prof-aff/update`;
+export const uploadRecordsProfessional = `${BASE_URL}/teacher/prof-aff/upload-file`;
 
 //  Faculty_as_Resource Routes
 export const getAllRecordsResource = `${BASE_URL}/teacher/facultyresource/all`;
@@ -126,6 +128,7 @@ export const getOneRecordsResource = (username) => {
 export const addRecordsResource = `${BASE_URL}/teacher/facultyresource/create-new`;
 export const deleteRecordsResource = `${BASE_URL}/teacher/facultyresource/remove`;
 export const updateRecordsResource = `${BASE_URL}/teacher/facultyresource/update`;
+export const uploadRecordsResource = `${BASE_URL}/teacher/facultyresource/upload-file`;
 
 //  Extension_Activity Routes
 export const getAllRecordsExtension = `${BASE_URL}/teacher/extension-act/all`;
@@ -135,6 +138,7 @@ export const getOneRecordsExtension = (username) => {
 export const addRecordsExtension = `${BASE_URL}/teacher/extension-act/create-new`;
 export const deleteRecordsExtension = `${BASE_URL}/teacher/extension-act/remove`;
 export const updateRecordsExtension = `${BASE_URL}/teacher/extension-act/update`;
+export const uploadRecordsExtension = `${BASE_URL}/teacher/extension-act/upload-file`;
 
 //  Techfest_Organized Routes
 export const getAllRecordsTechnical = `${BASE_URL}/teacher/techfest-org/all`;
@@ -144,6 +148,7 @@ export const getOneRecordsTechnical = (username) => {
 export const addRecordsTechnical = `${BASE_URL}/teacher/techfest-org/create-new`;
 export const deleteRecordsTechnical = `${BASE_URL}/teacher/techfest-org/remove`;
 export const updateRecordsTechnical = `${BASE_URL}/teacher/techfest-org/update`;
+export const uploadRecordsTechnical = `${BASE_URL}/teacher/techfest-org/upload-file`;
 
 //  Faculty_Achievements Routes
 export const getAllRecordsAchievements = `${BASE_URL}/teacher/faculty-achievement/all`;
@@ -153,6 +158,7 @@ export const getOneRecordsAchievements = (username) => {
 export const addRecordsAchievements = `${BASE_URL}/teacher/faculty-achievement/create-new`;
 export const deleteRecordsAchievements = `${BASE_URL}/teacher/faculty-achievement/remove`;
 export const updateRecordsAchievements = `${BASE_URL}/teacher/faculty-achievement/update`;
+export const uploadRecordsAchievements = `${BASE_URL}/teacher/faculty-achievement/upload-file`;
 
 // Industrial_Visits Routes
 export const getAllRecordsIndustrial = `${BASE_URL}/teacher/visit-tours/all`;
@@ -162,6 +168,7 @@ export const getOneRecordsIndustrial = (username) => {
 export const addRecordsIndustrial = `${BASE_URL}/teacher/visit-tours/create-new`;
 export const deleteRecordsIndustrial = `${BASE_URL}/teacher/visit-tours/remove`;
 export const updateRecordsIndustrial = `${BASE_URL}/teacher/visit-tours/update`;
+export const uploadRecordsIndustrial = `${BASE_URL}/teacher/visit-tours/upload-file`;
 
 //  Contribution_To_BOS Routes
 export const getAllRecordsContribution = `${BASE_URL}/teacher/contribution-bos/all`;
@@ -171,3 +178,4 @@ export const getOneRecordsContribution = (username) => {
 export const addRecordsContribution = `${BASE_URL}/teacher/contribution-bos/create-new`;
 export const deleteRecordsContribution = `${BASE_URL}/teacher/contribution-bos/remove`;
 export const updateRecordsContribution = `${BASE_URL}/teacher/contribution-bos/update`;
+export const uploadRecordsContribution = `${BASE_URL}/teacher/contribution-bos/upload-file`;

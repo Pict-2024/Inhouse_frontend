@@ -13,15 +13,18 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-import { addRecordsAchievements } from "./API_Routes";
+import {
+  addRecordsAchievements,
+  uploadRecordsAchievements,
+} from "./API_Routes";
 
 export default function FacultyAchievements() {
   const { currentUser } = useSelector((state) => state.user);
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     T_ID: null,
+    Name: currentUser?.Name,
     Username: currentUser?.Username,
-    Name:currentUser?.Name,
     Department: "",
     Achievement_Details: "",
     Name_of_Event: "",
@@ -33,27 +36,125 @@ export default function FacultyAchievements() {
   });
 
   const handleInputChange = (e) => {
+    const { name, value, type, files } = e.target;
+
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value,
+      [name]:
+        type === "file" ? (files && files.length > 0 ? files[0] : null) : value,
     });
+  };
+
+  const handleFileUpload = async (file) => {
+    try {
+      console.log("file as:", file);
+      // if (!file || !file.length) {
+      //   // If file is null, display a toast alert
+
+      // }
+
+      const formDataForFile = new FormData();
+      formDataForFile.append("file", file);
+      formDataForFile.append("username", currentUser?.Username);
+      formDataForFile.append("role", currentUser?.Role);
+      formDataForFile.append("tableName", "faculty_achievements");
+
+      const response = await axios.post(
+        uploadRecordsAchievements,
+        formDataForFile
+      );
+      // console.log(response);
+      // console.log("file response:", response.data.filePath);
+
+      return response.data.filePath;
+    } catch (error) {
+      console.error("Error uploading file:", error);
+      // Handle error as needed
+    }
   };
 
   //add new record
   const handleSubmit = async (e) => {
     e.preventDefault();
-    await axios.post(addRecordsAchievements, formData);
-    toast.success("Record Added Successfully", {
-      position: "top-right",
-      autoClose: 1500,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-      theme: "light",
-    });
-    navigate("/t/data");
+    console.log(formData);
+
+    var pathUpload;
+    console.log(formData.Certificate);
+    try {
+      if (formData.Certificate !== null) {
+        console.log("hello");
+        pathUpload = await handleFileUpload(formData.Certificate);
+
+        console.log("Upload path = ", pathUpload);
+      } else {
+        toast.error("Please select a file for upload", {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+        });
+        return;
+      }
+
+      // If file upload is successful, continue with the form submission
+      const formDataWithFilePath = {
+        ...formData,
+        Certificate: pathUpload, // Use an empty string as a default if fileUploadPath is undefined
+      };
+      if (pathUpload === "") {
+        // If file is null, display a toast alert
+        toast.error("Some e rror occurred while uploading file", {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+        });
+        return;
+      }
+
+      console.log("Final data:", formDataWithFilePath);
+
+      // Send a POST request to the addRecordsBook API endpoint
+      await axios.post(addRecordsAchievements, formDataWithFilePath);
+
+      // Display a success toast
+      toast.success("Record Added Successfully", {
+        position: "top-right",
+        autoClose: 1500,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+
+      // Navigate to "/t/data" after successful submission
+      navigate("/t/data");
+    } catch (error) {
+      // Handle file upload error
+      console.error("File upload error:", error);
+
+      // Display an error toast
+      toast.error("File upload failed. Please try again.", {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+    }
   };
 
   return (
@@ -211,7 +312,6 @@ export default function FacultyAchievements() {
                 size="lg"
                 name="Certificate"
                 type="file"
-                value={formData.Certificate}
                 label="Certificate"
                 onChange={handleInputChange}
               />
