@@ -312,12 +312,12 @@ export default function Teachers() {
         <div>
           <Header category="Page" title="Teacher" />
         </div>
-        <div className="flex items-center justify-between gap-2">
+        <div className="flex items-center p-0 justify-between gap-2">
           <TextField
             label="Enter Teacher ID"
             variant="outlined"
             value={teacherId}
-            className="w-80"
+            className="w-80 py-0"
             onChange={(e) => setTeacherId(e.target.value)}
           />
           <Button

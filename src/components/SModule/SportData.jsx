@@ -13,7 +13,7 @@ import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-import { addRecordsSport } from "./API_Routes";
+import { addRecordsSport, uploadRecordsSport } from "./API_Routes";
 
 export default function SportData() {
   const navigate = useNavigate();
@@ -38,38 +38,146 @@ export default function SportData() {
     Start_Date: "",
     End_Date: "",
     Financial_support_given_by_institute_in_INR: "",
-    Evidence: "",
     Award: "",
     Award_Prize_Money: "",
     Remarks: "",
     Geo_Tag_Photos: "",
     Certificates: null,
+    Evidence: null,
   });
 
   const handleOnChange = (e) => {
     const { id, value, type, files } = e.target;
+
     setFormData({
       ...formData,
-      [id]: type === "file" ? files[0] : value,
+      [id]:
+        type === "file" ? (files && files.length > 0 ? files[0] : null) : value,
     });
   };
+
+  const handleFileUpload = async (file) => {
+    try {
+      console.log("file as:", file);
+
+      const formDataForFile = new FormData();
+      formDataForFile.append("file", file);
+      formDataForFile.append("username", currentUser?.Username);
+      formDataForFile.append("role", currentUser?.Role);
+      formDataForFile.append("tableName", "student_sports_data");
+
+      const response = await axios.post(uploadRecordsSport, formDataForFile);
+      console.log(response);
+      // console.log("file response:", response.data.filePath);
+
+      return response.data.filePath;
+    } catch (error) {
+      console.error("Error uploading file:", error);
+      // Handle error as needed
+    }
+  };
+
 
   //add new record
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Sport data:", formData);
-    await axios.post(addRecordsSport, formData);
-    toast.success("Record Added Successfully", {
-      position: "top-right",
-      autoClose: 1500,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-      theme: "light",
-    });
-    navigate("/s/data");
+    console.log(formData);
+
+    var pathEvidence=null, pathReport;
+    console.log(isFinancialSupport);
+    console.log(formData.Evidence);
+    // Check if evidence upload is required
+    if (isFinancialSupport && formData.Evidence === null) {
+      alert("Upload Evidence document");
+      return;
+    }
+
+    try {
+      if (isFinancialSupport ) {
+        console.log("hi");
+        // Handle evidence upload only if financial support is selected
+        pathEvidence = await handleFileUpload(formData.Evidence);
+      }
+      if (
+        formData.Certificates !== null ) {
+        console.log("1");
+
+        console.log("2");
+        pathReport = await handleFileUpload(formData.Certificates);
+
+        // console.log("Upload path = ", pathUpload);
+      } else {
+        toast.error("Please select a file for upload", {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+        });
+        return;
+      }
+      // console.log("Evidence path:",pathEvidence);
+      // If file upload is successful, continue with the form submission
+     
+      const formDataWithFilePath = {
+        ...formData,
+
+        Evidence: pathEvidence,
+        Certificates: pathReport,
+      };
+      if (pathEvidence === "" && pathReport === "" ) {
+        // If file is null, display a toast alert
+        toast.error("Some error occurred while uploading file", {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+        });
+        return;
+      }
+
+      console.log("Final data:", formDataWithFilePath);
+
+      // Send a POST request to the addRecordsBook API endpoint
+      await axios.post(addRecordsSport, formDataWithFilePath);
+
+      // Display a success toast
+      toast.success("Record Added Successfully", {
+        position: "top-right",
+        autoClose: 1500,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+
+      // Navigate to "/t/data" after successful submission
+      navigate("/s/data");
+    } catch (error) {
+      // Handle file upload error
+      console.error("File upload error:", error);
+
+      // Display an error toast
+      toast.error("File upload failed. Please try again.", {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+    }
   };
 
   return (
@@ -349,7 +457,7 @@ export default function SportData() {
                 <Input
                   size="lg"
                   label="Amount in INR"
-                  name="Financial_support_given_by_institute_in_INR"
+                  id="Financial_support_given_by_institute_in_INR"
                   type="number"
                   value={formData.Financial_support_given_by_institute_in_INR}
                   onChange={handleOnChange}
@@ -360,9 +468,8 @@ export default function SportData() {
                 <Input
                   size="lg"
                   label="Evidence Document"
-                  name="Evidence"
+                  id="Evidence"
                   type="file"
-                  value={formData.Evidence}
                   onChange={handleOnChange}
                   disabled={!isFinancialSupport}
                 />
@@ -410,7 +517,6 @@ export default function SportData() {
                 size="lg"
                 label=""
                 type="file"
-                value={formData.Certificates}
                 onChange={handleOnChange}
               />
             </div>

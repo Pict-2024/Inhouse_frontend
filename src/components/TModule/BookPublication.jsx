@@ -110,7 +110,7 @@ export default function BookPublication() {
       };
       if (pathUpload === "") {
         // If file is null, display a toast alert
-        toast.error("Some e rror occurred while uploading file", {
+        toast.error("Some error occurred while uploading file", {
           position: "top-right",
           autoClose: 3000,
           hideProgressBar: false,

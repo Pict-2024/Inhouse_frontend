@@ -13,7 +13,7 @@ import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-import { addRecordsHigherEdu } from "./API_Routes";
+import { addRecordsHigherEdu, uploadRecordsHigherEdu } from "./API_Routes";
 
 export default function HigherEdu() {
   const navigate = useNavigate();
@@ -25,64 +25,149 @@ export default function HigherEdu() {
     Academic_Year: "",
     Student_Name: currentUser?.Name,
     Roll_No: "",
-    Div: "",
+    Division: "",
     Department: "",
     Mobile_No: "",
     Email_ID: currentUser?.Username,
     Parent_Mobile_No: "",
     Passing_Year: "",
+    Qualifying_Exam_Attempted: "",
+    Upload_Proof_of_Qualifying_Exam: null,
     Upload_Score_Card_as_Evidence: null,
     Name_of_university_admitted_for_higher_studies: "",
     Name_of_enrolled_Branch_Specialization: "",
     Upload_ID_card_or_Proof_of_Admission: null,
-
-
-    
-    Qualifying_Exam_Attempted: "",
-    Other_Exam: "",
-    Upload_Proof_of_Qualifying_Exam: null,
   });
 
   const handleOnChange = (e) => {
     const { id, value, type, files } = e.target;
+
     setFormData({
       ...formData,
-      [id]: type === "file" ? files[0] : value,
+      [id]:
+        type === "file" ? (files && files.length > 0 ? files[0] : null) : value,
     });
   };
+
+  const handleFileUpload = async (file) => {
+    try {
+      console.log("file as:", file);
+
+      const formDataForFile = new FormData();
+      formDataForFile.append("file", file);
+      formDataForFile.append("username", currentUser?.Username);
+      formDataForFile.append("role", currentUser?.Role);
+      formDataForFile.append("tableName", "student_higher_education");
+
+      const response = await axios.post(uploadRecordsHigherEdu, formDataForFile);
+      console.log(response);
+      // console.log("file response:", response.data.filePath);
+
+      return response.data.filePath;
+    } catch (error) {
+      console.error("Error uploading file:", error);
+      // Handle error as needed
+    }
+  };
+
 
   const handleQualifyingExamChange = (value) => {
-    setFormData({
-      ...formData,
-      Qualifying_Exam_Attempted: value,
-      Other_Exam: "", // Reset Other_Exam when the main Qualifying_Exam_Attempted changes
+    setFormData((prevFormData) => {
+      return {
+        ...prevFormData,
+        Qualifying_Exam_Attempted: value,
+      };
     });
   };
-
-  const handleOtherExamChange = (e) => {
-    setFormData({
-      ...formData,
-      Other_Exam: e.target.value,
-    });
-  };
-
 
   //add new record
   const handleSubmit = async (e) => {
+    console.log("handle submit api hit");
+    console.log("Form data is : ", formData);
     e.preventDefault();
-    // console.log("higherEdu:", formData);
-    await axios.post(addRecordsHigherEdu, formData);
-    toast.success("Record Added Successfully", {
-      position: "top-right",
-      autoClose: 1500,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-      theme: "light",
-    });
-    navigate("/s/data");
+
+    var completionPath, internshipPath, uploadId;
+
+    try {
+      if(formData.Upload_Proof_of_Qualifying_Exam !== null && formData.Upload_Score_Card_as_Evidence !== null && formData.Upload_ID_card_or_Proof_of_Admission)
+      {
+        completionPath = await handleFileUpload(formData.Upload_Proof_of_Qualifying_Exam);
+        internshipPath = await handleFileUpload(formData.Upload_Score_Card_as_Evidence);
+        uploadId = await handleFileUpload(formData.Upload_ID_card_or_Proof_of_Admission);
+      }
+      else
+      {
+        toast.error("Please select a file for upload", {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+        });
+        return;
+      }
+
+      const formDataWithFilePath = {
+        ...formData,
+
+        Upload_Proof_of_Qualifying_Exam: completionPath,
+        Upload_Score_Card_as_Evidence: internshipPath,
+        Upload_ID_card_or_Proof_of_Admission: uploadId,
+      };
+      if (completionPath === "" || internshipPath === "" || uploadId === "") {
+        // If file is null, display a toast alert
+        toast.error("Some error occurred while uploading file", {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+        });
+        return;
+      }
+
+      console.log("Final data:", formDataWithFilePath);
+      
+      // Send a POST request to the addRecordsBook API endpoint
+      const res = await axios.post(addRecordsHigherEdu, formDataWithFilePath);
+      console.log("Response = ", res)
+
+      toast.success("Record Added Successfully", {
+        position: "top-right",
+        autoClose: 1500,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+
+      navigate("/s/data")
+      
+    } catch (error) {
+      
+      console.error("File upload error:", error);
+
+      // Display an error toast
+      toast.error("File upload failed. Please try again.", {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+    }
+
   };
 
   return (
@@ -182,13 +267,13 @@ export default function HigherEdu() {
                 Div
               </Typography>
               <Select
-                id="Div"
+                id="Division"
                 label="Eg.11"
                 size="lg"
-                value={formData.Div}
+                value={formData.Division}
                 onChange={(value) =>
                   handleOnChange({
-                    target: { id: "Div", value },
+                    target: { id: "Division", value },
                   })
                 }
               >
@@ -230,34 +315,34 @@ export default function HigherEdu() {
 
           <div className="mb-4 flex flex-wrap -mx-4 ">
           <div className="w-full md:w-1/2 px-4 mb-4 flex flex-col gap-1">
-            <Typography variant="h6" color="blue-gray" className="mb-3">
-              Qualifying Exam Attempted
-            </Typography>
-            <Select
-              id="Qualifying_Exam_Attempted"
-              size="lg"
-              label="Qualifying Exam Attempted"
-              value={formData.Qualifying_Exam_Attempted}
-              onChange={(value) => handleQualifyingExamChange(value)}
-            >
-              <Option value="GRE">GRE</Option>
-              <Option value="GATE">GATE</Option>
-              <Option value="CAT">CAT</Option>
-              <Option value="CAT">TOEFL</Option>
-              <Option value="Other">Other</Option>
-            </Select>
-            <div>
-            {formData.Qualifying_Exam_Attempted === "Other" && (
-              <Input
-              id="Other_Exam"
-              size="lg"
-              label="Other Exam Name"
-              value={formData.Other_Exam}
-              onChange={handleOtherExamChange}
-              />
-              )}
-            </div>
-          </div>
+          <Typography variant="h6" color="blue-gray" className="mb-3">
+            Qualifying Exam Attempted
+          </Typography>
+          <Select
+            id="Qualifying_Exam_Attempted"
+            size="lg"
+            label="Qualifying Exam Attempted"
+            value={formData.Qualifying_Exam_Attempted}
+            onChange={(value) =>
+              handleOnChange({
+                target: { id: "Qualifying_Exam_Attempted", value },
+              })
+            }
+          >
+            <Option value="GRE">GRE</Option>
+            <Option value="GATE">GATE</Option>
+            <Option value="CAT">CAT</Option>
+            <Option value="TOEFL">TOEFL</Option>
+            <Option value="IELTS">IELTS</Option>
+            <Option value="SAT">SAT</Option>
+            <Option value="CMAT">CMAT</Option>
+            <Option value="MAT">MAT</Option>
+            <Option value="UPSC">UPSC</Option>
+            <Option value="MPSC">MPSC</Option>
+          </Select>
+         
+        </div>
+  
           <div className="w-full md:w-1/2 px-4 mb-4">
             <Typography variant="h6" color="blue-gray" className="mb-3">
               Upload Proof of Qualifying Exam
@@ -310,7 +395,6 @@ export default function HigherEdu() {
                 size="lg"
                 label=""
                 type="file"
-                value={formData.Upload_ID_card_or_Proof_of_Admission}
                 onChange={handleOnChange}
               />
             </div>
@@ -323,7 +407,6 @@ export default function HigherEdu() {
                 size="lg"
                 type="file"
                 label=""
-                value={formData.Upload_Score_Card_as_Evidence}
                 onChange={handleOnChange}
               />
             </div>
