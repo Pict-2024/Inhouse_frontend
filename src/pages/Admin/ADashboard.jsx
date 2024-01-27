@@ -1,39 +1,25 @@
-import { IconButton, Modal, Box } from "@mui/material";
-import NotificationsActiveIcon from "@mui/icons-material/NotificationsActive";
+
 import { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
+// import { useSelector } from "react-redux";
 import {
-  Button,
   Card,
   CardBody,
-  Input,
-  Textarea,
-  Tooltip,
   Typography,
 } from "@material-tailwind/react";
 import axios from "axios";
-import CloseIcon from "@mui/icons-material/Close";
-import moment from "moment";
 
 // ... (imports)
 
 export const ADashBoard = () => {
-  const { currentUser } = useSelector((state) => state.user);
+  // const { currentUser } = useSelector((state) => state.user);
   const [tableData, setTableData] = useState({
     students: [],
     teachers: [],
   });
-  const getCurrentDate = () => {
-    const currentDate = new Date();
-    return currentDate.toISOString().split("T")[0];
-  };
-  const [notificationData, setNotificationData] = useState({
-    Username: currentUser?.Username,
-    Title: "",
-    Description: "",
-    Role: currentUser?.Role,
-    date: getCurrentDate(),
-  });
+  // const getCurrentDate = () => {
+  //   const currentDate = new Date();
+  //   return currentDate.toISOString().split("T")[0];
+  // };
 
 
   const fetchAllTablesData = async () => {

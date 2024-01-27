@@ -14,7 +14,7 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-import { addRecordsResearch } from "./API_Routes";
+import { addRecordsResearch, uploadRecordsResearch } from "./API_Routes";
 
 export default function Research() {
   const { currentUser } = useSelector((state) => state.user);
@@ -28,8 +28,8 @@ export default function Research() {
 
   const [formData, setFormData] = useState({
     T_ID: null,
-    Username: currentUser?.Username,
     Name: currentUser?.Name,
+    Username: currentUser?.Username,
     Department: "",
     Title_of_Research_Article: "",
     Type_Research_Review: "",
@@ -49,38 +49,156 @@ export default function Research() {
     Year: "",
     DOI: "",
     Financial_support_from_institute_in_INR: "",
-    Evidence: "",
-    Link_To_Paper: "",
-    Achievements_if_any: "",
+    Evidence: null,
+    Link_To_Paper: null,
     Upload_Paper: null,
+    Achievements_if_any: "",
     Upload_DOA: null,
   });
 
   const handleChange = (e) => {
     const { name, value, type, files } = e.target;
+
     setFormData({
       ...formData,
-      [name]: type === "file" ? files[0] : value,
+      [name]:
+        type === "file" ? (files && files.length > 0 ? files[0] : null) : value,
     });
   };
 
-  //Add records
+  const handleFileUpload = async (file) => {
+    try {
+      console.log("file as:", file);
+
+      const formDataForFile = new FormData();
+      formDataForFile.append("file", file);
+      formDataForFile.append("username", currentUser?.Username);
+      formDataForFile.append("role", currentUser?.Role);
+      formDataForFile.append("tableName", "research_publication");
+
+      const response = await axios.post(uploadRecordsResearch, formDataForFile);
+      console.log(response);
+      // console.log("file response:", response.data.filePath);
+
+      return response.data.filePath;
+    } catch (error) {
+      console.error("Error uploading file:", error);
+      // Handle error as needed
+    }
+  };
+
+  //Add Records
   const handleSubmit = async (e) => {
     e.preventDefault();
-    await axios.post(addRecordsResearch, formData);
+    console.log(formData);
 
-    toast.success("Record Added Successfully", {
-      position: "top-right",
-      autoClose: 1500,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-      theme: "light",
-    });
+    var pathEvidence = null,
+      pathReport,
+      pathStudent,
+      pathLink;
+    // console.log(isFinancialSupport);
+    // console.log(formData.Evidence);
+    // Check if evidence upload is required
+    if (isFinancialSupport && formData.Evidence === null) {
+      alert("Upload Evidence document");
+      return;
+    }
 
-    navigate("/t/data");
+    try {
+      if (isFinancialSupport) {
+        // console.log("hi");
+        // Handle evidence upload only if financial support is selected
+        pathEvidence = await handleFileUpload(formData.Evidence);
+      }
+      if (
+        formData.Upload_Paper !== null &&
+        formData.Upload_DOA !== null &&
+        formData.Link_To_Paper !== null
+      ) {
+        pathReport = await handleFileUpload(formData.Upload_Paper);
+        pathStudent = await handleFileUpload(formData.Upload_DOA);
+        pathLink = await handleFileUpload(formData.Link_To_Paper);
+
+        // console.log("Upload path = ", pathUpload);
+      } else {
+        toast.error("Please select a file for upload", {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+        });
+        return;
+      }
+      // console.log("Evidence path:",pathEvidence);
+      // If file upload is successful, continue with the form submission
+
+      const formDataWithFilePath = {
+        ...formData,
+
+        Evidence: pathEvidence,
+        Upload_Paper: pathReport,
+        Upload_DOA: pathStudent,
+        Link_To_Paper: pathLink,
+      };
+      if (
+        pathEvidence === "" ||
+        pathReport === "" ||
+        pathStudent === "" ||
+        pathLink === ""
+      ) {
+        // If file is null, display a toast alert
+        toast.error("Some error occurred while uploading file", {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+        });
+        return;
+      }
+
+      console.log("Final data:", formDataWithFilePath);
+
+      // Send a POST request to the addRecordsBook API endpoint
+      await axios.post(addRecordsResearch, formDataWithFilePath);
+
+      // Display a success toast
+      toast.success("Record Added Successfully", {
+        position: "top-right",
+        autoClose: 1500,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+
+      // Navigate to "/t/data" after successful submission
+      navigate("/t/data");
+    } catch (error) {
+      // Handle file upload error
+      console.error("File upload error:", error);
+
+      // Display an error toast
+      toast.error("File upload failed. Please try again.", {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+    }
   };
 
   return (
@@ -435,9 +553,9 @@ export default function Research() {
                   <Input
                     size="lg"
                     label="Amount in INR"
-                    name="Financial_support_amount_INR"
+                    name="Financial_support_from_institute_in_INR"
                     type="number"
-                    value={formData.Financial_support_amount_INR}
+                    value={formData.Financial_support_from_institute_in_INR}
                     onChange={handleChange}
                     disabled={!isFinancialSupport}
                   />
@@ -448,7 +566,6 @@ export default function Research() {
                     label="Evidence Document"
                     name="Evidence"
                     type="file"
-                    value={formData.Evidence}
                     onChange={handleChange}
                     disabled={!isFinancialSupport}
                   />
@@ -479,9 +596,8 @@ export default function Research() {
               <Input
                 size="lg"
                 label="Link to article / paper / abstract of the article"
-                type="text"
+                type="file"
                 name="Link_To_Paper"
-                value={formData.Link_To_Paper}
                 onChange={handleChange}
               />
             </div>
@@ -495,7 +611,6 @@ export default function Research() {
                 label="Upload the Paper"
                 className="border-t-blue-gray-200 focus:border-t-gray-900"
                 name="Upload_Paper"
-                value={formData.Upload_Paper}
                 onChange={handleChange}
               />
             </div>
@@ -522,10 +637,9 @@ export default function Research() {
               <Input
                 size="lg"
                 type="file"
-                label="Financial support from institute in INR "
+                label=" Upload Document of Achievement"
                 className="border-t-blue-gray-200 focus:border-t-gray-900"
                 name="Upload_DOA"
-                value={formData.Upload_DOA}
                 onChange={handleChange}
               />
             </div>

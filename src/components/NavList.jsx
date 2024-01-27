@@ -7,9 +7,9 @@ import { Modal, Box } from "@mui/material";
 import moment from "moment";
 import axios from "axios";
 
-import React, {useState} from "react";
-import { toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import React, { useState } from "react";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 import {
   Typography,
@@ -40,7 +40,6 @@ import {
   // Bars2Icon,
 } from "@heroicons/react/24/solid";
 
-
 import {
   Dialog,
   DialogHeader,
@@ -49,22 +48,21 @@ import {
 } from "@material-tailwind/react";
 import { resetUser } from "../redux/user/userSlice";
 
-
 const profileMenuItems = [
   {
     label: "My Profile",
     icon: UserCircleIcon,
-    link: "/dashboard"
+    link: "/dashboard",
   },
   {
     label: "Achievements",
     icon: Square3Stack3DIcon,
-    link: "/general"
+    link: "/general",
   },
   {
     label: "Inbox",
     icon: InboxArrowDownIcon,
-    link: "/general"
+    link: "/general",
   },
   // {
   //   label: "Help",
@@ -76,9 +74,7 @@ const profileMenuItems = [
   },
 ];
 
-
 function ProfileMenu({ currUser }) {
-
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -89,21 +85,18 @@ function ProfileMenu({ currUser }) {
 
   const closeMenu = (isLastItem, link) => {
     setIsMenuOpen(false);
-    if(isLastItem)
-    {
+    if (isLastItem) {
       handleOpen("xs");
-    }
-    else
-    {
+    } else {
       navigate(currUser + link);
     }
-  }
- 
+  };
+
   const handleLogout = () => {
     handleOpen(null);
     dispatch(resetUser());
     navigate("/");
-    toast.success('Logout Successful', {
+    toast.success("Logout Successful", {
       position: "top-left",
       autoClose: 1500,
       hideProgressBar: false,
@@ -113,9 +106,7 @@ function ProfileMenu({ currUser }) {
       progress: undefined,
       theme: "light",
     });
-    
-  }
-
+  };
 
   return (
     <Menu open={isMenuOpen} handler={setIsMenuOpen} placement="bottom-end">
@@ -143,13 +134,10 @@ function ProfileMenu({ currUser }) {
       <MenuList className="p-1">
         {profileMenuItems.map(({ label, icon, link }, key) => {
           const isLastItem = key === profileMenuItems.length - 1;
-          if(currUser === "/a" && link === "/general")
-          {
-            console.log("Inside not happening")
-            return <div key={label}></div>
-          }
-          else
-          {
+          if (currUser === "/a" && link === "/general") {
+            console.log("Inside not happening");
+            return <div key={label}></div>;
+          } else {
             return (
               <MenuItem
                 key={label}
@@ -169,53 +157,41 @@ function ProfileMenu({ currUser }) {
                   variant="small"
                   className="font-normal"
                   color={isLastItem ? "red" : "inherit"}
-                  
                 >
                   {label}
                 </Typography>
               </MenuItem>
             );
           }
-          
         })}
       </MenuList>
 
       <Dialog
-      open={
-        size === "xs" ||
-        size === "sm"
-      }
-      size={size || "sm"}
-      handler={handleOpen}
-    >
-      <DialogHeader>Warning</DialogHeader>
-      <DialogBody>
-        Are you sure you want to logout ?
-      </DialogBody>
-      <DialogFooter>
-        <Button
-          variant="text"
-          color="red"
-          onClick={() => handleOpen(null)}
-          className="mr-1"
-        >
-          <span>Cancel</span>
-        </Button>
-        <Button
-          variant="gradient"
-          color="green"
-          onClick={() => handleLogout()}
-        >
-          <span>Confirm</span>
-        </Button>
-      </DialogFooter>
-    </Dialog>
-
+        open={size === "xs" || size === "sm"}
+        size={size || "sm"}
+        handler={handleOpen}
+      >
+        <DialogHeader>Warning</DialogHeader>
+        <DialogBody>Are you sure you want to logout ?</DialogBody>
+        <DialogFooter>
+          <Button
+            variant="text"
+            color="red"
+            onClick={() => handleOpen(null)}
+            className="mr-1"
+          >
+            <span>Cancel</span>
+          </Button>
+          <Button
+            variant="gradient"
+            color="green"
+            onClick={() => handleLogout()}
+          >
+            <span>Confirm</span>
+          </Button>
+        </DialogFooter>
+      </Dialog>
     </Menu>
-
-
-    
-
   );
 }
 
@@ -226,10 +202,10 @@ export default function NavList() {
   const [notices, setNotices] = useState([]);
   const [isNotificationModalOpen, setNotificationModalOpen] = useState(false);
   const [isSendModalOpen, setSendModalOpen] = useState(false);
-  const [tableData, setTableData] = useState({
-    students: [],
-    teachers: [],
-  });
+  // const [tableData, setTableData] = useState({
+  //   students: [],
+  //   teachers: [],
+  // });
   const getCurrentDate = () => {
     const currentDate = new Date();
     return currentDate.toISOString().split("T")[0];
@@ -315,16 +291,11 @@ export default function NavList() {
 
   var pathLink = "";
 
-  if(currentUser && currentUser.Role === 0)
-  {
+  if (currentUser && currentUser.Role === 0) {
     pathLink = "/a";
-  }
-  else if(currentUser && currentUser.Role === 1)
-  {
+  } else if (currentUser && currentUser.Role === 1) {
     pathLink = "/t";
-  }
-  else if(currentUser && currentUser.Role === 2)
-  {
+  } else if (currentUser && currentUser.Role === 2) {
     pathLink = "/s";
   }
 
@@ -335,16 +306,16 @@ export default function NavList() {
           <img src="../../src/assets/pictlogo.png" className="w-16 h-16" />
           <Link
             to={"/"}
-            className="mr-4 w-full font-bold cursor-pointer py-1.5 font-sans text-lg  leading-normal text-inherit antialiased"
+            className="mr-4 w-full font-bold cursor-pointer py-1.5 font-sans text-2xl leading-normal text-inherit antialiased"
           >
             <span>PICT</span>
           </Link>
-          
-          
 
           {currentUser === null ? (
-
-            <Link to={"/auth/login"} className=" w-full flex items-center justify-end">
+            <Link
+              to={"/auth/login"}
+              className=" w-full flex items-center justify-end"
+            >
               <button
                 className=" rounded-lg bg-gradient-to-tr px-4 bg-blue-500 py-2  font-sans text-xs font-bold uppercase text-white shadow-md shadow-blue-500/20 transition-all hover:shadow-lg hover:shadow-blue-500/40 active:opacity-[0.85] disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none "
                 type="button"
@@ -355,25 +326,29 @@ export default function NavList() {
             </Link>
           ) : (
             <div className="flex gap-4">
-              <Tooltip
-                content="Notifications"
-                placement="left"
-                animate={{
-                  mount: { scale: 1, y: 0 },
-                  unmount: { scale: 0, y: 0 },
-                }}
-              >
-                <IconButton className="bg-white rounded-full p-2 shadow-none hover:shadow-none" onClick={handleOpenNotificationModal}>
-                  <NotificationsActiveIcon color="warning" />
-                </IconButton>
-              </Tooltip>
+              {currentUser?.Role !== 2 && (
+                <Tooltip
+                  content="Notifications"
+                  placement="left"
+                  animate={{
+                    mount: { scale: 1, y: 0 },
+                    unmount: { scale: 0, y: 0 },
+                  }}
+                >
+                  <IconButton
+                    className="bg-white rounded-full p-2 shadow-none hover:shadow-none"
+                    onClick={handleOpenNotificationModal}
+                  >
+                    <NotificationsActiveIcon color="warning" />
+                  </IconButton>
+                </Tooltip>
+              )}
               <div className=" w-full flex items-center justify-end">
                 <i className="fa-solid fa-user"></i>
                 <ProfileMenu currUser={pathLink} />
               </div>
             </div>
           )}
-
         </div>
       </div>
 
@@ -390,11 +365,14 @@ export default function NavList() {
             transform: "translate(-50%, -50%)",
             width: 900,
             maxWidth: "80vw",
+            maxHeight: "80vh",
+            overflowY: "auto",
             bgcolor: "background.paper",
             boxShadow: 24,
             p: 4,
+            margin: "20px", // Add margin
           }}
-          className="flex flex-col gap-2 rounded-md shadow-md overflow-y-auto"
+          className="flex flex-col gap-2 rounded-md shadow-md"
         >
           <div className="flex justify-between relative">
             <div>
@@ -404,7 +382,10 @@ export default function NavList() {
                 style={{ position: "absolute" }}
                 className="z-50"
               >
-                <Button className="text-white hover:bg-black" onClick={handleOpenSendModal}>
+                <Button
+                  className="text-white hover:bg-black"
+                  onClick={handleOpenSendModal}
+                >
                   Send Notification
                 </Button>
               </Tooltip>
@@ -419,7 +400,10 @@ export default function NavList() {
               </Typography>
             </div>
             <div>
-              <Button className="text-white bg-red-600 p-2 hover:bg-red-700" onClick={handleCloseNotificationModal}>
+              <Button
+                className="text-white bg-red-600 p-2 hover:bg-red-700"
+                onClick={handleCloseNotificationModal}
+              >
                 <CloseIcon />
               </Button>
             </div>
@@ -436,20 +420,21 @@ export default function NavList() {
               <div>
                 <div className="flex justify-between items-center">
                   <Typography
-                  variant="body1"
-                  color="blue-gray"
-                  className="mb-2"
-                  style={{ fontWeight: "600", letterSpacing: "0.5px" }}
+                    variant="body1"
+                    color="blue-gray"
+                    className="mb-2"
+                    style={{ fontWeight: "600", letterSpacing: "0.5px" }}
                   >
-                  {notice.Title}
+                    {notice.Title}
                   </Typography>
                   <Typography
-                  variant="body1"
-                  color="blue-gray"
-                  className="mb-2 text-sm"
-                >
-                {"Date - "}{moment(notice.DateTime).format("YYYY-MM-DD")}
-                </Typography>
+                    variant="body1"
+                    color="blue-gray"
+                    className="mb-2 text-sm"
+                  >
+                    {"Date - "}
+                    {moment(notice.DateTime).format("YYYY-MM-DD")}
+                  </Typography>
                 </div>
 
                 <Typography variant="body2" color="blue-gray">
@@ -462,7 +447,8 @@ export default function NavList() {
                   color="blue-gray"
                   className="mb-2 text-sm"
                 >
-                {"Sent by - "}{notice.Username}
+                  {"Sent by - "}
+                  {notice.Username}
                 </Typography>
               </div>
             </Card>
@@ -529,8 +515,6 @@ export default function NavList() {
           </div>
         </Box>
       </Modal>
-
-
     </nav>
   );
 }

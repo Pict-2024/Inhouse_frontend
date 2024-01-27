@@ -13,7 +13,7 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-import { addRecordsGrants } from "./API_Routes";
+import { addRecordsGrants, uploadRecordsGrants } from "./API_Routes";
 
 export default function Grants() {
   const { currentUser } = useSelector((state) => state.user);
@@ -27,23 +27,23 @@ export default function Grants() {
   // Define state variables for form fields
   const [formData, setFormData] = useState({
     T_ID: null,
+    Name: currentUser?.Name,
     Username: currentUser?.Username,
-    Name:currentUser?.Name,
     Department: "",
     Principal_Investigator_Faculty_Name: "",
     Project_Title: "",
-    Number_of_CO_PI: "",
     Names_of_CO_PI: "",
+    Number_of_CO_PI: "",
     Department_of_CO_PI: "",
     Project_Type_Government_Non_Government: "",
     Name_of_Funding_Agency: "",
     Name_of_the_Scheme: "",
     Amount_Sanctioned: "",
+    Evidence_Document: null,
     Year_of_grant_received: "",
     Start_Date: "",
     End_Date: "",
-    Amount_deposited_to_PICT_account: "",
-    Evidence_Document: null,
+    Amount_deposited_to_PICT_account: null,
     Transaction_date: "",
     Status_Ongoing_Completed: "",
     Duration: "",
@@ -51,27 +51,126 @@ export default function Grants() {
   });
 
   const handleChange = (e) => {
+    const { name, value, type, files } = e.target;
+
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value,
+      [name]:
+        type === "file" ? (files && files.length > 0 ? files[0] : null) : value,
     });
   };
 
-  // add new entry
+  const handleFileUpload = async (file) => {
+    try {
+      console.log("file as:", file);
+
+      const formDataForFile = new FormData();
+      formDataForFile.append("file", file);
+      formDataForFile.append("username", currentUser?.Username);
+      formDataForFile.append("role", currentUser?.Role);
+      formDataForFile.append("tableName", "grants");
+
+      const response = await axios.post(uploadRecordsGrants, formDataForFile);
+      console.log(response);
+      // console.log("file response:", response.data.filePath);
+
+      return response.data.filePath;
+    } catch (error) {
+      console.error("Error uploading file:", error);
+      // Handle error as needed
+    }
+  };
+
+  //add new record
   const handleSubmit = async (e) => {
     e.preventDefault();
-    await axios.post(addRecordsGrants, formData);
-    toast.success("Record Added Successfully", {
-      position: "top-right",
-      autoClose: 1500,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-      theme: "light",
-    });
-    navigate("/t/data");
+    console.log(formData);
+
+    let pathEvidence, pathReport;
+
+    try {
+      if (
+        formData.Amount_deposited_to_PICT_account !== null &&
+        formData.Evidence_Document !== null
+      ) {
+        pathReport = await handleFileUpload(
+          formData.Amount_deposited_to_PICT_account
+        );
+        pathEvidence = await handleFileUpload(formData.Evidence_Document);
+
+        // console.log("Upload path = ", pathUpload);
+      } else {
+        toast.error("Please select a file for upload", {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+        });
+        return;
+      }
+      // console.log("Evidence path:",pathEvidence);
+      // If file upload is successful, continue with the form submission
+
+      const formDataWithFilePath = {
+        ...formData,
+
+        Evidence_Document: pathEvidence,
+        Amount_deposited_to_PICT_account: pathReport,
+      };
+      if (pathEvidence === "" || pathReport === "") {
+        // If file is null, display a toast alert
+        toast.error("Some error occurred while uploading file", {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+        });
+        return;
+      }
+
+      console.log("Final data:", formDataWithFilePath);
+
+      // Send a POST request to the addRecordsBook API endpoint
+      await axios.post(addRecordsGrants, formDataWithFilePath);
+
+      // Display a success toast
+      toast.success("Record Added Successfully", {
+        position: "top-right",
+        autoClose: 1500,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+
+      // Navigate to "/t/data" after successful submission
+      navigate("/t/data");
+    } catch (error) {
+      // Handle file upload error
+      console.error("File upload error:", error);
+
+      // Display an error toast
+      toast.error("File upload failed. Please try again.", {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+    }
   };
 
   return (
@@ -307,7 +406,6 @@ export default function Grants() {
                 size="lg"
                 name="Amount_deposited_to_PICT_account"
                 type="file"
-                value={formData.Amount_deposited_to_PICT_account}
                 onChange={handleChange}
                 label="Amount deposited to PICT account"
               />
@@ -324,7 +422,6 @@ export default function Grants() {
                 size="lg"
                 name="Evidence_Document"
                 type="file"
-                value={formData.Evidence_Document}
                 onChange={handleChange}
                 label="Document evidence for amount deposited in PICT account"
               />

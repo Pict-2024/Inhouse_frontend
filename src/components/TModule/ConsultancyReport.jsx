@@ -13,15 +13,15 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-import { addRecordsConsultancy } from "./API_Routes";
+import { addRecordsConsultancy, uploadRecordsConsultancy } from "./API_Routes";
 
 export default function ConsultancyReport() {
   const { currentUser } = useSelector((state) => state.user);
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     T_ID: null,
+    Name: currentUser?.Name,
     Username: currentUser?.Username,
-    Name:currentUser?.Name,
     Name_of_Department: "",
     Role: "",
     Client_Organisation: "",
@@ -31,37 +31,139 @@ export default function ConsultancyReport() {
     Amount: "",
     Start_Date: "",
     End_Date: "",
-    Amt_Deposited: "",
+    Amt_Deposited: null,
     Date_of_Transaction: "",
-    Link_to_evidence: "",
+    Link_to_evidence: null,
     Status: "",
     Outcome: "",
-    Upload_Paper: "",
+    Upload_Paper: null,
   });
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
+    const { name, value, type, files } = e.target;
+
     setFormData({
       ...formData,
-      [name]: value,
+      [name]:
+        type === "file" ? (files && files.length > 0 ? files[0] : null) : value,
     });
+  };
+
+  const handleFileUpload = async (file) => {
+    try {
+      console.log("file as:", file);
+
+      const formDataForFile = new FormData();
+      formDataForFile.append("file", file);
+      formDataForFile.append("username", currentUser?.Username);
+      formDataForFile.append("role", currentUser?.Role);
+      formDataForFile.append("tableName", "consultancy_report");
+
+      const response = await axios.post(
+        uploadRecordsConsultancy,
+        formDataForFile
+      );
+      console.log(response);
+      // console.log("file response:", response.data.filePath);
+
+      return response.data.filePath;
+    } catch (error) {
+      console.error("Error uploading file:", error);
+      // Handle error as needed
+    }
   };
 
   //Add new records
   const handleSubmit = async (e) => {
     e.preventDefault();
-    await axios.post(addRecordsConsultancy, formData);
-    toast.success("Record Added Successfully", {
-      position: "top-right",
-      autoClose: 1500,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-      theme: "light",
-    });
-    navigate("/t/data");
+    console.log(formData);
+
+    let pathEvidence, pathReport, pathAmt;
+
+    try {
+      if (
+        formData.Upload_Paper !== null &&
+        formData.Link_to_evidence !== null &&
+        formData.Amt_Deposited !== null
+      ) {
+        pathReport = await handleFileUpload(formData.Upload_Paper);
+        pathEvidence = await handleFileUpload(formData.Link_to_evidence);
+        pathAmt = await handleFileUpload(formData.Amt_Deposited);
+
+        // console.log("Upload path = ", pathUpload);
+      } else {
+        toast.error("Please select a file for upload", {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+        });
+        return;
+      }
+      // console.log("Evidence path:",pathEvidence);
+      // If file upload is successful, continue with the form submission
+
+      const formDataWithFilePath = {
+        ...formData,
+
+        Link_to_evidence: pathEvidence,
+        Upload_Paper: pathReport,
+        Amt_Deposited: pathAmt,
+      };
+      if (pathEvidence === "" || pathReport === "" || pathAmt === "") {
+        // If file is null, display a toast alert
+        toast.error("Some error occurred while uploading file", {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+        });
+        return;
+      }
+
+      console.log("Final data:", formDataWithFilePath);
+
+      // Send a POST request to the addRecordsBook API endpoint
+      await axios.post(addRecordsConsultancy, formDataWithFilePath);
+
+      // Display a success toast
+      toast.success("Record Added Successfully", {
+        position: "top-right",
+        autoClose: 1500,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+
+      // Navigate to "/t/data" after successful submission
+      navigate("/t/data");
+    } catch (error) {
+      // Handle file upload error
+      console.error("File upload error:", error);
+
+      // Display an error toast
+      toast.error("File upload failed. Please try again.", {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+    }
   };
 
   return (
@@ -257,13 +359,12 @@ export default function ConsultancyReport() {
                 size="lg"
                 name="Amt_Deposited"
                 type="file"
-                value={formData.Amt_Deposited}
                 onChange={handleChange}
                 label="Document evidence for amount deposited in PICT account"
               />
             </div>
           </div>
-          <div className="mb-4 flex flex-wrap -mx-4"> 
+          <div className="mb-4 flex flex-wrap -mx-4">
             <div className="w-full px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
                 Document evidence for amount sanctioned from funding agency (for
@@ -273,7 +374,6 @@ export default function ConsultancyReport() {
                 size="lg"
                 name="Link_to_evidence"
                 type="file"
-                value={formData.Link_to_evidence}
                 onChange={handleChange}
                 label=" Document evidence for amount sanctioned "
               />
@@ -301,7 +401,6 @@ export default function ConsultancyReport() {
                 size="lg"
                 type="file"
                 name="Upload_Paper"
-                value={formData.Upload_Paper}
                 label="Upload PDF Documents"
                 onChange={handleChange}
               />
