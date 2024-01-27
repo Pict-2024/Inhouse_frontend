@@ -3,49 +3,6 @@
 import { links } from "../../data/dummy";
 import "../../App.css";
 
-// const AdminSidebar = () => {
-//
-
-//   return (
-//     <div className="h-[90vh] lg:max-w-[15rem] w-1/24 sm:w-2/5 p-2 shadow-blue-gray-900/5  hidden sm:block">
-//       <>
-//         <div className="flex justify-between items-center">
-//           <Link
-//             to="/"
-//             className="items-center gap-3 ml-3 mt-2 flex text-xl font-extrabold tracking-tight dark:text-white text-slate-900"
-//           >
-//             <span>Admin Dashboard</span>
-//           </Link>
-//         </div>
-//         <div className="mt-10">
-//           {links.map((item) => (
-//             <div key={item.title}>
-//               <p className="text-gray-400 dark:text-gray-400 m-3 mt-2 uppercase">
-//                 {item.title}
-//               </p>
-//               {item.links.map((link) => (
-//                 <NavLink
-//                   to={`/a/${link.name}`}
-//                   key={link.name}
-//                   style={{ color: "black" }}
-//                   className={({ isActive }) =>
-//                     isActive ? activeLink : normalLink
-//                   }
-//                 >
-//                   {link.icon}
-//                   <span className="capitalize ">{link.name}</span>
-//                 </NavLink>
-//               ))}
-//             </div>
-//           ))}
-//         </div>
-//       </>
-//     </div>
-//   );
-// };
-
-// export default AdminSidebar;
-
 import { Link } from "react-router-dom";
 
 import {

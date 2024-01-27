@@ -60,9 +60,9 @@ export default function TableData({ tableName }) {
     const apiRoutes = {
       Internship: (username) => getOneRecordsInternship(username),
       Research: (username) => getOneRecordsResearchStud(username),
-      "Conference Publication": (username) =>
+      "Conference publication": (username) =>
         getOneRecordsConferenceStud(username),
-      "Certificate Courses": (username) =>
+      "Certificate Course Attended": (username) =>
         getOneRecordsCertificateStud(username),
       "Sport Data": (username) => getOneRecordsSport(username),
       "Event Participated": (username) => getOneRecordsParticipation(username),
@@ -84,9 +84,9 @@ export default function TableData({ tableName }) {
         `${deleteRecordsInternship}?username=${username}&S_ID=${S_ID}`,
       Research: (username, S_ID) =>
         `${deleteRecordsResearchStud}?username=${username}&S_ID=${S_ID}`,
-      "Conference Publication": (username, S_ID) =>
+      "Conference publication": (username, S_ID) =>
         `${deleteRecordsConferenceStud}?username=${username}&S_ID=${S_ID}`,
-      "Certificate Courses": (username, S_ID) =>
+      "Certificate Course Attended": (username, S_ID) =>
         `${deleteRecordsCertificateStud}?username=${username}&S_ID=${S_ID}`,
       "Sport Data": (username, S_ID) =>
         `${deleteRecordsSport}?username=${username}&S_ID=${S_ID}`,
@@ -111,9 +111,9 @@ export default function TableData({ tableName }) {
         `${updateRecordsInternship}?username=${username}&S_ID=${S_ID}`,
       Research: (username, S_ID) =>
         `${updateRecordsResearchStud}?username=${username}&S_ID=${S_ID}`,
-      "Conference Publication": (username, S_ID) =>
+      "Conference publication": (username, S_ID) =>
         `${updateRecordsConferenceStud}?username=${username}&S_ID=${S_ID}`,
-      "Certificate Courses": (username, S_ID) =>
+      "Certificate Course Attended": (username, S_ID) =>
         `${updateRecordsCertificateStud}?username=${username}&S_ID=${S_ID}`,
       "Sport Data": (username, S_ID) =>
         `${updateRecordsSport}?username=${username}&S_ID=${S_ID}`,
@@ -172,8 +172,6 @@ export default function TableData({ tableName }) {
         currentUser.Username,
         record.S_ID
       );
-      // console.log("Deleting record with:", currentUser.Email, record.S_ID);
-      // console.log("Table:", tableName);
 
       await axios.delete(apiurl, {
         headers: {
@@ -216,11 +214,12 @@ export default function TableData({ tableName }) {
   const handleSave = async (tId) => {
     try {
       const updatedRecord = editableFields[tId];
-      // console.log("Updated:", updatedRecord);
+      console.log("Updated:", updatedRecord);
       // Send a PUT request to update the record in the backend
       const apiurl = updateAPIRoute(tableName)(currentUser.Username, tId);
-      // console.log("updating record with:", currentUser.Email, tId);
-      // console.log("Table:", tableName);
+      console.log(apiurl);
+      console.log("updating record with:", currentUser.Username, tId);
+      console.log("Table:", tableName);
       await axios.put(apiurl, updatedRecord, {
         headers: {
           "Content-Type": "application/json",

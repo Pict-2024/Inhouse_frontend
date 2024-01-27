@@ -21,10 +21,11 @@ export default function Internship() {
   const [isPPO, setIsPPO] = useState("No");
 
   const { currentUser } = useSelector((state) => state.user);
-  console.log("currentuser:", currentUser);
+  // console.log("currentuser:", currentUser);
   const options = Array.from({ length: 11 }, (_, index) => index + 1);
   const [formData, setFormData] = useState({
     S_ID: null,
+    Username: currentUser?.Username,
     Academic_Year: "",
     Student_Name: currentUser?.Name,
     Roll_No: "",
@@ -33,7 +34,6 @@ export default function Internship() {
     Div: "",
     Mobile_No: "",
     Email_ID: currentUser?.Username,
-    Username: currentUser?.Username,
     Internship_Title: "",
     Internship_Organizer: "",
     Internship_Company_Website_Address: "",
@@ -58,7 +58,7 @@ export default function Internship() {
       [id]:
         type === "file" ? (files && files.length > 0 ? files[0] : null) : value,
     });
-    console.log("formdata = ", formData)
+    // console.log("formdata = ", formData)
   };
 
   const handleFileUpload = async (file) => {
@@ -84,7 +84,7 @@ export default function Internship() {
 
   //add new record
   const handleSubmit = async (e) => {
-    console.log("handle submit api hit");
+    // console.log("handle submit api hit");
     console.log("Form data is : ", formData);
     e.preventDefault();
 

@@ -13,7 +13,7 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-import { addRecordsFaculty } from "./API_Routes";
+import { addRecordsFaculty, uploadRecordsFaculty } from "./API_Routes";
 
 export default function FacultyConferencePublication() {
   const { currentUser } = useSelector((state) => state.user);
@@ -28,8 +28,8 @@ export default function FacultyConferencePublication() {
 
   const [formData, setFormData] = useState({
     T_ID: null,
+    Name: currentUser?.Name,
     Username: currentUser?.Username,
-    Name:currentUser?.Name,
     Department: "",
     Title_of_the_Paper: "",
     Title_of_the_proceedings_of_the_conference: "",
@@ -40,40 +40,157 @@ export default function FacultyConferencePublication() {
     Year_of_publication: "",
     ISSN_ISBN_number_of_the_proceeding: "",
     Affiliating_Institute_at_the_time_of_publication: "",
-    Link_to_paper: "",
+    Link_To_Paper: null,
     Upload_Paper: null,
     Financial_support_given_by_institute_in_INR: "",
-    Evidence:null,
+    Evidence: null,
     DOI: "",
     Presented_Yes_No: "",
     Any_Achievements: "",
-    Upload_DOA: "",
+    Upload_DOA: null,
   });
 
   const handleInputChange = (e) => {
-    const { name, value, type } = e.target;
+    const { name, value, type, files } = e.target;
 
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: type === "file" ? e.target.files[0] : value,
-    }));
+    setFormData({
+      ...formData,
+      [name]:
+        type === "file" ? (files && files.length > 0 ? files[0] : null) : value,
+    });
+  };
+
+  const handleFileUpload = async (file) => {
+    try {
+      console.log("file as:", file);
+
+      const formDataForFile = new FormData();
+      formDataForFile.append("file", file);
+      formDataForFile.append("username", currentUser?.Username);
+      formDataForFile.append("role", currentUser?.Role);
+      formDataForFile.append("tableName", "faculty_conference_publication");
+
+      const response = await axios.post(uploadRecordsFaculty, formDataForFile);
+      console.log(response);
+      // console.log("file response:", response.data.filePath);
+
+      return response.data.filePath;
+    } catch (error) {
+      console.error("Error uploading file:", error);
+      // Handle error as needed
+    }
   };
 
   //Add records
   const handleSubmit = async (e) => {
     e.preventDefault();
-    await axios.post(addRecordsFaculty, formData);
-    toast.success("Record Added Successfully", {
-      position: "top-right",
-      autoClose: 1500,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-      theme: "light",
-    });
-    navigate("/t/data");
+    console.log(formData);
+
+    let pathEvidence = null,
+      pathReport,
+      pathStudent,
+      pathLink;
+    console.log(isFinancialSupport);
+    console.log(formData.Evidence);
+    // Check if evidence upload is required
+    if (isFinancialSupport && formData.Evidence === null) {
+      alert("Upload Evidence document");
+      return;
+    }
+
+    try {
+      if (isFinancialSupport) {
+        pathEvidence = await handleFileUpload(formData.Evidence);
+      }
+      if (
+        formData.Upload_Paper !== null &&
+        formData.Upload_DOA !== null &&
+        formData.Link_To_Paper !== null
+      ) {
+        pathReport = await handleFileUpload(formData.Upload_Paper);
+        pathStudent = await handleFileUpload(formData.Upload_DOA);
+        pathLink = await handleFileUpload(formData.Link_To_Paper);
+
+        // console.log("Upload path = ", pathUpload);
+      } else {
+        toast.error("Please select a file for upload", {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+        });
+        return;
+      }
+      // console.log("Evidence path:",pathEvidence);
+      // If file upload is successful, continue with the form submission
+
+      const formDataWithFilePath = {
+        ...formData,
+
+        Evidence: pathEvidence,
+        Upload_Paper: pathReport,
+        Upload_DOA: pathStudent,
+        Link_To_Paper: pathLink,
+      };
+      if (
+        pathEvidence === "" ||
+        pathReport === "" ||
+        pathStudent === "" ||
+        pathLink === ""
+      ) {
+        // If file is null, display a toast alert
+        toast.error("Some error occurred while uploading file", {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+        });
+        return;
+      }
+
+      console.log("Final data:", formDataWithFilePath);
+
+      // Send a POST request to the addRecordsBook API endpoint
+      await axios.post(addRecordsFaculty, formDataWithFilePath);
+
+      // Display a success toast
+      toast.success("Record Added Successfully", {
+        position: "top-right",
+        autoClose: 1500,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+
+      // Navigate to "/t/data" after successful submission
+      navigate("/t/data");
+    } catch (error) {
+      // Handle file upload error
+      console.error("File upload error:", error);
+
+      // Display an error toast
+      toast.error("File upload failed. Please try again.", {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+    }
   };
 
   return (
@@ -269,8 +386,7 @@ export default function FacultyConferencePublication() {
                 label="Link to paper"
                 type="file"
                 onChange={handleInputChange}
-                name="Link_to_paper"
-                value={formData.Link_to_paper}
+                name="Link_To_Paper"
               />
             </div>
           </div>
@@ -285,7 +401,6 @@ export default function FacultyConferencePublication() {
                 label="Upload Paper"
                 onChange={handleInputChange}
                 name="Upload_Paper"
-                value={formData.Upload_Paper}
               />
             </div>
           </div>
@@ -337,7 +452,6 @@ export default function FacultyConferencePublication() {
                     label="Evidence Document"
                     name="Evidence"
                     type="file"
-                    value={formData.Evidence}
                     onChange={handleInputChange}
                     disabled={!isFinancialSupport}
                   />
@@ -410,7 +524,6 @@ export default function FacultyConferencePublication() {
                 label="Upload Achievement Document"
                 onChange={handleInputChange}
                 name="Upload_DOA"
-                value={formData.Upload_DOA}
               />
             </div>
           </div>

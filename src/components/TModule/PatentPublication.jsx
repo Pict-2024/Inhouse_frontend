@@ -13,7 +13,7 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-import { addRecordsPatent } from "./API_Routes";
+import { addRecordsPatent, uploadRecordsPatent } from "./API_Routes";
 
 export default function PatentPublication() {
   const { currentUser } = useSelector((state) => state.user);
@@ -21,8 +21,8 @@ export default function PatentPublication() {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     T_ID: null,
-    Username: currentUser?.Username,
     Name: currentUser?.Name,
+    Username: currentUser?.Username,
     Name_of_the_Department: "",
     Patent_Application_No: "",
     Status_of_Patent_Pub: "",
@@ -30,12 +30,12 @@ export default function PatentPublication() {
     Title_of_the_Patent: "",
     Co_Inventors_Name: "",
     Patent_Filed_Date: "",
-    Patent_Granted_Date: "",
     Patent_Pub_Date: "",
+    Patent_Granted_Date: "",
     Patent_Pub_Number: "",
     Institute_Affiliation: "",
-    Financial_Support_By_PICT: "",
-    Evidence: "",
+    Finance_Support_By_PICT: "",
+    Evidence: null,
     URL_Web_Links: "",
     Type_of_the_Patent: "",
     Approval_Letter: null,
@@ -45,28 +45,142 @@ export default function PatentPublication() {
   });
 
   const handleChange = (e) => {
-    const { name, value, type, files } = e.target;
+   const { name, value, type, files } = e.target;
+
     setFormData({
       ...formData,
-      [name]: type === "file" ? files[0] : value,
+      [name]:
+        type === "file" ? (files && files.length > 0 ? files[0] : null) : value,
     });
+  };
+
+  const handleFileUpload = async (file) => {
+    try {
+      console.log("file as:", file);
+
+      const formDataForFile = new FormData();
+      formDataForFile.append("file", file);
+      formDataForFile.append("username", currentUser?.Username);
+      formDataForFile.append("role", currentUser?.Role);
+      formDataForFile.append("tableName", "patent_publication");
+
+      const response = await axios.post(
+        uploadRecordsPatent,
+        formDataForFile
+      );
+      console.log(response);
+      // console.log("file response:", response.data.filePath);
+
+      return response.data.filePath;
+    } catch (error) {
+      console.error("Error uploading file:", error);
+      // Handle error as needed
+    }
   };
 
   // Add new record
   const handleSubmit = async (e) => {
     e.preventDefault();
-    await axios.post(addRecordsPatent, formData);
-    toast.success("Record Added Successfully", {
-      position: "top-right",
-      autoClose: 1500,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-      theme: "light",
-    });
-    navigate("/t/data");
+    console.log(formData);
+
+    var pathEvidence=null, pathReport, pathDoc, pathGrant;
+    console.log(isFinancialSupport);
+    console.log(formData.Evidence);
+    // Check if evidence upload is required
+    if (isFinancialSupport && formData.Evidence === null) {
+      alert("Upload Evidence document");
+      return;
+    }
+
+    try {
+      if (isFinancialSupport ) {
+        pathEvidence = await handleFileUpload(formData.Evidence);
+      }
+      if (
+        formData.Approval_Letter !== null &&
+        formData.Upload_Patent_Document !== null && 
+        formData.Upload_Patent_Grant !== null
+      ) {
+        pathReport = await handleFileUpload(formData.Approval_Letter);
+        pathDoc = await handleFileUpload(formData.Upload_Patent_Document);
+        pathGrant = await handleFileUpload(formData.Upload_Patent_Grant)
+
+
+        // console.log("Upload path = ", pathUpload);
+      } else {
+        toast.error("Please select a file for upload", {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+        });
+        return;
+      }
+      // console.log("Evidence path:",pathEvidence);
+      // If file upload is successful, continue with the form submission
+     
+      const formDataWithFilePath = {
+        ...formData,
+
+        Evidence: pathEvidence,
+        Approval_Letter: pathReport,
+        Upload_Patent_Document: pathDoc,
+        Upload_Patent_Grant:pathGrant
+      };
+      if (pathEvidence === "" || pathReport === "" || pathDoc === "" || pathGrant === "") {
+        // If file is null, display a toast alert
+        toast.error("Some error occurred while uploading file", {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+        });
+        return;
+      }
+
+      console.log("Final data:", formDataWithFilePath);
+
+      // Send a POST request to the addRecordsBook API endpoint
+      await axios.post(addRecordsPatent, formDataWithFilePath);
+
+      // Display a success toast
+      toast.success("Record Added Successfully", {
+        position: "top-right",
+        autoClose: 1500,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+
+      // Navigate to "/t/data" after successful submission
+      navigate("/t/data");
+    } catch (error) {
+      // Handle file upload error
+      console.error("File upload error:", error);
+
+      // Display an error toast
+      toast.error("File upload failed. Please try again.", {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+    }
   };
 
   return (
@@ -290,9 +404,9 @@ export default function PatentPublication() {
                   <Input
                     size="lg"
                     label="Amount in INR"
-                    name="Financial_Support_By_PICT"
+                    name="Finance_Support_By_PICT"
                     type="number"
-                    value={formData.Financial_Support_By_PICT}
+                    value={formData.Finance_Support_By_PICT}
                     onChange={handleChange}
                     disabled={!isFinancialSupport}
                   />
@@ -303,7 +417,6 @@ export default function PatentPublication() {
                     label="Evidence Document"
                     name="Evidence"
                     type="file"
-                    value={formData.Evidence}
                     onChange={handleChange}
                     disabled={!isFinancialSupport}
                   />
@@ -346,7 +459,6 @@ export default function PatentPublication() {
                 size="lg"
                 name="Approval_Letter"
                 type="file"
-                value={formData.Approval_Letter}
                 onChange={handleChange}
                 label="Approval Letter for financial Support"
               />

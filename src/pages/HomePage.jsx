@@ -3,10 +3,10 @@ import "../App.css"
 // import { Carousel } from "@material-tailwind/react";
 export const HomePage = () => {
   return (
-    <div className="">
+    <div className="overflow-y-hidden">
       <NavList/>
       <div className="w-full h-full">
-        <img src="../../src/assets/loginbg.jpg" alt="" className=""/>
+        <img src="../../src/assets/loginbg.jpg" alt="" />
       </div>
     </div>
   );
