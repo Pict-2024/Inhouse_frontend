@@ -87,18 +87,19 @@ export default function Login() {
     }
   };
 
-  const customStyle = {
-
-  }
-
   return (
-    <div className="flex justify-center items-center h-[100vh] " style={{backgroundImage:`url('../../src/assets/loginbg.jpg')`,backgroundSize:'cover',opacity:'0.9'}}>
+    <div
+      className="flex justify-center items-center h-[100vh] "
+      style={{
+        backgroundImage: `url('../../src/assets/loginbg.jpg')`,
+        backgroundSize: "cover",
+        opacity: "0.9",
+      }}
+    >
       <Card
         color="transparent"
         shadow={true}
         className="border bg-white border-gray-300 w-5/6 sm:w-1/2 md:w-1/3 lg:w-1/4 mb-12 h-1/2 p-6 rounded-md flex flex-col justify-between"
-        style={customStyle}
-        
       >
         <Typography
           variant="h4"
@@ -155,11 +156,16 @@ export default function Login() {
           {error && <p className="error text-center text-red-600">{error}</p>}
           {/**  && <p className="success">Login successful!</p> */}
 
-          <div className="text-center">
+          <div className="flex justify-between">
             <span className="text-gray-700 mt-2 text-sm">
               New user ?
               <Link to={"/auth/register"} className="text-blue-500 mx-2">
                 register
+              </Link>
+            </span>
+            <span className="text-gray-700 mt-2 text-sm">
+              <Link to={"/auth/forgot-password"} className="text-red-300 mx-2">
+                Forgot Password
               </Link>
             </span>
           </div>

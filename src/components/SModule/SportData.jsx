@@ -56,6 +56,22 @@ export default function SportData() {
     });
   };
 
+  const generateAcademicYearOptions = () => {
+    const currentYear = new Date().getFullYear();
+    const Options = [];
+
+    for (let year = 2023; year <= currentYear; year++) {
+      const academicYearStart = `${year}-${year + 1}`;
+      Options.push(
+        <Option key={academicYearStart} value={academicYearStart}>
+          {academicYearStart}
+        </Option>
+      );
+    }
+
+    return Options;
+  };
+
   const handleFileUpload = async (file) => {
     try {
       console.log("file as:", file);
@@ -77,13 +93,13 @@ export default function SportData() {
     }
   };
 
-
   //add new record
   const handleSubmit = async (e) => {
     e.preventDefault();
     console.log(formData);
 
-    var pathEvidence=null, pathReport;
+    var pathEvidence = null,
+      pathReport;
     console.log(isFinancialSupport);
     console.log(formData.Evidence);
     // Check if evidence upload is required
@@ -93,13 +109,12 @@ export default function SportData() {
     }
 
     try {
-      if (isFinancialSupport ) {
+      if (isFinancialSupport) {
         console.log("hi");
         // Handle evidence upload only if financial support is selected
         pathEvidence = await handleFileUpload(formData.Evidence);
       }
-      if (
-        formData.Certificates !== null ) {
+      if (formData.Certificates !== null) {
         console.log("1");
 
         console.log("2");
@@ -121,14 +136,14 @@ export default function SportData() {
       }
       // console.log("Evidence path:",pathEvidence);
       // If file upload is successful, continue with the form submission
-     
+
       const formDataWithFilePath = {
         ...formData,
 
         Evidence: pathEvidence,
         Certificates: pathReport,
       };
-      if (pathEvidence === "" && pathReport === "" ) {
+      if (pathEvidence === "" && pathReport === "") {
         // If file is null, display a toast alert
         toast.error("Some error occurred while uploading file", {
           position: "top-right",
@@ -222,13 +237,19 @@ export default function SportData() {
               <Typography variant="h6" color="blue-gray" className="mb-3">
                 Academic Year
               </Typography>
-              <Input
-                id="Academic_Year"
+              <Select
                 size="lg"
-                label="Eg.2022-2023"
+                id="Academic_Year"
                 value={formData.Academic_Year}
-                onChange={handleOnChange}
-              />
+                label="Academic Year"
+                onChange={(value) =>
+                  handleOnChange({
+                    target: { id: "Academic_Year", value },
+                  })
+                }
+              >
+                {generateAcademicYearOptions()}
+              </Select>
             </div>
           </div>
 
@@ -422,61 +443,61 @@ export default function SportData() {
               />
             </div>
           </div>
-          
+
           <div className="mb-4 flex flex-wrap -mx-4">
-          <div className="w-full">
-            <div className="px-4 mb-4 flex gap-40">
-              <Typography variant="h6" color="blue-gray" className="mb-3">
-                Financial support from institute in INR
-              </Typography>
-              <div className="flex gap-3">
-                <label className="mx-2">
-                  <input
-                    type="radio"
-                    name="financialSupport"
-                    value="yes"
-                    checked={isFinancialSupport}
-                    onChange={() => setIsFinancialSupport(true)}
-                  />
-                  Yes
-                </label>
-                <label>
-                  <input
-                    type="radio"
-                    name="financialSupport"
-                    value="no"
-                    checked={!isFinancialSupport}
-                    onChange={() => setIsFinancialSupport(false)}
-                  />
-                  No
-                </label>
+            <div className="w-full">
+              <div className="px-4 mb-4 flex gap-40">
+                <Typography variant="h6" color="blue-gray" className="mb-3">
+                  Financial support from institute in INR
+                </Typography>
+                <div className="flex gap-3">
+                  <label className="mx-2">
+                    <input
+                      type="radio"
+                      name="financialSupport"
+                      value="yes"
+                      checked={isFinancialSupport}
+                      onChange={() => setIsFinancialSupport(true)}
+                    />
+                    Yes
+                  </label>
+                  <label>
+                    <input
+                      type="radio"
+                      name="financialSupport"
+                      value="no"
+                      checked={!isFinancialSupport}
+                      onChange={() => setIsFinancialSupport(false)}
+                    />
+                    No
+                  </label>
+                </div>
               </div>
-            </div>
-            <div className="flex justify-between flex-col md:flex-row">
-              <div className="w-full md:w-1/2 px-4 mb-4">
-                <Input
-                  size="lg"
-                  label="Amount in INR"
-                  id="Financial_support_given_by_institute_in_INR"
-                  type="number"
-                  value={formData.Financial_support_given_by_institute_in_INR}
-                  onChange={handleOnChange}
-                  disabled={!isFinancialSupport}
-                />
-              </div>
-              <div className="w-full md:w-1/2 px-4 mb-4">
-                <Input
-                  size="lg"
-                  label="Evidence Document"
-                  id="Evidence"
-                  type="file"
-                  onChange={handleOnChange}
-                  disabled={!isFinancialSupport}
-                />
+              <div className="flex justify-between flex-col md:flex-row">
+                <div className="w-full md:w-1/2 px-4 mb-4">
+                  <Input
+                    size="lg"
+                    label="Amount in INR"
+                    id="Financial_support_given_by_institute_in_INR"
+                    type="number"
+                    value={formData.Financial_support_given_by_institute_in_INR}
+                    onChange={handleOnChange}
+                    disabled={!isFinancialSupport}
+                  />
+                </div>
+                <div className="w-full md:w-1/2 px-4 mb-4">
+                  <Input
+                    size="lg"
+                    label="Evidence Document"
+                    id="Evidence"
+                    type="file"
+                    onChange={handleOnChange}
+                    disabled={!isFinancialSupport}
+                  />
+                </div>
               </div>
             </div>
           </div>
-        </div>
 
           <div className="mb-4 flex flex-wrap -mx-4">
             <div className="w-full md:w-1/2 px-4 mb-4">
@@ -491,7 +512,7 @@ export default function SportData() {
                 onChange={handleOnChange}
               />
             </div>
-            
+
             <div className="w-full md:w-1/2 px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
                 Award_Prize_Money
@@ -506,7 +527,6 @@ export default function SportData() {
             </div>
           </div>
 
-          
           <div className="mb-4 flex flex-wrap -mx-4">
             <div className="w-full md:w-1/2 px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
@@ -547,7 +567,6 @@ export default function SportData() {
               />
             </div>
           </div>
-
 
           <Button type="submit" className="mt-4" fullWidth>
             Add Changes

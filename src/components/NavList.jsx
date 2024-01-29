@@ -7,7 +7,7 @@ import { Modal, Box } from "@mui/material";
 import moment from "moment";
 import axios from "axios";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -24,20 +24,16 @@ import {
   Tooltip,
   IconButton,
   Card,
+  Select,
+  Option,
 } from "@material-tailwind/react";
 
 import {
   UserCircleIcon,
-  Square3Stack3DIcon,
+  // Square3Stack3DIcon,
   ChevronDownIcon,
-  InboxArrowDownIcon,
+  // InboxArrowDownIcon,
   PowerIcon,
-  // CubeTransparentIcon,
-  // CodeBracketSquareIcon,
-  // Cog6ToothIcon,
-  // LifebuoyIcon,
-  // RocketLaunchIcon,
-  // Bars2Icon,
 } from "@heroicons/react/24/solid";
 
 import {
@@ -54,16 +50,16 @@ const profileMenuItems = [
     icon: UserCircleIcon,
     link: "/dashboard",
   },
-  {
-    label: "Achievements",
-    icon: Square3Stack3DIcon,
-    link: "/general",
-  },
-  {
-    label: "Inbox",
-    icon: InboxArrowDownIcon,
-    link: "/general",
-  },
+  // {
+  //   label: "Achievements",
+  //   icon: Square3Stack3DIcon,
+  //   link: "/general",
+  // },
+  // {
+  //   label: "Inbox",
+  //   icon: InboxArrowDownIcon,
+  //   link: "/general",
+  // },
   // {
   //   label: "Help",
   //   icon: LifebuoyIcon,
@@ -202,6 +198,9 @@ export default function NavList() {
   const [notices, setNotices] = useState([]);
   const [isNotificationModalOpen, setNotificationModalOpen] = useState(false);
   const [isSendModalOpen, setSendModalOpen] = useState(false);
+  const [usernames, setusernames] = useState([]);
+  let teachers = [];
+
   // const [tableData, setTableData] = useState({
   //   students: [],
   //   teachers: [],
@@ -215,14 +214,36 @@ export default function NavList() {
     Title: "",
     Description: "",
     Role: currentUser?.Role,
-    date: getCurrentDate(),
+    DateTime: getCurrentDate(),
+    Receiver: currentUser?.Role === 1 ? "adminasg@gmail.com" : "",
   });
+
+  const fetchAllTeachers = async () => {
+    try {
+      const apiUrl = "http://localhost:5000/api/v1/auth/getAllTeacher";
+      const response = await axios.get(apiUrl);
+      console.log(response?.data?.data);
+      teachers = response?.data?.data;
+
+      const usernamesArray = teachers.map((item) => ({
+        value: item.Username,
+        label: item.Username,
+      }));
+      usernamesArray.unshift({ value: "All", label: "All" });
+      setusernames(usernamesArray);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   const fetchNotices = async () => {
     try {
-      console.log(currentUser?.Role);
+      console.log(currentUser?.Role, currentUser?.Username);
       const apiUrl = "http://localhost:5000/api/v1/general/get-notices";
-      const response = await axios.post(apiUrl, { Role: currentUser?.Role });
+      const response = await axios.post(apiUrl, {
+        Role: currentUser?.Role,
+        Username: currentUser?.Username,
+      });
       console.log("Notices:", response.data.data);
 
       // Update the state with fetched notices
@@ -243,6 +264,7 @@ export default function NavList() {
 
   const handleOpenSendModal = () => {
     setSendModalOpen(true);
+    fetchAllTeachers();
     // Close the notification modal when opening the send modal
     handleCloseNotificationModal();
   };
@@ -252,21 +274,25 @@ export default function NavList() {
   };
 
   const handleNotificationChange = (e) => {
-    setNotificationData({
-      ...notificationData,
-      [e.target.name]: e.target.value,
-    });
+    const { name, value } = e.target;
+    setNotificationData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
   };
 
   const handleSubmitNotification = async (e) => {
     e.preventDefault();
+    console.log(notificationData);
 
+    const finalData = {
+      ...notificationData,
+      Receiver: notificationData.Receiver,
+    };
+    console.log("final", finalData);
     try {
       const apiUrl = "http://localhost:5000/api/v1/general/send-notice";
-      await axios.post(apiUrl, {
-        ...notificationData,
-        Username: currentUser?.Username,
-      });
+      await axios.post(apiUrl, finalData);
 
       // console.log(response);
 
@@ -277,6 +303,7 @@ export default function NavList() {
       setNotificationData({
         Title: "",
         Description: "",
+        Receiver: "",
       });
 
       // Close the modal
@@ -286,8 +313,6 @@ export default function NavList() {
       // Handle error as needed
     }
   };
-
-  // -----------------------------------
 
   var pathLink = "";
 
@@ -351,7 +376,6 @@ export default function NavList() {
           )}
         </div>
       </div>
-
       {/* Notification Modal */}
       <Modal
         open={isNotificationModalOpen}
@@ -455,7 +479,6 @@ export default function NavList() {
           ))}
         </Box>
       </Modal>
-
       {/* Send Modal */}
       <Modal open={isSendModalOpen} onClose={handleCloseNotificationModal}>
         <Box
@@ -467,10 +490,9 @@ export default function NavList() {
             width: 700,
             bgcolor: "background.paper",
             boxShadow: 24,
-            height: 300,
             p: 4,
           }}
-          className="flex flex-col gap-2 rounded-md shadow-md"
+          className="flex flex-col gap-2 rounded-md shadow-md h-auto"
         >
           <Typography
             variant="h5"
@@ -487,6 +509,25 @@ export default function NavList() {
               label="Title"
               onChange={handleNotificationChange}
             />
+            {currentUser && currentUser?.Role === 0 && (
+              <Select
+                size="large"
+                name="Receiver"
+                value={notificationData.Receiver}
+                label="To"
+                onChange={(value) =>
+                  handleNotificationChange({
+                    target: { name: "Receiver", value },
+                  })
+                }
+              >
+                {usernames.map((user) => (
+                  <Option key={user.value} value={user.value}>
+                    {user.label}
+                  </Option>
+                ))}
+              </Select>
+            )}
             <Textarea
               size="large"
               name="Description"

@@ -13,7 +13,10 @@ import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-import { addRecordsTechnicalStud, uploadRecordsTechincalStud } from "./API_Routes";
+import {
+  addRecordsTechnicalStud,
+  uploadRecordsTechincalStud,
+} from "./API_Routes";
 
 export default function TechEvents() {
   const navigate = useNavigate();
@@ -51,6 +54,22 @@ export default function TechEvents() {
     Evidence: null,
   });
 
+  const generateAcademicYearOptions = () => {
+    const currentYear = new Date().getFullYear();
+    const Options = [];
+
+    for (let year = 2023; year <= currentYear; year++) {
+      const academicYearStart = `${year}-${year + 1}`;
+      Options.push(
+        <Option key={academicYearStart} value={academicYearStart}>
+          {academicYearStart}
+        </Option>
+      );
+    }
+
+    return Options;
+  };
+
   const handleOnChange = (e) => {
     const { id, value, type, files } = e.target;
 
@@ -70,7 +89,10 @@ export default function TechEvents() {
       formDataForFile.append("role", currentUser?.Role);
       formDataForFile.append("tableName", "student_technical_events");
 
-      const response = await axios.post(uploadRecordsTechincalStud, formDataForFile);
+      const response = await axios.post(
+        uploadRecordsTechincalStud,
+        formDataForFile
+      );
       console.log(response);
       // console.log("file response:", response.data.filePath);
 
@@ -86,7 +108,8 @@ export default function TechEvents() {
     e.preventDefault();
     console.log(formData);
 
-    var pathEvidence=null, pathReport;
+    var pathEvidence = null,
+      pathReport;
     console.log(isFinancialSupport);
     console.log(formData.Evidence);
     // Check if evidence upload is required
@@ -96,15 +119,12 @@ export default function TechEvents() {
     }
 
     try {
-      if (isFinancialSupport ) {
+      if (isFinancialSupport) {
         console.log("hi");
         // Handle evidence upload only if financial support is selected
         pathEvidence = await handleFileUpload(formData.Evidence);
       }
-      if (
-        formData.Certificate_Link !== null 
-       
-      ) {
+      if (formData.Certificate_Link !== null) {
         console.log("1");
 
         console.log("2");
@@ -128,14 +148,14 @@ export default function TechEvents() {
       }
       // console.log("Evidence path:",pathEvidence);
       // If file upload is successful, continue with the form submission
-     
+
       const formDataWithFilePath = {
         ...formData,
 
         Evidence: pathEvidence,
         Certificate_Link: pathReport,
       };
-      if (pathEvidence === "" || pathReport === "" ) {
+      if (pathEvidence === "" || pathReport === "") {
         // If file is null, display a toast alert
         toast.error("Some error occurred while uploading file", {
           position: "top-right",
@@ -151,10 +171,13 @@ export default function TechEvents() {
       }
 
       console.log("Final data:", formDataWithFilePath);
-      
+
       // Send a POST request to the addRecordsBook API endpoint
-      const res = await axios.post(addRecordsTechnicalStud, formDataWithFilePath);
-      console.log("Response = ", res)
+      const res = await axios.post(
+        addRecordsTechnicalStud,
+        formDataWithFilePath
+      );
+      console.log("Response = ", res);
 
       // Display a success toast
       toast.success("Record Added Successfully", {
@@ -231,14 +254,19 @@ export default function TechEvents() {
               <Typography variant="h6" color="blue-gray" className="mb-3">
                 Academic Year
               </Typography>
-              <Input
-                id="Academic_Year"
+              <Select
                 size="lg"
-                required
-                label="Eg.2022-2023"
+                id="Academic_Year"
                 value={formData.Academic_Year}
-                onChange={handleOnChange}
-              />
+                label="Academic Year"
+                onChange={(value) =>
+                  handleOnChange({
+                    target: { id: "Academic_Year", value },
+                  })
+                }
+              >
+                {generateAcademicYearOptions()}
+              </Select>
             </div>
           </div>
 
@@ -415,7 +443,7 @@ export default function TechEvents() {
                 <Option value="State">Others</Option>
               </Select>
             </div>
-            
+
             <div className="w-full md:w-1/2 lg:w-1/3 px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
                 Mode
@@ -435,22 +463,21 @@ export default function TechEvents() {
                 <Option value="Offline">Offline</Option>
               </Select>
             </div>
-            
+
             <div className="w-full md:w-1/2 lg:w-1/3 px-4 mb-4">
-            <Typography variant="h6" color="blue-gray" className="mb-3">
-              Place
-            </Typography>
-            <Input
-              id="Place"
-              size="lg"
-              label="Place"
-              value={formData.Place}
-              onChange={handleOnChange}
-            />
-          </div>
+              <Typography variant="h6" color="blue-gray" className="mb-3">
+                Place
+              </Typography>
+              <Input
+                id="Place"
+                size="lg"
+                label="Place"
+                value={formData.Place}
+                onChange={handleOnChange}
+              />
+            </div>
           </div>
 
-        
           <div className="mb-4 flex flex-wrap -mx-4">
             <div className="w-full md:w-1/2 px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
@@ -481,59 +508,59 @@ export default function TechEvents() {
           </div>
 
           <div className="mb-4 flex flex-wrap -mx-4">
-          <div className="w-full">
-            <div className="px-4 mb-4 flex justify-start items-center gap-4">
-              <Typography variant="h6" color="blue-gray" className="mb-3">
-                Financial support from institute in INR
-              </Typography>
-              <div className="flex gap-3">
-                <label className="mx-2">
-                  <input
-                    type="radio"
-                    name="financialSupport"
-                    value="yes"
-                    checked={isFinancialSupport}
-                    onChange={() => setIsFinancialSupport(true)}
-                  />
-                  Yes
-                </label>
-                <label>
-                  <input
-                    type="radio"
-                    name="financialSupport"
-                    value="no"
-                    checked={!isFinancialSupport}
-                    onChange={() => setIsFinancialSupport(false)}
-                  />
-                  No
-                </label>
+            <div className="w-full">
+              <div className="px-4 mb-4 flex justify-start items-center gap-4">
+                <Typography variant="h6" color="blue-gray" className="mb-3">
+                  Financial support from institute in INR
+                </Typography>
+                <div className="flex gap-3">
+                  <label className="mx-2">
+                    <input
+                      type="radio"
+                      name="financialSupport"
+                      value="yes"
+                      checked={isFinancialSupport}
+                      onChange={() => setIsFinancialSupport(true)}
+                    />
+                    Yes
+                  </label>
+                  <label>
+                    <input
+                      type="radio"
+                      name="financialSupport"
+                      value="no"
+                      checked={!isFinancialSupport}
+                      onChange={() => setIsFinancialSupport(false)}
+                    />
+                    No
+                  </label>
+                </div>
               </div>
-            </div>
-            <div className="flex justify-between  flex-col md:flex-row">
-              <div className="w-full md:w-1/2 px-4 mb-4">
-                <Input
-                  size="lg"
-                  label="Amount in INR"
-                  id="Financial_support_given_by_Institute_in_INR"
-                  type="number"
-                  value={formData.Financial_support_given_by_Institute_in_INR}
-                  onChange={handleOnChange}
-                  disabled={!isFinancialSupport}
-                />
-              </div>
-              <div className="w-full md:w-1/2 px-4 mb-4">
-                <Input
-                  size="lg"
-                  label="Evidence Document"
-                  id="Evidence"
-                  type="file" 
-                  onChange={handleOnChange}
-                  disabled={!isFinancialSupport}
-                />
+              <div className="flex justify-between  flex-col md:flex-row">
+                <div className="w-full md:w-1/2 px-4 mb-4">
+                  <Input
+                    size="lg"
+                    label="Amount in INR"
+                    id="Financial_support_given_by_Institute_in_INR"
+                    type="number"
+                    value={formData.Financial_support_given_by_Institute_in_INR}
+                    onChange={handleOnChange}
+                    disabled={!isFinancialSupport}
+                  />
+                </div>
+                <div className="w-full md:w-1/2 px-4 mb-4">
+                  <Input
+                    size="lg"
+                    label="Evidence Document"
+                    id="Evidence"
+                    type="file"
+                    onChange={handleOnChange}
+                    disabled={!isFinancialSupport}
+                  />
+                </div>
               </div>
             </div>
           </div>
-        </div>
           <div className="mb-4 flex flex-wrap -mx-4">
             <div className="w-full md:w-1/2 px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
@@ -547,7 +574,7 @@ export default function TechEvents() {
                 onChange={handleOnChange}
               />
             </div>
-            
+
             <div className="w-full md:w-1/2 px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
                 Award_Prize_Money
@@ -561,7 +588,6 @@ export default function TechEvents() {
               />
             </div>
           </div>
-
 
           <div className="mb-4 flex flex-wrap -mx-4">
             <div className="w-full md:w-1/2 px-4 mb-4">
@@ -590,7 +616,6 @@ export default function TechEvents() {
             </div>
           </div>
 
-          
           <div className="mb-4 flex flex-wrap -mx-4">
             <div className="w-full  px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">

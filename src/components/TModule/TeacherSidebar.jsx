@@ -47,7 +47,7 @@ export default function TeacherSidebar() {
             <ListItemPrefix>
               <TrophyIcon className="h-5 w-5" />
             </ListItemPrefix>
-            Add Achievements
+            Add Details
           </ListItem>
         </Link>
         <Link to={"/t/data"}>
