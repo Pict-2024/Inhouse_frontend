@@ -13,7 +13,10 @@ import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-import { addRecordsResearchStud, uploadRecordsResearchStud } from "./API_Routes";
+import {
+  addRecordsResearchStud,
+  uploadRecordsResearchStud,
+} from "./API_Routes";
 
 export default function Research() {
   const navigate = useNavigate();
@@ -59,8 +62,24 @@ export default function Research() {
     Evidence: null,
   });
 
+  const generateAcademicYearOptions = () => {
+    const currentYear = new Date().getFullYear();
+    const Options = [];
+
+    for (let year = 2023; year <= currentYear; year++) {
+      const academicYearStart = `${year}-${year + 1}`;
+      Options.push(
+        <Option key={academicYearStart} value={academicYearStart}>
+          {academicYearStart}
+        </Option>
+      );
+    }
+
+    return Options;
+  };
+
   const handleOnChange = (e) => {
-   const { id, value, type, files } = e.target;
+    const { id, value, type, files } = e.target;
 
     setFormData({
       ...formData,
@@ -79,7 +98,10 @@ export default function Research() {
       formDataForFile.append("role", currentUser?.Role);
       formDataForFile.append("tableName", "student_research_publication");
 
-      const response = await axios.post(uploadRecordsResearchStud, formDataForFile);
+      const response = await axios.post(
+        uploadRecordsResearchStud,
+        formDataForFile
+      );
       console.log(response);
       // console.log("file response:", response.data.filePath);
 
@@ -90,13 +112,14 @@ export default function Research() {
     }
   };
 
-
   //add new record
   const handleSubmit = async (e) => {
     e.preventDefault();
     console.log(formData);
 
-    var pathEvidence=null, pathReport, pathStudent;
+    var pathEvidence = null,
+      pathReport,
+      pathStudent;
     console.log(isFinancialSupport);
     console.log(formData.Evidence);
     // Check if evidence upload is required
@@ -106,7 +129,7 @@ export default function Research() {
     }
 
     try {
-      if (isFinancialSupport ) {
+      if (isFinancialSupport) {
         console.log("hi");
         // Handle evidence upload only if financial support is selected
         pathEvidence = await handleFileUpload(formData.Evidence);
@@ -120,7 +143,9 @@ export default function Research() {
         console.log("2");
         pathReport = await handleFileUpload(formData.Upload_Paper);
         console.log("3");
-        pathStudent = await handleFileUpload(formData.Upload_Document_of_Achievement);
+        pathStudent = await handleFileUpload(
+          formData.Upload_Document_of_Achievement
+        );
         console.log("4");
 
         // console.log("Upload path = ", pathUpload);
@@ -139,7 +164,7 @@ export default function Research() {
       }
       // console.log("Evidence path:",pathEvidence);
       // If file upload is successful, continue with the form submission
-     
+
       const formDataWithFilePath = {
         ...formData,
 
@@ -199,7 +224,6 @@ export default function Research() {
     }
   };
 
-
   return (
     <>
       <Card
@@ -242,13 +266,19 @@ export default function Research() {
               <Typography variant="h6" color="blue-gray" className="mb-3">
                 Academic Year
               </Typography>
-              <Input
-                id="Academic_Year"
+              <Select
                 size="lg"
-                label="Eg.2022-2023"
+                id="Academic_Year"
                 value={formData.Academic_Year}
-                onChange={handleOnChange}
-              />
+                label="Academic Year"
+                onChange={(value) =>
+                  handleOnChange({
+                    target: { id: "Academic_Year", value },
+                  })
+                }
+              >
+                {generateAcademicYearOptions()}
+              </Select>
             </div>
           </div>
 

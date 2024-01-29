@@ -10,6 +10,7 @@ import {
   CardHeader,
   Typography,
   CardBody,
+  Button,
   IconButton,
   Tooltip,
   Input,
@@ -17,6 +18,8 @@ import {
 import axios from "axios";
 import PropTypes from "prop-types";
 import { useSelector } from "react-redux";
+import moment from "moment";
+import ExcelJS from "exceljs";
 import {
   deleteRecordsCertificateStud,
   deleteRecordsConferenceStud,
@@ -258,6 +261,38 @@ export default function TableData({ tableName }) {
     window.open(link, "_blank");
   };
 
+  const generateExcel = () => {
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet("Report");
+
+    // Add headers
+    const headerRow = worksheet.addRow(tableHead.map((head) => head));
+
+    // Add data rows
+    tableRows.forEach((row) => {
+      const dataRow = tableHead.map((head) => row[head]);
+      worksheet.addRow(dataRow);
+    });
+
+    // Save the workbook
+    workbook.xlsx.writeBuffer().then((buffer) => {
+      const blob = new Blob([buffer], {
+        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "report.xlsx";
+      a.click();
+      window.URL.revokeObjectURL(url);
+    });
+  };
+
+  // Add this function to handle the "Generate Excel" button click
+  const handleGenerateExcel = () => {
+    generateExcel();
+  };
+
   return (
     <Card className="h-full w-full p-3">
       <CardHeader floated={false} shadow={false} className="rounded-none">
@@ -332,6 +367,14 @@ export default function TableData({ tableName }) {
                           onClick={() => handleLink(record[head])}
                           className="cursor-pointer w-6 h-6"
                         />
+                      ) : head.includes("Date") ? (
+                        <Typography
+                          variant="body"
+                          color="black"
+                          className="text-dark font-bold"
+                        >
+                          <p>{moment(record[head]).format("YYYY-MM-DD")}</p>
+                        </Typography>
                       ) : (
                         <Typography
                           variant="body"
@@ -380,6 +423,14 @@ export default function TableData({ tableName }) {
           </table>
         </div>
       </CardBody>
+      <div className="mt-4 text-right">
+        <Button
+          onClick={handleGenerateExcel}
+          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+        >
+          Generate Excel
+        </Button>
+      </div>
     </Card>
   );
 }

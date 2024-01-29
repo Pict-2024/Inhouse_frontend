@@ -51,6 +51,22 @@ export default function Internship() {
     Remark: "",
   });
 
+  const generateAcademicYearOptions = () => {
+    const currentYear = new Date().getFullYear();
+    const Options = [];
+
+    for (let year = 2023; year <= currentYear; year++) {
+      const academicYearStart = `${year}-${year + 1}`;
+      Options.push(
+        <Option key={academicYearStart} value={academicYearStart}>
+          {academicYearStart}
+        </Option>
+      );
+    }
+
+    return Options;
+  };
+
   const handleOnChange = (e) => {
     const { id, value, type, files } = e.target;
     setFormData({
@@ -71,7 +87,10 @@ export default function Internship() {
       formDataForFile.append("role", currentUser?.Role);
       formDataForFile.append("tableName", "student_internship_details");
 
-      const response = await axios.post(uploadRecordsInternship, formDataForFile);
+      const response = await axios.post(
+        uploadRecordsInternship,
+        formDataForFile
+      );
       console.log(response);
       // console.log("file response:", response.data.filePath);
 
@@ -88,26 +107,28 @@ export default function Internship() {
     console.log("Form data is : ", formData);
     e.preventDefault();
 
-    var completionPath, internshipPath, ppoPath = null;
+    var completionPath,
+      internshipPath,
+      ppoPath = null;
     if (isPPO === "Yes" && formData.PPO_Offer === null) {
       alert("Upload PPO evidence");
       return;
     }
 
     try {
-
-      if(isPPO === "Yes")
-      {
+      if (isPPO === "Yes") {
         ppoPath = await handleFileUpload(formData.PPO_Offer);
       }
 
-      if(formData.Completion_Certificate !== null && formData.Internship_Report !== null)
-      {
-        completionPath = await handleFileUpload(formData.Completion_Certificate);
+      if (
+        formData.Completion_Certificate !== null &&
+        formData.Internship_Report !== null
+      ) {
+        completionPath = await handleFileUpload(
+          formData.Completion_Certificate
+        );
         internshipPath = await handleFileUpload(formData.Internship_Report);
-      }
-      else
-      {
+      } else {
         toast.error("Please select a file for upload", {
           position: "top-right",
           autoClose: 3000,
@@ -128,7 +149,7 @@ export default function Internship() {
         Internship_Report: internshipPath,
         PPO_Offer: ppoPath,
       };
-      if (completionPath === "" || internshipPath === "" ) {
+      if (completionPath === "" || internshipPath === "") {
         // If file is null, display a toast alert
         toast.error("Some error occurred while uploading file", {
           position: "top-right",
@@ -144,10 +165,10 @@ export default function Internship() {
       }
 
       console.log("Final data:", formDataWithFilePath);
-      
+
       // Send a POST request to the addRecordsBook API endpoint
       const res = await axios.post(addRecordsInternship, formDataWithFilePath);
-      console.log("Response = ", res)
+      console.log("Response = ", res);
 
       toast.success("Record Added Successfully", {
         position: "top-right",
@@ -160,10 +181,8 @@ export default function Internship() {
         theme: "light",
       });
 
-      navigate("/s/data")
-      
+      navigate("/s/data");
     } catch (error) {
-      
       console.error("File upload error:", error);
 
       // Display an error toast
@@ -178,7 +197,6 @@ export default function Internship() {
         theme: "light",
       });
     }
-
   };
 
   return (
@@ -223,13 +241,19 @@ export default function Internship() {
               <Typography variant="h6" color="blue-gray" className="mb-3">
                 Academic Year
               </Typography>
-              <Input
-                id="Academic_Year"
+              <Select
                 size="lg"
-                label="Eg.2022-2023"
+                id="Academic_Year"
                 value={formData.Academic_Year}
-                onChange={handleOnChange}
-              />
+                label="Academic Year"
+                onChange={(value) =>
+                  handleOnChange({
+                    target: { id: "Academic_Year", value },
+                  })
+                }
+              >
+                {generateAcademicYearOptions()}
+              </Select>
             </div>
           </div>
 
@@ -503,35 +527,35 @@ export default function Internship() {
           </div>
 
           <div className="mb-4 flex flex-wrap -mx-4">
-          <div className="w-full md:w-1/2 px-4 mb-4">
-            <Typography variant="h6" color="blue-gray" className="mb-3">
-              PPO Offer
-            </Typography>
-            <Select
-              id="PPO"
-              size="lg"
-              label="PPO Offer"
-              value={isPPO}
-              onChange={(value) => setIsPPO(value)}
-            >
-              <Option value="Yes">Yes</Option>
-              <Option value="No">No</Option>
-            </Select>
-          </div>
-          {isPPO === "Yes" && (
             <div className="w-full md:w-1/2 px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
-                Proof of Evidence
+                PPO Offer
               </Typography>
-              <Input
-                id="PPO_Offer"
+              <Select
+                id="PPO"
                 size="lg"
-                label="Proof of Evidence"
-                type="file"
-                onChange={handleOnChange}
-              />
+                label="PPO Offer"
+                value={isPPO}
+                onChange={(value) => setIsPPO(value)}
+              >
+                <Option value="Yes">Yes</Option>
+                <Option value="No">No</Option>
+              </Select>
             </div>
-          )}
+            {isPPO === "Yes" && (
+              <div className="w-full md:w-1/2 px-4 mb-4">
+                <Typography variant="h6" color="blue-gray" className="mb-3">
+                  Proof of Evidence
+                </Typography>
+                <Input
+                  id="PPO_Offer"
+                  size="lg"
+                  label="Proof of Evidence"
+                  type="file"
+                  onChange={handleOnChange}
+                />
+              </div>
+            )}
             <div className="w-full md:w-1/2 px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
                 Remark
