@@ -13,6 +13,7 @@ import {
 
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { loginAPI } from "./AuthApis";
 
 export default function Login() {
   const navigate = useNavigate();
@@ -25,9 +26,6 @@ export default function Login() {
 
   const { error, loading } = useSelector((state) => state.user);
 
-  // console.log(state);
-  // const [login, setLogin] = useState(false);
-
   const handleInputChange = (e) => {
     setFormData({
       ...formData,
@@ -37,17 +35,11 @@ export default function Login() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    // console.log("formdata is : ", formData);
-
     try {
       dispatch(signInUserStart());
-      const response = await axios.post(
-        "http://localhost:5000/api/v1/auth/login",
-        formData
-      );
+      const response = await axios.post(loginAPI, formData);
 
-      console.log("RESPONSE IS : ", response.data.data);
+      // console.log("RESPONSE IS : ", response.data.data);
       // setFormData(response?.data);
 
       if (response.success === false) {

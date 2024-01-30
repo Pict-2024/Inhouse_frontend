@@ -1,12 +1,8 @@
-
 import { useEffect, useState } from "react";
 // import { useSelector } from "react-redux";
-import {
-  Card,
-  CardBody,
-  Typography,
-} from "@material-tailwind/react";
+import { Card, CardBody, Typography } from "@material-tailwind/react";
 import axios from "axios";
+import { getCountAllTables } from "./AdminApis";
 
 // ... (imports)
 
@@ -21,11 +17,9 @@ export const ADashBoard = () => {
   //   return currentDate.toISOString().split("T")[0];
   // };
 
-
   const fetchAllTablesData = async () => {
     try {
-      const apiUrl = "http://localhost:5000/api/v1/general/get-count-tables";
-      const response = await axios.get(apiUrl);
+      const response = await axios.get(getCountAllTables);
       // console.log("Tables response", response.data.data);
       // Update the state with fetched table data
       const studentTablesData = response?.data?.data?.Student_Tables || [];
@@ -60,22 +54,18 @@ export const ADashBoard = () => {
 
   return (
     <>
-
       {/* Card data */}
       <div className="flex flex-col m-1">
         {/* Teacher Records Section */}
         <div className="mb-4 ">
-          <Typography variant="h4" color="blue-gray" className="mb-2">
+          <Typography variant="h4" color="blue-gray" className="mb-2 mx-4">
             Teacher Records
           </Typography>
-          <div
-            className="flex justify-around gap-2 flex-wrap -mx-4"
-            style={{ width: "90%" }}
-          >
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 ">
             {tableData?.teachers?.map((table, index) => (
               <div
                 key={index}
-                className="w-full sm:w-1/2 md:w-1/2 lg:w-1/3 xl:w-1/4 px-4 py-1 my-2 transition duration-300 relative group"
+                className="w-full  px-4 py-1 transition duration-300 relative group"
               >
                 <Card
                   className="w-full h-full rounded-lg p-4"
@@ -110,17 +100,14 @@ export const ADashBoard = () => {
 
         {/* Student Records Section */}
         <div>
-          <Typography variant="h4" color="blue-gray" className="mb-2">
+          <Typography variant="h4" color="blue-gray" className="mb-2 mx-4">
             Student Records
           </Typography>
-          <div
-            className="flex justify-around gap-2 flex-wrap -mx-4"
-            style={{ width: "90%" }}
-          >
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 ">
             {tableData?.students?.map((table, index) => (
               <div
                 key={index}
-                className="w-full sm:w-1/2 md:w-1/2 lg:w-1/3 xl:w-1/4 px-4 py-1 my-2 transition duration-300 relative group"
+                className="w-full  px-4 py-1 transition duration-300 relative group"
               >
                 <Card
                   className="w-full h-full rounded-lg p-4"
@@ -153,7 +140,6 @@ export const ADashBoard = () => {
           </div>
         </div>
       </div>
-
     </>
   );
 };
