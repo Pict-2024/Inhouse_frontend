@@ -4,16 +4,18 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { resetPasswordAPI } from "./AuthApis";
 
 export default function ResetPass() {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
-    gmail: "",
+    email: "",
     newPassword: "",
     confirmPassword: "",
   });
   const [error, setError] = useState(null);
   const [resetSuccessful, setResetSuccessful] = useState(false);
+  const [loading, setLoading] = useState(false); // Added loading state
 
   const handleResetPassword = async (e) => {
     e.preventDefault();
@@ -24,14 +26,12 @@ export default function ResetPass() {
     }
 
     try {
-      const resetResponse = await axios.post(
-        "http://localhost:5000/api/v1/auth/reset-password",
-        {
-          gmail: formData.gmail,
-          newPassword: formData.newPassword,
-          confirmPassword: formData.confirmPassword,
-        }
-      );
+      setLoading(true); // Set loading to true while making the request
+
+      const resetResponse = await axios.post(resetPasswordAPI, {
+        email: formData.email,
+        newPassword: formData.newPassword,
+      });
 
       if (resetResponse.data.success === true) {
         setResetSuccessful(true);
@@ -54,6 +54,8 @@ export default function ResetPass() {
     } catch (error) {
       setError("Password Reset failed");
       console.error(error.response.data);
+    } finally {
+      setLoading(false); // Set loading back to false, regardless of success or failure
     }
   };
 
@@ -91,9 +93,9 @@ export default function ResetPass() {
           <div className="mb-4">
             <Input
               size="lg"
-              name="gmail"
-              value={formData.gmail}
-              label="Gmail"
+              name="email"
+              value={formData.email}
+              label="email"
               className="border-t-blue-gray-200 focus-border-t-gray-900"
               onChange={handleInputChange}
             />
@@ -124,7 +126,7 @@ export default function ResetPass() {
           </div>
 
           <Button type="submit" className="mt-4" fullWidth>
-            Reset Password
+            {loading ? "Resetting..." : "Reset Password"}
           </Button>
         </form>
 

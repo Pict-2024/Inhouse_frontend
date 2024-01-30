@@ -5,9 +5,9 @@ import { Link, useNavigate } from "react-router-dom";
 
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { registerAPI, verifyAPI } from "./AuthApis";
 
 export default function Register() {
-
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
@@ -15,7 +15,7 @@ export default function Register() {
     gmail: "",
     password: "",
     newPassword: "",
-    pro_email: ""
+    pro_email: "",
   });
   // const [name, setName] = useState("");
   // const [gmail, setGmail] = useState("");
@@ -23,22 +23,20 @@ export default function Register() {
   // const [newPassword, setNewPassword] = useState("");
   const [verified, setVerified] = useState(false);
   const [error, setError] = useState(null);
+  // eslint-disable-next-line no-unused-vars
   const [register, setRegister] = useState(false);
   const [role, setRole] = useState(null);
 
   const handleVerify = async () => {
     try {
-      const response = await axios.post("http://localhost:5000/api/v1/auth/verify", {
-        // eslint-disable-next-line no-undef
-        // gmail,
-        // password
+      const response = await axios.post(verifyAPI, {
         gmail: formData.gmail,
-        password: formData.password
+        password: formData.password,
       });
-      // console.log("Response is = ", response)
+
       if (response.data.success === true) {
-        setRole(response.data.role)
-        console.log("Role = ", role)
+        setRole(response.data.role);
+        console.log("Role = ", role);
         setVerified(true);
         toast.success("Verification Successful", {
           position: "top-left",
@@ -76,14 +74,12 @@ export default function Register() {
       // Check if the user is already registered and verified
       if (verified) {
         // Proceed with registration
-        const registerResponse = await axios.post(
-          "http://localhost:5000/api/v1/auth/register",
-          { name: formData.name, 
-            pro_email: formData.pro_email, 
-            password: formData.newPassword ,
-            gmail: formData.gmail
-          }
-        );
+        const registerResponse = await axios.post(registerAPI, {
+          name: formData.name,
+          pro_email: formData.pro_email,
+          password: formData.newPassword,
+          gmail: formData.gmail,
+        });
         console.log(registerResponse?.data);
 
         setError(null);
@@ -98,8 +94,7 @@ export default function Register() {
           progress: undefined,
           theme: "light",
         });
-        navigate("/auth/login")
-        
+        navigate("/auth/login");
       } else {
         setError("Please verify your email and password first.");
       }
@@ -110,7 +105,14 @@ export default function Register() {
   };
 
   return (
-    <div className="flex justify-center items-center h-[100vh]" style={{backgroundImage:`url('../../src/assets/loginbg.jpg')`,backgroundSize:'cover',opacity:'0.9'}}>
+    <div
+      className="flex justify-center items-center h-[100vh]"
+      style={{
+        backgroundImage: `url('../../src/assets/loginbg.jpg')`,
+        backgroundSize: "cover",
+        opacity: "0.9",
+      }}
+    >
       <Card
         color="transparent"
         shadow={true}
@@ -126,7 +128,6 @@ export default function Register() {
 
         <form className="mt-2" onSubmit={handleSubmit}>
           <div className="mb-4">
-            
             <Input
               size="lg"
               name="name"
@@ -139,7 +140,6 @@ export default function Register() {
           </div>
 
           <div className="mb-4">
-           
             <Input
               size="lg"
               name="gmail"
@@ -151,7 +151,6 @@ export default function Register() {
             />
           </div>
           <div className="mb-4">
-        
             <Input
               size="lg"
               name="password"
@@ -174,20 +173,19 @@ export default function Register() {
 
           {verified && (
             <>
-            { role === 2 && 
-
-              <div className="mb-4 mt-4">
-                <Input
-                  size="lg"
-                  name="pro_email"
-                  value={formData.pro_email}
-                  label="Personal Email"
-                  className="border-t-blue-gray-200 focus-border-t-gray-900"
-                  // onChange={(e) => setGmail(e.target.value)}
-                  onChange={handleInputChange}
-                />
-              </div>
-            }
+              {role === 2 && (
+                <div className="mb-4 mt-4">
+                  <Input
+                    size="lg"
+                    name="pro_email"
+                    value={formData.pro_email}
+                    label="Personal Email"
+                    className="border-t-blue-gray-200 focus-border-t-gray-900"
+                    // onChange={(e) => setGmail(e.target.value)}
+                    onChange={handleInputChange}
+                  />
+                </div>
+              )}
 
               <div className="mb-4">
                 <Typography variant="h6" color="blue-gray">
@@ -199,7 +197,6 @@ export default function Register() {
                   value={formData.newPassword}
                   type="password"
                   label="New Password"
-
                   className="border-t-blue-gray-200 focus-border-t-gray-900"
                   // onChange={(e) => setNewPassword(e.target.value)}
                   onChange={handleInputChange}

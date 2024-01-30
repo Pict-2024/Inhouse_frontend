@@ -3,24 +3,22 @@ import { Card, Input, Button, Typography } from "@material-tailwind/react";
 import axios from "axios";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { forgotPasswordAPI } from "./AuthApis";
 
 export default function ForgotPass() {
   const [formData, setFormData] = useState({
-    gmail: "",
+    email: "",
   });
   const [error, setError] = useState(null);
   const [emailSent, setEmailSent] = useState(false);
+  const [loading, setLoading] = useState(false); // Added loading state
 
   const handleResetPassword = async (e) => {
     e.preventDefault();
+    setLoading(true); // Set loading to true while making the request
 
     try {
-      const resetResponse = await axios.post(
-        "http://localhost:5000/api/v1/auth/reset-password-request",
-        {
-          gmail: formData.gmail,
-        }
-      );
+      const resetResponse = await axios.post(forgotPasswordAPI, {email: formData.email,});
 
       if (resetResponse.data.success === true) {
         setEmailSent(true);
@@ -41,6 +39,8 @@ export default function ForgotPass() {
     } catch (error) {
       setError("Failed to send password reset email");
       console.error(error.response.data);
+    } finally {
+      setLoading(false); // Set loading back to false, regardless of success or failure
     }
   };
 
@@ -78,16 +78,16 @@ export default function ForgotPass() {
           <div className="mb-4">
             <Input
               size="lg"
-              name="gmail"
-              value={formData.gmail}
-              label="Gmail"
+              name="email"
+              value={formData.email}
+              label="email"
               className="border-t-blue-gray-200 focus-border-t-gray-900"
               onChange={handleInputChange}
             />
           </div>
 
           <Button type="submit" className="mt-4" fullWidth>
-            Send Reset Email
+            {loading ? "Sending..." : "Send Reset Email"}
           </Button>
         </form>
 

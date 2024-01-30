@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
 import Header from "../../components/AModule/Header";
-import TextField from "@mui/material/TextField";
 import SendIcon from "@mui/icons-material/Send";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import { Typography, Button } from "@material-tailwind/react";
+import { Typography, Button, Input } from "@material-tailwind/react";
+import { getAllStudent } from "./AdminApis";
 
 export default function Students() {
   const navigate = useNavigate();
@@ -19,8 +19,7 @@ export default function Students() {
 
   const getAllStudents = async () => {
     try {
-      const apiurl = "http://localhost:5000/api/v1/auth/getAllStudent";
-      const response = await axios.get(apiurl, {
+      const response = await axios.get(getAllStudent, {
         headers: {
           "Content-Type": "application/json",
         },
@@ -38,24 +37,24 @@ export default function Students() {
   }, []);
 
   return (
-    <div className="container mx-auto">
-      <div className="flex items-center justify-between gap-2 mx-2">
+    <div className="container ">
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between mx-2">
         <div>
           <Header category="Page" title="Student" />
         </div>
-        <div className="flex items-center justify-between gap-2">
-          <TextField
+        <div className="flex flex-col md:flex-row items-center justify-between p-0 gap-4">
+          <Input
             label="Enter Student ID"
             variant="outlined"
             value={StudentId}
-            className="w-80"
+            className="w-80 py-0"
             onChange={(e) => setStudentId(e.target.value)}
           />
           <Button
             variant="contained"
             color="primary"
+            className="w-full"
             onClick={handleButtonClick}
-            style={{ marginLeft: "10px" }}
             endIcon={<SendIcon />}
           >
             View Student Data
