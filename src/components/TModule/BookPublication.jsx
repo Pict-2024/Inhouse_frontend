@@ -44,10 +44,6 @@ export default function BookPublication() {
   const handleFileUpload = async (file) => {
     try {
       console.log("file as:", file);
-      // if (!file || !file.length) {
-      //   // If file is null, display a toast alert
-
-      // }
 
       const formDataForFile = new FormData();
       formDataForFile.append("file", file);
@@ -58,9 +54,9 @@ export default function BookPublication() {
 
       const response = await axios.post(uploadRecordsBook, formDataForFile);
       console.log(response);
-      console.log("file response:", response.data.filePath);
+      console.log("file response:", response?.data?.filePath);
 
-      return response.data.filePath;
+      return response?.data?.filePath;
     } catch (error) {
       console.error("Error uploading file:", error);
       // Handle error as needed
@@ -88,7 +84,7 @@ export default function BookPublication() {
       if (formData.Upload_Paper !== null) {
         console.log("hello");
         pathUpload = await handleFileUpload(formData.Upload_Paper);
-       
+
         console.log("Upload path = ", pathUpload);
       } else {
         toast.error("Please select a file for upload", {
