@@ -72,8 +72,12 @@ export default function Contribution() {
       formDataForFile.append("username", currentUser?.Username);
       formDataForFile.append("role", currentUser?.Role);
       formDataForFile.append("tableName", "contribution_to_bos");
+      formDataForFile.append("columnName", "Evidence");
 
-      const response = await axios.post(uploadRecordsContribution, formDataForFile);
+      const response = await axios.post(
+        uploadRecordsContribution,
+        formDataForFile
+      );
       // console.log(response);
       // console.log("file response:", response.data.filePath);
 

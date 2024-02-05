@@ -56,6 +56,7 @@ export default function ExtensionActivity() {
       formDataForFile.append("username", currentUser?.Username);
       formDataForFile.append("role", currentUser?.Role);
       formDataForFile.append("tableName", "extension_activity");
+      formDataForFile.append("columnName", ["List_of_Students", "Report"]);
 
       const response = await axios.post(
         uploadRecordsExtension,

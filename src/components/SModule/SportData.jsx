@@ -81,6 +81,11 @@ export default function SportData() {
       formDataForFile.append("username", currentUser?.Username);
       formDataForFile.append("role", currentUser?.Role);
       formDataForFile.append("tableName", "student_sports_data");
+      formDataForFile.append("columnName", [
+        "Certificates",
+        "Evidence",
+      ]);
+
 
       const response = await axios.post(uploadRecordsSport, formDataForFile);
       console.log(response);

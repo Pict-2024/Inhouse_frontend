@@ -374,11 +374,12 @@ export default function TableData({ tableName }) {
     });
   };
 
-
   // Add this function to handle the "Generate Excel" button click
   const handleGenerateExcel = () => {
     generateExcel();
   };
+
+
 
   return (
     <Card className="h-full w-full p-3">
@@ -518,6 +519,7 @@ export default function TableData({ tableName }) {
           Generate Excel
         </Button>
       </div>
+  
     </Card>
   );
 }

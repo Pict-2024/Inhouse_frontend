@@ -52,6 +52,7 @@ export default function ProfessionalAffiliations() {
       formDataForFile.append("username", currentUser?.Username);
       formDataForFile.append("role", currentUser?.Role);
       formDataForFile.append("tableName", "professional_affiliation");
+      formDataForFile.append("columnName", ["Membership_Evidence", "Evidence"]);
 
       const response = await axios.post(
         uploadRecordsProfessional,

@@ -58,6 +58,11 @@ export default function ConsultancyReport() {
       formDataForFile.append("username", currentUser?.Username);
       formDataForFile.append("role", currentUser?.Role);
       formDataForFile.append("tableName", "consultancy_report");
+      formDataForFile.append("columnName", [
+        "Amt_Deposited",
+        "Link_to_evidence",
+        "Upload_Paper",
+      ]);
 
       const response = await axios.post(
         uploadRecordsConsultancy,

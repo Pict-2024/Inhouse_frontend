@@ -58,6 +58,7 @@ export default function FacultyAchievements() {
       formDataForFile.append("username", currentUser?.Username);
       formDataForFile.append("role", currentUser?.Role);
       formDataForFile.append("tableName", "faculty_achievements");
+      formDataForFile.append("columnName", "Certificate");
 
       const response = await axios.post(
         uploadRecordsAchievements,

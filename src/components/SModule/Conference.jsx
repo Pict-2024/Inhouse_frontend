@@ -92,6 +92,7 @@ export default function Conference() {
       formDataForFile.append("username", currentUser?.Username);
       formDataForFile.append("role", currentUser?.Role);
       formDataForFile.append("tableName", "student_conference_publication");
+      formDataForFile.append("columnName", ["Paper_Link", "Upload_Paper","Evidence"]);
 
       const response = await axios.post(
         uploadRecordsConferenceStud,

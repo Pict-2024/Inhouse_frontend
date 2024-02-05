@@ -59,6 +59,7 @@ export default function WebinarConducted() {
       formDataForFile.append("username", currentUser?.Username);
       formDataForFile.append("role", currentUser?.Role);
       formDataForFile.append("tableName", "webinar_guest_lectures");
+      formDataForFile.append("columnName", ["Evidence", "Report"]);
 
       const response = await axios.post(uploadRecordsWebinar, formDataForFile);
       console.log(response);
@@ -114,7 +115,7 @@ export default function WebinarConducted() {
         List_of_Students: pathStudent,
         Evidence: pathEvidence,
       };
-      if (pathReport === "" && pathStudent === ""  && formData.Evidence === "") {
+      if (pathReport === "" && pathStudent === "" && formData.Evidence === "") {
         // If file is null, display a toast alert
         toast.error("Some error occurred while uploading file", {
           position: "top-right",

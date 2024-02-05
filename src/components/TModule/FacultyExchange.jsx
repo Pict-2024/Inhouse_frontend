@@ -61,6 +61,7 @@ export default function FacultyExchange() {
       formDataForFile.append("username", currentUser?.Username);
       formDataForFile.append("role", currentUser?.Role);
       formDataForFile.append("tableName", "mous");
+      formDataForFile.append("columnName", "Upload_Report");
 
       const response = await axios.post(uploadRecordsMous, formDataForFile);
       console.log(response);

@@ -80,6 +80,7 @@ export default function Certificate() {
       formDataForFile.append("username", currentUser?.Username);
       formDataForFile.append("role", currentUser?.Role);
       formDataForFile.append("tableName", "student_certificate_course");
+      formDataForFile.append("columnName", ["Certificates", "Evidence"]);
 
       const response = await axios.post(
         uploadRecordsCertificateStud,

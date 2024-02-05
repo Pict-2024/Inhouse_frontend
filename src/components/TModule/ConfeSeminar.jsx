@@ -62,6 +62,7 @@ export default function ConfeSeminar() {
       formDataForFile.append("username", currentUser?.Username);
       formDataForFile.append("role", currentUser?.Role);
       formDataForFile.append("tableName", "conference_seminar_workshops");
+      formDataForFile.append("columnName", ["List_of_Students", "List_of_Students_Outside","Sample_Certificate","Evidence","Report"]);
 
       const response = await axios.post(
         uploadRecordsConference,

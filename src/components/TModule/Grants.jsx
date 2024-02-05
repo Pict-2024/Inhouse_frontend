@@ -69,6 +69,7 @@ export default function Grants() {
       formDataForFile.append("username", currentUser?.Username);
       formDataForFile.append("role", currentUser?.Role);
       formDataForFile.append("tableName", "grants");
+      formDataForFile.append("columnName", ["Evidence_Document", "Amount_deposited_to_PICT_account"]);
 
       const response = await axios.post(uploadRecordsGrants, formDataForFile);
       console.log(response);

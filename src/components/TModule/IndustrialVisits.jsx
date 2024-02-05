@@ -54,6 +54,11 @@ export default function IndustrialVisit() {
       formDataForFile.append("username", currentUser?.Username);
       formDataForFile.append("role", currentUser?.Role);
       formDataForFile.append("tableName", "industrial_fields_tour");
+      formDataForFile.append("columnName", [
+        "Upload_Report",
+        "Evidence",
+        "List_of_Students",
+      ]);
 
       const response = await axios.post(
         uploadRecordsIndustrial,
@@ -74,7 +79,9 @@ export default function IndustrialVisit() {
     e.preventDefault();
     console.log(formData);
 
-    var pathEvidence=null, pathReport, pathStudent;
+    var pathEvidence = null,
+      pathReport,
+      pathStudent;
     console.log(isFinancialSupport);
     console.log(formData.Evidence);
     // Check if evidence upload is required
@@ -84,7 +91,7 @@ export default function IndustrialVisit() {
     }
 
     try {
-      if (isFinancialSupport ) {
+      if (isFinancialSupport) {
         console.log("hi");
         // Handle evidence upload only if financial support is selected
         pathEvidence = await handleFileUpload(formData.Evidence);
@@ -117,7 +124,7 @@ export default function IndustrialVisit() {
       }
       // console.log("Evidence path:",pathEvidence);
       // If file upload is successful, continue with the form submission
-     
+
       const formDataWithFilePath = {
         ...formData,
 

@@ -86,6 +86,11 @@ export default function Internship() {
       formDataForFile.append("username", currentUser?.Username);
       formDataForFile.append("role", currentUser?.Role);
       formDataForFile.append("tableName", "student_internship_details");
+      formDataForFile.append("columnName", [
+        "Completion_Certificate",
+        "Internship_Report",
+        "PPO_Offer",
+      ]);
 
       const response = await axios.post(
         uploadRecordsInternship,
