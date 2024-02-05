@@ -88,6 +88,7 @@ export default function EventParticipated() {
       formDataForFile.append("username", currentUser?.Username);
       formDataForFile.append("role", currentUser?.Role);
       formDataForFile.append("tableName", "student_event_participated");
+      formDataForFile.append("columnName", ["Certificate", "Evidence"]);
 
       const response = await axios.post(
         uploadRecordsParticipation,

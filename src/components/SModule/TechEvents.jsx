@@ -88,6 +88,7 @@ export default function TechEvents() {
       formDataForFile.append("username", currentUser?.Username);
       formDataForFile.append("role", currentUser?.Role);
       formDataForFile.append("tableName", "student_technical_events");
+      formDataForFile.append("columnName", ["Certificate_Link", "Evidence"]);
 
       const response = await axios.post(
         uploadRecordsTechincalStud,

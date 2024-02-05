@@ -29,7 +29,7 @@ export default function BookPublication() {
     Chapter_if_any: "",
     Level_International_National: "",
     Publisher: "",
-    Year_of_Publication: "",
+    Year: "",
     ISBN_ISSN_DOI_any_other: "",
     Upload_Paper: null,
   });
@@ -54,10 +54,11 @@ export default function BookPublication() {
       formDataForFile.append("username", currentUser?.Username);
       formDataForFile.append("role", currentUser?.Role);
       formDataForFile.append("tableName", "book_publication");
+      formDataForFile.append("columnName", "Upload_Paper");
 
       const response = await axios.post(uploadRecordsBook, formDataForFile);
-      // console.log(response);
-      // console.log("file response:", response.data.filePath);
+      console.log(response);
+      console.log("file response:", response.data.filePath);
 
       return response.data.filePath;
     } catch (error) {
@@ -269,14 +270,14 @@ export default function BookPublication() {
                 Year_of_Publication
               </Typography>
               <Select
-                id="Year_of_Publication"
+                id="Year"
                 size="lg"
                 label="Select Year_of_Publication"
                 color="light-gray"
-                value={formData.Year_of_Publication}
+                value={formData.Year}
                 onChange={(value) =>
                   handleOnChange({
-                    target: { id: "Year_of_Publication", value },
+                    target: { id: "Year", value },
                   })
                 }
                 // onChange={handleOnChange}

@@ -57,6 +57,7 @@ export default function Attended() {
       formDataForFile.append("username", currentUser?.Username);
       formDataForFile.append("role", currentUser?.Role);
       formDataForFile.append("tableName", "sttp_fdp_conference_attended");
+      formDataForFile.append("columnName", ["Evidence", "Upload_Certificate"]);
 
       const response = await axios.post(uploadRecordsAttended, formDataForFile);
       console.log(response);

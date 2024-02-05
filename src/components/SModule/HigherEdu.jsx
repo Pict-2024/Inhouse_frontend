@@ -74,6 +74,11 @@ export default function HigherEdu() {
       formDataForFile.append("username", currentUser?.Username);
       formDataForFile.append("role", currentUser?.Role);
       formDataForFile.append("tableName", "student_higher_education");
+      formDataForFile.append("columnName", [
+        "Upload_Proof_of_Qualifying_Exam",
+        "Upload_Score_Card_as_Evidence",
+        "Upload_ID_card_or_Proof_of_Admission",
+      ]);
 
       const response = await axios.post(
         uploadRecordsHigherEdu,

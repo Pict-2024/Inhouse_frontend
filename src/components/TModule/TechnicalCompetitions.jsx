@@ -59,6 +59,11 @@ export default function TechnicalCompetitions() {
       formDataForFile.append("username", currentUser?.Username);
       formDataForFile.append("role", currentUser?.Role);
       formDataForFile.append("tableName", "technical_competition_fest");
+      formDataForFile.append("columnName", [
+        "List_of_Students",
+        "Evidence",
+        "Sponsorship_Document",
+      ]);
 
       const response = await axios.post(
         uploadRecordsTechnical,

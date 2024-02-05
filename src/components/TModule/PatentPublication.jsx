@@ -45,7 +45,7 @@ export default function PatentPublication() {
   });
 
   const handleChange = (e) => {
-   const { name, value, type, files } = e.target;
+    const { name, value, type, files } = e.target;
 
     setFormData({
       ...formData,
@@ -63,11 +63,14 @@ export default function PatentPublication() {
       formDataForFile.append("username", currentUser?.Username);
       formDataForFile.append("role", currentUser?.Role);
       formDataForFile.append("tableName", "patent_publication");
+      formDataForFile.append("columnName", [
+        "Evidence",
+        "Approval_Letter",
+        "Upload_Patent_Document",
+        "Upload_Patent_Grant",
+      ]);
 
-      const response = await axios.post(
-        uploadRecordsPatent,
-        formDataForFile
-      );
+      const response = await axios.post(uploadRecordsPatent, formDataForFile);
       console.log(response);
       // console.log("file response:", response.data.filePath);
 
@@ -83,7 +86,10 @@ export default function PatentPublication() {
     e.preventDefault();
     console.log(formData);
 
-    var pathEvidence=null, pathReport, pathDoc, pathGrant;
+    var pathEvidence = null,
+      pathReport,
+      pathDoc,
+      pathGrant;
     console.log(isFinancialSupport);
     console.log(formData.Evidence);
     // Check if evidence upload is required
@@ -93,18 +99,17 @@ export default function PatentPublication() {
     }
 
     try {
-      if (isFinancialSupport ) {
+      if (isFinancialSupport) {
         pathEvidence = await handleFileUpload(formData.Evidence);
       }
       if (
         formData.Approval_Letter !== null &&
-        formData.Upload_Patent_Document !== null && 
+        formData.Upload_Patent_Document !== null &&
         formData.Upload_Patent_Grant !== null
       ) {
         pathReport = await handleFileUpload(formData.Approval_Letter);
         pathDoc = await handleFileUpload(formData.Upload_Patent_Document);
-        pathGrant = await handleFileUpload(formData.Upload_Patent_Grant)
-
+        pathGrant = await handleFileUpload(formData.Upload_Patent_Grant);
 
         // console.log("Upload path = ", pathUpload);
       } else {
@@ -122,16 +127,21 @@ export default function PatentPublication() {
       }
       // console.log("Evidence path:",pathEvidence);
       // If file upload is successful, continue with the form submission
-     
+
       const formDataWithFilePath = {
         ...formData,
 
         Evidence: pathEvidence,
         Approval_Letter: pathReport,
         Upload_Patent_Document: pathDoc,
-        Upload_Patent_Grant:pathGrant
+        Upload_Patent_Grant: pathGrant,
       };
-      if (pathEvidence === "" || pathReport === "" || pathDoc === "" || pathGrant === "") {
+      if (
+        pathEvidence === "" ||
+        pathReport === "" ||
+        pathDoc === "" ||
+        pathGrant === ""
+      ) {
         // If file is null, display a toast alert
         toast.error("Some error occurred while uploading file", {
           position: "top-right",

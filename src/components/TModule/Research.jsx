@@ -75,6 +75,9 @@ export default function Research() {
       formDataForFile.append("username", currentUser?.Username);
       formDataForFile.append("role", currentUser?.Role);
       formDataForFile.append("tableName", "research_publication");
+      formDataForFile.append("columnName", ["Evidence", "Link_To_Paper", "Upload_Paper", "Upload_DOA"]);
+
+      console.log(formDataForFile);
 
       const response = await axios.post(uploadRecordsResearch, formDataForFile);
       console.log(response);

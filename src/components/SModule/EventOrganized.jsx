@@ -83,6 +83,10 @@ export default function EventOrganized() {
       formDataForFile.append("username", currentUser?.Username);
       formDataForFile.append("role", currentUser?.Role);
       formDataForFile.append("tableName", "student_event_organized");
+      formDataForFile.append("columnName", [
+        "Certificate_or_Letter_of_Appreciation",
+        "Evidence",
+      ]);
 
       const response = await axios.post(
         uploadRecordsOrganized,
