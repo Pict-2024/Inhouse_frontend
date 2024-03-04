@@ -6,7 +6,10 @@ import { Modal, Box } from "@mui/material";
 
 import moment from "moment";
 import axios from "axios";
+<<<<<<< HEAD
 import logo from "../assets/pictlogo.png";
+=======
+>>>>>>> 02b1a27c7acf564dce358eb23e2d729279eae118
 
 import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
@@ -221,7 +224,11 @@ export default function NavList() {
 
   const fetchAllTeachers = async () => {
     try {
+<<<<<<< HEAD
       const apiUrl = "http://10.10.15.150:8081/api/v1/auth/getAllTeacher";
+=======
+      const apiUrl = "http://localhost:5000/api/v1/auth/getAllTeacher";
+>>>>>>> 02b1a27c7acf564dce358eb23e2d729279eae118
       const response = await axios.get(apiUrl);
       console.log(response?.data?.data);
       teachers = response?.data?.data;
@@ -240,8 +247,12 @@ export default function NavList() {
   const fetchNotices = async () => {
     try {
       console.log(currentUser?.Role, currentUser?.Username);
+<<<<<<< HEAD
       const apiUrl = "http://10.10.15.150:8081/api/v1/general/get-notices";
       console.log("Info = ", currentUser?.Role, currentUser?.Username)
+=======
+      const apiUrl = "http://localhost:5000/api/v1/general/get-notices";
+>>>>>>> 02b1a27c7acf564dce358eb23e2d729279eae118
       const response = await axios.post(apiUrl, {
         Role: currentUser?.Role,
         Username: currentUser?.Username,
@@ -293,7 +304,11 @@ export default function NavList() {
     };
     console.log("final", finalData);
     try {
+<<<<<<< HEAD
       const apiUrl = "http://10.10.15.150:8081/api/v1/general/send-notice";
+=======
+      const apiUrl = "http://localhost:5000/api/v1/general/send-notice";
+>>>>>>> 02b1a27c7acf564dce358eb23e2d729279eae118
       await axios.post(apiUrl, finalData);
 
       // console.log(response);
@@ -330,7 +345,11 @@ export default function NavList() {
     <nav className=" block w-full rounded-xl border  border-white/80 bg-white bg-opacity-80 py-2 px-2 text-white shadow-md backdrop-blur-2xl backdrop-saturate-200 lg:px-2 lg:py-2">
       <div>
         <div className="w-full flex items-center px-2 gap-x-2 justify-between text-gray-900">
+<<<<<<< HEAD
           <img src={logo} className="w-16 h-16" />
+=======
+          <img src="../../src/assets/pictlogo.png" className="w-16 h-16" />
+>>>>>>> 02b1a27c7acf564dce358eb23e2d729279eae118
           <Link
             to={"/"}
             className="mr-4 w-full font-bold cursor-pointer py-1.5 font-sans text-2xl leading-normal text-inherit antialiased"

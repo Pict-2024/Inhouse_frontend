@@ -128,7 +128,11 @@ const Report = () => {
   const [columnNames, setColumnNames] = useState([]);
   const [formFilters, setFormFilters] = useState({});
   const [apiUrl, setApiUrl] = useState(
+<<<<<<< HEAD
     "http://10.10.15.150:8081/api/v1/general/allcolumns"
+=======
+    "http://localhost:5000/api/v1/general/allcolumns"
+>>>>>>> 02b1a27c7acf564dce358eb23e2d729279eae118
   );
   const [tableRows, setTableRows] = useState([]);
   // const [page, setPage] = useState(0);
@@ -180,7 +184,11 @@ const Report = () => {
   const getAllTables = async () => {
     try {
       const response = await axios.get(
+<<<<<<< HEAD
         "http://10.10.15.150:8081/api/v1/general/alltables"
+=======
+        "http://localhost:5000/api/v1/general/alltables"
+>>>>>>> 02b1a27c7acf564dce358eb23e2d729279eae118
       );
       const fetchedTableNames = response.data.data;
       setTableNames(fetchedTableNames);
@@ -197,7 +205,11 @@ const Report = () => {
   const getAllColumns = async () => {
     try {
       const response = await axios.post(
+<<<<<<< HEAD
         `http://10.10.15.150:8081/api/v1/general/allcolumns?tablename=${tablename}`
+=======
+        `http://localhost:5000/api/v1/general/allcolumns?tablename=${tablename}`
+>>>>>>> 02b1a27c7acf564dce358eb23e2d729279eae118
       );
       return response.data; // Returning the data for further processing
     } catch (error) {
@@ -251,7 +263,11 @@ const Report = () => {
       : "teacher";
 
     setApiUrl(
+<<<<<<< HEAD
       `http://10.10.15.150:8081/api/v1/${tablePrefix}/${tableMapping[selectedTable]}/filter?${queryParameters}`
+=======
+      `http://localhost:5000/api/v1/${tablePrefix}/${tableMapping[selectedTable]}/filter?${queryParameters}`
+>>>>>>> 02b1a27c7acf564dce358eb23e2d729279eae118
     );
 
     console.log("form filter is : ", formFilters);

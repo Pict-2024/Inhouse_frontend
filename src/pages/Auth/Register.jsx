@@ -50,6 +50,7 @@ export default function Register() {
         });
         setError(null);
       } else {
+<<<<<<< HEAD
         // setError("Invalid Credentials");
         toast.error("Invalid Credentials", {
           position: "top-left",
@@ -61,10 +62,14 @@ export default function Register() {
           progress: undefined,
           theme: "light",
         });
+=======
+        setError("Invalid Credentials");
+>>>>>>> 02b1a27c7acf564dce358eb23e2d729279eae118
       }
 
       console.log(response.data);
     } catch (error) {
+<<<<<<< HEAD
       // setError("Invalid Credentials");
       toast.error("Invalid Credentials", {
         position: "top-left",
@@ -76,6 +81,9 @@ export default function Register() {
         progress: undefined,
         theme: "light",
       });
+=======
+      setError("Invalid Credentials");
+>>>>>>> 02b1a27c7acf564dce358eb23e2d729279eae118
       console.error(error.response.data);
     }
   };
@@ -91,6 +99,7 @@ export default function Register() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+<<<<<<< HEAD
       if(!formData.gmail && !formData.password){
         toast.warning("Please enter your email and password", {
           position: "top-left",
@@ -129,6 +138,8 @@ export default function Register() {
         });
         return;
       }
+=======
+>>>>>>> 02b1a27c7acf564dce358eb23e2d729279eae118
       // Check if the user is already registered and verified
       if (verified) {
         // Proceed with registration
@@ -154,6 +165,7 @@ export default function Register() {
         });
         navigate("/auth/login");
       } else {
+<<<<<<< HEAD
         // setError("Please verify your email and password first.");
         toast.warning("Please verify your email and password first.", {
           position: "top-left",
@@ -178,6 +190,12 @@ export default function Register() {
         progress: undefined,
         theme: "light",
       });
+=======
+        setError("Please verify your email and password first.");
+      }
+    } catch (error) {
+      setError("Registration failed");
+>>>>>>> 02b1a27c7acf564dce358eb23e2d729279eae118
       console.error(error.response.data);
     }
   };
@@ -222,7 +240,11 @@ export default function Register() {
               size="lg"
               name="gmail"
               value={formData.gmail}
+<<<<<<< HEAD
               label="Email"
+=======
+              label="gmail"
+>>>>>>> 02b1a27c7acf564dce358eb23e2d729279eae118
               className="border-t-blue-gray-200 focus-border-t-gray-900"
               // onChange={(e) => setGmail(e.target.value)}
               onChange={handleInputChange}

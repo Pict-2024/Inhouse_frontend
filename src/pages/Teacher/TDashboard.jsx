@@ -61,7 +61,11 @@ export default function TDashboard() {
   const fetchNotifications = async () => {
     try {
       console.log(currentUser?.Role);
+<<<<<<< HEAD
       const apiUrl = "http://10.10.15.150:8081/api/v1/general/get-notices";
+=======
+      const apiUrl = "http://localhost:5000/api/v1/general/get-notices";
+>>>>>>> 02b1a27c7acf564dce358eb23e2d729279eae118
       const response = await axios.post(apiUrl, { Role: currentUser?.Role });
       console.log("Notifications:", response.data.data);
       setNotifications(response.data.data);
@@ -72,7 +76,11 @@ export default function TDashboard() {
 
   const handleSubmitNotification = async () => {
     try {
+<<<<<<< HEAD
       const apiUrl = "http://10.10.15.150:8081/api/v1/general/send-notice";
+=======
+      const apiUrl = "http://localhost:5000/api/v1/general/send-notice";
+>>>>>>> 02b1a27c7acf564dce358eb23e2d729279eae118
       await axios.post(apiUrl, notificationData);
       // console.log(response);
       fetchNotifications();
@@ -113,7 +121,11 @@ export default function TDashboard() {
 
   const fetchData = async () => {
     try {
+<<<<<<< HEAD
       const apiUrl = "http://10.10.15.150:8081/api/v1/general/get-count-user";
+=======
+      const apiUrl = "http://localhost:5000/api/v1/general/get-count-user";
+>>>>>>> 02b1a27c7acf564dce358eb23e2d729279eae118
       console.log(currentUser?.Username);
       const response = await axios.post(apiUrl, {
         username: currentUser?.Username,

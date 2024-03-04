@@ -18,7 +18,11 @@ export default function SDashboard() {
 
   const fetchData = async () => {
     try {
+<<<<<<< HEAD
       const apiUrl = "http://10.10.15.150:8081/api/v1/general/get-count-user";
+=======
+      const apiUrl = "http://localhost:5000/api/v1/general/get-count-user";
+>>>>>>> 02b1a27c7acf564dce358eb23e2d729279eae118
       console.log(currentUser?.Username);
       const response = await axios.post(apiUrl, {
         username: currentUser?.Username,

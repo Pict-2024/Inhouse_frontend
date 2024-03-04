@@ -519,7 +519,11 @@ export default function ConfeSeminar() {
           </div>
 
           <Button className="mt-4" type="submit" fullWidth>
+<<<<<<< HEAD
             Submit
+=======
+            Add Changes
+>>>>>>> 02b1a27c7acf564dce358eb23e2d729279eae118
           </Button>
         </form>
       </Card>

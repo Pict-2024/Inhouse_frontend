@@ -37,6 +37,7 @@ export default function Login() {
     e.preventDefault();
     try {
       dispatch(signInUserStart());
+<<<<<<< HEAD
       if(!formData.gmail && !formData.password){
         toast.warning("Please enter your email and password", {
           position: "top-left",
@@ -78,18 +79,29 @@ export default function Login() {
         dispatch(signInUserFailure({data:"Password is required"}));
         return;
       }
+=======
+>>>>>>> 02b1a27c7acf564dce358eb23e2d729279eae118
       const response = await axios.post(loginAPI, formData);
 
       // console.log("RESPONSE IS : ", response.data.data);
       // setFormData(response?.data);
 
       if (response.success === false) {
+<<<<<<< HEAD
         dispatch(signInUserFailure(response?.data));
         return;
       }
       dispatch(signInUserSuccess(response?.data?.data?.user));
 
       const currentUser = response?.data?.data?.user;
+=======
+        dispatch(signInUserFailure(response.data));
+        return;
+      }
+      dispatch(signInUserSuccess(response.data.data.user));
+
+      const currentUser = response.data.data.user;
+>>>>>>> 02b1a27c7acf564dce358eb23e2d729279eae118
 
       var pathLink = "";
 
@@ -102,7 +114,11 @@ export default function Login() {
       }
 
       navigate(pathLink);
+<<<<<<< HEAD
       toast.success(response?.data?.message, {
+=======
+      toast.success("Login Successful", {
+>>>>>>> 02b1a27c7acf564dce358eb23e2d729279eae118
         position: "top-left",
         autoClose: 1500,
         hideProgressBar: false,
@@ -113,6 +129,7 @@ export default function Login() {
         theme: "light",
       });
     } catch (error) {
+<<<<<<< HEAD
       console.log(error);
       console.log("Error is : ", error?.response?.data?.message);
       // setError("Invalid credentials");
@@ -127,6 +144,11 @@ export default function Login() {
         theme: "light",
       });
       dispatch(signInUserFailure(error?.response?.data?.message));
+=======
+      console.log("Error is : ", error.response.data.message);
+      // setError("Invalid credentials");
+      dispatch(signInUserFailure(error.response.data.message));
+>>>>>>> 02b1a27c7acf564dce358eb23e2d729279eae118
       // console.error(error.response.data);
     }
   };
@@ -168,7 +190,11 @@ export default function Login() {
                 size="lg"
                 name="gmail"
                 value={formData.gmail}
+<<<<<<< HEAD
                 label="Email"
+=======
+                label="gmail"
+>>>>>>> 02b1a27c7acf564dce358eb23e2d729279eae118
                 onChange={handleInputChange}
               />
             </div>
@@ -197,7 +223,11 @@ export default function Login() {
             {loading ? "loading" : "login"}
           </Button>
 
+<<<<<<< HEAD
           {/* {error && <p className="error text-center text-red-600">{error}</p>} */}
+=======
+          {error && <p className="error text-center text-red-600">{error}</p>}
+>>>>>>> 02b1a27c7acf564dce358eb23e2d729279eae118
           {/**  && <p className="success">Login successful!</p> */}
 
           <div className="flex justify-between">
