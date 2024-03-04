@@ -1,0 +1,409 @@
+import { useState } from "react";
+import {
+  Card,
+  Select,
+  Option,
+  Input,
+  Button,
+  Typography,
+} from "@material-tailwind/react";
+import axios from "axios";
+import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
+import { addRecordsAttended, uploadRecordsAttended } from "./API_Routes";
+
+export default function Attended() {
+  const { currentUser } = useSelector((state) => state.user);
+  const [isFinancialSupport, setIsFinancialSupport] = useState(false);
+  const navigate = useNavigate();
+
+  const [formData, setFormData] = useState({
+    T_ID: null,
+    Name: currentUser?.Name,
+    UserName: currentUser?.Username,
+    Department: "",
+    Title_of_the_Event: "",
+    Type_Nature: "",
+    Organizer_Institute_Name: "",
+    Name_of_Coordinators: "",
+    Start_Date: "",
+    End_Date: "",
+    Mode_Online_Physical: "",
+    Duration_in_Days: "",
+    Finance_Support_By_PICT: "",
+    Upload_Certificate: null,
+    Evidence: null,
+  });
+
+  const handleOnChange = (e) => {
+    const { id, value, type, files } = e.target;
+
+    setFormData({
+      ...formData,
+      [id]:
+        type === "file" ? (files && files.length > 0 ? files[0] : null) : value,
+    });
+  };
+
+  const handleFileUpload = async (file) => {
+    try {
+      // console.log("file as:", file);
+
+      const formDataForFile = new FormData();
+      formDataForFile.append("file", file);
+      formDataForFile.append("username", currentUser?.Username);
+      formDataForFile.append("role", currentUser?.Role);
+      formDataForFile.append("tableName", "sttp_fdp_conference_attended");
+      formDataForFile.append("columnName", ["Evidence", "Upload_Certificate"]);
+
+      const response = await axios.post(uploadRecordsAttended, formDataForFile);
+      console.log(response);
+      // console.log("file response:", response.data.filePath);
+
+      return response.data.filePath;
+    } catch (error) {
+      console.error("Error uploading file:", error);
+      // Handle error as needed
+    }
+  };
+
+  //add new record
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    console.log(formData);
+
+    var pathEvidence, pathStudent;
+    // console.log(formData.Upload_Certificate);
+    try {
+      if (formData.Evidence !== null && formData.Upload_Certificate !== null) {
+        // console.log("2");
+        pathEvidence = await handleFileUpload(formData.Evidence);
+        // console.log("3");
+        pathStudent = await handleFileUpload(formData.Upload_Certificate);
+        // console.log("4");
+
+        // console.log("Upload path = ", pathUpload);
+      } else {
+        toast.error("Please select a file for upload", {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+        });
+        return;
+      }
+
+      // If file upload is successful, continue with the form submission
+      const formDataWithFilePath = {
+        ...formData,
+
+        Evidence: pathEvidence,
+        Upload_Certificate: pathStudent,
+      };
+      if (pathEvidence === "" && pathStudent === "") {
+        // If file is null, display a toast alert
+        toast.error("Some error occurred while uploading file", {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+        });
+        return;
+      }
+
+      console.log("Final data:", formDataWithFilePath);
+
+      // Send a POST request to the addRecordsBook API endpoint
+      await axios.post(addRecordsAttended, formDataWithFilePath);
+
+      // Display a success toast
+      toast.success("Record Added Successfully", {
+        position: "top-right",
+        autoClose: 1500,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+
+      // Navigate to "/t/data" after successful submission
+      navigate("/t/data");
+    } catch (error) {
+      // Handle file upload error
+      console.error("File upload error:", error);
+
+      // Display an error toast
+      toast.error("File upload failed. Please try again.", {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+    }
+  };
+
+  return (
+    <>
+      <Card
+        color="transparent"
+        shadow={false}
+        className="border border-gray-300 w-85 mx-auto p-2 my-2 rounded-md overflow-x-hidden"
+      >
+        <Typography
+          variant="h4"
+          color="blue-gray"
+          className="mx-auto underline underline-offset-2"
+        >
+          STTP/FDP/Workshop/Conference Attended
+        </Typography>
+
+        <form className="mt-8 mb-2" onSubmit={handleSubmit}>
+          <div className="mb-4 flex flex-wrap -mx-4">
+            <div className="w-full px-4 mb-4">
+              <Typography variant="h6" color="blue-gray" className="mb-3">
+                Department
+              </Typography>
+              <Select
+                id="Department"
+                size="lg"
+                label="Department"
+                value={formData.Department}
+                onChange={(value) =>
+                  handleOnChange({
+                    target: { id: "Department", value },
+                  })
+                }
+              >
+                <Option value="CS">CS</Option>
+                <Option value="IT">IT</Option>
+                <Option value="EnTC">EnTC</Option>
+                <Option value="FE">FE</Option>
+              </Select>
+            </div>
+          </div>
+
+          <div className="mb-4 flex flex-wrap -mx-4">
+            <div className="w-full md:w-1/2 px-4 mb-4">
+              <Typography variant="h6" color="blue-gray" className="mb-3">
+                Title of the Event
+              </Typography>
+              <Input
+                id="Title_of_the_Event"
+                size="lg"
+                type="text"
+                label="Title of the Event"
+                value={formData.Title_of_the_Event}
+                onChange={handleOnChange}
+              />
+            </div>
+            <div className="w-full md:w-1/2 px-4 mb-4">
+              <Typography variant="h6" color="blue-gray" className="mb-3">
+                Type/Nature (FDP/STTP/Workshop/Conference etc)
+              </Typography>
+              <Select
+                id="Type_Nature"
+                size="lg"
+                label="Type/Nature"
+                value={formData.Type_Nature}
+                onChange={(value) =>
+                  handleOnChange({
+                    target: { id: "Type_Nature", value },
+                  })
+                }
+              >
+                <Option value="FDP">FDP</Option>
+                <Option value="STTP">STTP</Option>
+                <Option value="Workshop">Workshop</Option>
+                <Option value="Webinar">Webinar</Option>
+                <Option value="Conference">Conference</Option>
+                <Option value="Other">Other</Option>
+              </Select>
+            </div>
+          </div>
+
+          <div className="mb-4 flex flex-wrap -mx-4">
+            <div className="w-full md:w-1/2 px-4 mb-4">
+              <Typography variant="h6" color="blue-gray" className="mb-3">
+                Name of organizing Institute
+              </Typography>
+              <Input
+                id="Organizer_Institute_Name"
+                size="lg"
+                type="text"
+                label="Organizing Institute"
+                value={formData.Organizer_Institute_Name}
+                onChange={handleOnChange}
+              />
+            </div>
+            <div className="w-full md:w-1/2 px-4 mb-4">
+              <Typography variant="h6" color="blue-gray" className="mb-3">
+                Name of the coordinator from organizing Institute
+              </Typography>
+              <Input
+                id="Name_of_Coordinators"
+                size="lg"
+                type="text"
+                label="Name of the coordinator"
+                value={formData.Name_of_Coordinators}
+                onChange={handleOnChange}
+              />
+            </div>
+          </div>
+
+          <div className="mb-4 flex flex-wrap -mx-4">
+            <div className="w-full md:w-1/2 px-4 mb-4">
+              <Typography variant="h6" color="blue-gray" className="mb-3">
+                Start Date (DD-MM-YYYY)
+              </Typography>
+              <Input
+                id="Start_Date"
+                size="lg"
+                type="date"
+                value={formData.Start_Date}
+                onChange={handleOnChange}
+              />
+            </div>
+            <div className="w-full md:w-1/2 px-4 mb-4">
+              <Typography variant="h6" color="blue-gray" className="mb-3">
+                End Date (DD-MM-YYYY)
+              </Typography>
+              <Input
+                id="End_Date"
+                size="lg"
+                type="date"
+                value={formData.End_Date}
+                onChange={handleOnChange}
+              />
+            </div>
+          </div>
+
+          <div className="mb-4 flex flex-wrap -mx-4">
+            <div className="w-full md:w-1/2 px-4 mb-4">
+              <Typography variant="h6" color="blue-gray" className="mb-3">
+                Mode: Online/Physical
+              </Typography>
+              <Select
+                id="Mode_Online_Physical"
+                size="lg"
+                label="Select Mode"
+                value={formData.Mode_Online_Physical}
+                onChange={(value) =>
+                  handleOnChange({
+                    target: { id: "Mode_Online_Physical", value },
+                  })
+                }
+              >
+                <Option value="Online">Online</Option>
+                <Option value="Physical">Physical</Option>
+              </Select>
+            </div>
+            <div className="w-full md:w-1/2 px-4 mb-4">
+              <Typography variant="h6" color="blue-gray" className="mb-3">
+                Duration in Hours
+              </Typography>
+              <Input
+                id="Duration_in_Days"
+                size="lg"
+                type="text"
+                label="Duration"
+                value={formData.Duration_in_Days}
+                onChange={handleOnChange}
+              />
+            </div>
+          </div>
+
+          <div className="mb-4 flex flex-wrap -mx-4 ">
+            <div className="w-full">
+              <div className="px-4 mb-4 flex gap-40 ">
+                <Typography variant="h6" color="blue-gray" className="mb-3">
+                  Financial support from institute in INR
+                </Typography>
+                <div className="flex gap-3 ">
+                  <label className="mx-2">
+                    <input
+                      type="radio"
+                      id="financialSupport"
+                      value="yes"
+                      checked={isFinancialSupport}
+                      onChange={() => setIsFinancialSupport(true)}
+                    />
+                    Yes
+                  </label>
+                  <label>
+                    <input
+                      type="radio"
+                      id="financialSupport"
+                      value="no"
+                      checked={!isFinancialSupport}
+                      onChange={() => setIsFinancialSupport(false)}
+                    />
+                    No
+                  </label>
+                </div>
+              </div>
+              <div className="flex justify-between border-2">
+                <div className="w-full md:w-1/2 px-4 mb-4">
+                  <Input
+                    size="lg"
+                    label="Amount in INR"
+                    id="Finance_Support_By_PICT"
+                    type="number"
+                    value={formData.Finance_Support_By_PICT}
+                    onChange={handleOnChange}
+                    disabled={!isFinancialSupport}
+                  />
+                </div>
+                <div className="w-full md:w-1/2 px-4 mb-4 flex gap-4">
+                  <Input
+                    size="lg"
+                    label="Evidence Document"
+                    id="Evidence"
+                    type="file"
+                    onChange={handleOnChange}
+                    disabled={!isFinancialSupport}
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="mb-4 flex flex-wrap -mx-4">
+            <div className="w-full px-4 mb-4">
+              <Typography variant="h6" color="blue-gray" className="mb-3">
+                Upload Certificate
+              </Typography>
+              <Input
+                id="Upload_Certificate"
+                label="Upload certificate"
+                size="lg"
+                type="file"
+                onChange={handleOnChange}
+              />
+            </div>
+          </div>
+
+          <Button type="submit" className="mt-4" fullWidth>
+            Submit
+          </Button>
+        </form>
+      </Card>
+    </>
+  );
+}
