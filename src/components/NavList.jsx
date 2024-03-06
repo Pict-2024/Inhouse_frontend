@@ -338,6 +338,7 @@ export default function NavList() {
             className="mr-4 w-full font-bold cursor-pointer py-1.5 font-sans text-lg  leading-normal text-inherit antialiased"
           >
             <span>PICT</span>
+            <h1>Sidebar button</h1>
           </Link>
           
           
