@@ -58,10 +58,10 @@ export default function TeacherSidebar() {
             View Uploads
           </ListItem>
         </Link>
-        {currentUser && currentUser.SpecialAccess !== null && (
+        {currentUser && currentUser.SpecialAccess !== undefined && (
           <Link to={`/t/report/${currentUser.SpecialAccess}`}>
             <ListItem>
-              <ListItemPrefix>
+              <ListItemPrefix>  
                 <DocumentChartBarIcon className="h-5 w-5" />
               </ListItemPrefix>
               Reports

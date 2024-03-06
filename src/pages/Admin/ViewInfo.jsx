@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useLocation } from "react-router";
 import axios from "axios";
 import { Card, Typography, Button } from "@material-tailwind/react";
+import { BASE_URL } from "../../api";
 
 const ViewInfo = () => {
   const location = useLocation();
@@ -84,11 +85,7 @@ const ViewInfo = () => {
     const userId = userType === "teacher" ? teacherId : studentId;
 
     try {
-<<<<<<< HEAD
-      const apiUrl = `http://10.10.15.150:8081/api/v1/general/get-user-data?username=${userId}&selectedTables[]=${Object.keys(
-=======
-      const apiUrl = `http://localhost:5000/api/v1/general/get-user-data?username=${userId}&selectedTables[]=${Object.keys(
->>>>>>> 02b1a27c7acf564dce358eb23e2d729279eae118
+      const apiUrl = `${BASE_URL}/general/get-user-data?username=${userId}&selectedTables[]=${Object.keys(
         selectedTables
       ).join("&selectedTables[]=")}`;
       const response = await axios.post(apiUrl, {

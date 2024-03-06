@@ -258,7 +258,14 @@ export default function TableData({ tableName }) {
   //link to uploaded document
   const handleLink = (link) => {
     console.log("Link of document is : ", link);
-    window.open(link, "_blank");
+    const IP = `${IP}`;
+    const PORT = `${PORT}`;
+    const pathParts = link.split('\\Uploads');
+    const newPath = `${IP}:${PORT}/Uploads${pathParts[1]}`;
+
+    console.log("New URL is : ", newPath);
+
+    window.open(newPath, "_blank");
   };
 
   const generateExcel = () => {
@@ -319,7 +326,7 @@ export default function TableData({ tableName }) {
                     <Typography
                       variant="small"
                       color="blue"
-                      className="flex items-center justify-between gap-2 font-normal leading-none opacity-70 font-bold text-blue-700"
+                      className="flex items-center justify-between gap-2 leading-none opacity-70 font-bold text-blue-700"
                     >
                       {head}{" "}
                       {index !== tableHead.length - 1 && (
@@ -361,7 +368,7 @@ export default function TableData({ tableName }) {
                             handleEditField(record.S_ID, head, e.target.value)
                           }
                         />
-                      ) : head.startsWith("Upload") ||
+                      ) : head.startsWith("Upload") || head.startsWith("Completion") ||
                         head.startsWith("Link") ? (
                         <DocumentIcon
                           onClick={() => handleLink(record[head])}

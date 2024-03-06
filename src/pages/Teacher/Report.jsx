@@ -54,6 +54,7 @@ import { Option, Select } from "@material-tailwind/react";
 import html2pdf from "html2pdf.js";
 import ExcelJS from "exceljs";
 import { useSelector } from "react-redux";
+import { BASE_URL } from "../../api";
 
 const Report = () => {
   const { currentUser } = useSelector((state) => state.user);
@@ -131,11 +132,7 @@ const Report = () => {
   const [columnNames, setColumnNames] = useState([]);
   const [formFilters, setFormFilters] = useState({});
   const [apiUrl, setApiUrl] = useState(
-<<<<<<< HEAD
-    "http://10.10.15.150:8081/api/v1/general/allcolumns"
-=======
-    "http://localhost:5000/api/v1/general/allcolumns"
->>>>>>> 02b1a27c7acf564dce358eb23e2d729279eae118
+    `${BASE_URL}/general/allcolumns`
   );
   const [tableRows, setTableRows] = useState([]);
   const [selectedColumns, setSelectedColumns] = useState([]); // New state to track selected columns
@@ -178,11 +175,7 @@ const Report = () => {
   const getAllTables = async () => {
     try {
       const response = await axios.post(
-<<<<<<< HEAD
-        `http://10.10.15.150:8081/api/v1/general/get-spec-cols?username=${currentUser.Username}`
-=======
-        `http://localhost:5000/api/v1/general/get-spec-cols?username=${currentUser.Username}`
->>>>>>> 02b1a27c7acf564dce358eb23e2d729279eae118
+        `${BASE_URL}/general/get-spec-cols?username=${currentUser.Username}`
       );
       // const fetchedTableNames = response.data.data;
 
@@ -209,11 +202,7 @@ const Report = () => {
   const getAllColumns = async () => {
     try {
       const response = await axios.post(
-<<<<<<< HEAD
-        `http://10.10.15.150:8081/api/v1/general/allcolumns?tablename=${tablename}`
-=======
-        `http://localhost:5000/api/v1/general/allcolumns?tablename=${tablename}`
->>>>>>> 02b1a27c7acf564dce358eb23e2d729279eae118
+        `${BASE_URL}/general/allcolumns?tablename=${tablename}`
       );
       return response.data; // Returning the data for further processing
     } catch (error) {
@@ -263,11 +252,7 @@ const Report = () => {
     }
 
     setApiUrl(
-<<<<<<< HEAD
-      `http://10.10.15.150:8081/api/v1/teacher/${tableMapping[selectedTable]}/filter?${queryParameters}`
-=======
-      `http://localhost:5000/api/v1/teacher/${tableMapping[selectedTable]}/filter?${queryParameters}`
->>>>>>> 02b1a27c7acf564dce358eb23e2d729279eae118
+      `${BASE_URL}/teacher/${tableMapping[selectedTable]}/filter?${queryParameters}`
     );
     console.log("form filter is : ", formFilters);
     console.log("Update api url is : ", apiUrl);

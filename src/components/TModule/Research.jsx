@@ -235,7 +235,7 @@ export default function Research() {
                     target: { name: "Department", value },
                   })
                 }
-                // onChange={handleOnChange}
+              // onChange={handleOnChange}
               >
                 <Option value="CS">CS</Option>
                 <Option value="IT">IT</Option>
@@ -606,7 +606,7 @@ export default function Research() {
             </div>
             <div className="w-full md:w-1/2 px-4 mb-4 ">
               <Typography variant="h6" color="blue-gray" className="mb-3">
-                Upload the Paper
+                Upload the Paper (Pdf Only)
               </Typography>
               <Input
                 size="lg"
@@ -635,7 +635,7 @@ export default function Research() {
             </div>
             <div className="w-full md:w-1/2 px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
-                Upload Document of Achievement
+                Upload Document of Achievement (Pdf Only)
               </Typography>
               <Input
                 size="lg"
@@ -648,12 +648,63 @@ export default function Research() {
             </div>
           </div>
 
+           {/* <div className="mb-4 flex flex-wrap -mx-4 ">
+            <div className="w-full">
+              <div className="px-4 mb-4 flex gap-40 ">
+                <Typography variant="h6" color="blue-gray" className="mb-3">
+                  Financial support from institute in INR
+                </Typography>
+                <div className="flex gap-3 ">
+                  <label className="mx-2">
+                    <input
+                      type="radio"
+                      name="financialSupport"
+                      value="yes"
+                      checked={isFinancialSupport}
+                      onChange={() => setIsFinancialSupport(true)}
+                    />
+                    Yes
+                  </label>
+                  <label>
+                    <input
+                      type="radio"
+                      name="financialSupport"
+                      value="no"
+                      checked={!isFinancialSupport}
+                      onChange={() => setIsFinancialSupport(false)}
+                    />
+                    No
+                  </label>
+                </div>
+              </div>
+              <div className="flex justify-between border-2">
+                <div className="w-full md:w-1/2 px-4 mb-4">
+                  <Input
+                    size="lg"
+                    label="Amount in INR"
+                    name="Financial_support_from_institute_in_INR"
+                    type="number"
+                    value={formData.Financial_support_from_institute_in_INR}
+                    onChange={handleChange}
+                    disabled={!isFinancialSupport}
+                  />
+                </div>
+                <div className="w-full md:w-1/2 px-4 mb-4 flex gap-4">
+                  <Input
+                    size="lg"
+                    label="Evidence Document"
+                    name="Evidence"
+                    type="file"
+                    onChange={handleChange}
+                    disabled={!isFinancialSupport}
+                  />
+                </div>
+              </div>
+            </div>
+          </div> */}
+
           <Button type="submit" className="mt-4" fullWidth>
-<<<<<<< HEAD
             Submit
-=======
-            Add Changes
->>>>>>> 02b1a27c7acf564dce358eb23e2d729279eae118
           </Button>
         </form>
       </Card>

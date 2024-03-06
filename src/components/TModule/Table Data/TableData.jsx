@@ -82,11 +82,8 @@ export default function TableData({ tableName }) {
   const [tableHead, setTableHead] = useState([]);
   const [tableRows, setTableRows] = useState([]);
   const [editableFields, setEditableFields] = useState({});
-<<<<<<< HEAD
   const IP = `10.10.15.150`;
   const PORT = `8081`;
-=======
->>>>>>> 02b1a27c7acf564dce358eb23e2d729279eae118
 
   // getRecords by username apis
   const getApiRoute = (tableName) => {
@@ -349,7 +346,6 @@ export default function TableData({ tableName }) {
   //link to uploaded document
   const handleLink = (link) => {
     console.log("Link of document is : ", link);
-<<<<<<< HEAD
     const IP = "http://10.10.15.150";
     const PORT = 8081;
     const pathParts = link.split('\\Uploads');
@@ -358,9 +354,6 @@ export default function TableData({ tableName }) {
     console.log("New URL is : ", newPath);
 
     window.open(newPath, "_blank");
-=======
-    window.open(link, "_blank");
->>>>>>> 02b1a27c7acf564dce358eb23e2d729279eae118
   };
 
   const generateExcel = () => {

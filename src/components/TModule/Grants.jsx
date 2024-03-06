@@ -501,11 +501,7 @@ export default function Grants() {
           </div>
 
           <Button type="submit" className="mt-4" fullWidth>
-<<<<<<< HEAD
             Submit
-=======
-            Add Changes
->>>>>>> 02b1a27c7acf564dce358eb23e2d729279eae118
           </Button>
         </form>
       </Card>

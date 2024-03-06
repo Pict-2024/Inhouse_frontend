@@ -379,11 +379,7 @@ export default function IndustrialVisit() {
           </div>
 
           <Button className="mt-4" fullWidth type="submit">
-<<<<<<< HEAD
             Submit
-=======
-            Add Changes
->>>>>>> 02b1a27c7acf564dce358eb23e2d729279eae118
           </Button>
         </form>
       </Card>

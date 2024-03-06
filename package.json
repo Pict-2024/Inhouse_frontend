@@ -19,18 +19,6 @@
     "@mui/x-data-grid": "^6.18.7",
     "@mui/x-data-grid-generator": "^6.18.7",
     "@reduxjs/toolkit": "^1.9.7",
-    "@syncfusion/ej2": "^19.4.48",
-    "@syncfusion/ej2-base": "^24.1.42",
-    "@syncfusion/ej2-react-calendars": "^19.4.48",
-    "@syncfusion/ej2-react-charts": "^19.4.50",
-    "@syncfusion/ej2-react-dropdowns": "^19.4.52",
-    "@syncfusion/ej2-react-grids": "^19.4.56",
-    "@syncfusion/ej2-react-inputs": "^19.4.52",
-    "@syncfusion/ej2-react-kanban": "^19.4.48",
-    "@syncfusion/ej2-react-navigations": "^24.1.41",
-    "@syncfusion/ej2-react-popups": "^19.4.52",
-    "@syncfusion/ej2-react-richtexteditor": "^19.4.50",
-    "@syncfusion/ej2-react-schedule": "^19.4.50",
     "axios": "^1.5.1",
     "date-fns": "^3.3.0",
     "dotenv": "^16.3.1",
@@ -62,7 +50,7 @@
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.4.3",
     "postcss": "^8.4.31",
-    "tailwindcss": "^3.3.3",
+    "tailwindcss": "^3.4.1",
     "vite": "^4.4.5"
   }
 }

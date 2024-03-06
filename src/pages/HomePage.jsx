@@ -2,6 +2,7 @@ import NavList from "../components/NavList";
 import "../App.css";
 import home from "../assets/home.jpg";
 export const HomePage = () => {
+  
   return (
     <div className="overflow-y-hidden">
       <NavList />

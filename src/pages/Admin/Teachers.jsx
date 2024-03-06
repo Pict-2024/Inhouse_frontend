@@ -21,6 +21,7 @@ import TextField from "@mui/material/TextField";
 import SendIcon from "@mui/icons-material/Send";
 import { useNavigate } from "react-router-dom";
 import { removeSpecificColumns } from "./AdminApis";
+import { BASE_URL } from "../../api";
 
 const SimpleModal = ({
   teacherUsername,
@@ -125,11 +126,7 @@ export default function Teachers() {
 
   const getAllTeachers = async () => {
     try {
-<<<<<<< HEAD
-      const apiurl = "http://10.10.15.150:8081/api/v1/auth/getAllTeacher";
-=======
-      const apiurl = "http://localhost:5000/api/v1/auth/getAllTeacher";
->>>>>>> 02b1a27c7acf564dce358eb23e2d729279eae118
+      const apiurl = `${BASE_URL}/auth/getAllTeacher`;
       const response = await axios.get(apiurl, {
         headers: {
           "Content-Type": "application/json",
@@ -145,11 +142,7 @@ export default function Teachers() {
   const getAllTables = async () => {
     try {
       const tablesUrl =
-<<<<<<< HEAD
-        "http://10.10.15.150:8081/api/v1/teacher/gettables/tables-stud-fact";
-=======
-        "http://localhost:5000/api/v1/teacher/gettables/tables-stud-fact";
->>>>>>> 02b1a27c7acf564dce358eb23e2d729279eae118
+        `${BASE_URL}/teacher/gettables/tables-stud-fact`;
       const response = await axios.get(tablesUrl, {
         headers: {
           "Content-Type": "application/json",
@@ -189,11 +182,7 @@ export default function Teachers() {
 
   const handleSaveClick = async (Username) => {
     try {
-<<<<<<< HEAD
-      const updateApiurl = `http://10.10.15.150:8081/api/v1/general/update-fields`;
-=======
-      const updateApiurl = `http://localhost:5000/api/v1/general/update-fields`;
->>>>>>> 02b1a27c7acf564dce358eb23e2d729279eae118
+      const updateApiurl = `${BASE_URL}/general/update-fields`;
 
       // Modify the data to be sent to the backend
       const data = {
@@ -252,11 +241,7 @@ export default function Teachers() {
   const getTeacherAccess = async (Username) => {
     try {
       // Fetch the current special access for the user
-<<<<<<< HEAD
-      const accessUrl = `http://10.10.15.150:8081/api/v1/general/get-spec-cols?username=${Username}`;
-=======
-      const accessUrl = `http://localhost:5000/api/v1/general/get-spec-cols?username=${Username}`;
->>>>>>> 02b1a27c7acf564dce358eb23e2d729279eae118
+      const accessUrl = `${BASE_URL}/general/get-spec-cols?username=${Username}`;
       const accessResponse = await axios.post(accessUrl, {
         headers: {
           "Content-Type": "application/json",

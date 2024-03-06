@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { Card, Input, Button, Typography } from "@material-tailwind/react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-
+import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import { useDispatch, useSelector } from "react-redux";
 import {
   signInUserStart,
@@ -23,6 +23,10 @@ export default function Login() {
     gmail: "",
     password: "",
   });
+  const [showPassword, setShowPassword] = useState(false);
+  const togglePasswordVisibility = () => {
+    setShowPassword(prevState => !prevState);
+  };
 
   const { error, loading } = useSelector((state) => state.user);
 
@@ -37,8 +41,7 @@ export default function Login() {
     e.preventDefault();
     try {
       dispatch(signInUserStart());
-<<<<<<< HEAD
-      if(!formData.gmail && !formData.password){
+      if (!formData.gmail && !formData.password) {
         toast.warning("Please enter your email and password", {
           position: "top-left",
           autoClose: 1500,
@@ -49,10 +52,10 @@ export default function Login() {
           progress: undefined,
           theme: "light",
         });
-        dispatch(signInUserFailure({data:'Email and password is required'}));
+        dispatch(signInUserFailure({ data: 'Email and password is required' }));
         return;
       }
-      else if(!formData.gmail){
+      else if (!formData.gmail) {
         toast.warning("Please enter your email", {
           position: "top-left",
           autoClose: 1500,
@@ -63,9 +66,9 @@ export default function Login() {
           progress: undefined,
           theme: "light",
         });
-        dispatch(signInUserFailure({data:'Email is required'}));
+        dispatch(signInUserFailure({ data: 'Email is required' }));
         return;
-      } else if(!formData.password){
+      } else if (!formData.password) {
         toast.warning("Please enter your password", {
           position: "top-left",
           autoClose: 1500,
@@ -76,32 +79,21 @@ export default function Login() {
           progress: undefined,
           theme: "light",
         });
-        dispatch(signInUserFailure({data:"Password is required"}));
+        dispatch(signInUserFailure({ data: "Password is required" }));
         return;
       }
-=======
->>>>>>> 02b1a27c7acf564dce358eb23e2d729279eae118
       const response = await axios.post(loginAPI, formData);
 
       // console.log("RESPONSE IS : ", response.data.data);
       // setFormData(response?.data);
 
       if (response.success === false) {
-<<<<<<< HEAD
         dispatch(signInUserFailure(response?.data));
         return;
       }
       dispatch(signInUserSuccess(response?.data?.data?.user));
 
       const currentUser = response?.data?.data?.user;
-=======
-        dispatch(signInUserFailure(response.data));
-        return;
-      }
-      dispatch(signInUserSuccess(response.data.data.user));
-
-      const currentUser = response.data.data.user;
->>>>>>> 02b1a27c7acf564dce358eb23e2d729279eae118
 
       var pathLink = "";
 
@@ -114,11 +106,7 @@ export default function Login() {
       }
 
       navigate(pathLink);
-<<<<<<< HEAD
       toast.success(response?.data?.message, {
-=======
-      toast.success("Login Successful", {
->>>>>>> 02b1a27c7acf564dce358eb23e2d729279eae118
         position: "top-left",
         autoClose: 1500,
         hideProgressBar: false,
@@ -129,7 +117,6 @@ export default function Login() {
         theme: "light",
       });
     } catch (error) {
-<<<<<<< HEAD
       console.log(error);
       console.log("Error is : ", error?.response?.data?.message);
       // setError("Invalid credentials");
@@ -144,11 +131,6 @@ export default function Login() {
         theme: "light",
       });
       dispatch(signInUserFailure(error?.response?.data?.message));
-=======
-      console.log("Error is : ", error.response.data.message);
-      // setError("Invalid credentials");
-      dispatch(signInUserFailure(error.response.data.message));
->>>>>>> 02b1a27c7acf564dce358eb23e2d729279eae118
       // console.error(error.response.data);
     }
   };
@@ -190,17 +172,13 @@ export default function Login() {
                 size="lg"
                 name="gmail"
                 value={formData.gmail}
-<<<<<<< HEAD
                 label="Email"
-=======
-                label="gmail"
->>>>>>> 02b1a27c7acf564dce358eb23e2d729279eae118
                 onChange={handleInputChange}
               />
             </div>
           </div>
 
-          <div className="mb-4">
+          <div className="mb-4 relative">
             {/* <Typography variant="h6" color="blue-gray">
               Password
             </Typography> */}
@@ -208,10 +186,17 @@ export default function Login() {
               size="lg"
               name="password"
               value={formData.password}
-              type="password"
+              type={showPassword ? "text" : "password"}
               label="Password"
               onChange={handleInputChange}
             />
+            <div className="absolute inset-y-0 right-0 flex items-center pr-3">
+              {showPassword ? (
+                <FaEye className="text-gray-400 cursor-pointer" onClick={togglePasswordVisibility} />
+              ) : (
+                <FaEyeSlash className="text-gray-400 cursor-pointer" onClick={togglePasswordVisibility} />
+              )}
+            </div>
           </div>
 
           <Button
@@ -223,18 +208,14 @@ export default function Login() {
             {loading ? "loading" : "login"}
           </Button>
 
-<<<<<<< HEAD
           {/* {error && <p className="error text-center text-red-600">{error}</p>} */}
-=======
-          {error && <p className="error text-center text-red-600">{error}</p>}
->>>>>>> 02b1a27c7acf564dce358eb23e2d729279eae118
           {/**  && <p className="success">Login successful!</p> */}
 
           <div className="flex justify-between">
             <span className="text-gray-700 mt-2 text-sm">
               New user ?
               <Link to={"/auth/register"} className="text-blue-500 mx-2">
-                register
+                Register
               </Link>
             </span>
             <span className="text-gray-700 mt-2 text-sm">

@@ -53,10 +53,13 @@ import {
 import { Option, Select } from "@material-tailwind/react";
 import html2pdf from "html2pdf.js";
 import ExcelJS from "exceljs";
+import { BASE_URL } from "../../api";
+import Spinner from "../../components/Spinner";
 
 // Define the Report component
 const Report = () => {
   let tablename = "";
+  const [loading, setLoading] = useState(false);
 
   const tableMapping = {
     'mous': "number-of_mous",
@@ -128,11 +131,7 @@ const Report = () => {
   const [columnNames, setColumnNames] = useState([]);
   const [formFilters, setFormFilters] = useState({});
   const [apiUrl, setApiUrl] = useState(
-<<<<<<< HEAD
-    "http://10.10.15.150:8081/api/v1/general/allcolumns"
-=======
-    "http://localhost:5000/api/v1/general/allcolumns"
->>>>>>> 02b1a27c7acf564dce358eb23e2d729279eae118
+    `${BASE_URL}/general/allcolumns`
   );
   const [tableRows, setTableRows] = useState([]);
   // const [page, setPage] = useState(0);
@@ -157,9 +156,10 @@ const Report = () => {
   //get all records
   const getAllRecords = async () => {
     try {
+      setLoading(true);
       const apiurl = tableRoutesMapping(selectedTable);
-      console.log("Table Name: ", selectedTable);
-      console.log("apiRoute in getAllRecords:", apiurl);
+      // console.log("Table Name: ", selectedTable);
+      // console.log("apiRoute in getAllRecords:", apiurl);
 
       const response = await axios.get(apiurl, {
         headers: {
@@ -167,9 +167,11 @@ const Report = () => {
         },
       });
 
-      console.log(response.data.data);
+      // console.log(response.data.data);
       setTableRows(response.data.data);
+      setLoading(false);
     } catch (error) {
+      setLoading(false);
       console.error("Error fetching records:", error.message);
     }
   };
@@ -183,17 +185,16 @@ const Report = () => {
   // Function to fetch all tables
   const getAllTables = async () => {
     try {
+      setLoading(true);
       const response = await axios.get(
-<<<<<<< HEAD
-        "http://10.10.15.150:8081/api/v1/general/alltables"
-=======
-        "http://localhost:5000/api/v1/general/alltables"
->>>>>>> 02b1a27c7acf564dce358eb23e2d729279eae118
+        `${BASE_URL}/general/alltables`
       );
       const fetchedTableNames = response.data.data;
       setTableNames(fetchedTableNames);
-      // console.log("table names are : ", fetchedTableNames);
+      console.log("table names are : ", fetchedTableNames);
+      setLoading(false);
     } catch (error) {
+      setLoading(false);
       console.log("error is : \n", error.message);
     }
   };
@@ -204,25 +205,27 @@ const Report = () => {
 
   const getAllColumns = async () => {
     try {
+      setLoading(true);
       const response = await axios.post(
-<<<<<<< HEAD
-        `http://10.10.15.150:8081/api/v1/general/allcolumns?tablename=${tablename}`
-=======
-        `http://localhost:5000/api/v1/general/allcolumns?tablename=${tablename}`
->>>>>>> 02b1a27c7acf564dce358eb23e2d729279eae118
+        `${BASE_URL}/general/allcolumns?tablename=${tablename}`
       );
+      setLoading(false);
       return response.data; // Returning the data for further processing
     } catch (error) {
+      setLoading(false);
       console.log("error is: ", error.message);
     }
   };
 
   const fetchData = async () => {
     try {
+      setLoading(true);
       const columnsData = await getAllColumns();
       // console.log("Return value of columns: ", columnsData.data);
       setColumnNames(columnsData.data);
+      setLoading(false);
     } catch (error) {
+      setLoading(false);
       console.error("Error fetching columns data:", error.message);
     }
   };
@@ -263,11 +266,7 @@ const Report = () => {
       : "teacher";
 
     setApiUrl(
-<<<<<<< HEAD
-      `http://10.10.15.150:8081/api/v1/${tablePrefix}/${tableMapping[selectedTable]}/filter?${queryParameters}`
-=======
-      `http://localhost:5000/api/v1/${tablePrefix}/${tableMapping[selectedTable]}/filter?${queryParameters}`
->>>>>>> 02b1a27c7acf564dce358eb23e2d729279eae118
+      `${BASE_URL}/${tablePrefix}/${tableMapping[selectedTable]}/filter?${queryParameters}`
     );
 
     console.log("form filter is : ", formFilters);
@@ -295,23 +294,23 @@ const Report = () => {
 
   // const generatePDF = () => {
   //   const doc = new jsPDF('landscape');
-  
+
   //   doc.setFont("helvetica", "bold");
   //   doc.setFontSize(16);
   //   doc.text("PUNE INSTITUTE OF COMPUTER TECHNOLOGY", 20, 20);
-  
+
   //   doc.setFontSize(14);
   //   doc.text(`Report on ${selectedTable}`, 20, 30);
-  
+
   //   doc.setFontSize(10);
-  
+
   //   const tableRow = [];
   //   let headersAdded = false;
-  
+
   //   tableRows.forEach((row) => {
   //     const rowData = selectedColumns.map((column) => row[column.Field]);
   //     tableRow.push(rowData);
-  
+
   //     if (!headersAdded) {
   //       const tableHeader = selectedColumns.map((header) => {
   //         const headerLines = doc.splitTextToSize(header.Field, 25);
@@ -321,15 +320,15 @@ const Report = () => {
   //       headersAdded = true;
   //     }
   //   });
-  
+
   //   const columnWidths = selectedColumns.map(() => 25);
-  
+
   //   // Rotate headers
   //   const rotatedHeaders = selectedColumns.map((header) => {
   //     const headerLines = doc.splitTextToSize(header.Field, 15);
   //     return headerLines.join('\n');
   //   });
-  
+
   //   doc.autoTable({
   //     head: [rotatedHeaders],
   //     body: tableRow.slice(1),
@@ -343,7 +342,7 @@ const Report = () => {
   //       doc.text("Page " + data.pageNumber, data.settings.margin.left, doc.internal.pageSize.height - 5);
   //     },
   //   });
-  
+
   //   doc.save("report.pdf");
   // };
 
@@ -493,9 +492,10 @@ const Report = () => {
   };
 
   const handleSubmit = () => {
-    console.log("form filters are : ", formFilters);
-    console.log("API URL is : ", apiUrl);
+    // console.log("form filters are : ", formFilters);
+    // console.log("API URL is : ", apiUrl);
 
+    // setLoading(true);
     fetch(apiUrl, {
       method: "POST",
       headers: {
@@ -639,106 +639,109 @@ const Report = () => {
 
   return (
     <>
-      <Box>
-        <div className="flex justify-start mx-2 w-32 absolute">
-          <Header category="Page" title="Report" />
-        </div>
-        <div className="flex flex-col justify-center items-center gap-4 m-2 ">
-          <label className="block text-gray-700 text-md font-bold  m-2">
-            Select Table:
-          </label>
-          <select
-            onChange={(e) => setTable(e)}
-            className="border border-gray-300 rounded-md p-2 w-200 focus:outline-none focus:ring focus:border-blue-300 transition-all duration-300 ease-in-out custom-select"
-          >
-            {tableNames.map((table, index) => (
-              <option
-                className="py-2 hover:bg-blue-100"
-                key={index}
-                value={table.Tables_in_inhouse_hod}
+      {loading ? <Spinner /> :
+        <>
+          <Box>
+            <div className="flex justify-start mx-2 w-32 absolute">
+              <Header category="Page" title="Report" />
+            </div>
+            <div className="flex flex-col justify-center items-center gap-4 m-2 ">
+              <label className="block text-gray-700 text-md font-bold  m-2">
+                Select Table:
+              </label>
+              <select
+                onChange={(e) => setTable(e)}
+                className="border border-gray-300 rounded-md p-2 w-200 focus:outline-none focus:ring focus:border-blue-300 transition-all duration-300 ease-in-out custom-select"
               >
-                {table.Tables_in_inhouse_hod}
-              </option>
-            ))}
-          </select>
+                {tableNames.map((table, index) => (
+                  <option
+                    className="py-2 hover:bg-blue-100"
+                    key={index}
+                    value={table.Tables_in_inhouse_hod}
+                  >
+                    {table.Tables_in_inhouse_hod}
+                  </option>
+                ))}
+              </select>
 
-          {selectedTable !== "" && 
-          <div>
-            <label className="block text-gray-700 text-md font-bold  m-2">Select Filters:</label>
-            
-            <div className="flex flex-col justify-end align-items-center m-2 p-4">
-              <div className="flex   gap-4 flex-wrap  p-3 w-full">
-              {renderInputFields()}
-              </div>
-              <Button
-              variant="contained"
-              className="w-25 p-3"
-              onClick={handleSubmit}
-              endIcon={<FilterAltIcon />}
-              >
-              Filter
-              </Button>
-            </div>
+              {selectedTable !== "" &&
+                <div>
+                  <label className="block text-gray-700 text-md font-bold  m-2">Select Filters:</label>
 
-            {/* New component for column selection */}
-            <div className="border">
-            <ColumnSelection
-            columns={columnNames}
-            onSelectColumns={handleColumnSelection}
-            />
-            
-            <div className="flex gap-4 px-4">
-              <Button variant="contained" onClick={generatePDF}>
-              Generate PDF
-              </Button>
-              
-              <Button variant="contained" onClick={generateExcel}>
-              Generate Excel
-              </Button>
-            </div>
-            </div>
+                  <div className="flex flex-col justify-end align-items-center m-2 p-4">
+                    <div className="flex   gap-4 flex-wrap  p-3 w-full">
+                      {renderInputFields()}
+                    </div>
+                    <Button
+                      variant="contained"
+                      className="w-25 p-3"
+                      onClick={handleSubmit}
+                      endIcon={<FilterAltIcon />}
+                    >
+                      Filter
+                    </Button>
+                  </div>
 
-          </div>
-      }
-          
+                  {/* New component for column selection */}
+                  <div className="border">
+                    <ColumnSelection
+                      columns={columnNames}
+                      onSelectColumns={handleColumnSelection}
+                    />
 
-          
+                    <div className="flex gap-4 px-4">
+                      <Button variant="contained" onClick={generatePDF}>
+                        Generate PDF
+                      </Button>
+
+                      <Button variant="contained" onClick={generateExcel}>
+                        Generate Excel
+                      </Button>
+                    </div>
+                  </div>
+
+                </div>
+              }
 
 
-          <TableContainer id="table-container" component={Paper}>
-            <Table>
-              <TableHead>
-                <TableRow>
-                  {selectedColumns.map((column) => (
-                    <TableCell key={column.Field}>{column.Field}</TableCell>
-                  ))}
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {tableRows &&
-                  tableRows
-                   
-                    .map((row, rowIndex) => (
-                      <TableRow key={rowIndex}>
-                        {selectedColumns.map((column) => (
-                          <TableCell key={column.Field}>
-                            {column.Type === "date"
-                              ? moment(row[column.Field]).format("DD-MM-YYYY")
-                              : row[column.Field]}
-                          </TableCell>
+
+
+
+              <TableContainer id="table-container" component={Paper}>
+                <Table>
+                  <TableHead>
+                    <TableRow>
+                      {selectedColumns.map((column) => (
+                        <TableCell key={column.Field}>{column.Field}</TableCell>
+                      ))}
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {tableRows &&
+                      tableRows
+
+                        .map((row, rowIndex) => (
+                          <TableRow key={rowIndex}>
+                            {selectedColumns.map((column) => (
+                              <TableCell key={column.Field}>
+                                {column.Type === "date"
+                                  ? moment(row[column.Field]).format("DD-MM-YYYY")
+                                  : row[column.Field]}
+                              </TableCell>
+                            ))}
+                          </TableRow>
                         ))}
-                      </TableRow>
-                    ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
+                  </TableBody>
+                </Table>
+              </TableContainer>
 
-          
 
-          <TableContainer component={Paper}></TableContainer>
 
-        </div>
-      </Box>
+              <TableContainer component={Paper}></TableContainer>
+
+            </div>
+          </Box>
+        </>}
     </>
   );
 };

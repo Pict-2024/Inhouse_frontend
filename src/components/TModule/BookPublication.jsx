@@ -45,7 +45,7 @@ export default function BookPublication() {
     try {
       console.log("file as:", file);
 
-      const formDataForFile = new FormData();
+      let formDataForFile = new FormData();
       formDataForFile.append("file", file);
       formDataForFile.append("username", currentUser?.Username);
       formDataForFile.append("role", currentUser?.Role);
@@ -78,11 +78,11 @@ export default function BookPublication() {
     e.preventDefault();
     console.log(formData);
 
-    var pathUpload;
+    let pathUpload;
     console.log(formData.Upload_Paper);
     try {
       if (formData.Upload_Paper !== null) {
-        console.log("hello");
+        // console.log("hello");
         pathUpload = await handleFileUpload(formData.Upload_Paper);
 
         console.log("Upload path = ", pathUpload);
@@ -302,7 +302,7 @@ export default function BookPublication() {
           <div className="mb-4 flex flex-wrap -mx-4">
             <div className="w-full px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
-                Upload_Paper document
+                Upload_Paper document (Pdf Only)
               </Typography>
               <Input
                 id="Upload_Paper"
@@ -315,11 +315,7 @@ export default function BookPublication() {
           </div>
 
           <Button type="submit" className="mt-4" fullWidth>
-<<<<<<< HEAD
            Submit
-=======
-            Add Changes
->>>>>>> 02b1a27c7acf564dce358eb23e2d729279eae118
           </Button>
         </form>
       </Card>
