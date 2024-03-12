@@ -22,6 +22,7 @@ export default function Research() {
   const navigate = useNavigate();
 
   const [isFinancialSupport, setIsFinancialSupport] = useState(false);
+  const [isAchievements, setIsAchievements] = useState("No");
 
   const { currentUser } = useSelector((state) => state.user);
   const currentYear = new Date().getFullYear();
@@ -124,35 +125,30 @@ export default function Research() {
 
     var pathEvidence = null,
       pathReport,
-      pathStudent;
-    console.log(isFinancialSupport);
-    console.log(formData.Evidence);
+      pathStudent=null;
+    // console.log(isFinancialSupport);
+    // console.log(formData.Evidence);
     // Check if evidence upload is required
     if (isFinancialSupport && formData.Evidence === null) {
       alert("Upload Evidence document");
       return;
     }
+    if (isAchievements === "Yes" && formData.Upload_Document_of_Achievement === null) {
+      alert("Upload Achievement document");
+      return;
+    }
 
     try {
       if (isFinancialSupport) {
-        console.log("hi");
-        // Handle evidence upload only if financial support is selected
         pathEvidence = await handleFileUpload(formData.Evidence);
       }
-      if (
-        formData.Upload_Paper !== null &&
-        formData.Upload_Document_of_Achievement !== null
-      ) {
-        console.log("1");
-
-        console.log("2");
-        pathReport = await handleFileUpload(formData.Upload_Paper);
-        console.log("3");
+      if (isAchievements === "Yes") {
         pathStudent = await handleFileUpload(
           formData.Upload_Document_of_Achievement
         );
-        console.log("4");
-
+      }
+      if (formData.Upload_Paper !== null ) {
+        pathReport = await handleFileUpload(formData.Upload_Paper);
         // console.log("Upload path = ", pathUpload);
       } else {
         toast.error("Please select a file for upload", {
@@ -668,7 +664,7 @@ export default function Research() {
             </div>
             <div className="w-full md:w-1/2 px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
-                Upload the Paper
+                Upload the Paper (Pdf Only)
               </Typography>
               <Input
                 size="lg"
@@ -686,28 +682,33 @@ export default function Research() {
               <Typography variant="h6" color="blue-gray" className="mb-3">
                 Achievements
               </Typography>
-              <Input
+              <Select
                 size="lg"
                 label="Achievements"
                 className="border-t-blue-gray-200 focus:border-t-gray-900"
                 id="Achievements"
                 value={formData.Achievements}
-                onChange={handleOnChange}
-              />
+                onChange={(value) => setIsAchievements(value)}
+                >
+                <Option value="Yes">Yes</Option>
+                <Option value="No">No</Option>
+              </Select>
             </div>
-            <div className="w-full md:w-1/2 px-4 mb-4">
-              <Typography variant="h6" color="blue-gray" className="mb-3">
-                Upload Document of Achievement
-              </Typography>
-              <Input
-                size="lg"
-                type="file"
-                label=""
-                className="border-t-blue-gray-200 focus:border-t-gray-900"
-                id="Upload_Document_of_Achievement"
-                onChange={handleOnChange}
-              />
+          {isAchievements === "Yes" && (
+              <div className="w-full md:w-1/2 px-4 mb-4">
+                <Typography variant="h6" color="blue-gray" className="mb-3">
+                  Upload Document of Achievement (Pdf Only)
+                </Typography>
+                <Input
+                  size="lg"
+                  type="file"
+                  label=""
+                  className="border-t-blue-gray-200 focus:border-t-gray-900"
+                  id="Upload_Document_of_Achievement"
+                  onChange={handleOnChange}
+                />
             </div>
+          )}
           </div>
 
           <Button type="submit" className="mt-4" fullWidth>

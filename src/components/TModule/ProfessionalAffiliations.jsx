@@ -73,14 +73,22 @@ export default function ProfessionalAffiliations() {
     e.preventDefault();
     console.log(formData);
 
-    var pathReport, pathStudent;
+    var pathReport, pathStudent =null;
+    if (isFinancialSupport && formData.Evidence === null) {
+      alert("Upload Evidence document");
+      return;
+    }
     // console.log(formData.Evidence);
     try {
-      if (formData.Membership_Evidence !== null && formData.Evidence !== null) {
+      if (isFinancialSupport) {
+        // console.log("hi");
+        // Handle evidence upload only if financial support is selected
+        pathStudent = await handleFileUpload(formData.Evidence);
+      }
+      if (formData.Membership_Evidence !== null) {
         // console.log("2");
         pathReport = await handleFileUpload(formData.Membership_Evidence);
-        // console.log("3");
-        pathStudent = await handleFileUpload(formData.Evidence);
+      
         // console.log("4");
 
         // console.log("Upload path = ", pathUpload);
@@ -273,7 +281,6 @@ export default function ProfessionalAffiliations() {
                     label="Evidence Document"
                     name="Evidence"
                     type="file"
-                    value={formData.Evidence}
                     onChange={handleChange}
                     disabled={!isFinancialSupport}
                   />

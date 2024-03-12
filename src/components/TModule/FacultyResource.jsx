@@ -20,8 +20,8 @@ export default function FacultyResource() {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     T_ID: null,
-    Username: currentUser?.Username,
     Name:currentUser?.Name,
+    Username: currentUser?.Username,
     Dept_Name: "",
     FDP_Workshop_Name: "",
     Level: "",

@@ -475,18 +475,19 @@ export default function Certificate() {
               />
             </div>
           </div>
-
-          <div className="w-full md:w-1/2 mb-4">
-            <Typography variant="h6" color="blue-gray" className="mb-3">
-              Completion Certificate
-            </Typography>
-            <Input
-              id="Certificates"
-              size="lg"
-              label=""
-              type="file"
-              onChange={handleOnChange}
-            />
+          <div className="mb-4 flex flex-wrap -mx-4">
+            <div className="w-full mb-4">
+              <Typography variant="h6" color="blue-gray" className="mb-3">
+                Upload Completion Certificate (Only Pdf)
+              </Typography>
+              <Input
+                id="Certificates"
+                size="lg"
+                label=""
+                type="file"
+                onChange={handleOnChange}
+              />
+            </div>
           </div>
 
           <Button type="submit" className="mt-4" fullWidth>

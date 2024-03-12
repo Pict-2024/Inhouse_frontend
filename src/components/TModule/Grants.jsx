@@ -404,7 +404,7 @@ export default function Grants() {
             <div className="w-full px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
                 Document evidence for amount sanctioned from funding agency (for
-                current A.Y.)
+                current A.Y.) (Only Pdf)
               </Typography>
               <Input
                 size="lg"
@@ -420,7 +420,7 @@ export default function Grants() {
             <div className="w-full px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
                 Document evidence for amount deposited in PICT account (bank
-                statement)
+                statement) (Only Pdf)
               </Typography>
               <Input
                 size="lg"

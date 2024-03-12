@@ -19,6 +19,7 @@ export default function FacultyConferencePublication() {
   const { currentUser } = useSelector((state) => state.user);
 
   const [isFinancialSupport, setIsFinancialSupport] = useState(false);
+  const [isAchievement, setIsAchievement] = useState("No");
   const navigate = useNavigate();
   const currentYear = new Date().getFullYear();
   const years = Array.from(
@@ -94,13 +95,17 @@ export default function FacultyConferencePublication() {
 
     let pathEvidence = null,
       pathReport,
-      pathStudent,
+      pathStudent=null,
       pathLink;
-    console.log(isFinancialSupport);
-    console.log(formData.Evidence);
+    // console.log(isFinancialSupport);
+    // console.log(formData.Evidence);
     // Check if evidence upload is required
     if (isFinancialSupport && formData.Evidence === null) {
       alert("Upload Evidence document");
+      return;
+    }
+    if (isAchievement === "Yes" && formData.Upload_DOA === null) {
+      alert("Upload Achievement document");
       return;
     }
 
@@ -108,15 +113,15 @@ export default function FacultyConferencePublication() {
       if (isFinancialSupport) {
         pathEvidence = await handleFileUpload(formData.Evidence);
       }
+      if (isAchievement === "Yes") {
+        pathStudent = await handleFileUpload(formData.Upload_DOA);
+      }
       if (
         formData.Upload_Paper !== null &&
-        formData.Upload_DOA !== null &&
         formData.Link_To_Paper !== null
       ) {
         pathReport = await handleFileUpload(formData.Upload_Paper);
-        pathStudent = await handleFileUpload(formData.Upload_DOA);
         pathLink = await handleFileUpload(formData.Link_To_Paper);
-
         // console.log("Upload path = ", pathUpload);
       } else {
         toast.error("Please select a file for upload", {
@@ -399,7 +404,7 @@ export default function FacultyConferencePublication() {
           <div className="mb-4 flex flex-wrap -mx-4">
             <div className="w-full px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
-                Upload Paper
+                Upload Paper (Only Pdf)
               </Typography>
               <Input
                 size="lg"
@@ -486,14 +491,14 @@ export default function FacultyConferencePublication() {
                 size="lg"
                 label="Select Yes/No"
                 color="light-gray"
+                name="Presented_Yes_No"
+                value={formData.Presented_Yes_No}
                 // onChange={handleInputChange}
                 onChange={(value) =>
                   handleInputChange({
                     target: { name: "Presented_Yes_No", value },
                   })
                 }
-                name="Presented_Yes_No"
-                value={formData.Presented_Yes_No}
               >
                 <Option value="Yes">Yes</Option>
                 <Option value="No">No</Option>
@@ -510,19 +515,16 @@ export default function FacultyConferencePublication() {
                 label="Any Achievements"
                 name="Any_Achievements"
                 value={formData.Any_Achievements}
-                onChange={(value) =>
-                  handleInputChange({
-                    target: { name: "Any_Achievements", value },
-                  })
-                }
+                onChange={(value) => setIsAchievement(value)}
               >
                 <Option value="Yes">Yes</Option>
                 <Option value="No">No</Option>
               </Select>
             </div>
-            <div className="w-full md:w-1/2 px-4 mb-4">
+           {isAchievement === "Yes" && (
+             <div className="w-full md:w-1/2 px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
-                Upload Achievement Document
+                Upload Achievement Document (Only Pdf)
               </Typography>
               <Input
                 size="lg"
@@ -531,7 +533,8 @@ export default function FacultyConferencePublication() {
                 onChange={handleInputChange}
                 name="Upload_DOA"
               />
-            </div>
+           </div>
+           )}
           </div>
 
           <Button type="submit" className="mt-4" fullWidth>

@@ -6,12 +6,11 @@ export const HomePage = () => {
   return (
     <div className="overflow-y-hidden">
       <NavList />
-      <div className="w-full h-full">
+      <div className=" flex w-full h-full items-center justify-center">
         <img
           src={home}
           alt="pict"
-          width={"100%"}
-          // style={{ height: 900, width: 10000 }}
+          className="lg:max-w-screen-lg md:max-w-screen-md sm:max-w-screen-sm  h-screen object-cover"
         />
       </div>
     </div>

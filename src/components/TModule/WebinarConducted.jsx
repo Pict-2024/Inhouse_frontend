@@ -292,7 +292,7 @@ export default function WebinarConducted() {
             </div>
             <div className="w-full md:w-1/2 px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
-                List of Students
+                List of Students (Only pdf)
               </Typography>
               <Input
                 size="lg"
@@ -398,7 +398,7 @@ export default function WebinarConducted() {
           <div className="mb-4 flex flex-wrap -mx-4">
             <div className="w-full md:w-1/2 px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
-                Evidence document
+                Upload Evidence document (Only Pdf)
               </Typography>
               <Input
                 size="lg"
@@ -410,7 +410,7 @@ export default function WebinarConducted() {
             </div>
             <div className="w-full md:w-1/2 px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
-                Report
+                Report (Only Pdf)
               </Typography>
               <Input
                 size="lg"

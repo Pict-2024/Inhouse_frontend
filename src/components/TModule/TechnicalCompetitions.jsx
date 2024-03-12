@@ -84,16 +84,22 @@ export default function TechnicalCompetitions() {
     e.preventDefault();
     console.log(formData);
 
-    var pathEvidence, pathReport, pathStudent;
+    var pathEvidence=null, pathReport, pathStudent;
     // console.log(formData.Evidence);
+    if (isFinancialSupport && formData.Evidence === null) {
+      alert("Upload Evidence document");
+      return;
+    }
     try {
+      if (isFinancialSupport) {
+        // console.log("hi");
+        // Handle evidence upload only if financial support is selected
+        pathEvidence = await handleFileUpload(formData.Evidence);
+      }
       if (
-        formData.Evidence !== null &&
         formData.Sponsorship_Document !== null &&
         formData.List_of_Students !== null
       ) {
-        // console.log("1");
-        pathEvidence = await handleFileUpload(formData.Evidence);
         // console.log("2");
         pathReport = await handleFileUpload(formData.Sponsorship_Document);
         // console.log("3");

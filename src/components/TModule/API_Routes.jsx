@@ -49,7 +49,7 @@ export const getOneRecordsConsultancy = (username) => {
 export const addRecordsConsultancy = `${BASE_URL}/teacher/cons-rep/create-new`;
 export const deleteRecordsConsultancy = `${BASE_URL}/teacher/cons-rep/remove`;
 export const updateRecordsConsultancy = `${BASE_URL}/teacher/cons-rep/update`;
-export const uploadRecordsConsultancy = `${BASE_URL}/teacher/cons-rep/upload-file`;
+export const uploadRecordsConsultancy = `${BASE_URL}/teacher/consrep/upload-file`;
 
 // Patent Publication Routes
 export const getAllRecordsPatent = `${BASE_URL}/teacher/patent-pb/all`;

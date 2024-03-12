@@ -51,6 +51,7 @@ export default function Conference() {
   });
 
   const currentYear = new Date().getFullYear();
+  const [isAchievements, setIsAchievements] = useState("No");
 
   const years = Array.from(
     { length: currentYear - 1999 },
@@ -115,7 +116,7 @@ export default function Conference() {
 
     var pathEvidence = null,
       pathReport,
-      pathStudent,
+      pathStudent=null,
       pathLink;
     console.log(isFinancialSupport);
     console.log(formData.Evidence);
@@ -124,29 +125,26 @@ export default function Conference() {
       alert("Upload Evidence document");
       return;
     }
+    if (isAchievements === "Yes" && formData.Upload_Achievement_Document === null) {
+      alert("Upload Achievement document");
+      return;
+    }
 
     try {
       if (isFinancialSupport) {
-        console.log("hi");
-        // Handle evidence upload only if financial support is selected
         pathEvidence = await handleFileUpload(formData.Evidence);
       }
-      if (
-        formData.Upload_Paper !== null &&
-        formData.Upload_Achievement_Document !== null &&
-        formData.Paper_Link !== null
-      ) {
-        console.log("1");
-
-        console.log("2");
-        pathLink = await handleFileUpload(formData.Paper_Link);
-        pathReport = await handleFileUpload(formData.Upload_Paper);
-        console.log("3");
+      if (isAchievements === "Yes") {
         pathStudent = await handleFileUpload(
           formData.Upload_Achievement_Document
         );
-        console.log("4");
-
+      }
+      if (
+        formData.Upload_Paper !== null &&
+        formData.Paper_Link !== null
+      ) {
+        pathLink = await handleFileUpload(formData.Paper_Link);
+        pathReport = await handleFileUpload(formData.Upload_Paper);
         // console.log("Upload path = ", pathUpload);
       } else {
         toast.error("Please select a file for upload", {
@@ -466,7 +464,7 @@ export default function Conference() {
             </div>
             <div className="w-full md:w-1/2 px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
-                Upload_Paper
+                Upload_Paper (Pdf Only)
               </Typography>
               <Input
                 id="Upload_Paper"
@@ -566,17 +564,21 @@ export default function Conference() {
               <Typography variant="h6" color="blue-gray" className="mb-3">
                 Achievements
               </Typography>
-              <Input
+              <Select
                 id="Achievements"
                 size="lg"
                 value={formData.Achievements}
                 label="Achievements"
-                onChange={handleOnChange}
-              />
+                onChange={(value) => setIsAchievements(value)}
+              >
+                <Option value="Yes">Yes</Option>
+                <Option value="No">No</Option>
+              </Select>
             </div>
-            <div className="w-full md:w-1/2 px-4 mb-4">
+           {isAchievements === "Yes" && (
+             <div className="w-full md:w-1/2 px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
-                Upload Achievement Document
+                Upload Achievement Document (Pdf Only)
               </Typography>
               <Input
                 id="Upload_Achievement_Document"
@@ -585,7 +587,8 @@ export default function Conference() {
                 label=""
                 onChange={handleOnChange}
               />
-            </div>
+           </div>
+           )}
           </div>
 
           <Button type="submit" className="mt-4" fullWidth>

@@ -423,7 +423,7 @@ export default function ConfeSeminar() {
             </div>
             <div className="w-full md:w-1/2 px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
-                Evidence of sponsor amount
+                Evidence of sponsor amount (Only Pdf)
               </Typography>
               <Input
                 id="Evidence"
@@ -451,7 +451,7 @@ export default function ConfeSeminar() {
             </div>
             <div className="w-full md:w-1/2 px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
-                List of no of students from PICT
+                List of no of students from PICT (Only Pdf)
               </Typography>
               <Input
                 id="List_of_Students"
@@ -479,7 +479,7 @@ export default function ConfeSeminar() {
             </div>
             <div className="w-full md:w-1/2 px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
-                List of no of students outside PICT
+                List of no of students outside PICT (Only Pdf)
               </Typography>
               <Input
                 id="List_of_Students_Outside"
@@ -506,7 +506,7 @@ export default function ConfeSeminar() {
             </div>
             <div className="w-full md:w-1/2 px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
-                Report
+                Report (Only Pdf)
               </Typography>
               <Input
                 id="Report"
