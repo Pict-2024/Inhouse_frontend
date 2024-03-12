@@ -55,9 +55,13 @@ const ViewInfo = () => {
   };
 
   const openModal = (type) => {
-    setShowModal(true);
-    setUserType(type);
-  };
+  // Show the modal
+  setShowModal(true);
+  // Set the user type
+  setUserType(type);
+  // Initialize selectedTables as an empty object
+  setSelectedTables({});
+};
 
   const closeModal = () => {
     setShowModal(false);
@@ -65,16 +69,12 @@ const ViewInfo = () => {
 
   const handleCheckboxChange = (tableName) => {
     setSelectedTables((prevSelectedTables) => {
+      // Create a new object to avoid mutating state directly
       const newSelectedTables = { ...prevSelectedTables };
-
-      if (newSelectedTables[tableName]) {
-        // Remove table if it's already selected
-        delete newSelectedTables[tableName];
-      } else {
-        // Add table if it's not selected
-        newSelectedTables[tableName] = true;
-      }
-
+  
+      // Toggle the selection state for the clicked table
+      newSelectedTables[tableName] = !newSelectedTables[tableName];
+  
       return newSelectedTables;
     });
   };
@@ -180,6 +180,19 @@ const ViewInfo = () => {
     );
   };
 
+  const handleSelectAll = () => {
+    // If all tables are currently selected, deselect all; otherwise, select all
+    setSelectedTables(
+      Object.keys(selectedTables).length ===
+        Object.keys(userType === "teacher" ? teacherTables : studentTables)
+          .length
+        ? {}
+        : userType === "teacher"
+        ? teacherTables
+        : studentTables
+    );
+  };
+
   return (
     <div>
       <div className="flex justify-center w-full gap-2">
@@ -210,13 +223,18 @@ const ViewInfo = () => {
           <div className="flex flex-col m-3 bg-white p-6 rounded-lg shadow-md w-full max-w-lg overflow-y-auto">
             <h1 className="text-lg font-semibold mb-4">Select Tables</h1>
 
-            {/* <div className="mb-4 flex items-center">
+            <div className="mb-4 flex items-center">
               <input
                 type="checkbox"
                 id="checkbox-select-all"
                 className="mr-2 h-5 w-5 border-gray-300 focus:ring focus:border-blue-300"
                 onChange={handleSelectAll}
-                checked={selectAll}
+                checked={
+                  Object.keys(selectedTables).length ===
+                  Object.keys(
+                    userType === "teacher" ? teacherTables : studentTables
+                  ).length
+                }
               />
               <label
                 htmlFor="checkbox-select-all"
@@ -224,7 +242,7 @@ const ViewInfo = () => {
               >
                 Select All
               </label>
-            </div> */}
+            </div>
             <div style={{ maxHeight: "300px", overflowY: "auto" }}>
               {userType === "teacher"
                 ? Object.keys(teacherTables).map((tableName) => (
