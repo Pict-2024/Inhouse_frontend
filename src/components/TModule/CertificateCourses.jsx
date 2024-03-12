@@ -24,11 +24,11 @@ export default function CertificateCourses() {
     UserName: currentUser?.Username,
     Department: "",
     Additional_Certificate_Programs: "",
-    Year_of_offering: "",
+    Year_of_offering: null,
     No_of_times_offered: "",
     Duration_of_course: "",
-    Start_Date: "",
-    End_Date: "",
+    Start_Date: null,
+    End_Date: null,
     Students_enrolled: "",
     Students_Completing_the_Course: "",
     Names_of_speakers: "",
@@ -242,7 +242,6 @@ export default function CertificateCourses() {
                 id="Year_of_offering"
                 size="lg"
                 label="Academic Year"
-                type="number"
                 value={formData.Year_of_offering}
                 onChange={(value) =>
                   handleOnChange({
@@ -424,7 +423,7 @@ export default function CertificateCourses() {
           <div className="mb-4 flex flex-wrap -mx-4">
             <div className="w-full md:w-1/2 px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
-                Final Report
+                Upload Final Report (Only Pdf)
               </Typography>
               <Input
                 id="Report"
@@ -436,7 +435,7 @@ export default function CertificateCourses() {
             </div>
             <div className="w-full md:w-1/2 px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
-                Sample Certificate
+                Upload Sample Certificate (Only Pdf)
               </Typography>
               <Input
                 id="Sample_Certificate"

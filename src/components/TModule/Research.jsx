@@ -19,6 +19,7 @@ import { addRecordsResearch, uploadRecordsResearch } from "./API_Routes";
 export default function Research() {
   const { currentUser } = useSelector((state) => state.user);
   const [isFinancialSupport, setIsFinancialSupport] = useState(false);
+  const [isAchievement, setIsAchievement] = useState("No");
   const navigate = useNavigate();
   const currentYear = new Date().getFullYear();
   const years = Array.from(
@@ -35,7 +36,7 @@ export default function Research() {
     Type_Research_Review: "",
     Level_International_National_State_University: "",
     Indexed_SCI_Scopus_Web_of_Science_UGC_Others: "",
-    Date: "",
+    Date: null,
     Author: "",
     Affiliation_at_the_Time_of_Publication: "",
     Role_First_Author_Second_Author_Third_Author: "",
@@ -97,13 +98,17 @@ export default function Research() {
 
     var pathEvidence = null,
       pathReport,
-      pathStudent,
+      pathStudent=null,
       pathLink;
-    // console.log(isFinancialSupport);
+    console.log(isAchievement);
     // console.log(formData.Evidence);
     // Check if evidence upload is required
     if (isFinancialSupport && formData.Evidence === null) {
       alert("Upload Evidence document");
+      return;
+    }
+    if (isAchievement === "Yes" && formData.Upload_DOA === null) {
+      alert("Upload Achievement document");
       return;
     }
 
@@ -113,13 +118,14 @@ export default function Research() {
         // Handle evidence upload only if financial support is selected
         pathEvidence = await handleFileUpload(formData.Evidence);
       }
+      if (isAchievement === "Yes") {
+        pathStudent = await handleFileUpload(formData.Upload_DOA);
+      }
       if (
         formData.Upload_Paper !== null &&
-        formData.Upload_DOA !== null &&
         formData.Link_To_Paper !== null
       ) {
         pathReport = await handleFileUpload(formData.Upload_Paper);
-        pathStudent = await handleFileUpload(formData.Upload_DOA);
         pathLink = await handleFileUpload(formData.Link_To_Paper);
 
         // console.log("Upload path = ", pathUpload);
@@ -551,7 +557,7 @@ export default function Research() {
                   </label>
                 </div>
               </div>
-              <div className="flex justify-between border-2">
+              <div className="flex justify-between">
                 <div className="w-full md:w-1/2 px-4 mb-4">
                   <Input
                     size="lg"
@@ -621,19 +627,22 @@ export default function Research() {
           <div className="mb-4 flex flex-wrap -mx-4">
             <div className="w-full md:w-1/2 px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
-                Achievements if any
+                Any Achievements 
               </Typography>
-              <Input
+              <Select
                 size="lg"
                 label="Achievements if any"
-                type="text"
                 className="border-t-blue-gray-200 focus:border-t-gray-900"
                 name="Achievements_if_any"
                 value={formData.Achievements_if_any}
-                onChange={handleChange}
-              />
+                onChange={(value) => setIsAchievement(value)}
+                >
+                  <Option value="Yes">Yes</Option>
+                  <Option value="No">No</Option>
+                </Select>
             </div>
-            <div className="w-full md:w-1/2 px-4 mb-4">
+           {isAchievement === "Yes" && (
+             <div className="w-full md:w-1/2 px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
                 Upload Document of Achievement (Pdf Only)
               </Typography>
@@ -645,63 +654,9 @@ export default function Research() {
                 name="Upload_DOA"
                 onChange={handleChange}
               />
-            </div>
+           </div>
+           )}
           </div>
-
-           {/* <div className="mb-4 flex flex-wrap -mx-4 ">
-            <div className="w-full">
-              <div className="px-4 mb-4 flex gap-40 ">
-                <Typography variant="h6" color="blue-gray" className="mb-3">
-                  Financial support from institute in INR
-                </Typography>
-                <div className="flex gap-3 ">
-                  <label className="mx-2">
-                    <input
-                      type="radio"
-                      name="financialSupport"
-                      value="yes"
-                      checked={isFinancialSupport}
-                      onChange={() => setIsFinancialSupport(true)}
-                    />
-                    Yes
-                  </label>
-                  <label>
-                    <input
-                      type="radio"
-                      name="financialSupport"
-                      value="no"
-                      checked={!isFinancialSupport}
-                      onChange={() => setIsFinancialSupport(false)}
-                    />
-                    No
-                  </label>
-                </div>
-              </div>
-              <div className="flex justify-between border-2">
-                <div className="w-full md:w-1/2 px-4 mb-4">
-                  <Input
-                    size="lg"
-                    label="Amount in INR"
-                    name="Financial_support_from_institute_in_INR"
-                    type="number"
-                    value={formData.Financial_support_from_institute_in_INR}
-                    onChange={handleChange}
-                    disabled={!isFinancialSupport}
-                  />
-                </div>
-                <div className="w-full md:w-1/2 px-4 mb-4 flex gap-4">
-                  <Input
-                    size="lg"
-                    label="Evidence Document"
-                    name="Evidence"
-                    type="file"
-                    onChange={handleChange}
-                    disabled={!isFinancialSupport}
-                  />
-                </div>
-              </div>
-            </div>
-          </div> */}
 
           <Button type="submit" className="mt-4" fullWidth>
             Submit

@@ -212,7 +212,7 @@ export default function HigherEdu() {
           Higher Education
         </Typography>
 
-        <form className="mt-8 mb-2" onSubmit={handleSubmit}>
+        <form className="mt-8 mb-2" onSubmit={handleSubmit} >
           <div className="mb-4 flex flex-wrap -mx-4">
             <div className="w-full md:w-1/2 px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
@@ -276,6 +276,7 @@ export default function HigherEdu() {
                 id="Roll_No"
                 size="lg"
                 label="Roll No"
+                type="number"
                 value={formData.Roll_No}
                 onChange={handleOnChange}
               />
@@ -377,7 +378,7 @@ export default function HigherEdu() {
 
             <div className="w-full md:w-1/2 px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
-                Upload Proof of Qualifying Exam
+                Upload Proof of Qualifying Exam (Only Pdf)
               </Typography>
               <Input
                 id="Upload_Proof_of_Qualifying_Exam"
@@ -420,7 +421,7 @@ export default function HigherEdu() {
           <div className="mb-4 flex flex-wrap -mx-4">
             <div className="w-full md:w-1/2 px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
-                Upload ID card or Proof of Admission
+                Upload ID card or Proof of Admission (Only Pdf)
               </Typography>
               <Input
                 id="Upload_ID_card_or_Proof_of_Admission"
@@ -432,7 +433,7 @@ export default function HigherEdu() {
             </div>
             <div className="w-full md:w-1/2 px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
-                Upload Score Card as Evidence
+                Upload Score Card as Evidence (Only Pdf)
               </Typography>
               <Input
                 id="Upload_Score_Card_as_Evidence"

@@ -29,10 +29,10 @@ export default function ConsultancyReport() {
     Title_of_Work_domain: "",
     Type_Paid_Unpaid: "",
     Amount: "",
-    Start_Date: "",
-    End_Date: "",
+    Start_Date: null,
+    End_Date: null,
     Amt_Deposited: null,
-    Date_of_Transaction: "",
+    Date_of_Transaction: null,
     Link_to_evidence: null,
     Status: "",
     Outcome: "",
@@ -300,6 +300,27 @@ export default function ConsultancyReport() {
             </div>
           </div>
           <div className="mb-4 flex flex-wrap -mx-4">
+            <div className="w-full px-4 mb-4">
+              <Typography variant="h6" color="blue-gray" className="mb-3">
+                Status
+              </Typography>
+              <Select
+                size="lg"
+                name="Status"
+                value={formData.Status}
+                label="Select Type"
+                // onChange={handleChange}
+                onChange={(value) =>
+                  handleChange({ target: { name: "State", value } })
+                }
+              >
+                <Option value="Ongoing">Ongoing</Option>
+                <Option value="Completed">Completed</Option>
+              </Select>
+            </div>
+            
+          </div>
+          <div className="mb-4 flex flex-wrap -mx-4">
             <div className="w-full md:w-1/2 px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
                 Start Date
@@ -334,8 +355,9 @@ export default function ConsultancyReport() {
               </Typography>
               <Input
                 size="lg"
-                name="Amt_Deposited"
-                value={formData.Amt_Deposited}
+                name="Amount"
+                type="number"
+                value={formData.Amount}
                 label="Amount Deposited to college account"
                 onChange={handleChange}
               />
@@ -358,7 +380,7 @@ export default function ConsultancyReport() {
             <div className="w-full px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
                 Document evidence for amount deposited in PICT account (bank
-                statement)
+                statement) (Only Pdf)
               </Typography>
               <Input
                 size="lg"
@@ -373,7 +395,7 @@ export default function ConsultancyReport() {
             <div className="w-full px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
                 Document evidence for amount sanctioned from funding agency (for
-                current A.Y.)
+                current A.Y.) (Only Pdf)
               </Typography>
               <Input
                 size="lg"

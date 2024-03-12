@@ -20,14 +20,14 @@ export default function FacultyResource() {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     T_ID: null,
-    Username: currentUser?.Username,
     Name:currentUser?.Name,
+    Username: currentUser?.Username,
     Dept_Name: "",
     FDP_Workshop_Name: "",
     Level: "",
     Topic: "",
     Organizer: "",
-    Date: "",
+    Date: null,
   });
 
   const handleChange = (e) => {
@@ -41,6 +41,7 @@ export default function FacultyResource() {
   //add new record
   const handleSubmit = async (e) => {
     e.preventDefault();
+    console.log("formdata: ", formData);
     await axios.post(addRecordsResource, formData);
     toast.success("Record Added Successfully", {
       position: "top-right",

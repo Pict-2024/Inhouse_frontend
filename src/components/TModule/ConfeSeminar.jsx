@@ -28,8 +28,8 @@ export default function ConfeSeminar() {
     Level: "",
     Sponsoring_Authority: "",
     No_of_Participants: "",
-    Start_Date: "",
-    End_Date: "",
+    Start_Date: null,
+    End_Date: null,
     Mode: "",
     List_of_Resource_Persons: "",
     Name_of_the_Coordinators: "",
@@ -62,7 +62,7 @@ export default function ConfeSeminar() {
       formDataForFile.append("username", currentUser?.Username);
       formDataForFile.append("role", currentUser?.Role);
       formDataForFile.append("tableName", "conference_seminar_workshops");
-      formDataForFile.append("columnName", ["List_of_Students", "List_of_Students_Outside","Sample_Certificate","Evidence","Report"]);
+      formDataForFile.append("columnName", ["List_of_Students", "List_of_Students_Outside", "Sample_Certificate", "Evidence", "Report"]);
 
       const response = await axios.post(
         uploadRecordsConference,
@@ -276,7 +276,7 @@ export default function ConfeSeminar() {
                     },
                   })
                 }
-                // onChange={handleOnChange}
+              // onChange={handleOnChange}
               >
                 <Option value="International">International</Option>
                 <Option value="National">National</Option>
@@ -423,7 +423,7 @@ export default function ConfeSeminar() {
             </div>
             <div className="w-full md:w-1/2 px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
-                Evidence of sponsor amount
+                Evidence of sponsor amount (Only Pdf)
               </Typography>
               <Input
                 id="Evidence"
@@ -451,7 +451,7 @@ export default function ConfeSeminar() {
             </div>
             <div className="w-full md:w-1/2 px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
-                List of no of students from PICT
+                List of no of students from PICT (Only Pdf)
               </Typography>
               <Input
                 id="List_of_Students"
@@ -479,7 +479,7 @@ export default function ConfeSeminar() {
             </div>
             <div className="w-full md:w-1/2 px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
-                List of no of students outside PICT
+                List of no of students outside PICT (Only Pdf)
               </Typography>
               <Input
                 id="List_of_Students_Outside"
@@ -506,7 +506,7 @@ export default function ConfeSeminar() {
             </div>
             <div className="w-full md:w-1/2 px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
-                Report
+                Report (Only Pdf)
               </Typography>
               <Input
                 id="Report"

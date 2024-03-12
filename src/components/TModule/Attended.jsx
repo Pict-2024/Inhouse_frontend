@@ -29,8 +29,8 @@ export default function Attended() {
     Type_Nature: "",
     Organizer_Institute_Name: "",
     Name_of_Coordinators: "",
-    Start_Date: "",
-    End_Date: "",
+    Start_Date: null,
+    End_Date: null,
     Mode_Online_Physical: "",
     Duration_in_Days: "",
     Finance_Support_By_PICT: "",
@@ -75,12 +75,20 @@ export default function Attended() {
     e.preventDefault();
     console.log(formData);
 
-    var pathEvidence, pathStudent;
+    let pathEvidence=null, pathStudent;
+    if (isFinancialSupport && formData.Evidence === null) {
+      alert("Upload Evidence document");
+      return;
+    }
     // console.log(formData.Upload_Certificate);
     try {
-      if (formData.Evidence !== null && formData.Upload_Certificate !== null) {
-        // console.log("2");
+      if (isFinancialSupport) {
+        // console.log("hi");
+        // Handle evidence upload only if financial support is selected
         pathEvidence = await handleFileUpload(formData.Evidence);
+      }
+      if ( formData.Upload_Certificate !== null) {
+        // console.log("2");
         // console.log("3");
         pathStudent = await handleFileUpload(formData.Upload_Certificate);
         // console.log("4");
@@ -358,7 +366,7 @@ export default function Attended() {
                   </label>
                 </div>
               </div>
-              <div className="flex justify-between border-2">
+              <div className="flex justify-between ">
                 <div className="w-full md:w-1/2 px-4 mb-4">
                   <Input
                     size="lg"
@@ -387,7 +395,7 @@ export default function Attended() {
           <div className="mb-4 flex flex-wrap -mx-4">
             <div className="w-full px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
-                Upload Certificate
+                Upload Certificate (Only Pdf)
               </Typography>
               <Input
                 id="Upload_Certificate"

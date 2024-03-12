@@ -27,7 +27,7 @@ export default function IndustrialVisit() {
     Name_Of_Industry_Visited: "",
     Purpose_of_the_visit: "",
     No_of_Students: "",
-    Date_of_visit: "",
+    Date_of_visit: null,
     Coordinator: "",
     Finance_Support_By_PICT: "",
     Upload_Report: null,

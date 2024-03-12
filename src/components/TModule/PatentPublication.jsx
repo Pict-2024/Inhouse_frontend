@@ -15,10 +15,12 @@ import "react-toastify/dist/ReactToastify.css";
 
 import { addRecordsPatent, uploadRecordsPatent } from "./API_Routes";
 
+
 export default function PatentPublication() {
   const { currentUser } = useSelector((state) => state.user);
   const [isFinancialSupport, setIsFinancialSupport] = useState(false);
   const navigate = useNavigate();
+  
   const [formData, setFormData] = useState({
     T_ID: null,
     Name: currentUser?.Name,
@@ -29,9 +31,9 @@ export default function PatentPublication() {
     Inventor_Name: "",
     Title_of_the_Patent: "",
     Co_Inventors_Name: "",
-    Patent_Filed_Date: "",
-    Patent_Pub_Date: "",
-    Patent_Granted_Date: "",
+    Patent_Filed_Date: null,
+    Patent_Pub_Date: null,
+    Patent_Granted_Date: null,
     Patent_Pub_Number: "",
     Institute_Affiliation: "",
     Finance_Support_By_PICT: "",
@@ -463,7 +465,7 @@ export default function PatentPublication() {
           <div className="mb-4 flex flex-wrap -mx-4">
             <div className="w-full md:w-1/2 px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
-                Approval Letter for financial Support
+                Approval Letter for financial Support (Only Pdf)
               </Typography>
               <Input
                 size="lg"
@@ -490,7 +492,7 @@ export default function PatentPublication() {
           <div className="mb-4 flex flex-wrap -mx-4">
             <div className="w-full md:w-1/2 px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
-                Upload Patent Publication document
+                Upload Patent Publication document (Only Pdf)
               </Typography>
               <Input
                 size="lg"
@@ -502,8 +504,9 @@ export default function PatentPublication() {
             </div>
             <div className="w-full md:w-1/2 px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
-                Upload Patent grant document
+                Upload Patent grant document (Only Pdf)
               </Typography>
+             
               <Input
                 size="lg"
                 name="Upload_Patent_Grant"

@@ -312,7 +312,7 @@ export default function FacultyExchange() {
             </div>
             <div className="w-full md:w-1/2 px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
-                Upload_Report
+                Upload Report (Only Pdf)
               </Typography>
               <Input
                 size="lg"
