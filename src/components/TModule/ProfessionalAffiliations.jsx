@@ -255,7 +255,7 @@ export default function ProfessionalAffiliations() {
                   </label>
                 </div>
               </div>
-              <div className="flex justify-between border-2">
+              <div className="flex justify-between">
                 <div className="w-full md:w-1/2 px-4 mb-4">
                   <Input
                     size="lg"

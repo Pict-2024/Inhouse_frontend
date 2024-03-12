@@ -15,6 +15,14 @@ import {
   Tooltip,
   Input,
 } from "@material-tailwind/react";
+import {
+  Dialog,
+  DialogHeader,
+  DialogBody,
+  DialogFooter,
+} from "@material-tailwind/react";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import axios from "axios";
 import PropTypes from "prop-types";
 import { useSelector } from "react-redux";
@@ -55,6 +63,8 @@ export default function TableData({ tableName }) {
   const [tableHead, setTableHead] = useState([]);
   const [tableRows, setTableRows] = useState([]);
   const [editableFields, setEditableFields] = useState({});
+  const [showDialog, setShowDialog] = useState(false);
+  const [recordToDelete, setRecordToDelete] = useState(null);
 
   // getRecords by username apis
   const getApiRoute = (tableName) => {
@@ -168,6 +178,17 @@ export default function TableData({ tableName }) {
     }
   };
 
+  const handleOpenDialog = (record) => {
+    setRecordToDelete(record);
+    setShowDialog(true);
+  };
+
+  // Function to handle closing the dialog
+  const handleCloseDialog = () => {
+    setShowDialog(false);
+    setRecordToDelete(null);
+  };
+
   //Handle delete records
   const onDelete = async (record) => {
     try {
@@ -176,7 +197,7 @@ export default function TableData({ tableName }) {
         record.S_ID
       );
 
-      await axios.delete(apiurl, {
+      const response = await axios.delete(apiurl, {
         headers: {
           "Content-Type": "application/json",
         },
@@ -185,10 +206,32 @@ export default function TableData({ tableName }) {
           S_ID: record.S_ID,
         },
       });
+      if (response?.data.status == 200) {
+        toast.success("Record Deleted Successfully!", {
+          position: "top-left",
+          autoClose: 1500,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+        });
+      }
 
       const updatedRows = tableRows.filter((r) => r.S_ID !== record.S_ID);
       setTableRows(updatedRows);
     } catch (error) {
+      toast.error("Failed to delete Record!", {
+        position: "top-left",
+        autoClose: 1500,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
       console.error("Error deleting record:", error.response.data.message);
       // Handle error gracefully, e.g., show a user-friendly message
     }
@@ -301,144 +344,167 @@ export default function TableData({ tableName }) {
   };
 
   return (
-    <Card className="h-full w-full p-3">
-      <CardHeader floated={false} shadow={false} className="rounded-none">
-        <div className="flex items-center justify-between gap-8 mt-2">
-          <div>
-            <Typography variant="h5" color="blue-gray">
-              {tableName}
-            </Typography>
+    <>
+      <Card className="h-full w-full p-3">
+        <CardHeader floated={false} shadow={false} className="rounded-none">
+          <div className="flex items-center justify-between gap-8 mt-2">
+            <div>
+              <Typography variant="h5" color="blue-gray">
+                {tableName}
+              </Typography>
+            </div>
           </div>
-        </div>
-      </CardHeader>
-      <CardBody className="px-0">
-        <div className="overflow-x-auto mx-4">
-          <table className="mt-4 w-full min-w-max table-auto text-left">
-            <thead>
-              <tr>
-                {tableHead.map((head, index) => (
-                  <th
-                    key={head}
-                    className={`${
-                      index === 0 ? "hidden" : ""
-                    } cursor-pointer border-y border-blue-gray-100 bg-blue-gray-50/50 p-4 transition-colors hover:bg-blue-gray-50`}
-                  >
-                    <Typography
-                      variant="small"
-                      color="blue"
-                      className="flex items-center justify-between gap-2 leading-none opacity-70 font-bold text-blue-700"
-                    >
-                      {head}{" "}
-                      {index !== tableHead.length - 1 && (
-                        <ChevronUpDownIcon
-                          strokeWidth={2}
-                          className="h-4 w-4"
-                        />
-                      )}
-                    </Typography>
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {tableRows.map((record, index) => (
-                <tr
-                  key={index}
-                  className={`border-b border-solid border-blue-gray-200 ${
-                    index % 2 === 0 ? "bg-blue-gray-50" : "bg-white"
-                  }`}
-                >
-                  {tableHead.map((head, colIndex) => (
-                    <td
+        </CardHeader>
+        <CardBody className="px-0">
+          <div className="overflow-x-auto mx-4">
+            <table className="mt-4 w-full min-w-max table-auto text-left">
+              <thead>
+                <tr>
+                  {tableHead.map((head, index) => (
+                    <th
                       key={head}
-                      className={`${
-                        colIndex === 0 ? "hidden" : ""
-                      } p-4 whitespace-normal border-r ${
-                        colIndex === tableHead.length - 1
-                          ? ""
-                          : "border-solid border-blue-gray-200"
-                      }`}
+                      className={`${index === 0 ? "hidden" : ""
+                        } cursor-pointer border-y border-blue-gray-100 bg-blue-gray-50/50 p-4 transition-colors hover:bg-blue-gray-50`}
                     >
-                      {editableFields[record.S_ID] &&
-                      editableFields[record.S_ID][head] !== undefined ? (
-                        <Input
-                          value={editableFields[record.S_ID][head]}
-                          label={[head]}
-                          onChange={(e) =>
-                            handleEditField(record.S_ID, head, e.target.value)
-                          }
-                        />
-                      ) : head.startsWith("Upload") || head.startsWith("Completion") ||
-                        head.startsWith("Link") ? (
-                        <DocumentIcon
-                          onClick={() => handleLink(record[head])}
-                          className="cursor-pointer w-6 h-6"
-                        />
-                      ) : head.includes("Date") ? (
-                        <Typography
-                          variant="body"
-                          color="black"
-                          className="text-dark font-bold"
-                        >
-                          <p>{moment(record[head]).format("YYYY-MM-DD")}</p>
-                        </Typography>
+                      <Typography
+                        variant="small"
+                        color="blue"
+                        className="flex items-center justify-between gap-2 leading-none opacity-70 font-bold text-blue-700"
+                      >
+                        {head}{" "}
+                        {index !== tableHead.length - 1 && (
+                          <ChevronUpDownIcon
+                            strokeWidth={2}
+                            className="h-4 w-4"
+                          />
+                        )}
+                      </Typography>
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {tableRows.map((record, index) => (
+                  <tr
+                    key={index}
+                    className={`border-b border-solid border-blue-gray-200 ${index % 2 === 0 ? "bg-blue-gray-50" : "bg-white"
+                      }`}
+                  >
+                    {tableHead.map((head, colIndex) => (
+                      <td
+                        key={head}
+                        className={`${colIndex === 0 ? "hidden" : ""
+                          } p-4 whitespace-normal border-r ${colIndex === tableHead.length - 1
+                            ? ""
+                            : "border-solid border-blue-gray-200"
+                          }`}
+                      >
+                        {editableFields[record.S_ID] &&
+                          editableFields[record.S_ID][head] !== undefined ? (
+                          <Input
+                            value={editableFields[record.S_ID][head]}
+                            label={[head]}
+                            onChange={(e) =>
+                              handleEditField(record.S_ID, head, e.target.value)
+                            }
+                          />
+                        ) : head.startsWith("Upload") || head.startsWith("Completion") ||
+                          head.startsWith("Link") ? (
+                          <DocumentIcon
+                            onClick={() => handleLink(record[head])}
+                            className="cursor-pointer w-6 h-6"
+                          />
+                        ) : head.includes("Date") ? (
+                          <Typography
+                            variant="body"
+                            color="black"
+                            className="text-dark font-bold"
+                          >
+                            <p>{moment(record[head]).format("YYYY-MM-DD")}</p>
+                          </Typography>
+                        ) : (
+                          <Typography
+                            variant="body"
+                            color="black"
+                            className="text-dark font-bold"
+                          >
+                            <p>{record[head]}</p>
+                          </Typography>
+                        )}
+                      </td>
+                    ))}
+                    <td className="p-4 border-r border-solid border-blue-gray-200">
+                      {editableFields[record.S_ID] ? (
+                        <Tooltip content="Save Changes">
+                          <IconButton
+                            onClick={() => handleSave(record.S_ID)}
+                            variant="text"
+                          >
+                            <CheckCircleIcon className="h-4 w-4 text-green-500" />
+                          </IconButton>
+                        </Tooltip>
                       ) : (
-                        <Typography
-                          variant="body"
-                          color="black"
-                          className="text-dark font-bold"
-                        >
-                          <p>{record[head]}</p>
-                        </Typography>
+                        <>
+                          <Tooltip content="Edit data">
+                            <IconButton
+                              onClick={() => handleEdit(record)}
+                              variant="text"
+                            >
+                              <PencilIcon className="h-4 w-4 text-blue-500" />
+                            </IconButton>
+                          </Tooltip>
+                          <Tooltip content="Delete data">
+                            <IconButton
+
+                              onClick={() => handleOpenDialog(record)}
+                              variant="text"
+                            >
+                              <TrashIcon className="h-4 w-4 text-red-500" />
+                            </IconButton>
+                          </Tooltip>
+                        </>
                       )}
                     </td>
-                  ))}
-                  <td className="p-4 border-r border-solid border-blue-gray-200">
-                    {editableFields[record.S_ID] ? (
-                      <Tooltip content="Save Changes">
-                        <IconButton
-                          onClick={() => handleSave(record.S_ID)}
-                          variant="text"
-                        >
-                          <CheckCircleIcon className="h-4 w-4 text-green-500" />
-                        </IconButton>
-                      </Tooltip>
-                    ) : (
-                      <>
-                        <Tooltip content="Edit data">
-                          <IconButton
-                            onClick={() => handleEdit(record)}
-                            variant="text"
-                          >
-                            <PencilIcon className="h-4 w-4 text-blue-500" />
-                          </IconButton>
-                        </Tooltip>
-                        <Tooltip content="Delete data">
-                          <IconButton
-                            onClick={() => onDelete(record)}
-                            variant="text"
-                          >
-                            <TrashIcon className="h-4 w-4 text-red-500" />
-                          </IconButton>
-                        </Tooltip>
-                      </>
-                    )}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </CardBody>
+        <div className="mt-4 text-right">
+          <Button
+            onClick={handleGenerateExcel}
+            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+          >
+            Generate Excel
+          </Button>
         </div>
-      </CardBody>
-      <div className="mt-4 text-right">
-        <Button
-          onClick={handleGenerateExcel}
-          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-        >
-          Generate Excel
-        </Button>
-      </div>
-    </Card>
+      </Card>
+      <Dialog open={showDialog} size="sm" handler={handleCloseDialog}>
+        <DialogHeader>Warning</DialogHeader>
+        <DialogBody>Are you sure you want to delete this record?</DialogBody>
+        <DialogFooter>
+          <Button
+            variant="text"
+            color="red"
+            onClick={handleCloseDialog}
+            className="mr-1"
+          >
+            <span>Cancel</span>
+          </Button>
+          <Button
+            variant="gradient"
+            color="green"
+            onClick={() => {
+              onDelete(recordToDelete);
+              handleCloseDialog();
+            }}
+          >
+            <span>Delete</span>
+          </Button>
+        </DialogFooter>
+      </Dialog>
+    </>
   );
 }
 

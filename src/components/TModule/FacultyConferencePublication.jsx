@@ -505,20 +505,13 @@ export default function FacultyConferencePublication() {
               <Typography variant="h6" color="blue-gray" className="mb-3">
                 Any Achievements
               </Typography>
-              <Select
+              <Input
                 size="lg"
                 label="Any Achievements"
                 name="Any_Achievements"
                 value={formData.Any_Achievements}
-                onChange={(value) =>
-                  handleInputChange({
-                    target: { name: "Any_Achievements", value },
-                  })
-                }
-              >
-                <Option value="Yes">Yes</Option>
-                <Option value="No">No</Option>
-              </Select>
+                onChange={handleInputChange}
+              />
             </div>
             <div className="w-full md:w-1/2 px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">

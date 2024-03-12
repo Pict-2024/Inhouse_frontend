@@ -112,7 +112,7 @@ export default function TechEvents() {
     var pathEvidence = null,
       pathReport;
     console.log(isFinancialSupport);
-    console.log(formData.Evidence);
+    console.log(formData?.Evidence);
     // Check if evidence upload is required
     if (isFinancialSupport && formData.Evidence === null) {
       alert("Upload Evidence document");
@@ -173,7 +173,6 @@ export default function TechEvents() {
 
       console.log("Final data:", formDataWithFilePath);
 
-      // Send a POST request to the addRecordsBook API endpoint
       const res = await axios.post(
         addRecordsTechnicalStud,
         formDataWithFilePath
@@ -300,6 +299,7 @@ export default function TechEvents() {
               <Input
                 id="Roll_No"
                 size="lg"
+                type="number"
                 label="Roll No"
                 value={formData.Roll_No}
                 onChange={handleOnChange}
