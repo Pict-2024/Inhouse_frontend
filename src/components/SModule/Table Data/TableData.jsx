@@ -63,8 +63,8 @@ export default function TableData({ tableName }) {
   const [tableHead, setTableHead] = useState([]);
   const [tableRows, setTableRows] = useState([]);
   const [editableFields, setEditableFields] = useState({});
-  const IP = `10.10.15.150`;
-  const PORT = `8081`;
+  const [showDialog, setShowDialog] = useState(false);
+  const [recordToDelete, setRecordToDelete] = useState(null);
 
   // getRecords by username apis
   const getApiRoute = (tableName) => {
@@ -301,8 +301,8 @@ export default function TableData({ tableName }) {
   //link to uploaded document
   const handleLink = (link) => {
     console.log("Link of document is : ", link);
-    const IP = `${IP}`;
-    const PORT = `${PORT}`;
+    const IP = "http://10.10.15.150";
+    const PORT = 8081;
     const pathParts = link.split('\\Uploads');
     const newPath = `${IP}:${PORT}/Uploads${pathParts[1]}`;
 
@@ -344,6 +344,7 @@ export default function TableData({ tableName }) {
   };
 
   return (
+    <>
     <Card className="h-full w-full p-3">
       <CardHeader floated={false} shadow={false} className="rounded-none">
         <div className="flex items-center justify-between gap-8 mt-2">
@@ -410,9 +411,9 @@ export default function TableData({ tableName }) {
                           onChange={(e) =>
                             handleEditField(record.S_ID, head, e.target.value)
                           }
+                          disabled={head.startsWith("Upload")}
                         />
-                      ) : head.includes("Upload") || head.includes("Completion") ||
-                        head.includes("Link") ? (
+                      ) : head.includes("Upload") ? (
                         <DocumentIcon
                           onClick={() => handleLink(record[head])}
                           className="cursor-pointer w-6 h-6"
@@ -458,7 +459,7 @@ export default function TableData({ tableName }) {
                         </Tooltip>
                         <Tooltip content="Delete data">
                           <IconButton
-                            onClick={() => onDelete(record)}
+                            onClick={() => handleOpenDialog(record)}
                             variant="text"
                           >
                             <TrashIcon className="h-4 w-4 text-red-500" />
@@ -482,6 +483,31 @@ export default function TableData({ tableName }) {
         </Button>
       </div>
     </Card>
+    <Dialog open={showDialog} size="sm" handler={handleCloseDialog}>
+        <DialogHeader>Warning</DialogHeader>
+        <DialogBody>Are you sure you want to delete this record?</DialogBody>
+        <DialogFooter>
+          <Button
+            variant="text"
+            color="red"
+            onClick={handleCloseDialog}
+            className="mr-1"
+          >
+            <span>Cancel</span>
+          </Button>
+          <Button
+            variant="gradient"
+            color="green"
+            onClick={() => {
+              onDelete(recordToDelete);
+              handleCloseDialog();
+            }}
+          >
+            <span>Delete</span>
+          </Button>
+        </DialogFooter>
+      </Dialog>
+    </>
   );
 }
 

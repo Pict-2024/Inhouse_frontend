@@ -92,8 +92,7 @@ export default function TableData({ tableName }) {
   const [editableFields, setEditableFields] = useState({});
   const [showDialog, setShowDialog] = useState(false);
   const [recordToDelete, setRecordToDelete] = useState(null);
-  const IP = `10.10.15.150`;
-  const PORT = `8081`;
+
 
   // getRecords by username apis
   const getApiRoute = (tableName) => {
@@ -500,8 +499,7 @@ export default function TableData({ tableName }) {
                               handleEditField(record.T_ID, head, e.target.value)
                             }
                           />
-                        ) : head.startsWith("Upload") ||
-                          head.startsWith("Link") ? (
+                        ) : head.startsWith("Upload") ? (
                           <DocumentIcon
                             onClick={() => handleLink(record[head])}
                             className="cursor-pointer w-6 h-6"

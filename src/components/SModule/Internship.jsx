@@ -118,7 +118,7 @@ export default function Internship() {
     // console.log("handle submit api hit");
     e.preventDefault();
     // Check for empty required fields
-    const requiredFields = ["Academic_Year", "Department", "Year", "Div", "Internship_Title", "Internship_Organizer", "Internship_Company_Website_Address", "Company_Address", "Duration", "Mode", "Stipend", "Internal_Mentor_Name", "External_Mentor_Name", "External_Mentor_Email", "External_Mentor_Mobile", "Remark"];
+    const requiredFields = ["Academic_Year", "Department", "Class", "Div", "Internship_Title", "Internship_Organizer", "Internship_Company_Website_Address", "Company_Address", "Duration", "Mode", "Stipend", "Internal_Mentor_Name", "External_Mentor_Name", "External_Mentor_Email", "External_Mentor_Mobile", "Remark"];
 
     const emptyFields = requiredFields.filter(field => !formData[field]);
 
@@ -138,21 +138,21 @@ export default function Internship() {
     }
 
     // Validate Mobile No
-    if (!(/^\d{10}$/.test(formData.Mobile_No))) {
-      setErrors((prevErrors) => ({
-        ...prevErrors,
-        Mobile_No: "Mobile No must be a 10-digit number."
-      }));
-      return;
-    }
-    // Validate Mobile No
-    if (!(/^\d{10}$/.test(formData.External_Mentor_Mobile))) {
-      setErrors((prevErrors) => ({
-        ...prevErrors,
-        Mobile_No: "Mobile No must be a 10-digit number."
-      }));
-      return;
-    }
+    // if (!(/^\d{10}$/.test(formData.Mobile_No))) {
+    //   setErrors((prevErrors) => ({
+    //     ...prevErrors,
+    //     Mobile_No: "Mobile No must be a 10-digit number."
+    //   }));
+    //   return;
+    // }
+    // // Validate Mobile No
+    // if (!(/^\d{10}$/.test(formData.External_Mentor_Mobile))) {
+    //   setErrors((prevErrors) => ({
+    //     ...prevErrors,
+    //     Mobile_No: "Mobile No must be a 10-digit number."
+    //   }));
+    //   return;
+    // }
 
     var completionPath,
       internshipPath,
