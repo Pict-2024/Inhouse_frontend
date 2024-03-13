@@ -141,7 +141,7 @@ export default function Login() {
       style={{
         backgroundImage: `url('../../src/assets/loginbg.jpg')`,
         backgroundSize: "cover",
-        opacity: "0.9",
+        opacity: "1.0",
       }}
     >
       <Card
