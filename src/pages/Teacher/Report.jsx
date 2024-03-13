@@ -143,7 +143,7 @@ const Report = () => {
     (_, index) => currentYear - index
   );
 
-  
+
 
   //get all records
   const getAllRecords = async () => {
@@ -584,44 +584,44 @@ const Report = () => {
             ))}
           </select>
 
-          {selectedTable !== "" && 
-          <div>
-            <label className="block text-gray-700 text-md font-bold  m-2 px-4">Select Filters:</label>
-            
-            <div className="flex flex-col justify-end align-items-center m-2 p-4">
-              <div className="flex justify-start gap-4 flex-wrap  p-3 w-full">
-              {renderInputFields()}
+          {selectedTable !== "" &&
+            <div>
+              <label className="block text-gray-700 text-md font-bold  m-2 px-4">Select Filters:</label>
+
+              <div className="flex flex-col justify-end align-items-center m-2 p-4">
+                <div className="flex justify-start gap-4 flex-wrap  p-3 w-full">
+                  {renderInputFields()}
+                </div>
+                <Button
+                  variant="contained"
+                  className="w-25 p-3"
+                  onClick={handleSubmit}
+                  endIcon={<FilterAltIcon />}
+                >
+                  Filter
+                </Button>
               </div>
-              <Button
-              variant="contained"
-              className="w-25 p-3"
-              onClick={handleSubmit}
-              endIcon={<FilterAltIcon />}
-              >
-              Filter
-              </Button>
-            </div>
 
-            {/* New component for column selection */}
-            <div className="border">
-            <ColumnSelection
-            columns={columnNames}
-            onSelectColumns={handleColumnSelection}
-            />
-            
-            <div className="flex gap-4 px-4">
-              <Button variant="contained" onClick={generatePDF}>
-              Generate PDF
-              </Button>
-              
-              <Button variant="contained" onClick={generateExcel}>
-              Generate Excel
-              </Button>
-            </div>
-            </div>
+              {/* New component for column selection */}
+              <div className="border">
+                <ColumnSelection
+                  columns={columnNames}
+                  onSelectColumns={handleColumnSelection}
+                />
 
-          </div>
-      }
+                <div className="flex gap-4 px-4">
+                  <Button variant="contained" onClick={generatePDF}>
+                    Generate PDF
+                  </Button>
+
+                  <Button variant="contained" onClick={generateExcel}>
+                    Generate Excel
+                  </Button>
+                </div>
+              </div>
+
+            </div>
+          }
 
           <TableContainer id="table-container" component={Paper}>
             <Table>
@@ -650,7 +650,7 @@ const Report = () => {
             </Table>
           </TableContainer>
 
-          
+
 
           <TableContainer component={Paper}></TableContainer>
 

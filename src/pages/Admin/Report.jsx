@@ -3,7 +3,7 @@ import Box from "@mui/material/Box";
 import Header from "../../components/AModule/Header";
 import { useState, useEffect } from "react";
 import FilterAltIcon from "@mui/icons-material/FilterAlt";
-import { Checkbox, Input } from "@material-tailwind/react";
+import { Select, Option, Checkbox, Input } from "@material-tailwind/react";
 import moment from "moment";
 import {
   Table,
@@ -50,7 +50,6 @@ import {
   getAllRecordsTechnicalStud,
   getAllRecordsHigherEdu,
 } from "./../../components/SModule/API_Routes";
-import { Option, Select } from "@material-tailwind/react";
 import html2pdf from "html2pdf.js";
 import ExcelJS from "exceljs";
 import { BASE_URL } from "../../api";
@@ -137,6 +136,7 @@ const Report = () => {
   // const [page, setPage] = useState(0);
   // const [rowsPerPage, setRowsPerPage] = useState(5);
   const [selectedColumns, setSelectedColumns] = useState([]); // New state to track selected columns
+  const [selectedOption, setSelectedOption] = useState("Select Table");
 
   const currentYear = new Date().getFullYear();
   const years = Array.from(
@@ -181,6 +181,45 @@ const Report = () => {
       getAllRecords();
     }
   }, [selectedTable]);
+
+  const alternativeTableNames = {
+    // "19_student_dummy": "19_student_dummy",
+    // "alltables_stud_fact": "alltables_stud_fact",
+    "book_publication": "Book Publication",
+    "certificate_courses": "Certificate Courses",
+    "conference_seminar_workshops": "Conference Seminar Workshop",
+    "consultancy_report": "Consultancy Report",
+    "contribution_to_bos": "Contribution to BOS",
+    "extension_activity": "Extension Activity",
+    "faculty_achievements": "Faculty Achievements",
+    "faculty_conference_publication": "Faculty Conference Publication",
+    "grants": "Grants",
+    "industrial_fields_tour": "Industrial Fields Tour",
+    // "metadata_teacher": "metadata_teacher",
+    "mous": "MOUs",
+    // "notices": "Notices",
+    "patent_publication": "Patent Publication",
+    "professional_affiliation": "Professional Affiliation",
+    // "register": "register",
+    "research_publication": "Research Publication",
+    "resource_person": "Resource Person",
+    "sttp_fdp_conference_attended": "STTP/FDP/Conference Attended",
+    "student_certificate_course": "Student Certificate Course",
+    "student_conference_publication": "Student Conference Publication",
+    "student_event_organized": "Student Event Organized",
+    "student_event_participated": "Student Event Participated",
+    "student_higher_education": "Student Higher Education",
+    "student_internship_details": "Student Internship Details",
+    // "student_login": "student_login",
+    "student_research_publication": "Student Research Publication",
+    "student_sports_data": "Student Sports Data",
+    "student_technical_events": "Student Technical Events",
+    // "teacher_login": "teacher_login",
+    "technical_competition_fest": "Technical Competition Fest",
+    // "uploads": "uploads",
+    "webinar_guest_lectures": "Webinar Guest Lectures"
+  };
+
 
   // Function to fetch all tables
   const getAllTables = async () => {
@@ -269,8 +308,8 @@ const Report = () => {
       `${BASE_URL}/${tablePrefix}/${tableMapping[selectedTable]}/filter?${queryParameters}`
     );
 
-    console.log("form filter is : ", formFilters);
-    console.log("Update api url is : ", apiUrl);
+    // console.log("form filter is : ", formFilters);
+    // console.log("Update api url is : ", apiUrl);
   };
 
   useEffect(() => {
@@ -488,6 +527,7 @@ const Report = () => {
     console.log("Selected Table is: ", selectedTableName);
     tablename = selectedTableName;
     setSelectedTable(selectedTableName);
+    setFormFilters({});
     fetchData();
   };
 
@@ -577,7 +617,8 @@ const Report = () => {
           </div>
         </div>
       );
-    } else if (
+    }
+    else if (
       Type.includes("varchar") &&
       Field.includes("Upload") == false &&
       Field.includes("Link") == false
@@ -594,7 +635,8 @@ const Report = () => {
           />
         </div>
       );
-    } else if (Type.includes("int")) {
+    }
+    else if (Type.includes("int")) {
       return (
         <div key={Field} className="mb-4 py-3 bg-white rounded-lg">
           {/* <label className="block mb-2">{Enter ${Field}}</label> */}
@@ -651,15 +693,19 @@ const Report = () => {
               </label>
               <select
                 onChange={(e) => setTable(e)}
-                className="border border-gray-300 rounded-md p-2 w-200 focus:outline-none focus:ring focus:border-blue-300 transition-all duration-300 ease-in-out custom-select"
+                value={selectedTable}
+                className="border border-gray-300 rounded-md p-2 w-96 focus:outline-none focus:ring focus:border-blue-300 transition-all duration-300 ease-in-out custom-select"
               >
-                {tableNames.map((table, index) => (
+                <option value="" disabled selected>
+                  Select Table
+                </option>
+                {Object.entries(alternativeTableNames).map(([tableName, displayName], index) => (
                   <option
                     className="py-2 hover:bg-blue-100"
                     key={index}
-                    value={table.Tables_in_inhouse_hod}
+                    value={tableName}
                   >
-                    {table.Tables_in_inhouse_hod}
+                    {displayName}
                   </option>
                 ))}
               </select>

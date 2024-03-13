@@ -31,7 +31,7 @@ export default function Internship() {
     Student_Name: currentUser?.Name,
     Roll_No: null,
     Department: "",
-    Year: "",
+    Class: "",
     Div: "",
     Mobile_No: "",
     Email_ID: currentUser?.Username,
@@ -479,13 +479,13 @@ export default function Internship() {
                 Year of Engineering
               </Typography>
               <Select
-                id="Year"
+                id="Class"
                 size="lg"
-                label="Year"
+                label="Class"
                 value={formData.Year}
                 onChange={(value) =>
                   handleOnChange({
-                    target: { id: "Year", value },
+                    target: { id: "Class", value },
                   })
                 }
               >

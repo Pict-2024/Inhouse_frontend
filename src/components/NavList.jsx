@@ -605,7 +605,7 @@ export default function NavList() {
       </nav>
       {isSidebarOpen && (
         <div className="fixed top-0 left-0 w-full h-full bg-gray-800 bg-opacity-60 z-50">
-          {currentUser?.Role == 2 ? <StudentSidebar/> :<></>}
+          {currentUser?.Role == 2 ? <StudentSidebar /> : <></>}
         </div>
       )}
     </>
