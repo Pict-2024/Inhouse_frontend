@@ -30,7 +30,7 @@ export default function Conference() {
     Academic_Year: "",
     Student_Name: currentUser?.Name,
     Department: "",
-    Year_of_Study: "",
+    Class: "",
     Title_of_Paper: "",
     Title_of_proceedings_of_conference: "",
     Conference_Name: "",
@@ -40,10 +40,10 @@ export default function Conference() {
     Publication_Year: "",
     ISSN: "",
     Affiliating_Institute: "",
-    Paper_Link: null,
+    Paper_Link: "",
     Upload_Paper: null,
     Financial_support_given_by_institute_in_INR: "",
-    Evidence: null,
+    Upload_Evidence: null,
     DOI: "",
     Presented: "",
     Achievements: "",
@@ -93,7 +93,7 @@ export default function Conference() {
       formDataForFile.append("username", currentUser?.Username);
       formDataForFile.append("role", currentUser?.Role);
       formDataForFile.append("tableName", "student_conference_publication");
-      formDataForFile.append("columnName", ["Paper_Link", "Upload_Paper","Evidence"]);
+      formDataForFile.append("columnName", ["Upload_Paper", "Upload_Evidence"]);
 
       const response = await axios.post(
         uploadRecordsConferenceStud,
@@ -116,12 +116,12 @@ export default function Conference() {
 
     var pathEvidence = null,
       pathReport,
-      pathStudent=null,
-      pathLink;
+      pathStudent = null;
+
     console.log(isFinancialSupport);
-    console.log(formData.Evidence);
+    console.log(formData.Upload_Evidence);
     // Check if evidence upload is required
-    if (isFinancialSupport && formData.Evidence === null) {
+    if (isFinancialSupport && formData.Upload_Evidence === null) {
       alert("Upload Evidence document");
       return;
     }
@@ -132,7 +132,7 @@ export default function Conference() {
 
     try {
       if (isFinancialSupport) {
-        pathEvidence = await handleFileUpload(formData.Evidence);
+        pathEvidence = await handleFileUpload(formData.Upload_Evidence);
       }
       if (isAchievements === "Yes") {
         pathStudent = await handleFileUpload(
@@ -140,10 +140,9 @@ export default function Conference() {
         );
       }
       if (
-        formData.Upload_Paper !== null &&
-        formData.Paper_Link !== null
+        formData.Upload_Paper !== null
       ) {
-        pathLink = await handleFileUpload(formData.Paper_Link);
+
         pathReport = await handleFileUpload(formData.Upload_Paper);
         // console.log("Upload path = ", pathUpload);
       } else {
@@ -159,21 +158,19 @@ export default function Conference() {
         });
         return;
       }
-      // console.log("Evidence path:",pathEvidence);
+      // console.log("Upload_Evidence path:",pathUpload_Evidence);
       // If file upload is successful, continue with the form submission
 
       const formDataWithFilePath = {
         ...formData,
-        Paper_Link: pathLink,
-        Evidence: pathEvidence,
+        Upload_Evidence: pathEvidence,
         Upload_Paper: pathReport,
         Upload_Achievement_Document: pathStudent,
       };
       if (
         pathEvidence === "" &&
         pathReport === "" &&
-        pathStudent === "" &&
-        pathLink === ""
+        pathStudent === ""
       ) {
         // If file is null, display a toast alert
         toast.error("Some error occurred while uploading file", {
@@ -292,11 +289,11 @@ export default function Conference() {
               <Select
                 id="Year"
                 size="lg"
-                label="Year"
-                value={formData.Year_of_Study}
+                label="Class"
+                value={formData.Class}
                 onChange={(value) =>
                   handleOnChange({
-                    target: { id: "Year_of_Study", value },
+                    target: { id: "Class", value },
                   })
                 }
               >
@@ -363,7 +360,7 @@ export default function Conference() {
                     target: { id: "Level", value },
                   })
                 }
-                // onChange={handleOnChange}
+              // onChange={handleOnChange}
               >
                 <Option value="International">International</Option>
                 <Option value="National">National</Option>
@@ -426,7 +423,7 @@ export default function Conference() {
                     target: { id: "Publication_Year", value },
                   })
                 }
-                // onChange={handleOnChange}
+              // onChange={handleOnChange}
               >
                 {years.map((year) => (
                   <Option key={year} value={year}>
@@ -457,7 +454,6 @@ export default function Conference() {
               <Input
                 id="Paper_Link"
                 size="lg"
-                type="file"
                 label="Paper Link"
                 onChange={handleOnChange}
               />
@@ -521,7 +517,7 @@ export default function Conference() {
                   <Input
                     size="lg"
                     label="Evidence Document"
-                    id="Evidence"
+                    id="Upload_Evidence"
                     type="file"
                     onChange={handleOnChange}
                     disabled={!isFinancialSupport}
@@ -567,7 +563,7 @@ export default function Conference() {
               <Select
                 id="Achievements"
                 size="lg"
-                value={formData.Achievements}
+                value={isAchievements}
                 label="Achievements"
                 onChange={(value) => setIsAchievements(value)}
               >
@@ -575,20 +571,20 @@ export default function Conference() {
                 <Option value="No">No</Option>
               </Select>
             </div>
-           {isAchievements === "Yes" && (
-             <div className="w-full md:w-1/2 px-4 mb-4">
-              <Typography variant="h6" color="blue-gray" className="mb-3">
-                Upload Achievement Document (Pdf Only)
-              </Typography>
-              <Input
-                id="Upload_Achievement_Document"
-                size="lg"
-                type="file"
-                label=""
-                onChange={handleOnChange}
-              />
-           </div>
-           )}
+            {isAchievements === "Yes" && (
+              <div className="w-full md:w-1/2 px-4 mb-4">
+                <Typography variant="h6" color="blue-gray" className="mb-3">
+                  Upload Achievement Document (Pdf Only)
+                </Typography>
+                <Input
+                  id="Upload_Achievement_Document"
+                  size="lg"
+                  type="file"
+                  label=""
+                  onChange={handleOnChange}
+                />
+              </div>
+            )}
           </div>
 
           <Button type="submit" className="mt-4" fullWidth>

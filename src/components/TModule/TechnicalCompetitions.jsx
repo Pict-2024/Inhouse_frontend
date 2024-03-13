@@ -35,9 +35,9 @@ export default function TechnicalCompetitions() {
     Department: "",
     Sponsorship: "",
     Finance_Support_By_PICT: "",
-    List_of_Students: null,
-    Evidence: null,
-    Sponsorship_Document: null,
+    Upload_List_of_Students: null,
+    Upload_Evidence: null,
+    Upload_Sponsorship_Document: null,
   });
 
   const handleChange = (e) => {
@@ -60,9 +60,9 @@ export default function TechnicalCompetitions() {
       formDataForFile.append("role", currentUser?.Role);
       formDataForFile.append("tableName", "technical_competition_fest");
       formDataForFile.append("columnName", [
-        "List_of_Students",
-        "Evidence",
-        "Sponsorship_Document",
+        "Upload_List_of_Students",
+        "Upload_Evidence",
+        "Upload_Sponsorship_Document",
       ]);
 
       const response = await axios.post(
@@ -86,7 +86,7 @@ export default function TechnicalCompetitions() {
 
     var pathEvidence=null, pathReport, pathStudent;
     // console.log(formData.Evidence);
-    if (isFinancialSupport && formData.Evidence === null) {
+    if (isFinancialSupport && formData.Upload_Evidence === null) {
       alert("Upload Evidence document");
       return;
     }
@@ -94,16 +94,16 @@ export default function TechnicalCompetitions() {
       if (isFinancialSupport) {
         // console.log("hi");
         // Handle evidence upload only if financial support is selected
-        pathEvidence = await handleFileUpload(formData.Evidence);
+        pathEvidence = await handleFileUpload(formData.Upload_Evidence);
       }
       if (
-        formData.Sponsorship_Document !== null &&
-        formData.List_of_Students !== null
+        formData.Upload_Sponsorship_Document !== null &&
+        formData.Upload_List_of_Students !== null
       ) {
         // console.log("2");
-        pathReport = await handleFileUpload(formData.Sponsorship_Document);
+        pathReport = await handleFileUpload(formData.Upload_Sponsorship_Document);
         // console.log("3");
-        pathStudent = await handleFileUpload(formData.List_of_Students);
+        pathStudent = await handleFileUpload(formData.Upload_List_of_Students);
         // console.log("4");
 
         // console.log("Upload path = ", pathUpload);
@@ -124,9 +124,9 @@ export default function TechnicalCompetitions() {
       // If file upload is successful, continue with the form submission
       const formDataWithFilePath = {
         ...formData,
-        Evidence: pathEvidence,
-        Sponsorship_Document: pathReport,
-        List_of_Students: pathStudent,
+        Upload_Evidence: pathEvidence,
+        Upload_Sponsorship_Document: pathReport,
+        Upload_List_of_Students: pathStudent,
       };
       if (pathEvidence === "" && pathReport === "" && pathStudent === "") {
         // If file is null, display a toast alert
@@ -332,7 +332,7 @@ export default function TechnicalCompetitions() {
               </Typography>
               <Input
                 size="lg"
-                name="List_of_Students"
+                name="Upload_List_of_Students"
                 type="file"
                 label="List of Students"
                 onChange={handleChange}
@@ -387,7 +387,7 @@ export default function TechnicalCompetitions() {
                 size="lg"
                 label="Sponsorship Document"
                 type="file"
-                name="Sponsorship_Document"
+                name="Upload_Sponsorship_Document"
                 onChange={handleChange}
               />
             </div>
@@ -437,7 +437,7 @@ export default function TechnicalCompetitions() {
                   <Input
                     size="lg"
                     label="Evidence Document"
-                    name="Evidence"
+                    name="Upload_Evidence"
                     type="file"
                     onChange={handleChange}
                     disabled={!isFinancialSupport}

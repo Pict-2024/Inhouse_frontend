@@ -24,9 +24,9 @@ export default function SportData() {
     Username: currentUser?.Username,
     Academic_Year: "",
     Student_Name: currentUser?.Name,
-    Roll_No: "",
+    Roll_No: null,
     Department: "",
-    Year: "",
+    Class: "",
     Participant_or_Organizer_for_the_Event: "",
     Sports_Name: "",
     Sub_Event_Name: "",
@@ -35,15 +35,15 @@ export default function SportData() {
     Organizer_Name: "",
     Level: "",
     Place: "",
-    Start_Date: "",
-    End_Date: "",
+    Start_Date: null,
+    End_Date: null,
     Financial_support_given_by_institute_in_INR: "",
     Award: "",
     Award_Prize_Money: "",
     Remarks: "",
     Geo_Tag_Photos: "",
-    Certificates: null,
-    Evidence: null,
+    Upload_Certificates: null,
+    Upload_Evidence: null,
   });
 
   const handleOnChange = (e) => {
@@ -82,8 +82,8 @@ export default function SportData() {
       formDataForFile.append("role", currentUser?.Role);
       formDataForFile.append("tableName", "student_sports_data");
       formDataForFile.append("columnName", [
-        "Certificates",
-        "Evidence",
+        "Upload_Certificates",
+        "Upload_Evidence",
       ]);
 
 
@@ -106,9 +106,9 @@ export default function SportData() {
     var pathEvidence = null,
       pathReport;
     console.log(isFinancialSupport);
-    console.log(formData.Evidence);
+    console.log(formData.Upload_Evidence);
     // Check if evidence upload is required
-    if (isFinancialSupport && formData.Evidence === null) {
+    if (isFinancialSupport && formData.Upload_Evidence === null) {
       alert("Upload Evidence document");
       return;
     }
@@ -117,13 +117,13 @@ export default function SportData() {
       if (isFinancialSupport) {
         console.log("hi");
         // Handle evidence upload only if financial support is selected
-        pathEvidence = await handleFileUpload(formData.Evidence);
+        pathEvidence = await handleFileUpload(formData.Upload_Evidence);
       }
-      if (formData.Certificates !== null) {
+      if (formData.Upload_Certificates !== null) {
         console.log("1");
 
         console.log("2");
-        pathReport = await handleFileUpload(formData.Certificates);
+        pathReport = await handleFileUpload(formData.Upload_Certificates);
 
         // console.log("Upload path = ", pathUpload);
       } else {
@@ -145,8 +145,8 @@ export default function SportData() {
       const formDataWithFilePath = {
         ...formData,
 
-        Evidence: pathEvidence,
-        Certificates: pathReport,
+        Upload_Evidence: pathEvidence,
+        Upload_Certificates: pathReport,
       };
       if (pathEvidence === "" && pathReport === "") {
         // If file is null, display a toast alert
@@ -264,13 +264,13 @@ export default function SportData() {
                 Year of Study
               </Typography>
               <Select
-                id="Year"
+                id="Class"
                 size="lg"
-                label="Year"
+                label="Class"
                 value={formData.Year}
                 onChange={(value) =>
                   handleOnChange({
-                    target: { id: "Year", value },
+                    target: { id: "Class", value },
                   })
                 }
               >
@@ -287,6 +287,7 @@ export default function SportData() {
               <Input
                 id="Roll_No"
                 size="lg"
+                type="number"
                 label="Roll No"
                 value={formData.Roll_No}
                 onChange={handleOnChange}
@@ -494,7 +495,7 @@ export default function SportData() {
                   <Input
                     size="lg"
                     label="Evidence Document"
-                    id="Evidence"
+                    id="Upload_Evidence"
                     type="file"
                     onChange={handleOnChange}
                     disabled={!isFinancialSupport}
@@ -538,7 +539,7 @@ export default function SportData() {
                 Upload Completion Certificate (Only Pdf)
               </Typography>
               <Input
-                id="Certificates"
+                id="Upload_Certificates"
                 size="lg"
                 label=""
                 type="file"
@@ -574,7 +575,7 @@ export default function SportData() {
           </div>
 
           <Button type="submit" className="mt-4" fullWidth>
-           Submit
+            Submit
           </Button>
         </form>
       </Card>

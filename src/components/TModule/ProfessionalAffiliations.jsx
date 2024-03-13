@@ -29,8 +29,8 @@ export default function ProfessionalAffiliations() {
     Professional_Affiliation: "",
     Membership_Number_ID: "",
     Finance_Support_By_PICT: "",
-    Membership_Evidence: null,
-    Evidence: null,
+    Upload_Membership_Evidence: null,
+    Upload_Evidence: null,
   });
 
   const handleChange = (e) => {
@@ -52,7 +52,7 @@ export default function ProfessionalAffiliations() {
       formDataForFile.append("username", currentUser?.Username);
       formDataForFile.append("role", currentUser?.Role);
       formDataForFile.append("tableName", "professional_affiliation");
-      formDataForFile.append("columnName", ["Membership_Evidence", "Evidence"]);
+      formDataForFile.append("columnName", ["Upload_Membership_Evidence", "Upload_Evidence"]);
 
       const response = await axios.post(
         uploadRecordsProfessional,
@@ -74,7 +74,7 @@ export default function ProfessionalAffiliations() {
     console.log(formData);
 
     var pathReport, pathStudent =null;
-    if (isFinancialSupport && formData.Evidence === null) {
+    if (isFinancialSupport && formData.Upload_Evidence === null) {
       alert("Upload Evidence document");
       return;
     }
@@ -83,11 +83,11 @@ export default function ProfessionalAffiliations() {
       if (isFinancialSupport) {
         // console.log("hi");
         // Handle evidence upload only if financial support is selected
-        pathStudent = await handleFileUpload(formData.Evidence);
+        pathStudent = await handleFileUpload(formData.Upload_Evidence);
       }
-      if (formData.Membership_Evidence !== null) {
+      if (formData.Upload_Membership_Evidence !== null) {
         // console.log("2");
-        pathReport = await handleFileUpload(formData.Membership_Evidence);
+        pathReport = await handleFileUpload(formData.Upload_Membership_Evidence);
       
         // console.log("4");
 
@@ -110,8 +110,8 @@ export default function ProfessionalAffiliations() {
       const formDataWithFilePath = {
         ...formData,
 
-        Membership_Evidence: pathReport,
-        Evidence: pathStudent,
+        Upload_Membership_Evidence: pathReport,
+        Upload_Evidence: pathStudent,
       };
       if (pathReport === "" && pathStudent === "") {
         // If file is null, display a toast alert
@@ -226,7 +226,7 @@ export default function ProfessionalAffiliations() {
               </Typography>
               <Input
                 size="lg"
-                name="Membership_Evidence"
+                name="Upload_Membership_Evidence"
                 type="file"
                 label="Membership Evidence"
                 onChange={handleChange}
@@ -279,7 +279,7 @@ export default function ProfessionalAffiliations() {
                   <Input
                     size="lg"
                     label="Evidence Document"
-                    name="Evidence"
+                    name="Upload_Evidence"
                     type="file"
                     onChange={handleChange}
                     disabled={!isFinancialSupport}

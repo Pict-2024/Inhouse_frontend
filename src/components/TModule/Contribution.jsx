@@ -30,7 +30,7 @@ export default function Contribution() {
     Role: "",
     University_Institution: "",
     Body_Name: "",
-    Evidence: null,
+    Upload_Evidence: null,
   });
 
   const handleOnChange = (e) => {
@@ -72,7 +72,7 @@ export default function Contribution() {
       formDataForFile.append("username", currentUser?.Username);
       formDataForFile.append("role", currentUser?.Role);
       formDataForFile.append("tableName", "contribution_to_bos");
-      formDataForFile.append("columnName", "Evidence");
+      formDataForFile.append("columnName", "Upload_Evidence");
 
       const response = await axios.post(
         uploadRecordsContribution,
@@ -94,11 +94,11 @@ export default function Contribution() {
     console.log(formData);
 
     var pathUpload;
-    console.log(formData.Evidence);
+    console.log(formData.Upload_Evidence);
     try {
-      if (formData.Evidence !== null) {
+      if (formData.Upload_Evidence !== null) {
         console.log("hello");
-        pathUpload = await handleFileUpload(formData.Evidence);
+        pathUpload = await handleFileUpload(formData.Upload_Evidence);
 
         console.log("Upload path = ", pathUpload);
       } else {
@@ -118,7 +118,7 @@ export default function Contribution() {
       // If file upload is successful, continue with the form submission
       const formDataWithFilePath = {
         ...formData,
-        Evidence: pathUpload, // Use an empty string as a default if fileUploadPath is undefined
+        Upload_Evidence: pathUpload, // Use an empty string as a default if fileUploadPath is undefined
       };
       if (pathUpload === "") {
         // If file is null, display a toast alert
@@ -290,7 +290,7 @@ export default function Contribution() {
                 Evidence document
               </Typography>
               <Input
-                name="Evidence"
+                name="Upload_Evidence"
                 size="lg"
                 type="file"
                 label="Evidence Document"

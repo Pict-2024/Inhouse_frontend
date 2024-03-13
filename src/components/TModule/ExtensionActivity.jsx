@@ -34,8 +34,8 @@ export default function ExtensionActivity() {
     NoOf_Faculty_Participants: "",
     PSOs_Attained: "",
     Place: "",
-    List_of_Students: null,
-    Report: null,
+    Upload_List_of_Students: null,
+    Upload_Report: null,
   });
   const handleChange = (e) => {
     const { name, value, type, files } = e.target;
@@ -56,7 +56,7 @@ export default function ExtensionActivity() {
       formDataForFile.append("username", currentUser?.Username);
       formDataForFile.append("role", currentUser?.Role);
       formDataForFile.append("tableName", "extension_activity");
-      formDataForFile.append("columnName", ["List_of_Students", "Report"]);
+      formDataForFile.append("columnName", ["Upload_List_of_Students", "Upload_Report"]);
 
       const response = await axios.post(
         uploadRecordsExtension,
@@ -80,11 +80,11 @@ export default function ExtensionActivity() {
     var pathReport, pathStudent;
     // console.log(formData.Evidence);
     try {
-      if (formData.Report !== null && formData.List_of_Students !== null) {
+      if (formData.Upload_Report !== null && formData.Upload_List_of_Students !== null) {
         // console.log("2");
-        pathReport = await handleFileUpload(formData.Report);
+        pathReport = await handleFileUpload(formData.Upload_Report);
         // console.log("3");
-        pathStudent = await handleFileUpload(formData.List_of_Students);
+        pathStudent = await handleFileUpload(formData.Upload_List_of_Students);
         // console.log("4");
 
         // console.log("Upload path = ", pathUpload);
@@ -106,8 +106,8 @@ export default function ExtensionActivity() {
       const formDataWithFilePath = {
         ...formData,
 
-        Report: pathReport,
-        List_of_Students: pathStudent,
+        Upload_Report: pathReport,
+        Upload_List_of_Students: pathStudent,
       };
       if (pathReport === "" && pathStudent === "") {
         // If file is null, display a toast alert
@@ -322,7 +322,7 @@ export default function ExtensionActivity() {
               </Typography>
               <Input
                 size="lg"
-                name="List_of_Students"
+                name="Upload_List_of_Students"
                 type="file"
                 label="List of Students"
                 onChange={handleChange}
@@ -376,7 +376,7 @@ export default function ExtensionActivity() {
               </Typography>
               <Input
                 size="lg"
-                name="Report"
+                name="Upload_Report"
                 type="file"
                 label="Report"
                 onChange={handleChange}

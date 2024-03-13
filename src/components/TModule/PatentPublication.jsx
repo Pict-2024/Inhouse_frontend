@@ -37,10 +37,10 @@ export default function PatentPublication() {
     Patent_Pub_Number: "",
     Institute_Affiliation: "",
     Finance_Support_By_PICT: "",
-    Evidence: null,
+    Upload_Evidence: null,
     URL_Web_Links: "",
     Type_of_the_Patent: "",
-    Approval_Letter: null,
+    Upload_Approval_Letter: null,
     Country: "",
     Upload_Patent_Document: null,
     Upload_Patent_Grant: null,
@@ -66,8 +66,8 @@ export default function PatentPublication() {
       formDataForFile.append("role", currentUser?.Role);
       formDataForFile.append("tableName", "patent_publication");
       formDataForFile.append("columnName", [
-        "Evidence",
-        "Approval_Letter",
+        "Upload_Evidence",
+        "Upload_Approval_Letter",
         "Upload_Patent_Document",
         "Upload_Patent_Grant",
       ]);
@@ -93,23 +93,23 @@ export default function PatentPublication() {
       pathDoc,
       pathGrant;
     console.log(isFinancialSupport);
-    console.log(formData.Evidence);
+    console.log(formData.Upload_Evidence);
     // Check if evidence upload is required
-    if (isFinancialSupport && formData.Evidence === null) {
+    if (isFinancialSupport && formData.Upload_Evidence === null) {
       alert("Upload Evidence document");
       return;
     }
 
     try {
       if (isFinancialSupport) {
-        pathEvidence = await handleFileUpload(formData.Evidence);
+        pathEvidence = await handleFileUpload(formData.Upload_Evidence);
       }
       if (
-        formData.Approval_Letter !== null &&
+        formData.Upload_Approval_Letter !== null &&
         formData.Upload_Patent_Document !== null &&
         formData.Upload_Patent_Grant !== null
       ) {
-        pathReport = await handleFileUpload(formData.Approval_Letter);
+        pathReport = await handleFileUpload(formData.Upload_Approval_Letter);
         pathDoc = await handleFileUpload(formData.Upload_Patent_Document);
         pathGrant = await handleFileUpload(formData.Upload_Patent_Grant);
 
@@ -133,8 +133,8 @@ export default function PatentPublication() {
       const formDataWithFilePath = {
         ...formData,
 
-        Evidence: pathEvidence,
-        Approval_Letter: pathReport,
+        Upload_Evidence: pathEvidence,
+        Upload_Approval_Letter: pathReport,
         Upload_Patent_Document: pathDoc,
         Upload_Patent_Grant: pathGrant,
       };
@@ -427,7 +427,7 @@ export default function PatentPublication() {
                   <Input
                     size="lg"
                     label="Evidence Document"
-                    name="Evidence"
+                    name="Upload_Evidence"
                     type="file"
                     onChange={handleChange}
                     disabled={!isFinancialSupport}
@@ -469,7 +469,7 @@ export default function PatentPublication() {
               </Typography>
               <Input
                 size="lg"
-                name="Approval_Letter"
+                name="Upload_Approval_Letter"
                 type="file"
                 onChange={handleChange}
                 label="Approval Letter for financial Support"

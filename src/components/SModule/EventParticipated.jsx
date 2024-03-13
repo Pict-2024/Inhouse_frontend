@@ -28,11 +28,11 @@ export default function EventParticipated() {
     Username: currentUser?.Username,
     Academic_Year: "",
     Student_Name: currentUser?.Name,
-    Roll_No: "",
+    Roll_No: null,
     Department: "",
     Email_ID: currentUser?.Username,
     Mobile_No: "",
-    Year: "",
+    Class: "",
     Participant_or_Organizer: "",
     Event_Name: "",
     Name_of_Sub_Event: "",
@@ -49,8 +49,8 @@ export default function EventParticipated() {
     Award_Prize_Money: "",
     Remarks: "",
     Geo_Tag_Photos: "",
-    Certificate: null,
-    Evidence: null,
+    Upload_Certificate: null,
+    Upload_Evidence: null,
   });
 
   const generateAcademicYearOptions = () => {
@@ -88,7 +88,7 @@ export default function EventParticipated() {
       formDataForFile.append("username", currentUser?.Username);
       formDataForFile.append("role", currentUser?.Role);
       formDataForFile.append("tableName", "student_event_participated");
-      formDataForFile.append("columnName", ["Certificate", "Evidence"]);
+      formDataForFile.append("columnName", ["Upload_Certificate", "Upload_Evidence"]);
 
       const response = await axios.post(
         uploadRecordsParticipation,
@@ -112,9 +112,9 @@ export default function EventParticipated() {
     var pathEvidence = null,
       pathReport;
     console.log(isFinancialSupport);
-    console.log(formData.Evidence);
+    console.log(formData.Upload_Evidence);
     // Check if evidence upload is required
-    if (isFinancialSupport && formData.Evidence === null) {
+    if (isFinancialSupport && formData.Upload_Evidence === null) {
       alert("Upload Evidence document");
       return;
     }
@@ -123,13 +123,13 @@ export default function EventParticipated() {
       if (isFinancialSupport) {
         console.log("hi");
         // Handle evidence upload only if financial support is selected
-        pathEvidence = await handleFileUpload(formData.Evidence);
+        pathEvidence = await handleFileUpload(formData.Upload_Evidence);
       }
-      if (formData.Certificate !== null) {
+      if (formData.Upload_Certificate !== null) {
         console.log("1");
 
         console.log("2");
-        pathReport = await handleFileUpload(formData.Certificate);
+        pathReport = await handleFileUpload(formData.Upload_Certificate);
         console.log("3");
 
         // console.log("Upload path = ", pathUpload);
@@ -152,8 +152,8 @@ export default function EventParticipated() {
       const formDataWithFilePath = {
         ...formData,
 
-        Evidence: pathEvidence,
-        Certificate: pathReport,
+        Upload_Evidence: pathEvidence,
+        Upload_Certificate: pathReport,
       };
       if (pathEvidence === "" && pathReport === "") {
         // If file is null, display a toast alert
@@ -271,13 +271,13 @@ export default function EventParticipated() {
                 Year of Study
               </Typography>
               <Select
-                id="Year"
+                id="Class"
                 size="lg"
-                label="Year"
+                label="Class"
                 value={formData.Year}
                 onChange={(value) =>
                   handleOnChange({
-                    target: { id: "Year", value },
+                    target: { id: "Class", value },
                   })
                 }
               >
@@ -294,6 +294,7 @@ export default function EventParticipated() {
               <Input
                 id="Roll_No"
                 size="lg"
+                type="number"
                 label="Roll No"
                 value={formData.Roll_No}
                 onChange={handleOnChange}
@@ -304,12 +305,12 @@ export default function EventParticipated() {
           <div className="mb-4 flex flex-wrap -mx-4">
             <div className="w-full md:w-1/2 px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
-                Sport Name
+                Event Name
               </Typography>
               <Input
                 id="Event_Name"
                 size="lg"
-                label="Organized Byr"
+                label="Event Name"
                 value={formData.Event_Name}
                 onChange={handleOnChange}
               />
@@ -321,7 +322,7 @@ export default function EventParticipated() {
               <Input
                 id="Participant_or_Organizer"
                 size="lg"
-                label="Certificate Course Title"
+                label="Participant or Organizer"
                 value={formData.Participant_or_Organizer}
                 onChange={handleOnChange}
               />
@@ -526,7 +527,7 @@ export default function EventParticipated() {
                   <Input
                     size="lg"
                     label="Evidence Document"
-                    id="Evidence"
+                    id="Upload_Evidence"
                     type="file"
                     onChange={handleOnChange}
                     disabled={!isFinancialSupport}
@@ -570,7 +571,7 @@ export default function EventParticipated() {
                 Upload Completion Certificate (Only Pdf)
               </Typography>
               <Input
-                id="Certificate"
+                id="Upload_Certificate"
                 size="lg"
                 label=""
                 type="file"

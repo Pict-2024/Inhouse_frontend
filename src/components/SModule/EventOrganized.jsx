@@ -26,9 +26,9 @@ export default function EventOrganized() {
     Username: currentUser?.Username,
     Academic_Year: "",
     Student_Name: currentUser?.Name,
-    Roll_No: "",
+    Roll_No: null,
     Department: "",
-    Year: "",
+    Class: "",
     Email_ID: currentUser?.Username,
     Mobile_No: "",
     Extension_Activity_Name: "",
@@ -44,8 +44,8 @@ export default function EventOrganized() {
     Award: "",
     Remarks: "",
     Geo_Tag_Photos: "",
-    Certificate_or_Letter_of_Appreciation: null,
-    Evidence: null,
+    Upload_Certificate_or_Letter_of_Appreciation: null,
+    Upload_Evidence: null,
   });
 
   const generateAcademicYearOptions = () => {
@@ -84,8 +84,8 @@ export default function EventOrganized() {
       formDataForFile.append("role", currentUser?.Role);
       formDataForFile.append("tableName", "student_event_organized");
       formDataForFile.append("columnName", [
-        "Certificate_or_Letter_of_Appreciation",
-        "Evidence",
+        "Upload_Certificate_or_Letter_of_Appreciation",
+        "Upload_Evidence",
       ]);
 
       const response = await axios.post(
@@ -110,9 +110,9 @@ export default function EventOrganized() {
     var pathEvidence = null,
       pathReport;
     console.log(isFinancialSupport);
-    console.log(formData.Evidence);
+    console.log(formData.Upload_Evidence);
     // Check if evidence upload is required
-    if (isFinancialSupport && formData.Evidence === null) {
+    if (isFinancialSupport && formData.Upload_Evidence === null) {
       alert("Upload Evidence document");
       return;
     }
@@ -121,13 +121,13 @@ export default function EventOrganized() {
       if (isFinancialSupport) {
         console.log("hi");
         // Handle evidence upload only if financial support is selected
-        pathEvidence = await handleFileUpload(formData.Evidence);
+        pathEvidence = await handleFileUpload(formData.Upload_Evidence);
       }
-      if (formData.Certificate_or_Letter_of_Appreciation !== null) {
+      if (formData.Upload_Certificate_or_Letter_of_Appreciation !== null) {
         console.log("1");
 
         pathReport = await handleFileUpload(
-          formData.Certificate_or_Letter_of_Appreciation
+          formData.Upload_Certificate_or_Letter_of_Appreciation
         );
 
         // console.log("Upload path = ", pathUpload);
@@ -150,8 +150,8 @@ export default function EventOrganized() {
       const formDataWithFilePath = {
         ...formData,
 
-        Evidence: pathEvidence,
-        Certificate_or_Letter_of_Appreciation: pathReport,
+        Upload_Evidence: pathEvidence,
+        Upload_Certificate_or_Letter_of_Appreciation: pathReport,
       };
       if (pathEvidence === "" && pathReport === "") {
         // If file is null, display a toast alert
@@ -269,13 +269,13 @@ export default function EventOrganized() {
                 Year of Study
               </Typography>
               <Select
-                id="Year"
+                id="Class"
                 size="lg"
-                label="Year"
+                label="Class"
                 value={formData.Year}
                 onChange={(value) =>
                   handleOnChange({
-                    target: { id: "Year", value },
+                    target: { id: "Class", value },
                   })
                 }
               >
@@ -292,6 +292,7 @@ export default function EventOrganized() {
               <Input
                 id="Roll_No"
                 size="lg"
+                type="number"
                 label="Roll No"
                 value={formData.Roll_No}
                 onChange={handleOnChange}
@@ -478,7 +479,7 @@ export default function EventOrganized() {
                   <Input
                     size="lg"
                     label="Evidence Document"
-                    id="Evidence"
+                    id="Upload_Evidence"
                     type="file"
                     onChange={handleOnChange}
                     disabled={!isFinancialSupport}
@@ -522,7 +523,7 @@ export default function EventOrganized() {
                 Upload Completion Certificate (Only Pdf)
               </Typography>
               <Input
-                id="Certificate_or_Letter_of_Appreciation"
+                id="Upload_Certificate_or_Letter_of_Appreciation"
                 size="lg"
                 label="Completion Certificate"
                 type="file"

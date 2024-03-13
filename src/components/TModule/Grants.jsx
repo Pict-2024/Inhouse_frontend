@@ -39,11 +39,11 @@ export default function Grants() {
     Name_of_Funding_Agency: "",
     Name_of_the_Scheme: "",
     Amount_Sanctioned: "",
-    Evidence_Document: null,
+    Upload_Evidence: null,
     Year_of_grant_received: "",
     Start_Date: null,
     End_Date: null,
-    Amount_deposited_to_PICT_account: null,
+    Upload_Amount_deposited_to_PICT_account: null,
     Transaction_date: null,
     Status_Ongoing_Completed: "",
     Duration: "",
@@ -70,8 +70,8 @@ export default function Grants() {
       formDataForFile.append("role", currentUser?.Role);
       formDataForFile.append("tableName", "grants");
       formDataForFile.append("columnName", [
-        "Evidence_Document",
-        "Amount_deposited_to_PICT_account",
+        "Upload_Evidence",
+        "Upload_Amount_deposited_to_PICT_account",
       ]);
 
       const response = await axios.post(uploadRecordsGrants, formDataForFile);
@@ -94,13 +94,13 @@ export default function Grants() {
 
     try {
       if (
-        formData.Amount_deposited_to_PICT_account !== null &&
-        formData.Evidence_Document !== null
+        formData.Upload_Amount_deposited_to_PICT_account !== null &&
+        formData.Upload_Evidence !== null
       ) {
         pathReport = await handleFileUpload(
-          formData.Amount_deposited_to_PICT_account
+          formData.Upload_Amount_deposited_to_PICT_account
         );
-        pathEvidence = await handleFileUpload(formData.Evidence_Document);
+        pathEvidence = await handleFileUpload(formData.Upload_Evidence);
 
         // console.log("Upload path = ", pathUpload);
       } else {
@@ -122,8 +122,8 @@ export default function Grants() {
       const formDataWithFilePath = {
         ...formData,
 
-        Evidence_Document: pathEvidence,
-        Amount_deposited_to_PICT_account: pathReport,
+        Upload_Evidence: pathEvidence,
+        Upload_Amount_deposited_to_PICT_account: pathReport,
       };
       if (pathEvidence === "" || pathReport === "") {
         // If file is null, display a toast alert
@@ -408,7 +408,7 @@ export default function Grants() {
               </Typography>
               <Input
                 size="lg"
-                name="Amount_deposited_to_PICT_account"
+                name="Upload_Amount_deposited_to_PICT_account"
                 type="file"
                 onChange={handleChange}
                 label="Amount deposited to PICT account"
@@ -424,7 +424,7 @@ export default function Grants() {
               </Typography>
               <Input
                 size="lg"
-                name="Evidence_Document"
+                name="Upload_Evidence"
                 type="file"
                 onChange={handleChange}
                 label="Document evidence for amount deposited in PICT account"

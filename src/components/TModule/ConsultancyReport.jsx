@@ -31,9 +31,9 @@ export default function ConsultancyReport() {
     Amount: "",
     Start_Date: null,
     End_Date: null,
-    Amt_Deposited: null,
+    Upload_Amt_Deposited: null,
     Date_of_Transaction: null,
-    Link_to_evidence: null,
+    Upload_Link_to_evidence: null,
     Status: "",
     Outcome: "",
     Upload_Paper: null,
@@ -59,8 +59,8 @@ export default function ConsultancyReport() {
       formDataForFile.append("role", currentUser?.Role);
       formDataForFile.append("tableName", "consultancy_report");
       formDataForFile.append("columnName", [
-        "Amt_Deposited",
-        "Link_to_evidence",
+        "Upload_Amt_Deposited",
+        "Upload_Link_to_evidence",
         "Upload_Paper",
       ]);
 
@@ -88,12 +88,12 @@ export default function ConsultancyReport() {
     try {
       if (
         formData.Upload_Paper !== null &&
-        formData.Link_to_evidence !== null &&
-        formData.Amt_Deposited !== null
+        formData.Upload_Link_to_evidence !== null &&
+        formData.Upload_Amt_Deposited !== null
       ) {
         pathReport = await handleFileUpload(formData.Upload_Paper);
-        pathEvidence = await handleFileUpload(formData.Link_to_evidence);
-        pathAmt = await handleFileUpload(formData.Amt_Deposited);
+        pathEvidence = await handleFileUpload(formData.Upload_Link_to_evidence);
+        pathAmt = await handleFileUpload(formData.Upload_Amt_Deposited);
 
         // console.log("Upload path = ", pathUpload);
       } else {
@@ -115,9 +115,9 @@ export default function ConsultancyReport() {
       const formDataWithFilePath = {
         ...formData,
 
-        Link_to_evidence: pathEvidence,
+        Upload_Link_to_evidence: pathEvidence,
         Upload_Paper: pathReport,
-        Amt_Deposited: pathAmt,
+        Upload_Amt_Deposited: pathAmt,
       };
       if (pathEvidence === "" || pathReport === "" || pathAmt === "") {
         // If file is null, display a toast alert
@@ -384,7 +384,7 @@ export default function ConsultancyReport() {
               </Typography>
               <Input
                 size="lg"
-                name="Amt_Deposited"
+                name="Upload_Amt_Deposited"
                 type="file"
                 onChange={handleChange}
                 label="Document evidence for amount deposited in PICT account"
@@ -399,7 +399,7 @@ export default function ConsultancyReport() {
               </Typography>
               <Input
                 size="lg"
-                name="Link_to_evidence"
+                name="Upload_Link_to_evidence"
                 type="file"
                 onChange={handleChange}
                 label=" Document evidence for amount sanctioned "

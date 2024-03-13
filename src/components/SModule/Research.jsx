@@ -23,6 +23,7 @@ export default function Research() {
 
   const [isFinancialSupport, setIsFinancialSupport] = useState(false);
   const [isAchievements, setIsAchievements] = useState("No");
+  const [errors, setErrors] = useState({});
 
   const { currentUser } = useSelector((state) => state.user);
   const currentYear = new Date().getFullYear();
@@ -35,9 +36,9 @@ export default function Research() {
     Username: currentUser?.Username,
     Academic_Year: "",
     Student_Name: currentUser?.Name,
-    Roll_No: "",
+    Roll_No: null,
     Department: "",
-    Year_of_study: "",
+    Class: "",
     Research_Article_Title: "",
     Research_Type: "",
     Level: "",
@@ -60,7 +61,7 @@ export default function Research() {
     Upload_Paper: null,
     Achievements: "",
     Upload_Document_of_Achievement: null,
-    Evidence: null,
+    Upload_Evidence: null,
   });
 
   const generateAcademicYearOptions = () => {
@@ -82,6 +83,11 @@ export default function Research() {
   const handleOnChange = (e) => {
     const { id, value, type, files } = e.target;
 
+    setErrors((prevErrors) => ({
+      ...prevErrors,
+      [id]: ""
+    }));
+
     setFormData({
       ...formData,
       [id]:
@@ -101,7 +107,7 @@ export default function Research() {
       formDataForFile.append("columnName", [
         "Upload_Paper",
         "Upload_Document_of_Achievement",
-        "Evidence",
+        "Upload_Evidence",
       ]);
 
       const response = await axios.post(
@@ -121,15 +127,38 @@ export default function Research() {
   //add new record
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // Check for empty required fields
+    const requiredFields = ["Academic_Year", "Department", "Class", "Research_Article_Title", "Research_Type", "Level", "Indexed", "	Date", "Author", "Affiliation", "Role_of_Authors", "Publisher", "Co_Author", "Journal_Name", "ISSN", "DOI", "Financial_support_from_institute_in_INR", "Article_Link", "Achievements"];
+
+    const emptyFields = requiredFields.filter(field => !formData[field]);
+
+    if (emptyFields.length > 0) {
+      const emptyFieldNames = emptyFields.join(", ");
+      alert(`Please fill in all required fields: ${emptyFieldNames}`);
+      return;
+    }
+
+    // Validate Roll No
+    if (!(/^\d{5}$/.test(formData.Roll_No))) {
+      setErrors((prevErrors) => ({
+        ...prevErrors,
+        Roll_No: "Roll No must be a 5-digit number."
+      }));
+      return;
+    }
+
+
+
     console.log(formData);
 
     var pathEvidence = null,
       pathReport,
-      pathStudent=null;
+      pathStudent = null;
     // console.log(isFinancialSupport);
     // console.log(formData.Evidence);
     // Check if evidence upload is required
-    if (isFinancialSupport && formData.Evidence === null) {
+    if (isFinancialSupport && formData.Upload_Evidence === null) {
       alert("Upload Evidence document");
       return;
     }
@@ -140,14 +169,14 @@ export default function Research() {
 
     try {
       if (isFinancialSupport) {
-        pathEvidence = await handleFileUpload(formData.Evidence);
+        pathEvidence = await handleFileUpload(formData.Upload_Evidence);
       }
       if (isAchievements === "Yes") {
         pathStudent = await handleFileUpload(
           formData.Upload_Document_of_Achievement
         );
       }
-      if (formData.Upload_Paper !== null ) {
+      if (formData.Upload_Paper !== null) {
         pathReport = await handleFileUpload(formData.Upload_Paper);
         // console.log("Upload path = ", pathUpload);
       } else {
@@ -163,13 +192,13 @@ export default function Research() {
         });
         return;
       }
-      // console.log("Evidence path:",pathEvidence);
+      // console.log("Upload_Evidence path:",pathUpload_Evidence);
       // If file upload is successful, continue with the form submission
 
       const formDataWithFilePath = {
         ...formData,
 
-        Evidence: pathEvidence,
+        Upload_Evidence: pathEvidence,
         Upload_Paper: pathReport,
         Upload_Document_of_Achievement: pathStudent,
       };
@@ -303,10 +332,12 @@ export default function Research() {
               <Input
                 id="Roll_No"
                 size="lg"
+                type="number"
                 label="Roll No"
                 value={formData.Roll_No}
                 onChange={handleOnChange}
               />
+              {errors.Roll_No && <p className="text-red-500 text-sm">{errors.Roll_No}</p>}
             </div>
           </div>
 
@@ -316,13 +347,13 @@ export default function Research() {
                 Year of Study
               </Typography>
               <Select
-                id="Year_of_study"
+                id="Class"
                 size="lg"
-                label="Year"
-                value={formData.Year_of_study}
+                label="Class"
+                value={formData.Class}
                 onChange={(value) =>
                   handleOnChange({
-                    target: { id: "Year_of_study", value },
+                    target: { id: "Class", value },
                   })
                 }
               >
@@ -639,7 +670,7 @@ export default function Research() {
                   <Input
                     size="lg"
                     label="Evidence Document"
-                    id="Evidence"
+                    id="Upload_Evidence"
                     type="file"
                     onChange={handleOnChange}
                     disabled={!isFinancialSupport}
@@ -670,7 +701,7 @@ export default function Research() {
                 size="lg"
                 type="file"
                 label=""
-                className="border-t-blue-gray-200 focus:border-t-gray-900"
+
                 id="Upload_Paper"
                 onChange={handleOnChange}
               />
@@ -685,16 +716,16 @@ export default function Research() {
               <Select
                 size="lg"
                 label="Achievements"
-                className="border-t-blue-gray-200 focus:border-t-gray-900"
+
                 id="Achievements"
-                value={formData.Achievements}
+                value={isAchievements}
                 onChange={(value) => setIsAchievements(value)}
-                >
+              >
                 <Option value="Yes">Yes</Option>
                 <Option value="No">No</Option>
               </Select>
             </div>
-          {isAchievements === "Yes" && (
+            {isAchievements === "Yes" && (
               <div className="w-full md:w-1/2 px-4 mb-4">
                 <Typography variant="h6" color="blue-gray" className="mb-3">
                   Upload Document of Achievement (Pdf Only)
@@ -703,12 +734,12 @@ export default function Research() {
                   size="lg"
                   type="file"
                   label=""
-                  className="border-t-blue-gray-200 focus:border-t-gray-900"
+
                   id="Upload_Document_of_Achievement"
                   onChange={handleOnChange}
                 />
-            </div>
-          )}
+              </div>
+            )}
           </div>
 
           <Button type="submit" className="mt-4" fullWidth>

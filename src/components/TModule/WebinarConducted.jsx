@@ -35,9 +35,9 @@ export default function WebinarConducted() {
     Targeted_Audience: "",
     Duration_in_Hrs: "",
     Renumeration_Paid: "",
-    List_of_Students: "",
-    Evidence: null,
-    Report: null,
+    Upload_List_of_Students: "",
+    Upload_Evidence: null,
+    Upload_Report: null,
   });
 
   const handleInputChange = (e) => {
@@ -59,7 +59,7 @@ export default function WebinarConducted() {
       formDataForFile.append("username", currentUser?.Username);
       formDataForFile.append("role", currentUser?.Role);
       formDataForFile.append("tableName", "webinar_guest_lectures");
-      formDataForFile.append("columnName", ["Evidence", "Report"]);
+      formDataForFile.append("columnName", ["Upload_Evidence", "Upload_Report"]);
 
       const response = await axios.post(uploadRecordsWebinar, formDataForFile);
       console.log(response);
@@ -81,15 +81,15 @@ export default function WebinarConducted() {
     // console.log(formData.Sample_Certificate);
     try {
       if (
-        formData.Report !== null &&
-        formData.List_of_Students !== null &&
-        formData.Evidence !== null
+        formData.Upload_Report !== null &&
+        formData.Upload_List_of_Students !== null &&
+        formData.Upload_Evidence !== null
       ) {
         // console.log("2");
-        pathReport = await handleFileUpload(formData.Report);
+        pathReport = await handleFileUpload(formData.Upload_Report);
         // console.log("3");
-        pathStudent = await handleFileUpload(formData.List_of_Students);
-        pathEvidence = await handleFileUpload(formData.Evidence);
+        pathStudent = await handleFileUpload(formData.Upload_List_of_Students);
+        pathEvidence = await handleFileUpload(formData.Upload_Evidence);
         // console.log("4");
 
         // console.log("Upload path = ", pathUpload);
@@ -111,11 +111,11 @@ export default function WebinarConducted() {
       const formDataWithFilePath = {
         ...formData,
 
-        Report: pathReport,
-        List_of_Students: pathStudent,
-        Evidence: pathEvidence,
+        Upload_Report: pathReport,
+        Upload_List_of_Students: pathStudent,
+        Upload_Evidence: pathEvidence,
       };
-      if (pathReport === "" && pathStudent === "" && formData.Evidence === "") {
+      if (pathReport === "" && pathStudent === "" && formData.Upload_Evidence === "") {
         // If file is null, display a toast alert
         toast.error("Some error occurred while uploading file", {
           position: "top-right",
@@ -296,7 +296,7 @@ export default function WebinarConducted() {
               </Typography>
               <Input
                 size="lg"
-                name="List_of_Students"
+                name="Upload_List_of_Students"
                 type="file"
                 label="List of Students"
                 onChange={handleInputChange}
@@ -403,7 +403,7 @@ export default function WebinarConducted() {
               <Input
                 size="lg"
                 label="Evidence document"
-                name="Evidence"
+                name="Upload_Evidence"
                 type="file"
                 onChange={handleInputChange}
               />
@@ -415,7 +415,7 @@ export default function WebinarConducted() {
               <Input
                 size="lg"
                 label="Report"
-                name="Report"
+                name="Upload_Report"
                 type="file"
                 onChange={handleInputChange}
               />

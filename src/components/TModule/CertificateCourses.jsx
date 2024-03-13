@@ -33,12 +33,12 @@ export default function CertificateCourses() {
     Students_Completing_the_Course: "",
     Names_of_speakers: "",
     Speaker_details: "",
-    Upload_Report: "",
+    Report: "",
     PSOs_Attained: "",
     Fund_Generated: "",
     Sponsorship_collaboration: "",
     Sample_Certificate: null,
-    Report: null,
+    Upload_Report: null,
   });
 
   const generateAcademicYearOptions = () => {
@@ -76,7 +76,7 @@ export default function CertificateCourses() {
       formDataForFile.append("username", currentUser?.Username);
       formDataForFile.append("role", currentUser?.Role);
       formDataForFile.append("tableName", "certificate_courses");
-      formDataForFile.append("columnName", ["Sample_Certificate", "Report"]);
+      formDataForFile.append("columnName", ["Sample_Certificate", "Upload_Report"]);
 
       const response = await axios.post(
         uploadRecordsCertificate,
@@ -100,9 +100,9 @@ export default function CertificateCourses() {
     var pathReport, pathStudent;
     // console.log(formData.Sample_Certificate);
     try {
-      if (formData.Report !== null && formData.Sample_Certificate !== null) {
+      if (formData.Upload_Report !== null && formData.Sample_Certificate !== null) {
         // console.log("2");
-        pathReport = await handleFileUpload(formData.Report);
+        pathReport = await handleFileUpload(formData.Upload_Report);
         // console.log("3");
         pathStudent = await handleFileUpload(formData.Sample_Certificate);
         // console.log("4");
@@ -126,7 +126,7 @@ export default function CertificateCourses() {
       const formDataWithFilePath = {
         ...formData,
 
-        Report: pathReport,
+        Upload_Report: pathReport,
         Sample_Certificate: pathStudent,
       };
       if (pathReport === "" && pathStudent === "") {
@@ -372,10 +372,10 @@ export default function CertificateCourses() {
               Attendance
             </Typography>
             <Input
-              id="Upload_Report"
+              id="Report"
               size="lg"
               label="Link to Report Consisting of Geotagged Photograph, Feedback, Attendance"
-              value={formData.Upload_Report}
+              value={formData.Report}
               onChange={handleOnChange}
             />
           </div>
@@ -426,7 +426,7 @@ export default function CertificateCourses() {
                 Upload Final Report (Only Pdf)
               </Typography>
               <Input
-                id="Report"
+                id="Upload_Report"
                 size="lg"
                 label="Final Report"
                 type="file"

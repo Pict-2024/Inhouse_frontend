@@ -28,9 +28,9 @@ export default function Certificate() {
     Username: currentUser?.Username,
     Academic_Year: "",
     Student_Name: currentUser?.Name,
-    Roll_No: "",
+    Roll_No: null,
     Department: "",
-    Year: "",
+    Class: "",
     Certificate_Course_Title: "",
     Organized_By: "",
     Place: "",
@@ -41,8 +41,8 @@ export default function Certificate() {
     Financial_support_given_by_institute_in_INR: "",
     Award: "",
     Award_Prize_Money: "",
-    Certificates: null,
-    Evidence: null,
+    Upload_Certificates: null,
+    Upload_Evidence: null,
   });
 
   const generateAcademicYearOptions = () => {
@@ -80,7 +80,7 @@ export default function Certificate() {
       formDataForFile.append("username", currentUser?.Username);
       formDataForFile.append("role", currentUser?.Role);
       formDataForFile.append("tableName", "student_certificate_course");
-      formDataForFile.append("columnName", ["Certificates", "Evidence"]);
+      formDataForFile.append("columnName", ["Upload_Certificates", "Upload_Evidence"]);
 
       const response = await axios.post(
         uploadRecordsCertificateStud,
@@ -99,14 +99,34 @@ export default function Certificate() {
   //add new record
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // // Check for empty required fields
+    // const requiredFields = ["Academic_Year", "Department", "Class", "Research_Article_Title", "Research_Type", "Level", "Indexed", "	Date", "Author", "Affiliation", "Role_of_Authors", "Publisher", "Co_Author", "Journal_Name", "ISSN", "DOI", "Financial_support_from_institute_in_INR", "Article_Link", "Achievements"];
+
+    // const emptyFields = requiredFields.filter(field => !formData[field]);
+
+    // if (emptyFields.length > 0) {
+    //   const emptyFieldNames = emptyFields.join(", ");
+    //   alert(`Please fill in all required fields: ${emptyFieldNames}`);
+    //   return;
+    // }
+
+    // // Validate Roll No
+    // if (!(/^\d{5}$/.test(formData.Roll_No))) {
+    //   setErrors((prevErrors) => ({
+    //     ...prevErrors,
+    //     Roll_No: "Roll No must be a 5-digit number."
+    //   }));
+    //   return;
+    // }
     console.log(formData);
 
     var pathEvidence = null,
       pathReport;
     console.log(isFinancialSupport);
-    console.log(formData.Evidence);
+    console.log(formData.Upload_Evidence);
     // Check if evidence upload is required
-    if (isFinancialSupport && formData.Evidence === null) {
+    if (isFinancialSupport && formData.Upload_Evidence === null) {
       alert("Upload Evidence document");
       return;
     }
@@ -115,10 +135,10 @@ export default function Certificate() {
       if (isFinancialSupport) {
         console.log("hi");
         // Handle evidence upload only if financial support is selected
-        pathEvidence = await handleFileUpload(formData.Evidence);
+        pathEvidence = await handleFileUpload(formData.Upload_Evidence);
       }
-      if (formData.Certificates !== null) {
-        pathReport = await handleFileUpload(formData.Certificates);
+      if (formData.Upload_Certificates !== null) {
+        pathReport = await handleFileUpload(formData.Upload_Certificates);
 
         // console.log("Upload path = ", pathUpload);
       } else {
@@ -140,8 +160,8 @@ export default function Certificate() {
       const formDataWithFilePath = {
         ...formData,
 
-        Evidence: pathEvidence,
-        Certificates: pathReport,
+        Upload_Evidence: pathEvidence,
+        Upload_Certificates: pathReport,
       };
       if (pathEvidence === "" && pathReport === "") {
         // If file is null, display a toast alert
@@ -259,13 +279,13 @@ export default function Certificate() {
                 Year of Study
               </Typography>
               <Select
-                id="Year"
+                id="Class"
                 size="lg"
-                label="Year of study"
-                value={formData.Year}
+                label="Class"
+                value={formData.Class}
                 onChange={(value) =>
                   handleOnChange({
-                    target: { id: "Year", value },
+                    target: { id: "Class", value },
                   })
                 }
               >
@@ -282,6 +302,7 @@ export default function Certificate() {
               <Input
                 id="Roll_No"
                 size="lg"
+                type="number"
                 label="Roll No"
                 value={formData.Roll_No}
                 onChange={handleOnChange}
@@ -309,7 +330,7 @@ export default function Certificate() {
               <Input
                 id="Organized_By"
                 size="lg"
-                label="Organized Byr"
+                label="Organized By"
                 value={formData.Organized_By}
                 onChange={handleOnChange}
               />
@@ -439,7 +460,7 @@ export default function Certificate() {
                   <Input
                     size="lg"
                     label="Evidence Document"
-                    id="Evidence"
+                    id="Upload_Evidence"
                     type="file"
                     onChange={handleOnChange}
                     disabled={!isFinancialSupport}
@@ -476,12 +497,12 @@ export default function Certificate() {
             </div>
           </div>
           <div className="mb-4 flex flex-wrap -mx-4">
-            <div className="w-full mb-4">
+            <div className="w-full px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
                 Upload Completion Certificate (Only Pdf)
               </Typography>
               <Input
-                id="Certificates"
+                id="Upload_Certificates"
                 size="lg"
                 label=""
                 type="file"

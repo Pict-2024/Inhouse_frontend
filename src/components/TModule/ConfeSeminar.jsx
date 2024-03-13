@@ -35,13 +35,13 @@ export default function ConfeSeminar() {
     Name_of_the_Coordinators: "",
     Remarks: "",
     Sponsorship_Amount: "",
-    List_of_Students: null,
-    List_of_Students_Outside: null,
+    Upload_List_of_Students: null,
+    Upload_List_of_Students_Outside: null,
     NoOf_PICT_Participants: "",
     NoOf_Non_PICT_Participants: "",
-    Sample_Certificate: null,
-    Evidence: null,
-    Report: null,
+    Upload_Sample_Certificate: null,
+    Upload_Evidence: null,
+    Upload_Report: null,
   });
 
   const handleOnChange = (e) => {
@@ -62,7 +62,7 @@ export default function ConfeSeminar() {
       formDataForFile.append("username", currentUser?.Username);
       formDataForFile.append("role", currentUser?.Role);
       formDataForFile.append("tableName", "conference_seminar_workshops");
-      formDataForFile.append("columnName", ["List_of_Students", "List_of_Students_Outside", "Sample_Certificate", "Evidence", "Report"]);
+      formDataForFile.append("columnName", ["Upload_List_of_Students", "Upload_List_of_Students_Outside", "Upload_Sample_Certificate", "Upload_Evidence", "Upload_Report"]);
 
       const response = await axios.post(
         uploadRecordsConference,
@@ -84,21 +84,21 @@ export default function ConfeSeminar() {
     console.log(formData);
 
     var pathReport, pathCert, pathEvidence, pathOutside, pathPICT;
-    // console.log(formData.Sample_Certificate);
+    // console.log(formData.Upload_Sample_Certificate);
     try {
       if (
-        formData.Report !== null &&
-        formData.Sample_Certificate !== null &&
-        formData.Evidence !== null &&
-        formData.List_of_Students_Outside !== null &&
-        formData.List_of_Students !== null
+        formData.Upload_Report !== null &&
+        formData.Upload_Sample_Certificate !== null &&
+        formData.Upload_Evidence !== null &&
+        formData.Upload_List_of_Students_Outside !== null &&
+        formData.Upload_List_of_Students !== null
       ) {
         // console.log("2");
-        pathReport = await handleFileUpload(formData.Report);
-        pathCert = await handleFileUpload(formData.Sample_Certificate);
-        pathEvidence = await handleFileUpload(formData.Evidence);
-        pathOutside = await handleFileUpload(formData.List_of_Students_Outside);
-        pathPICT = await handleFileUpload(formData.List_of_Students);
+        pathReport = await handleFileUpload(formData.Upload_Report);
+        pathCert = await handleFileUpload(formData.Upload_Sample_Certificate);
+        pathEvidence = await handleFileUpload(formData.Upload_Evidence);
+        pathOutside = await handleFileUpload(formData.Upload_List_of_Students_Outside);
+        pathPICT = await handleFileUpload(formData.Upload_List_of_Students);
 
         // console.log("Upload path = ", pathUpload);
       } else {
@@ -118,11 +118,11 @@ export default function ConfeSeminar() {
       // If file upload is successful, continue with the form submission
       const formDataWithFilePath = {
         ...formData,
-        Report: pathReport,
-        Sample_Certificate: pathCert,
-        Evidence: pathEvidence,
-        List_of_Students_Outside: pathOutside,
-        List_of_Students: pathPICT,
+        Upload_Report: pathReport,
+        Upload_Sample_Certificate: pathCert,
+        Upload_Evidence: pathEvidence,
+        Upload_List_of_Students_Outside: pathOutside,
+        Upload_List_of_Students: pathPICT,
       };
       if (
         pathReport === "" &&
@@ -426,7 +426,7 @@ export default function ConfeSeminar() {
                 Evidence of sponsor amount (Only Pdf)
               </Typography>
               <Input
-                id="Evidence"
+                id="Upload_Evidence"
                 size="lg"
                 type="file"
                 label="Evidence of sponsor amount"
@@ -454,7 +454,7 @@ export default function ConfeSeminar() {
                 List of no of students from PICT (Only Pdf)
               </Typography>
               <Input
-                id="List_of_Students"
+                id="Upload_List_of_Students"
                 size="lg"
                 type="file"
                 label=" List of no of students"
@@ -482,10 +482,10 @@ export default function ConfeSeminar() {
                 List of no of students outside PICT (Only Pdf)
               </Typography>
               <Input
-                id="List_of_Students_Outside"
+                id="Upload_List_of_Students_Outside"
                 size="lg"
                 type="file"
-                label=" List of no of students"
+                label="List of no of students"
                 onChange={handleOnChange}
               />
             </div>
@@ -497,7 +497,7 @@ export default function ConfeSeminar() {
                 Sample Certificate document
               </Typography>
               <Input
-                id="Sample_Certificate"
+                id="Upload_Sample_Certificate"
                 size="lg"
                 label="Sample Certificate document"
                 type="file"
@@ -509,7 +509,7 @@ export default function ConfeSeminar() {
                 Report (Only Pdf)
               </Typography>
               <Input
-                id="Report"
+                id="Upload_Report"
                 size="lg"
                 type="file"
                 label="Complete Report"

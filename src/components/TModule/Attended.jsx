@@ -35,7 +35,7 @@ export default function Attended() {
     Duration_in_Days: "",
     Finance_Support_By_PICT: "",
     Upload_Certificate: null,
-    Evidence: null,
+    Upload_Evidence: null,
   });
 
   const handleOnChange = (e) => {
@@ -57,7 +57,7 @@ export default function Attended() {
       formDataForFile.append("username", currentUser?.Username);
       formDataForFile.append("role", currentUser?.Role);
       formDataForFile.append("tableName", "sttp_fdp_conference_attended");
-      formDataForFile.append("columnName", ["Evidence", "Upload_Certificate"]);
+      formDataForFile.append("columnName", ["Upload_Evidence", "Upload_Certificate"]);
 
       const response = await axios.post(uploadRecordsAttended, formDataForFile);
       console.log(response);
@@ -76,7 +76,7 @@ export default function Attended() {
     console.log(formData);
 
     let pathEvidence=null, pathStudent;
-    if (isFinancialSupport && formData.Evidence === null) {
+    if (isFinancialSupport && formData.Upload_Evidence === null) {
       alert("Upload Evidence document");
       return;
     }
@@ -85,7 +85,7 @@ export default function Attended() {
       if (isFinancialSupport) {
         // console.log("hi");
         // Handle evidence upload only if financial support is selected
-        pathEvidence = await handleFileUpload(formData.Evidence);
+        pathEvidence = await handleFileUpload(formData.Upload_Evidence);
       }
       if ( formData.Upload_Certificate !== null) {
         // console.log("2");
@@ -112,7 +112,7 @@ export default function Attended() {
       const formDataWithFilePath = {
         ...formData,
 
-        Evidence: pathEvidence,
+        Upload_Evidence: pathEvidence,
         Upload_Certificate: pathStudent,
       };
       if (pathEvidence === "" && pathStudent === "") {
@@ -382,7 +382,7 @@ export default function Attended() {
                   <Input
                     size="lg"
                     label="Evidence Document"
-                    id="Evidence"
+                    id="Upload_Evidence"
                     type="file"
                     onChange={handleOnChange}
                     disabled={!isFinancialSupport}

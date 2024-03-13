@@ -41,10 +41,10 @@ export default function FacultyConferencePublication() {
     Year_of_publication: "",
     ISSN_ISBN_number_of_the_proceeding: "",
     Affiliating_Institute_at_the_time_of_publication: "",
-    Link_To_Paper: null,
+    Link_To_Paper: "",
     Upload_Paper: null,
     Financial_support_given_by_institute_in_INR: "",
-    Evidence: null,
+    Upload_Evidence: null,
     DOI: "",
     Presented_Yes_No: "",
     Any_Achievements: "",
@@ -71,9 +71,9 @@ export default function FacultyConferencePublication() {
       formDataForFile.append("role", currentUser?.Role);
       formDataForFile.append("tableName", "faculty_conference_publication");
       formDataForFile.append("columnName", [
-        "Link_To_Paper",
+
         "Upload_Paper",
-        "Evidence",
+        "Upload_Evidence",
         "Upload_DOA",
       ]);
 
@@ -95,12 +95,11 @@ export default function FacultyConferencePublication() {
 
     let pathEvidence = null,
       pathReport,
-      pathStudent=null,
-      pathLink;
+      pathStudent = null;
     // console.log(isFinancialSupport);
     // console.log(formData.Evidence);
     // Check if evidence upload is required
-    if (isFinancialSupport && formData.Evidence === null) {
+    if (isFinancialSupport && formData.Upload_Evidence === null) {
       alert("Upload Evidence document");
       return;
     }
@@ -111,17 +110,15 @@ export default function FacultyConferencePublication() {
 
     try {
       if (isFinancialSupport) {
-        pathEvidence = await handleFileUpload(formData.Evidence);
+        pathEvidence = await handleFileUpload(formData.Upload_Evidence);
       }
       if (isAchievement === "Yes") {
         pathStudent = await handleFileUpload(formData.Upload_DOA);
       }
       if (
-        formData.Upload_Paper !== null &&
-        formData.Link_To_Paper !== null
+        formData.Upload_Paper !== null
       ) {
         pathReport = await handleFileUpload(formData.Upload_Paper);
-        pathLink = await handleFileUpload(formData.Link_To_Paper);
         // console.log("Upload path = ", pathUpload);
       } else {
         toast.error("Please select a file for upload", {
@@ -142,16 +139,14 @@ export default function FacultyConferencePublication() {
       const formDataWithFilePath = {
         ...formData,
 
-        Evidence: pathEvidence,
+        Upload_Evidence: pathEvidence,
         Upload_Paper: pathReport,
         Upload_DOA: pathStudent,
-        Link_To_Paper: pathLink,
       };
       if (
         pathEvidence === "" ||
         pathReport === "" ||
-        pathStudent === "" ||
-        pathLink === ""
+        pathStudent === ""
       ) {
         // If file is null, display a toast alert
         toast.error("Some error occurred while uploading file", {
@@ -395,7 +390,6 @@ export default function FacultyConferencePublication() {
               <Input
                 size="lg"
                 label="Link to paper"
-                type="file"
                 onChange={handleInputChange}
                 name="Link_To_Paper"
               />
@@ -461,7 +455,7 @@ export default function FacultyConferencePublication() {
                   <Input
                     size="lg"
                     label="Evidence Document"
-                    name="Evidence"
+                    name="Upload_Evidence"
                     type="file"
                     onChange={handleInputChange}
                     disabled={!isFinancialSupport}
@@ -514,27 +508,27 @@ export default function FacultyConferencePublication() {
                 size="lg"
                 label="Any Achievements"
                 name="Any_Achievements"
-                value={formData.Any_Achievements}
+                value={isAchievement}
                 onChange={(value) => setIsAchievement(value)}
               >
                 <Option value="Yes">Yes</Option>
                 <Option value="No">No</Option>
               </Select>
             </div>
-           {isAchievement === "Yes" && (
-             <div className="w-full md:w-1/2 px-4 mb-4">
-              <Typography variant="h6" color="blue-gray" className="mb-3">
-                Upload Achievement Document (Only Pdf)
-              </Typography>
-              <Input
-                size="lg"
-                type="file"
-                label="Upload Achievement Document"
-                onChange={handleInputChange}
-                name="Upload_DOA"
-              />
-           </div>
-           )}
+            {isAchievement === "Yes" && (
+              <div className="w-full md:w-1/2 px-4 mb-4">
+                <Typography variant="h6" color="blue-gray" className="mb-3">
+                  Upload Achievement Document (Only Pdf)
+                </Typography>
+                <Input
+                  size="lg"
+                  type="file"
+                  label="Upload Achievement Document"
+                  onChange={handleInputChange}
+                  name="Upload_DOA"
+                />
+              </div>
+            )}
           </div>
 
           <Button type="submit" className="mt-4" fullWidth>

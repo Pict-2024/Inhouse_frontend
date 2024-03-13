@@ -28,11 +28,11 @@ export default function TechEvents() {
     Username: currentUser?.Username,
     Academic_Year: "",
     Student_Name: currentUser?.Name,
-    Roll_No: "",
+    Roll_No: null,
     Email_ID: currentUser?.Username,
     Mobile_No: "",
     Department: "",
-    Year: "",
+    Class: "",
     Role: "",
     Technical_Event_Name: "",
     Name_of_Sub_Event: "",
@@ -50,8 +50,8 @@ export default function TechEvents() {
     Award_Prize_Money: "",
     Remarks: "",
     Geo_Tag_Photos: "",
-    Certificate_Link: null,
-    Evidence: null,
+    Upload_Certificate: null,
+    Upload_Evidence: null,
   });
 
   const generateAcademicYearOptions = () => {
@@ -88,7 +88,7 @@ export default function TechEvents() {
       formDataForFile.append("username", currentUser?.Username);
       formDataForFile.append("role", currentUser?.Role);
       formDataForFile.append("tableName", "student_technical_events");
-      formDataForFile.append("columnName", ["Certificate_Link", "Evidence"]);
+      formDataForFile.append("columnName", ["Upload_Certificate", "Upload_Evidence"]);
 
       const response = await axios.post(
         uploadRecordsTechincalStud,
@@ -112,9 +112,9 @@ export default function TechEvents() {
     var pathEvidence = null,
       pathReport;
     console.log(isFinancialSupport);
-    console.log(formData?.Evidence);
+    console.log(formData?.Upload_Evidence);
     // Check if evidence upload is required
-    if (isFinancialSupport && formData.Evidence === null) {
+    if (isFinancialSupport && formData.Upload_Evidence === null) {
       alert("Upload Evidence document");
       return;
     }
@@ -123,13 +123,13 @@ export default function TechEvents() {
       if (isFinancialSupport) {
         console.log("hi");
         // Handle evidence upload only if financial support is selected
-        pathEvidence = await handleFileUpload(formData.Evidence);
+        pathEvidence = await handleFileUpload(formData.Upload_Evidence);
       }
-      if (formData.Certificate_Link !== null) {
+      if (formData.Upload_Certificate !== null) {
         console.log("1");
 
         console.log("2");
-        pathReport = await handleFileUpload(formData.Certificate_Link);
+        pathReport = await handleFileUpload(formData.Upload_Certificate);
         console.log("3");
         console.log("4");
 
@@ -153,8 +153,8 @@ export default function TechEvents() {
       const formDataWithFilePath = {
         ...formData,
 
-        Evidence: pathEvidence,
-        Certificate_Link: pathReport,
+        Upload_Evidence: pathEvidence,
+        Upload_Certificate: pathReport,
       };
       if (pathEvidence === "" || pathReport === "") {
         // If file is null, display a toast alert
@@ -276,13 +276,13 @@ export default function TechEvents() {
                 Year of Study
               </Typography>
               <Select
-                id="Year"
+                id="Class"
                 size="lg"
-                label="Year"
-                value={formData.Year}
+                label="Class"
+                value={formData.Class}
                 onChange={(value) =>
                   handleOnChange({
-                    target: { id: "Year", value },
+                    target: { id: "Class", value },
                   })
                 }
               >
@@ -553,7 +553,7 @@ export default function TechEvents() {
                   <Input
                     size="lg"
                     label="Evidence Document"
-                    id="Evidence"
+                    id="Upload_Evidence"
                     type="file"
                     onChange={handleOnChange}
                     disabled={!isFinancialSupport}
@@ -596,7 +596,7 @@ export default function TechEvents() {
                 Upload Completion Certificate (Only Pdf)
               </Typography>
               <Input
-                id="Certificate_Link"
+                id="Upload_Certificate"
                 size="lg"
                 label=""
                 type="file"

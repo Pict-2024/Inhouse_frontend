@@ -246,7 +246,9 @@ export default function FacultyExchange() {
                 size="lg"
                 name="Year_of_signing"
                 value={formData.Year_of_signing}
-                onChange={handleChange}
+                onChange={(value) =>
+                  handleChange({ target: { name: "Year_of_signing", value } })
+                }
                 label="Select Year"
                 color="light-gray"
               >

@@ -19,6 +19,7 @@ export default function Internship() {
   const navigate = useNavigate();
 
   const [isPPO, setIsPPO] = useState("No");
+  const [errors, setErrors] = useState({});
 
   const { currentUser } = useSelector((state) => state.user);
   // console.log("currentuser:", currentUser);
@@ -28,7 +29,7 @@ export default function Internship() {
     Username: currentUser?.Username,
     Academic_Year: "",
     Student_Name: currentUser?.Name,
-    Roll_No: "",
+    Roll_No: null,
     Department: "",
     Year: "",
     Div: "",
@@ -45,9 +46,9 @@ export default function Internship() {
     External_Mentor_Name: "",
     External_Mentor_Email: "",
     External_Mentor_Mobile: "",
-    Completion_Certificate: null,
-    Internship_Report: null,
-    PPO_Offer: null,
+    Upload_Completion_Certificate: null,
+    Upload_Internship_Report: null,
+    Upload_PPO_Offer: null,
     Remark: "",
   });
 
@@ -69,6 +70,12 @@ export default function Internship() {
 
   const handleOnChange = (e) => {
     const { id, value, type, files } = e.target;
+
+    setErrors((prevErrors) => ({
+      ...prevErrors,
+      [id]: ""
+    }));
+
     setFormData({
       ...formData,
       [id]:
@@ -87,9 +94,9 @@ export default function Internship() {
       formDataForFile.append("role", currentUser?.Role);
       formDataForFile.append("tableName", "student_internship_details");
       formDataForFile.append("columnName", [
-        "Completion_Certificate",
-        "Internship_Report",
-        "PPO_Offer",
+        "Upload_Completion_Certificate",
+        "Upload_Internship_Report",
+        "Upload_PPO_Offer",
       ]);
 
       const response = await axios.post(
@@ -109,30 +116,65 @@ export default function Internship() {
   //add new record
   const handleSubmit = async (e) => {
     // console.log("handle submit api hit");
-    console.log("Form data is : ", formData);
     e.preventDefault();
+    // Check for empty required fields
+    const requiredFields = ["Academic_Year", "Department", "Year", "Div", "Internship_Title", "Internship_Organizer", "Internship_Company_Website_Address", "Company_Address", "Duration", "Mode", "Stipend", "Internal_Mentor_Name", "External_Mentor_Name", "External_Mentor_Email", "External_Mentor_Mobile", "Remark"];
+
+    const emptyFields = requiredFields.filter(field => !formData[field]);
+
+    if (emptyFields.length > 0) {
+      const emptyFieldNames = emptyFields.join(", ");
+      alert(`Please fill in all required fields: ${emptyFieldNames}`);
+      return;
+    }
+
+    // Validate Roll No
+    if (!(/^\d{5}$/.test(formData.Roll_No))) {
+      setErrors((prevErrors) => ({
+        ...prevErrors,
+        Roll_No: "Roll No must be a 5-digit number."
+      }));
+      return;
+    }
+
+    // Validate Mobile No
+    if (!(/^\d{10}$/.test(formData.Mobile_No))) {
+      setErrors((prevErrors) => ({
+        ...prevErrors,
+        Mobile_No: "Mobile No must be a 10-digit number."
+      }));
+      return;
+    }
+    // Validate Mobile No
+    if (!(/^\d{10}$/.test(formData.External_Mentor_Mobile))) {
+      setErrors((prevErrors) => ({
+        ...prevErrors,
+        Mobile_No: "Mobile No must be a 10-digit number."
+      }));
+      return;
+    }
 
     var completionPath,
       internshipPath,
       ppoPath = null;
-    if (isPPO === "Yes" && formData.PPO_Offer === null) {
+    if (isPPO === "Yes" && formData.Upload_PPO_Offer === null) {
       alert("Upload PPO evidence");
       return;
     }
 
     try {
       if (isPPO === "Yes") {
-        ppoPath = await handleFileUpload(formData.PPO_Offer);
+        ppoPath = await handleFileUpload(formData.Upload_PPO_Offer);
       }
 
       if (
-        formData.Completion_Certificate !== null &&
-        formData.Internship_Report !== null
+        formData.Upload_Completion_Certificate !== null &&
+        formData.Upload_Internship_Report !== null
       ) {
         completionPath = await handleFileUpload(
-          formData.Completion_Certificate
+          formData.Upload_Completion_Certificate
         );
-        internshipPath = await handleFileUpload(formData.Internship_Report);
+        internshipPath = await handleFileUpload(formData.Upload_Internship_Report);
       } else {
         toast.error("Please select a file for upload", {
           position: "top-right",
@@ -150,9 +192,9 @@ export default function Internship() {
       const formDataWithFilePath = {
         ...formData,
 
-        Completion_Certificate: completionPath,
-        Internship_Report: internshipPath,
-        PPO_Offer: ppoPath,
+        Upload_Completion_Certificate: completionPath,
+        Upload_Internship_Report: internshipPath,
+        Upload_PPO_Offer: ppoPath,
       };
       if (completionPath === "" || internshipPath === "") {
         // If file is null, display a toast alert
@@ -235,6 +277,7 @@ export default function Internship() {
                     target: { id: "Department", value },
                   })
                 }
+                required
               >
                 <Option value="CS">CS</Option>
                 <Option value="IT">IT</Option>
@@ -282,10 +325,12 @@ export default function Internship() {
               <Input
                 id="Roll_No"
                 size="lg"
+                type="number"
                 label="Roll No"
                 value={formData.Roll_No}
                 onChange={handleOnChange}
               />
+              {errors.Roll_No && <p className="text-red-500 text-sm">{errors.Roll_No}</p>}
             </div>
           </div>
 
@@ -301,6 +346,7 @@ export default function Internship() {
                 value={formData.Mobile_No}
                 onChange={handleOnChange}
               />
+              {errors.Mobile_No && <p className="text-red-500 text-sm">{errors.Mobile_No}</p>}
             </div>
             <div className="w-full md:w-1/2 px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
@@ -407,6 +453,7 @@ export default function Internship() {
               <Input
                 id="Duration"
                 size="lg"
+                type="number"
                 label="Duration"
                 value={formData.Duration}
                 onChange={handleOnChange}
@@ -501,6 +548,7 @@ export default function Internship() {
                 value={formData.External_Mentor_Mobile}
                 onChange={handleOnChange}
               />
+              {errors.External_Mentor_Mobile && <p className="text-red-500 text-sm">{errors.External_Mentor_Mobile}</p>}
             </div>
           </div>
 
@@ -510,7 +558,7 @@ export default function Internship() {
                 Completion Certificate
               </Typography>
               <Input
-                id="Completion_Certificate"
+                id="Upload_Completion_Certificate"
                 size="lg"
                 label=""
                 type="file"
@@ -522,7 +570,7 @@ export default function Internship() {
                 Internship Report
               </Typography>
               <Input
-                id="Internship_Report"
+                id="Upload_Internship_Report"
                 size="lg"
                 type="file"
                 label=""
@@ -553,7 +601,7 @@ export default function Internship() {
                   Proof of Evidence
                 </Typography>
                 <Input
-                  id="PPO_Offer"
+                  id="Upload_PPO_Offer"
                   size="lg"
                   label="Proof of Evidence"
                   type="file"
@@ -576,7 +624,7 @@ export default function Internship() {
           </div>
 
           <Button type="submit" className="mt-4" fullWidth>
-           Submit
+            Submit
           </Button>
         </form>
       </Card>

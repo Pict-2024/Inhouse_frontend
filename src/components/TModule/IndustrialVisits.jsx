@@ -31,8 +31,8 @@ export default function IndustrialVisit() {
     Coordinator: "",
     Finance_Support_By_PICT: "",
     Upload_Report: null,
-    Evidence: null,
-    List_of_Students: null,
+    Upload_Evidence: null,
+    Upload_List_of_Students: null,
   });
 
   const handleChange = (e) => {
@@ -56,8 +56,8 @@ export default function IndustrialVisit() {
       formDataForFile.append("tableName", "industrial_fields_tour");
       formDataForFile.append("columnName", [
         "Upload_Report",
-        "Evidence",
-        "List_of_Students",
+        "Upload_Evidence",
+        "Upload_List_of_Students",
       ]);
 
       const response = await axios.post(
@@ -83,9 +83,9 @@ export default function IndustrialVisit() {
       pathReport,
       pathStudent;
     console.log(isFinancialSupport);
-    console.log(formData.Evidence);
+    console.log(formData.Upload_Evidence);
     // Check if evidence upload is required
-    if (isFinancialSupport && formData.Evidence === null) {
+    if (isFinancialSupport && formData.Upload_Evidence === null) {
       alert("Upload Evidence document");
       return;
     }
@@ -94,18 +94,18 @@ export default function IndustrialVisit() {
       if (isFinancialSupport) {
         console.log("hi");
         // Handle evidence upload only if financial support is selected
-        pathEvidence = await handleFileUpload(formData.Evidence);
+        pathEvidence = await handleFileUpload(formData.Upload_Evidence);
       }
       if (
         formData.Upload_Report !== null &&
-        formData.List_of_Students !== null
+        formData.Upload_List_of_Students !== null
       ) {
         console.log("1");
 
         console.log("2");
         pathReport = await handleFileUpload(formData.Upload_Report);
         console.log("3");
-        pathStudent = await handleFileUpload(formData.List_of_Students);
+        pathStudent = await handleFileUpload(formData.Upload_List_of_Students);
         console.log("4");
 
         // console.log("Upload path = ", pathUpload);
@@ -128,9 +128,9 @@ export default function IndustrialVisit() {
       const formDataWithFilePath = {
         ...formData,
 
-        Evidence: pathEvidence,
+        Upload_Evidence: pathEvidence,
         Upload_Report: pathReport,
-        List_of_Students: pathStudent,
+        Upload_List_of_Students: pathStudent,
       };
       if (pathEvidence === "" && pathReport === "" && pathStudent === "") {
         // If file is null, display a toast alert
@@ -301,7 +301,7 @@ export default function IndustrialVisit() {
               </Typography>
               <Input
                 size="lg"
-                name="List_of_Students"
+                name="Upload_List_of_Students"
                 type="file"
                 label="List of Students"
                 onChange={handleChange}
@@ -354,7 +354,7 @@ export default function IndustrialVisit() {
                   <Input
                     size="lg"
                     label="Evidence Document"
-                    name="Evidence"
+                    name="Upload_Evidence"
                     type="file"
                     onChange={handleChange}
                     disabled={!isFinancialSupport}
