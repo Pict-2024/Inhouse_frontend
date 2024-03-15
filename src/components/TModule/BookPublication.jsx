@@ -74,7 +74,7 @@ export default function BookPublication() {
       let formDataForFile = new FormData();
       formDataForFile.append("files", file);
       const url = `${uploadRecordsBook}?${queryParams.toString()}`;
-      console.log("url builded by om" , url)
+      // console.log("url builded by om" , url)
       const response = await axios.post(url, formDataForFile);
       console.log("SOMETHING", response);
       console.log("file response:", response?.data?.uploadResults[0].filePath);
