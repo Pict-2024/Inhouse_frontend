@@ -20,6 +20,8 @@ export default function Research() {
   const { currentUser } = useSelector((state) => state.user);
   const [isFinancialSupport, setIsFinancialSupport] = useState(false);
   const [isAchievement, setIsAchievement] = useState("No");
+  const [uploadedFilePaths, setUploadedFilePaths] = useState({});
+
   const navigate = useNavigate();
   const currentYear = new Date().getFullYear();
   const years = Array.from(
@@ -56,7 +58,6 @@ export default function Research() {
     Achievements_if_any: "",
     Upload_DOA: null,
   });
-  const [uploadedFilePaths, setUploadedFilePaths] = useState({});
 
   const handleChange = (e) => {
     const { name, value, type, files } = e.target;
@@ -70,47 +71,57 @@ export default function Research() {
 
   const handleFileUpload = async (files) => {
     try {
-        const queryParams = new URLSearchParams();
-        queryParams.append("username", currentUser?.Username);
-        queryParams.append("role", currentUser?.Role);
-        queryParams.append("tableName", "research_publication");
-        // queryParams.append("columnNames", "Upload_Evidence,Upload_Paper,Upload_DOA");
+      const queryParams = new URLSearchParams();
+      queryParams.append("username", currentUser?.Username);
+      queryParams.append("role", currentUser?.Role);
+      queryParams.append("tableName", "research_publication");
+      // queryParams.append("columnNames", "Upload_Evidence,Upload_Paper,Upload_DOA");
 
-        let formDataForUpload = new FormData();
-        const columnNames = [];
-        // Append files under the 'files' field name as expected by the server
-        if (formData.Upload_Evidence) {
-          formDataForUpload.append("files", formData.Upload_Evidence);
-          columnNames.push("Upload_Evidence");
-        }
-        if (formData.Upload_Paper) {
-          formDataForUpload.append("files", formData.Upload_Paper);
-          columnNames.push("Upload_Paper");
-        }
-        if (formData.Upload_DOA) {
-          formDataForUpload.append("files", formData.Upload_DOA);
-          columnNames.push("Upload_DOA");
-        }
-        
-        // Append column names to the query parameters
-        queryParams.append("columnNames", columnNames.join(","));
-        console.log('query: ',queryParams);
-        const url = `${uploadRecordsResearch}?${queryParams.toString()}`;
-        console.log("url by om", url)
-        console.log("formdata", formDataForUpload)
-        const response = await axios.post(url, formDataForUpload, {
-            headers: {
-                "Content-Type": "multipart/form-data",
-            },
-        });
+      let formDataForUpload = new FormData();
+      const columnNames = [];
+      // Append files under the 'files' field name as expected by the server
+      if (formData.Upload_Evidence) {
+        formDataForUpload.append("files", formData.Upload_Evidence);
+        columnNames.push("Upload_Evidence");
+      }
+      if (formData.Upload_Paper) {
+        formDataForUpload.append("files", formData.Upload_Paper);
+        columnNames.push("Upload_Paper");
+      }
+      if (formData.Upload_DOA) {
+        formDataForUpload.append("files", formData.Upload_DOA);
+        columnNames.push("Upload_DOA");
+      }
 
-        console.log(response?.data?.uploadResults);
-        return response?.data?.uploadResults;
+      // Append column names to the query parameters
+      queryParams.append("columnNames", columnNames.join(","));
+      console.log('query: ', queryParams);
+      const url = `${uploadRecordsResearch}?${queryParams.toString()}`;
+      console.log("formdata", formDataForUpload)
+      const response = await axios.post(url, formDataForUpload, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+
+      console.log(response?.data?.uploadResults);
+      return response?.data?.uploadResults;
     } catch (error) {
-        console.error("Error uploading file:", error);
-        // Handle error as needed
+      console.error("Error uploading file:", error);
+      // Handle error as needed
+      // Display an error toast
+      toast.error(error?.response?.data?.message, {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
     }
-};
+  };
 
 
 
@@ -118,13 +129,21 @@ export default function Research() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     console.log(formData);
-    
 
-    var pathEvidence = null,
-      pathReport,
-      pathStudent = null;
-    console.log(isAchievement);
-    // console.log(formData.Evidence);
+    if (formData.Upload_Paper === null) {
+      // Display an error toast
+      toast.error("Select file for upload", {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+      return;
+    }
     // Check if evidence upload is required
     if (isFinancialSupport && formData.Upload_Evidence === null) {
       alert("Upload Evidence document");
@@ -134,24 +153,22 @@ export default function Research() {
       alert("Upload Achievement document");
       return;
     }
- 
+
     try {
-      let fileUploadResults = {}; // Object to store file upload results
 
       // Collect all files that need to be uploaded
       const filesToUpload = [];
       if (isFinancialSupport && formData.Upload_Evidence) {
-          filesToUpload.push(formData.Upload_Evidence);
+        filesToUpload.push(formData.Upload_Evidence);
       }
       if (isAchievement === "Yes" && formData.Upload_DOA) {
-          filesToUpload.push(formData.Upload_DOA);
+        filesToUpload.push(formData.Upload_DOA);
       }
       if (formData.Upload_Paper) {
-          filesToUpload.push(formData.Upload_Paper);
+        filesToUpload.push(formData.Upload_Paper);
       }
-      // console.log("Evidence path:",pathEvidence);
-      // If file upload is successful, continue with the form submission
 
+      // If file upload is successful, continue with the form submission
       const uploadResults = await handleFileUpload(filesToUpload);
 
       // Store the paths of uploaded files in the uploadedFilePaths object
@@ -166,24 +183,7 @@ export default function Research() {
         ...formData,
         ...updatedUploadedFilePaths,
       };
-      // if (
-      //   pathEvidence === "" ||
-      //   pathReport === "" ||
-      //   pathStudent === ""
-      // ) {
-      //   // If file is null, display a toast alert
-      //   toast.error("Some error occurred while uploading file", {
-      //     position: "top-right",
-      //     autoClose: 3000,
-      //     hideProgressBar: false,
-      //     closeOnClick: true,
-      //     pauseOnHover: true,
-      //     draggable: true,
-      //     progress: undefined,
-      //     theme: "light",
-      //   });
-      //   return;
-      // }
+
 
       console.log("Final data:", formDataWithFilePath);
 
@@ -209,7 +209,7 @@ export default function Research() {
       console.error("File upload error:", error);
 
       // Display an error toast
-      toast.error("File upload failed. Please try again.", {
+      toast.error(error?.response?.data?.message, {
         position: "top-right",
         autoClose: 3000,
         hideProgressBar: false,

@@ -17,6 +17,7 @@ import { addRecordsConference, uploadRecordsConference } from "./API_Routes";
 
 export default function ConfeSeminar() {
   const { currentUser } = useSelector((state) => state.user);
+  const [uploadedFilePaths, setUploadedFilePaths] = useState({});
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     T_ID: null,
@@ -53,42 +54,65 @@ export default function ConfeSeminar() {
         type === "file" ? (files && files.length > 0 ? files[0] : null) : value,
     });
   };
-  const handleFileUpload = async () => {
-    const formDataForUpload = new FormData();
-    // Append additional fields required by the server
-    formDataForUpload.append("username", currentUser?.Username);
-    formDataForUpload.append("role", currentUser?.Role);
-    formDataForUpload.append("tableName", "conference_seminar_workshops");
-    formDataForUpload.append("columnNames", "Upload_List_of_Students,Upload_List_of_Students_Outside,Upload_Sample_Certificate,Upload_Evidence, Upload_Report");
 
-    // Append files under the 'files' field name as expected by the server
-    if (formData.Upload_List_of_Students) {
-      formDataForUpload.append("files", formData.Upload_List_of_Students);
-    }
-    if (formData.Upload_List_of_Students_Outside) {
-      formDataForUpload.append("files", formData.Upload_List_of_Students_Outside);
-    }
-    if (formData.Upload_Sample_Certificate) {
-      formDataForUpload.append("files", formData.Upload_Sample_Certificate);
-    }
-    if (formData.Upload_Evidence) {
-      formDataForUpload.append("files", formData.Upload_Evidence);
-    }
-    if (formData.Upload_Report) {
-      formDataForUpload.append("files", formData.Upload_Report);
-    }
-
-
+  const handleFileUpload = async (files) => {
     try {
-      const response = await axios.post(uploadRecordsConference, formDataForUpload, {
+      const queryParams = new URLSearchParams();
+      queryParams.append("username", currentUser?.Username);
+      queryParams.append("role", currentUser?.Role);
+      queryParams.append("tableName", "conference_seminar_workshops");
+
+      let formDataForUpload = new FormData();
+      const columnNames = [];
+      // Append files under the 'files' field name as expected by the server
+      if (formData.Upload_List_of_Students) {
+        formDataForUpload.append("files", formData.Upload_List_of_Students);
+        columnNames.push("Upload_List_of_Students");
+      }
+      if (formData.Upload_Evidence) {
+        formDataForUpload.append("files", formData.Upload_Evidence);
+        columnNames.push("Upload_Evidence");
+      }
+      if (formData.Upload_List_of_Students_Outside) {
+        formDataForUpload.append("files", formData.Upload_List_of_Students_Outside);
+        columnNames.push("Upload_List_of_Students_Outside");
+      }
+      if (formData.Upload_Report) {
+        formDataForUpload.append("files", formData.Upload_Report);
+        columnNames.push("Upload_Report");
+      }
+      if (formData.Upload_Sample_Certificate) {
+        formDataForUpload.append("files", formData.Upload_Sample_Certificate);
+        columnNames.push("Upload_Sample_Certificate");
+      }
+
+
+      // Append column names to the query parameters
+      queryParams.append("columnNames", columnNames.join(","));
+      console.log('query: ', queryParams);
+      const url = `${uploadRecordsConference}?${queryParams.toString()}`;
+      console.log("formdata", formDataForUpload)
+      const response = await axios.post(url, formDataForUpload, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
       });
+
       console.log(response?.data?.uploadResults);
       return response?.data?.uploadResults;
     } catch (error) {
       console.error("Error uploading file:", error);
+      toast.error(error?.response?.data?.message, {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+      return;
       // Handle error as needed
     }
   };
@@ -98,9 +122,10 @@ export default function ConfeSeminar() {
     e.preventDefault();
     console.log(formData);
 
-    if (formData.Upload_Amt_Deposited === null || formData.Upload_Link_to_evidence === null
-      || formData.Upload_Paper === null) {
-      toast.error("Please select a file for upload.", {
+    if (formData.Upload_Evidence === null || formData.Upload_List_of_Students === null
+      || formData.Upload_List_of_Students_Outside === null || formData.Upload_Report === null
+      || formData.Upload_Sample_Certificate === null) {
+      toast.error("Select a file for upload.", {
         position: "top-right",
         autoClose: 3000,
         hideProgressBar: false,
@@ -113,65 +138,39 @@ export default function ConfeSeminar() {
       return;
     }
     try {
-      if (
-        formData.Upload_Report !== null &&
-        formData.Upload_Sample_Certificate !== null &&
-        formData.Upload_Evidence !== null &&
-        formData.Upload_List_of_Students_Outside !== null &&
-        formData.Upload_List_of_Students !== null
-      ) {
-        // console.log("2");
-        pathReport = await handleFileUpload(formData.Upload_Report);
-        pathCert = await handleFileUpload(formData.Upload_Sample_Certificate);
-        pathEvidence = await handleFileUpload(formData.Upload_Evidence);
-        pathOutside = await handleFileUpload(formData.Upload_List_of_Students_Outside);
-        pathPICT = await handleFileUpload(formData.Upload_List_of_Students);
+      const filesToUpload = [];
 
-        // console.log("Upload path = ", pathUpload);
-      } else {
-        toast.error("Please select a file for upload", {
-          position: "top-right",
-          autoClose: 3000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
-        });
-        return;
+      if (formData.Upload_Evidence !== null) {
+        filesToUpload.push(formData.Upload_Evidence);
+      }
+      if (formData.Upload_List_of_Students !== null) {
+        filesToUpload.push(formData.Upload_List_of_Students);
+      }
+      if (formData.Upload_List_of_Students_Outside !== null) {
+        filesToUpload.push(formData.Upload_List_of_Students_Outside);
+      }
+      if (formData.Upload_Report !== null) {
+        filesToUpload.push(formData.Upload_Report);
+      }
+      if (formData.Upload_Sample_Certificate !== null) {
+        filesToUpload.push(formData.Upload_Sample_Certificate);
       }
 
       // If file upload is successful, continue with the form submission
+      const uploadResults = await handleFileUpload(filesToUpload);
+
+      // Store the paths of uploaded files in the uploadedFilePaths object
+      const updatedUploadedFilePaths = { ...uploadedFilePaths };
+      uploadResults.forEach((result) => {
+        updatedUploadedFilePaths[result.columnName] = result.filePath;
+      });
+      setUploadedFilePaths(updatedUploadedFilePaths);
+
+      // Merge uploaded file paths with existing formData
       const formDataWithFilePath = {
         ...formData,
-        Upload_Report: pathReport,
-        Upload_Sample_Certificate: pathCert,
-        Upload_Evidence: pathEvidence,
-        Upload_List_of_Students_Outside: pathOutside,
-        Upload_List_of_Students: pathPICT,
+        ...updatedUploadedFilePaths,
       };
-      if (
-        pathReport === "" &&
-        pathCert === "" &&
-        pathEvidence === "" &&
-        pathOutside === "" &&
-        pathPICT === ""
-      ) {
-        // If file is null, display a toast alert
-        toast.error("Some error occurred while uploading file", {
-          position: "top-right",
-          autoClose: 3000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
-        });
-        return;
-      }
-
       console.log("Final data:", formDataWithFilePath);
 
       // Send a POST request to the addRecordsBook API endpoint
@@ -195,8 +194,7 @@ export default function ConfeSeminar() {
       // Handle file upload error
       console.error("File upload error:", error);
 
-      // Display an error toast
-      toast.error("File upload failed. Please try again.", {
+      toast.error(error?.response?.data?.message, {
         position: "top-right",
         autoClose: 3000,
         hideProgressBar: false,
@@ -206,6 +204,7 @@ export default function ConfeSeminar() {
         progress: undefined,
         theme: "light",
       });
+      return;
     }
   };
 

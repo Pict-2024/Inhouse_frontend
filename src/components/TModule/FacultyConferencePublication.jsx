@@ -20,6 +20,7 @@ export default function FacultyConferencePublication() {
 
   const [isFinancialSupport, setIsFinancialSupport] = useState(false);
   const [isAchievement, setIsAchievement] = useState("No");
+  const [uploadedFilePaths, setUploadedFilePaths] = useState({});
   const navigate = useNavigate();
   const currentYear = new Date().getFullYear();
   const years = Array.from(
@@ -61,43 +62,79 @@ export default function FacultyConferencePublication() {
     });
   };
 
-  const handleFileUpload = async (file) => {
+  const handleFileUpload = async (files) => {
     try {
-      console.log("file as:", file);
+      const queryParams = new URLSearchParams();
+      queryParams.append("username", currentUser?.Username);
+      queryParams.append("role", currentUser?.Role);
+      queryParams.append("tableName", "faculty_conference_publication");
 
-      const formDataForFile = new FormData();
-      formDataForFile.append("file", file);
-      formDataForFile.append("username", currentUser?.Username);
-      formDataForFile.append("role", currentUser?.Role);
-      formDataForFile.append("tableName", "faculty_conference_publication");
-      formDataForFile.append("columnName", [
+      let formDataForUpload = new FormData();
+      const columnNames = [];
+      // Append files under the 'files' field name as expected by the server
+      if (formData.Upload_Paper) {
+        formDataForUpload.append("files", formData.Upload_Paper);
+        columnNames.push("Upload_Paper");
+      }
+      if (formData.Upload_Evidence) {
+        formDataForUpload.append("files", formData.Upload_Evidence);
+        columnNames.push("Upload_Evidence");
+      }
+      if (formData.Upload_DOA) {
+        formDataForUpload.append("files", formData.Upload_DOA);
+        columnNames.push("Upload_DOA");
+      }
 
-        "Upload_Paper",
-        "Upload_Evidence",
-        "Upload_DOA",
-      ]);
 
-      const response = await axios.post(uploadRecordsFaculty, formDataForFile);
-      console.log(response);
-      // console.log("file response:", response.data.filePath);
+      // Append column names to the query parameters
+      queryParams.append("columnNames", columnNames.join(","));
+      console.log('query: ', queryParams);
+      const url = `${uploadRecordsFaculty}?${queryParams.toString()}`;
+      console.log("formdata", formDataForUpload)
+      const response = await axios.post(url, formDataForUpload, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
 
-      return response.data.filePath;
+      console.log(response?.data?.uploadResults);
+      return response?.data?.uploadResults;
     } catch (error) {
       console.error("Error uploading file:", error);
+      toast.error(error?.response?.data?.message, {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+      return;
       // Handle error as needed
     }
   };
+
 
   //Add records
   const handleSubmit = async (e) => {
     e.preventDefault();
     console.log(formData);
 
-    let pathEvidence = null,
-      pathReport,
-      pathStudent = null;
-    // console.log(isFinancialSupport);
-    // console.log(formData.Evidence);
+    if (formData.Upload_Paper === null) {
+      toast.error("Select file for upload", {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+      return;
+    }
     // Check if evidence upload is required
     if (isFinancialSupport && formData.Upload_Evidence === null) {
       alert("Upload Evidence document");
@@ -109,59 +146,32 @@ export default function FacultyConferencePublication() {
     }
 
     try {
-      if (isFinancialSupport) {
-        pathEvidence = await handleFileUpload(formData.Upload_Evidence);
+      const filesToUpload = [];
+      if (isFinancialSupport && formData.Upload_Evidence) {
+        filesToUpload.push(formData.Upload_Evidence);
       }
-      if (isAchievement === "Yes") {
-        pathStudent = await handleFileUpload(formData.Upload_DOA);
+      if (formData.Upload_DOA !== null) {
+        filesToUpload.push(formData.Upload_DOA);
       }
-      if (
-        formData.Upload_Paper !== null
-      ) {
-        pathReport = await handleFileUpload(formData.Upload_Paper);
-        // console.log("Upload path = ", pathUpload);
-      } else {
-        toast.error("Please select a file for upload", {
-          position: "top-right",
-          autoClose: 3000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
-        });
-        return;
+      if (formData.Upload_Paper !== null) {
+        filesToUpload.push(formData.Upload_Paper);
       }
-      // console.log("Evidence path:",pathEvidence);
-      // If file upload is successful, continue with the form submission
 
+      // If file upload is successful, continue with the form submission
+      const uploadResults = await handleFileUpload(filesToUpload);
+
+      // Store the paths of uploaded files in the uploadedFilePaths object
+      const updatedUploadedFilePaths = { ...uploadedFilePaths };
+      uploadResults.forEach((result) => {
+        updatedUploadedFilePaths[result.columnName] = result.filePath;
+      });
+      setUploadedFilePaths(updatedUploadedFilePaths);
+
+      // Merge uploaded file paths with existing formData
       const formDataWithFilePath = {
         ...formData,
-
-        Upload_Evidence: pathEvidence,
-        Upload_Paper: pathReport,
-        Upload_DOA: pathStudent,
+        ...updatedUploadedFilePaths,
       };
-      if (
-        pathEvidence === "" ||
-        pathReport === "" ||
-        pathStudent === ""
-      ) {
-        // If file is null, display a toast alert
-        toast.error("Some error occurred while uploading file", {
-          position: "top-right",
-          autoClose: 3000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
-        });
-        return;
-      }
-
       console.log("Final data:", formDataWithFilePath);
 
       // Send a POST request to the addRecordsBook API endpoint
@@ -186,7 +196,7 @@ export default function FacultyConferencePublication() {
       console.error("File upload error:", error);
 
       // Display an error toast
-      toast.error("File upload failed. Please try again.", {
+      toast.error(error?.response?.data?.message, {
         position: "top-right",
         autoClose: 3000,
         hideProgressBar: false,

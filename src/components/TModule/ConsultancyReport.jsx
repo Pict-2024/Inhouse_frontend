@@ -17,6 +17,7 @@ import { addRecordsConsultancy, uploadRecordsConsultancy } from "./API_Routes";
 
 export default function ConsultancyReport() {
   const { currentUser } = useSelector((state) => state.user);
+  const [uploadedFilePaths, setUploadedFilePaths] = useState({});
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     T_ID: null,
@@ -49,36 +50,56 @@ export default function ConsultancyReport() {
     });
   };
 
-  const handleFileUpload = async () => {
-    const formDataForUpload = new FormData();
-    // Append additional fields required by the server
-    formDataForUpload.append("username", currentUser?.Username);
-    formDataForUpload.append("role", currentUser?.Role);
-    formDataForUpload.append("tableName", "grants");
-    formDataForUpload.append("columnNames", "Upload_Amt_Deposited,Upload_Link_to_evidence,Upload_Paper");
-
-    // Append files under the 'files' field name as expected by the server
-    if (formData.Upload_Amt_Deposited) {
-      formDataForUpload.append("files", formData.Upload_Amt_Deposited);
-    }
-    if (formData.Upload_Link_to_evidence) {
-      formDataForUpload.append("files", formData.Upload_Link_to_evidence);
-    }
-    if (formData.Upload_Paper) {
-      formDataForUpload.append("files", formData.Upload_Paper);
-    }
-
-
+  const handleFileUpload = async (files) => {
     try {
-      const response = await axios.post(uploadRecordsConsultancy, formDataForUpload, {
+      const queryParams = new URLSearchParams();
+      queryParams.append("username", currentUser?.Username);
+      queryParams.append("role", currentUser?.Role);
+      queryParams.append("tableName", "consultancy_report");
+
+      let formDataForUpload = new FormData();
+      const columnNames = [];
+      // Append files under the 'files' field name as expected by the server
+      if (formData.Upload_Amt_Deposited) {
+        formDataForUpload.append("files", formData.Upload_Amt_Deposited);
+        columnNames.push("Upload_Amt_Deposited");
+      }
+      if (formData.Upload_Link_to_evidence) {
+        formDataForUpload.append("files", formData.Upload_Link_to_evidence);
+        columnNames.push("Upload_Link_to_evidence");
+      }
+      if (formData.Upload_Paper) {
+        formDataForUpload.append("files", formData.Upload_Paper);
+        columnNames.push("Upload_Paper");
+      }
+
+
+      // Append column names to the query parameters
+      queryParams.append("columnNames", columnNames.join(","));
+      console.log('query: ', queryParams);
+      const url = `${uploadRecordsConsultancy}?${queryParams.toString()}`;
+      console.log("formdata", formDataForUpload)
+      const response = await axios.post(url, formDataForUpload, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
       });
+
       console.log(response?.data?.uploadResults);
       return response?.data?.uploadResults;
     } catch (error) {
       console.error("Error uploading file:", error);
+      toast.error(error?.response?.data?.message, {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+      return;
       // Handle error as needed
     }
   };
@@ -89,7 +110,7 @@ export default function ConsultancyReport() {
     console.log(formData);
     if (formData.Upload_Amt_Deposited === null || formData.Upload_Link_to_evidence === null
       || formData.Upload_Paper === null) {
-      toast.error("Please select a file for upload.", {
+      toast.error("Select a file for upload.", {
         position: "top-right",
         autoClose: 3000,
         hideProgressBar: false,
@@ -102,23 +123,32 @@ export default function ConsultancyReport() {
       return;
     }
     try {
-      const uploadResults = await handleFileUpload();
-      console.log("Upload results:", uploadResults);
+      const filesToUpload = [];
 
-      // Map the upload results to an object where the keys are columnNames and the values are filePaths
-      const filePaths = uploadResults.reduce((acc, curr) => {
-        acc[curr.columnName] = curr.filePath;
-        return acc;
-      }, {});
+      if (formData.Upload_Amt_Deposited !== null) {
+        filesToUpload.push(formData.Upload_Amt_Deposited);
+      }
+      if (formData.Upload_Link_to_evidence !== null) {
+        filesToUpload.push(formData.Upload_Link_to_evidence);
+      }
+      if (formData.Upload_Paper !== null) {
+        filesToUpload.push(formData.Upload_Paper);
+      }
 
-      console.log("File paths:", filePaths);
+      // If file upload is successful, continue with the form submission
+      const uploadResults = await handleFileUpload(filesToUpload);
 
-      // Update formData with the file paths
+      // Store the paths of uploaded files in the uploadedFilePaths object
+      const updatedUploadedFilePaths = { ...uploadedFilePaths };
+      uploadResults.forEach((result) => {
+        updatedUploadedFilePaths[result.columnName] = result.filePath;
+      });
+      setUploadedFilePaths(updatedUploadedFilePaths);
+
+      // Merge uploaded file paths with existing formData
       const formDataWithFilePath = {
         ...formData,
-        Upload_Amt_Deposited: filePaths["Upload_Amt_Deposited"],
-        Upload_Link_to_evidence: filePaths["Upload_Link_to_evidence"],
-        Upload_Paper: filePaths["Upload_Paper"],
+        ...updatedUploadedFilePaths,
       };
       console.log("Final data:", formDataWithFilePath);
 
@@ -144,7 +174,7 @@ export default function ConsultancyReport() {
       console.error("File upload error:", error);
 
       // Display an error toast
-      toast.error("File upload failed. Please try again.", {
+      toast.error(error?.response?.data?.message, {
         position: "top-right",
         autoClose: 3000,
         hideProgressBar: false,
@@ -154,6 +184,7 @@ export default function ConsultancyReport() {
         progress: undefined,
         theme: "light",
       });
+      return;
     }
   };
 

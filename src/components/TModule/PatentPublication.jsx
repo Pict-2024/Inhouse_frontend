@@ -19,8 +19,10 @@ import { addRecordsPatent, uploadRecordsPatent } from "./API_Routes";
 export default function PatentPublication() {
   const { currentUser } = useSelector((state) => state.user);
   const [isFinancialSupport, setIsFinancialSupport] = useState(false);
+  const [uploadedFilePaths, setUploadedFilePaths] = useState({});
+
   const navigate = useNavigate();
-  
+
   const [formData, setFormData] = useState({
     T_ID: null,
     Name: currentUser?.Name,
@@ -56,29 +58,60 @@ export default function PatentPublication() {
     });
   };
 
-  const handleFileUpload = async (file) => {
+  const handleFileUpload = async (files) => {
     try {
-      console.log("file as:", file);
+      const queryParams = new URLSearchParams();
+      queryParams.append("username", currentUser?.Username);
+      queryParams.append("role", currentUser?.Role);
+      queryParams.append("tableName", "patent_publication");
 
-      const formDataForFile = new FormData();
-      formDataForFile.append("file", file);
-      formDataForFile.append("username", currentUser?.Username);
-      formDataForFile.append("role", currentUser?.Role);
-      formDataForFile.append("tableName", "patent_publication");
-      formDataForFile.append("columnName", [
-        "Upload_Evidence",
-        "Upload_Approval_Letter",
-        "Upload_Patent_Document",
-        "Upload_Patent_Grant",
-      ]);
+      let formDataForUpload = new FormData();
+      const columnNames = [];
+      // Append files under the 'files' field name as expected by the server
+      if (formData.Upload_Approval_Letter) {
+        formDataForUpload.append("files", formData.Upload_Approval_Letter);
+        columnNames.push("Upload_Approval_Letter");
+      }
+      if (formData.Upload_Evidence) {
+        formDataForUpload.append("files", formData.Upload_Evidence);
+        columnNames.push("Upload_Evidence");
+      }
+      if (formData.Upload_Patent_Document) {
+        formDataForUpload.append("files", formData.Upload_Patent_Document);
+        columnNames.push("Upload_Patent_Document");
+      }
+      if (formData.Upload_Patent_Grant) {
+        formDataForUpload.append("files", formData.Upload_Patent_Grant);
+        columnNames.push("Upload_Patent_Grant");
+      }
 
-      const response = await axios.post(uploadRecordsPatent, formDataForFile);
-      console.log(response);
-      // console.log("file response:", response.data.filePath);
 
-      return response.data.filePath;
+      // Append column names to the query parameters
+      queryParams.append("columnNames", columnNames.join(","));
+      console.log('query: ', queryParams);
+      const url = `${uploadRecordsPatent}?${queryParams.toString()}`;
+      console.log("formdata", formDataForUpload)
+      const response = await axios.post(url, formDataForUpload, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+
+      console.log(response?.data?.uploadResults);
+      return response?.data?.uploadResults;
     } catch (error) {
       console.error("Error uploading file:", error);
+      toast.error(error?.response?.data?.message, {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+      return;
       // Handle error as needed
     }
   };
@@ -88,75 +121,55 @@ export default function PatentPublication() {
     e.preventDefault();
     console.log(formData);
 
-    var pathEvidence = null,
-      pathReport,
-      pathDoc,
-      pathGrant;
-    console.log(isFinancialSupport);
-    console.log(formData.Upload_Evidence);
-    // Check if evidence upload is required
+    if (formData.Upload_Approval_Letter === null || formData.Upload_Patent_Document === null ||
+      formData.Upload_Patent_Grant === null) {
+      toast.error('Select file for upload', {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+      return;
+    }
     if (isFinancialSupport && formData.Upload_Evidence === null) {
       alert("Upload Evidence document");
       return;
     }
 
     try {
-      if (isFinancialSupport) {
-        pathEvidence = await handleFileUpload(formData.Upload_Evidence);
+      const filesToUpload = [];
+      if (isFinancialSupport && formData.Upload_Evidence) {
+        filesToUpload.push(formData.Upload_Evidence);
       }
-      if (
-        formData.Upload_Approval_Letter !== null &&
-        formData.Upload_Patent_Document !== null &&
-        formData.Upload_Patent_Grant !== null
-      ) {
-        pathReport = await handleFileUpload(formData.Upload_Approval_Letter);
-        pathDoc = await handleFileUpload(formData.Upload_Patent_Document);
-        pathGrant = await handleFileUpload(formData.Upload_Patent_Grant);
+      if (formData.Upload_Approval_Letter !== null) {
+        filesToUpload.push(formData.Upload_Approval_Letter);
+      }
+      if (formData.Upload_Patent_Document !== null) {
+        filesToUpload.push(formData.Upload_Patent_Document);
+      }
+      if (formData.Upload_Patent_Grant !== null) {
+        filesToUpload.push(formData.Upload_Patent_Grant);
+      }
 
-        // console.log("Upload path = ", pathUpload);
-      } else {
-        toast.error("Please select a file for upload", {
-          position: "top-right",
-          autoClose: 3000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
-        });
-        return;
-      }
-      // console.log("Evidence path:",pathEvidence);
       // If file upload is successful, continue with the form submission
+      const uploadResults = await handleFileUpload(filesToUpload);
 
+      // Store the paths of uploaded files in the uploadedFilePaths object
+      const updatedUploadedFilePaths = { ...uploadedFilePaths };
+      uploadResults.forEach((result) => {
+        updatedUploadedFilePaths[result.columnName] = result.filePath;
+      });
+      setUploadedFilePaths(updatedUploadedFilePaths);
+
+      // Merge uploaded file paths with existing formData
       const formDataWithFilePath = {
         ...formData,
-
-        Upload_Evidence: pathEvidence,
-        Upload_Approval_Letter: pathReport,
-        Upload_Patent_Document: pathDoc,
-        Upload_Patent_Grant: pathGrant,
+        ...updatedUploadedFilePaths,
       };
-      if (
-        pathEvidence === "" ||
-        pathReport === "" ||
-        pathDoc === "" ||
-        pathGrant === ""
-      ) {
-        // If file is null, display a toast alert
-        toast.error("Some error occurred while uploading file", {
-          position: "top-right",
-          autoClose: 3000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
-        });
-        return;
-      }
 
       console.log("Final data:", formDataWithFilePath);
 
@@ -182,7 +195,7 @@ export default function PatentPublication() {
       console.error("File upload error:", error);
 
       // Display an error toast
-      toast.error("File upload failed. Please try again.", {
+      toast.error(error?.response?.data?.message, {
         position: "top-right",
         autoClose: 3000,
         hideProgressBar: false,
@@ -192,6 +205,7 @@ export default function PatentPublication() {
         progress: undefined,
         theme: "light",
       });
+      return;
     }
   };
 
@@ -506,7 +520,7 @@ export default function PatentPublication() {
               <Typography variant="h6" color="blue-gray" className="mb-3">
                 Upload Patent grant document (Only Pdf)
               </Typography>
-             
+
               <Input
                 size="lg"
                 name="Upload_Patent_Grant"

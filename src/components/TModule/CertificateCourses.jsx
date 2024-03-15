@@ -17,6 +17,7 @@ import { addRecordsCertificate, uploadRecordsCertificate } from "./API_Routes";
 
 export default function CertificateCourses() {
   const { currentUser } = useSelector((state) => state.user);
+  const [uploadedFilePaths, setUploadedFilePaths] = useState({});
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     T_ID: null,
@@ -37,7 +38,7 @@ export default function CertificateCourses() {
     PSOs_Attained: "",
     Fund_Generated: "",
     Sponsorship_collaboration: "",
-    Sample_Certificate: null,
+    Upload_Sample_Certificate: null,
     Upload_Report: null,
   });
 
@@ -67,27 +68,52 @@ export default function CertificateCourses() {
     });
   };
 
-  const handleFileUpload = async (file) => {
+  const handleFileUpload = async (files) => {
     try {
-      // console.log("file as:", file);
+      const queryParams = new URLSearchParams();
+      queryParams.append("username", currentUser?.Username);
+      queryParams.append("role", currentUser?.Role);
+      queryParams.append("tableName", "certificate_courses");
 
-      const formDataForFile = new FormData();
-      formDataForFile.append("file", file);
-      formDataForFile.append("username", currentUser?.Username);
-      formDataForFile.append("role", currentUser?.Role);
-      formDataForFile.append("tableName", "certificate_courses");
-      formDataForFile.append("columnName", ["Sample_Certificate", "Upload_Report"]);
+      let formDataForUpload = new FormData();
+      const columnNames = [];
+      // Append files under the 'files' field name as expected by the server
+      if (formData.Upload_Report) {
+        formDataForUpload.append("files", formData.Upload_Report);
+        columnNames.push("Upload_Report");
+      }
+      if (formData.Upload_Sample_Certificate) {
+        formDataForUpload.append("files", formData.Upload_Sample_Certificate);
+        columnNames.push("Upload_Sample_Certificate");
+      }
 
-      const response = await axios.post(
-        uploadRecordsCertificate,
-        formDataForFile
-      );
-      console.log(response);
-      // console.log("file response:", response.data.filePath);
 
-      return response.data.filePath;
+      // Append column names to the query parameters
+      queryParams.append("columnNames", columnNames.join(","));
+      console.log('query: ', queryParams);
+      const url = `${uploadRecordsCertificate}?${queryParams.toString()}`;
+      console.log("formdata", formDataForUpload)
+      const response = await axios.post(url, formDataForUpload, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+
+      console.log(response?.data?.uploadResults);
+      return response?.data?.uploadResults;
     } catch (error) {
       console.error("Error uploading file:", error);
+      toast.error(error?.response?.data?.message, {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+      return;
       // Handle error as needed
     }
   };
@@ -96,53 +122,45 @@ export default function CertificateCourses() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     console.log(formData);
+    if (formData.Upload_Report === null || formData.Upload_Sample_Certificate === null) {
+      toast.error("Select a file for upload", {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+      return;
+    }
 
-    var pathReport, pathStudent;
-    // console.log(formData.Sample_Certificate);
     try {
-      if (formData.Upload_Report !== null && formData.Sample_Certificate !== null) {
-        // console.log("2");
-        pathReport = await handleFileUpload(formData.Upload_Report);
-        // console.log("3");
-        pathStudent = await handleFileUpload(formData.Sample_Certificate);
-        // console.log("4");
+      const filesToUpload = [];
 
-        // console.log("Upload path = ", pathUpload);
-      } else {
-        toast.error("Please select a file for upload", {
-          position: "top-right",
-          autoClose: 3000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
-        });
-        return;
+      if (formData.Upload_Report !== null) {
+        filesToUpload.push(formData.Upload_Report);
+      }
+      if (formData.Upload_Sample_Certificate !== null) {
+        filesToUpload.push(formData.Upload_Sample_Certificate);
       }
 
       // If file upload is successful, continue with the form submission
+      const uploadResults = await handleFileUpload(filesToUpload);
+
+      // Store the paths of uploaded files in the uploadedFilePaths object
+      const updatedUploadedFilePaths = { ...uploadedFilePaths };
+      uploadResults.forEach((result) => {
+        updatedUploadedFilePaths[result.columnName] = result.filePath;
+      });
+      setUploadedFilePaths(updatedUploadedFilePaths);
+
+      // Merge uploaded file paths with existing formData
       const formDataWithFilePath = {
         ...formData,
-
-        Upload_Report: pathReport,
-        Sample_Certificate: pathStudent,
+        ...updatedUploadedFilePaths,
       };
-      if (pathReport === "" && pathStudent === "") {
-        // If file is null, display a toast alert
-        toast.error("Some error occurred while uploading file", {
-          position: "top-right",
-          autoClose: 3000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
-        });
-        return;
-      }
 
       console.log("Final data:", formDataWithFilePath);
 
@@ -168,7 +186,7 @@ export default function CertificateCourses() {
       console.error("File upload error:", error);
 
       // Display an error toast
-      toast.error("File upload failed. Please try again.", {
+      toast.error(error?.response?.data?.message, {
         position: "top-right",
         autoClose: 3000,
         hideProgressBar: false,
@@ -178,6 +196,7 @@ export default function CertificateCourses() {
         progress: undefined,
         theme: "light",
       });
+      return;
     }
   };
 
@@ -438,7 +457,7 @@ export default function CertificateCourses() {
                 Upload Sample Certificate (Only Pdf)
               </Typography>
               <Input
-                id="Sample_Certificate"
+                id="Upload_Sample_Certificate"
                 size="lg"
                 type="file"
                 label="Sample Certificate"

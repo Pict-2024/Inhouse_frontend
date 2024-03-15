@@ -18,6 +18,8 @@ import { addRecordsAttended, uploadRecordsAttended } from "./API_Routes";
 export default function Attended() {
   const { currentUser } = useSelector((state) => state.user);
   const [isFinancialSupport, setIsFinancialSupport] = useState(false);
+  const [uploadedFilePaths, setUploadedFilePaths] = useState({});
+
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
@@ -48,39 +50,53 @@ export default function Attended() {
     });
   };
 
-  const handleFileUpload = async (file) => {
+  const handleFileUpload = async (files) => {
     try {
-      // console.log("file as:", file);
       const queryParams = new URLSearchParams();
-
       queryParams.append("username", currentUser?.Username);
       queryParams.append("role", currentUser?.Role);
       queryParams.append("tableName", "sttp_fdp_conference_attended");
-      // formDataForFile.append("columnName", ["Upload_Evidence", "Upload_Certificate"]);
+      // queryParams.append("columnNames", "Upload_Evidence,Upload_Paper,Upload_DOA");
+
       let formDataForUpload = new FormData();
+      const columnNames = [];
+      // Append files under the 'files' field name as expected by the server
+      if (formData.Upload_Certificate) {
+        formDataForUpload.append("files", formData.Upload_Certificate);
+        columnNames.push("Upload_Certificate");
+      }
       if (formData.Upload_Evidence) {
         formDataForUpload.append("files", formData.Upload_Evidence);
-        queryParams.append("columnNames", formData.Upload_Evidence);
-      }
-      else if (formData.Upload_Certificate) {
-        formDataForUpload.append("files", formData.Upload_Certificate);
-        queryParams.append("columnNames", formData.Upload_Certificate);
+        columnNames.push("Upload_Evidence");
       }
 
+
+      // Append column names to the query parameters
+      queryParams.append("columnNames", columnNames.join(","));
+      console.log('query: ', queryParams);
       const url = `${uploadRecordsAttended}?${queryParams.toString()}`;
-      // console.log("url by om", url)
       console.log("formdata", formDataForUpload)
       const response = await axios.post(url, formDataForUpload, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
       });
-      console.log(response?.data);
-      // console.log("file response:", response.data.filePath);
 
-      // return response.data.filePath;
+      console.log(response?.data?.uploadResults);
+      return response?.data?.uploadResults;
     } catch (error) {
       console.error("Error uploading file:", error);
+      toast.error(error?.response?.data?.message, {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+      return;
       // Handle error as needed
     }
   };
@@ -89,62 +105,48 @@ export default function Attended() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     console.log(formData);
-
-    let pathEvidence = null, pathStudent;
+    if (formData.Upload_Certificate === null) {
+      toast.error("Select file to upload", {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+      return;
+    }
     if (isFinancialSupport && formData.Upload_Evidence === null) {
       alert("Upload Evidence document");
       return;
     }
     // console.log(formData.Upload_Certificate);
     try {
-      if (isFinancialSupport) {
-        // console.log("hi");
-        // Handle evidence upload only if financial support is selected
-        pathEvidence = await handleFileUpload(formData.Upload_Evidence);
+      const filesToUpload = [];
+      if (isFinancialSupport && formData.Upload_Evidence) {
+        filesToUpload.push(formData.Upload_Evidence);
       }
       if (formData.Upload_Certificate !== null) {
-        // console.log("2");
-        // console.log("3");
-        pathStudent = await handleFileUpload(formData.Upload_Certificate);
-        // console.log("4");
-
-        // console.log("Upload path = ", pathUpload);
-      } else {
-        toast.error("Please select a file for upload", {
-          position: "top-right",
-          autoClose: 3000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
-        });
-        return;
+        filesToUpload.push(formData.Upload_Certificate);
       }
 
       // If file upload is successful, continue with the form submission
+      const uploadResults = await handleFileUpload(filesToUpload);
+
+      // Store the paths of uploaded files in the uploadedFilePaths object
+      const updatedUploadedFilePaths = { ...uploadedFilePaths };
+      uploadResults.forEach((result) => {
+        updatedUploadedFilePaths[result.columnName] = result.filePath;
+      });
+      setUploadedFilePaths(updatedUploadedFilePaths);
+
+      // Merge uploaded file paths with existing formData
       const formDataWithFilePath = {
         ...formData,
-
-        Upload_Evidence: pathEvidence,
-        Upload_Certificate: pathStudent,
+        ...updatedUploadedFilePaths,
       };
-      if (pathEvidence === "" && pathStudent === "") {
-        // If file is null, display a toast alert
-        toast.error("Some error occurred while uploading file", {
-          position: "top-right",
-          autoClose: 3000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
-        });
-        return;
-      }
-
       console.log("Final data:", formDataWithFilePath);
 
       // Send a POST request to the addRecordsBook API endpoint
@@ -169,7 +171,7 @@ export default function Attended() {
       console.error("File upload error:", error);
 
       // Display an error toast
-      toast.error("File upload failed. Please try again.", {
+      toast.error(error?.response?.data?.message, {
         position: "top-right",
         autoClose: 3000,
         hideProgressBar: false,

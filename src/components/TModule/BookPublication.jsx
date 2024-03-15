@@ -17,6 +17,7 @@ import { addRecordsBook, uploadRecordsBook } from "./API_Routes";
 
 export default function BookPublication() {
   const { currentUser } = useSelector((state) => state.user);
+  const [uploadedFilePaths, setUploadedFilePaths] = useState({});
 
   const navigate = useNavigate();
 
@@ -41,51 +42,52 @@ export default function BookPublication() {
     (_, index) => currentYear - index
   );
 
-  // const handleFileUpload = async (file) => {
-  //   try {
-  //     console.log("file as:", file);
-
-  //     let formDataForFile = new FormData();
-  //     formDataForFile.append("file", file);
-  //     formDataForFile.append("username", currentUser?.Username);
-  //     formDataForFile.append("role", currentUser?.Role);
-  //     formDataForFile.append("tableName", "book_publication");
-  //     formDataForFile.append("columnName", "Upload_Paper");
-
-  //     const response = await axios.post(uploadRecordsBook, formDataForFile);
-  //     console.log(response);
-  //     console.log("file response:", response?.data?.filePath);
-
-  //     return response?.data?.filePath;
-  //   } catch (error) {
-  //     console.error("Error uploading file:", error);
-  //     // Handle error as needed
-  //   }
-  // };
-  const handleFileUpload = async (file) => {
+  const handleFileUpload = async (files) => {
     try {
-      console.log("file as:", file);
-  
       const queryParams = new URLSearchParams();
       queryParams.append("username", currentUser?.Username);
       queryParams.append("role", currentUser?.Role);
       queryParams.append("tableName", "book_publication");
-      queryParams.append("columnNames", "Upload_Paper");
-      let formDataForFile = new FormData();
-      formDataForFile.append("files", file);
+
+      let formDataForUpload = new FormData();
+      const columnNames = [];
+      // Append files under the 'files' field name as expected by the server
+      if (formData.Upload_Paper) {
+        formDataForUpload.append("files", formData.Upload_Paper);
+        columnNames.push("Upload_Paper");
+      }
+
+
+      // Append column names to the query parameters
+      queryParams.append("columnNames", columnNames.join(","));
+      console.log('query: ', queryParams);
       const url = `${uploadRecordsBook}?${queryParams.toString()}`;
-      // console.log("url builded by om" , url)
-      const response = await axios.post(url, formDataForFile);
-      console.log("SOMETHING", response);
-      console.log("file response:", response?.data?.uploadResults[0].filePath);
-  
-      return response?.data?.uploadResults[0].filePath
+      console.log("formdata", formDataForUpload)
+      const response = await axios.post(url, formDataForUpload, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+
+      console.log(response?.data?.uploadResults);
+      return response?.data?.uploadResults;
     } catch (error) {
       console.error("Error uploading file:", error);
+      toast.error(error?.response?.data?.message, {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+      return;
+      // Handle error as needed
     }
-
   };
-  
+
 
   const handleOnChange = (e) => {
     const { id, value, type, files } = e.target;
@@ -101,37 +103,40 @@ export default function BookPublication() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     console.log(formData);
+    if (formData.Upload_Paper === null) {
+      toast.error("Select a file for upload.", {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+      return;
+    }
     try {
-      if (formData.Upload_Paper === null) {
-        // Show an alert if no file is uploaded
-        toast.error("Please select a file for upload.", {
-          position: "top-right",
-          autoClose: 3000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
-        });
-        return; // Exit the function if no file is uploaded
+      const filesToUpload = [];
+
+      if (formData.Upload_Paper !== null) {
+        filesToUpload.push(formData.Upload_Paper);
       }
-      const uploadResults = await handleFileUpload();
-      console.log("Upload results:", uploadResults);
 
+      // If file upload is successful, continue with the form submission
+      const uploadResults = await handleFileUpload(filesToUpload);
 
-      // Map the upload results to an object where the keys are columnNames and the values are filePaths
-      const filePaths = uploadResults.reduce((acc, curr) => {
-        acc[curr.columnName] = curr.filePath;
-        return acc;
-      }, {});
+      // Store the paths of uploaded files in the uploadedFilePaths object
+      const updatedUploadedFilePaths = { ...uploadedFilePaths };
+      uploadResults.forEach((result) => {
+        updatedUploadedFilePaths[result.columnName] = result.filePath;
+      });
+      setUploadedFilePaths(updatedUploadedFilePaths);
 
-      console.log("File paths:", filePaths);
-
-      // Update formData with the file paths
+      // Merge uploaded file paths with existing formData
       const formDataWithFilePath = {
         ...formData,
-        Upload_Paper: filePaths["Upload_Paper"],
+        ...updatedUploadedFilePaths,
       };
       console.log("Final data with file paths:", formDataWithFilePath);
 
@@ -157,7 +162,7 @@ export default function BookPublication() {
       console.error("File upload error:", error);
 
       // Display an error toast
-      toast.error("File upload failed. Please try again.", {
+      toast.error(error?.response?.data?.message, {
         position: "top-right",
         autoClose: 3000,
         hideProgressBar: false,
@@ -167,6 +172,7 @@ export default function BookPublication() {
         progress: undefined,
         theme: "light",
       });
+      return;
     }
   };
 
