@@ -67,34 +67,54 @@ export default function Research() {
     });
   };
 
-  const handleFileUpload = async (file) => {
+  const handleFileUpload = async (files) => {
     try {
-      console.log("file as:", file);
+        const queryParams = new URLSearchParams();
+        queryParams.append("username", currentUser?.Username);
+        queryParams.append("role", currentUser?.Role);
+        queryParams.append("tableName", "research_publication");
+        // queryParams.append("columnNames", "Upload_Evidence,Upload_Paper,Upload_DOA");
 
-      const formDataForFile = new FormData();
-      formDataForFile.append("file", file);
-      formDataForFile.append("username", currentUser?.Username);
-      formDataForFile.append("role", currentUser?.Role);
-      formDataForFile.append("tableName", "research_publication");
-      formDataForFile.append("columnName", ["Upload_Evidence", "Upload_Paper", "Upload_DOA"]);
+        let formDataForUpload = new FormData();
 
-      console.log(formDataForFile);
+        // Append files under the 'files' field name as expected by the server
+        if (formData.Upload_Evidence) {
+          formDataForUpload.append("files", formData.Upload_Evidence);
+          queryParams.append("columnNames", formData.Upload_Evidence);
+        }
+        else if (formData.Upload_Paper) {
+          formDataForUpload.append("files", formData.Upload_Paper);
+          queryParams.append("columnNames", formData.Upload_Paper);
+        }
+        else if (formData.Upload_DOA) {
+          formDataForUpload.append("files", formData.Upload_DOA);
+          queryParams.append("columnNames", formData.Upload_DOA);
+        }
 
-      const response = await axios.post(uploadRecordsResearch, formDataForFile);
-      console.log(response);
-      // console.log("file response:", response.data.filePath);
+        const url = `${uploadRecordsResearch}?${queryParams.toString()}`;
+        console.log("url by om", url)
+        console.log("formdata", formDataForUpload)
+        const response = await axios.post(url, formDataForUpload, {
+            headers: {
+                "Content-Type": "multipart/form-data",
+            },
+        });
 
-      return response.data.filePath;
+        console.log(response?.data?.uploadResults);
+        return response?.data?.uploadResults;
     } catch (error) {
-      console.error("Error uploading file:", error);
-      // Handle error as needed
+        console.error("Error uploading file:", error);
+        // Handle error as needed
     }
-  };
+};
+
+
 
   //Add Records
   const handleSubmit = async (e) => {
     e.preventDefault();
     console.log(formData);
+    
 
     var pathEvidence = null,
       pathReport,

@@ -41,27 +41,50 @@ export default function BookPublication() {
     (_, index) => currentYear - index
   );
 
+  // const handleFileUpload = async (file) => {
+  //   try {
+  //     console.log("file as:", file);
+
+  //     let formDataForFile = new FormData();
+  //     formDataForFile.append("file", file);
+  //     formDataForFile.append("username", currentUser?.Username);
+  //     formDataForFile.append("role", currentUser?.Role);
+  //     formDataForFile.append("tableName", "book_publication");
+  //     formDataForFile.append("columnName", "Upload_Paper");
+
+  //     const response = await axios.post(uploadRecordsBook, formDataForFile);
+  //     console.log(response);
+  //     console.log("file response:", response?.data?.filePath);
+
+  //     return response?.data?.filePath;
+  //   } catch (error) {
+  //     console.error("Error uploading file:", error);
+  //     // Handle error as needed
+  //   }
+  // };
   const handleFileUpload = async (file) => {
     try {
       console.log("file as:", file);
-
+  
+      const queryParams = new URLSearchParams();
+      queryParams.append("username", currentUser?.Username);
+      queryParams.append("role", currentUser?.Role);
+      queryParams.append("tableName", "book_publication");
+      queryParams.append("columnNames", "Upload_Paper");
       let formDataForFile = new FormData();
-      formDataForFile.append("file", file);
-      formDataForFile.append("username", currentUser?.Username);
-      formDataForFile.append("role", currentUser?.Role);
-      formDataForFile.append("tableName", "book_publication");
-      formDataForFile.append("columnName", "Upload_Paper");
-
-      const response = await axios.post(uploadRecordsBook, formDataForFile);
-      console.log(response);
-      console.log("file response:", response?.data?.filePath);
-
-      return response?.data?.filePath;
+      formDataForFile.append("files", file);
+      const url = `${uploadRecordsBook}?${queryParams.toString()}`;
+      console.log("url builded by om" , url)
+      const response = await axios.post(url, formDataForFile);
+      console.log("SOMETHING", response);
+      console.log("file response:", response?.data?.uploadResults[0].filePath);
+  
+      return response?.data?.uploadResults[0].filePath
     } catch (error) {
       console.error("Error uploading file:", error);
-      // Handle error as needed
     }
   };
+  
 
   const handleOnChange = (e) => {
     const { id, value, type, files } = e.target;
