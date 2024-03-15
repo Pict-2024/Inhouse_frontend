@@ -49,29 +49,34 @@ export default function ConsultancyReport() {
     });
   };
 
-  const handleFileUpload = async (file) => {
+  const handleFileUpload = async () => {
+    const formDataForUpload = new FormData();
+    // Append additional fields required by the server
+    formDataForUpload.append("username", currentUser?.Username);
+    formDataForUpload.append("role", currentUser?.Role);
+    formDataForUpload.append("tableName", "grants");
+    formDataForUpload.append("columnNames", "Upload_Amt_Deposited,Upload_Link_to_evidence,Upload_Paper");
+
+    // Append files under the 'files' field name as expected by the server
+    if (formData.Upload_Amt_Deposited) {
+      formDataForUpload.append("files", formData.Upload_Amt_Deposited);
+    }
+    if (formData.Upload_Link_to_evidence) {
+      formDataForUpload.append("files", formData.Upload_Link_to_evidence);
+    }
+    if (formData.Upload_Paper) {
+      formDataForUpload.append("files", formData.Upload_Paper);
+    }
+
+
     try {
-      console.log("file as:", file);
-
-      const formDataForFile = new FormData();
-      formDataForFile.append("file", file);
-      formDataForFile.append("username", currentUser?.Username);
-      formDataForFile.append("role", currentUser?.Role);
-      formDataForFile.append("tableName", "consultancy_report");
-      formDataForFile.append("columnName", [
-        "Upload_Amt_Deposited",
-        "Upload_Link_to_evidence",
-        "Upload_Paper",
-      ]);
-
-      const response = await axios.post(
-        uploadRecordsConsultancy,
-        formDataForFile
-      );
-      console.log(response);
-      // console.log("file response:", response.data.filePath);
-
-      return response.data.filePath;
+      const response = await axios.post(uploadRecordsConsultancy, formDataForUpload, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+      console.log(response?.data?.uploadResults);
+      return response?.data?.uploadResults;
     } catch (error) {
       console.error("Error uploading file:", error);
       // Handle error as needed
@@ -82,58 +87,39 @@ export default function ConsultancyReport() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     console.log(formData);
-
-    let pathEvidence, pathReport, pathAmt;
-
+    if (formData.Upload_Amt_Deposited === null || formData.Upload_Link_to_evidence === null
+      || formData.Upload_Paper === null) {
+      toast.error("Please select a file for upload.", {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+      return;
+    }
     try {
-      if (
-        formData.Upload_Paper !== null &&
-        formData.Upload_Link_to_evidence !== null &&
-        formData.Upload_Amt_Deposited !== null
-      ) {
-        pathReport = await handleFileUpload(formData.Upload_Paper);
-        pathEvidence = await handleFileUpload(formData.Upload_Link_to_evidence);
-        pathAmt = await handleFileUpload(formData.Upload_Amt_Deposited);
+      const uploadResults = await handleFileUpload();
+      console.log("Upload results:", uploadResults);
 
-        // console.log("Upload path = ", pathUpload);
-      } else {
-        toast.error("Please select a file for upload", {
-          position: "top-right",
-          autoClose: 3000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
-        });
-        return;
-      }
-      // console.log("Evidence path:",pathEvidence);
-      // If file upload is successful, continue with the form submission
+      // Map the upload results to an object where the keys are columnNames and the values are filePaths
+      const filePaths = uploadResults.reduce((acc, curr) => {
+        acc[curr.columnName] = curr.filePath;
+        return acc;
+      }, {});
 
+      console.log("File paths:", filePaths);
+
+      // Update formData with the file paths
       const formDataWithFilePath = {
         ...formData,
-
-        Upload_Link_to_evidence: pathEvidence,
-        Upload_Paper: pathReport,
-        Upload_Amt_Deposited: pathAmt,
+        Upload_Amt_Deposited: filePaths["Upload_Amt_Deposited"],
+        Upload_Link_to_evidence: filePaths["Upload_Link_to_evidence"],
+        Upload_Paper: filePaths["Upload_Paper"],
       };
-      if (pathEvidence === "" || pathReport === "" || pathAmt === "") {
-        // If file is null, display a toast alert
-        toast.error("Some error occurred while uploading file", {
-          position: "top-right",
-          autoClose: 3000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
-        });
-        return;
-      }
-
       console.log("Final data:", formDataWithFilePath);
 
       // Send a POST request to the addRecordsBook API endpoint
@@ -318,7 +304,7 @@ export default function ConsultancyReport() {
                 <Option value="Completed">Completed</Option>
               </Select>
             </div>
-            
+
           </div>
           <div className="mb-4 flex flex-wrap -mx-4">
             <div className="w-full md:w-1/2 px-4 mb-4">

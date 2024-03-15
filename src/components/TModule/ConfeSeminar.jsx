@@ -53,25 +53,40 @@ export default function ConfeSeminar() {
         type === "file" ? (files && files.length > 0 ? files[0] : null) : value,
     });
   };
-  const handleFileUpload = async (file) => {
+  const handleFileUpload = async () => {
+    const formDataForUpload = new FormData();
+    // Append additional fields required by the server
+    formDataForUpload.append("username", currentUser?.Username);
+    formDataForUpload.append("role", currentUser?.Role);
+    formDataForUpload.append("tableName", "conference_seminar_workshops");
+    formDataForUpload.append("columnNames", "Upload_List_of_Students,Upload_List_of_Students_Outside,Upload_Sample_Certificate,Upload_Evidence, Upload_Report");
+
+    // Append files under the 'files' field name as expected by the server
+    if (formData.Upload_List_of_Students) {
+      formDataForUpload.append("files", formData.Upload_List_of_Students);
+    }
+    if (formData.Upload_List_of_Students_Outside) {
+      formDataForUpload.append("files", formData.Upload_List_of_Students_Outside);
+    }
+    if (formData.Upload_Sample_Certificate) {
+      formDataForUpload.append("files", formData.Upload_Sample_Certificate);
+    }
+    if (formData.Upload_Evidence) {
+      formDataForUpload.append("files", formData.Upload_Evidence);
+    }
+    if (formData.Upload_Report) {
+      formDataForUpload.append("files", formData.Upload_Report);
+    }
+
+
     try {
-      // console.log("file as:", file);
-
-      const formDataForFile = new FormData();
-      formDataForFile.append("file", file);
-      formDataForFile.append("username", currentUser?.Username);
-      formDataForFile.append("role", currentUser?.Role);
-      formDataForFile.append("tableName", "conference_seminar_workshops");
-      formDataForFile.append("columnName", ["Upload_List_of_Students", "Upload_List_of_Students_Outside", "Upload_Sample_Certificate", "Upload_Evidence", "Upload_Report"]);
-
-      const response = await axios.post(
-        uploadRecordsConference,
-        formDataForFile
-      );
-      console.log(response);
-      // console.log("file response:", response.data.filePath);
-
-      return response.data.filePath;
+      const response = await axios.post(uploadRecordsConference, formDataForUpload, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+      console.log(response?.data?.uploadResults);
+      return response?.data?.uploadResults;
     } catch (error) {
       console.error("Error uploading file:", error);
       // Handle error as needed
@@ -83,8 +98,20 @@ export default function ConfeSeminar() {
     e.preventDefault();
     console.log(formData);
 
-    var pathReport, pathCert, pathEvidence, pathOutside, pathPICT;
-    // console.log(formData.Upload_Sample_Certificate);
+    if (formData.Upload_Amt_Deposited === null || formData.Upload_Link_to_evidence === null
+      || formData.Upload_Paper === null) {
+      toast.error("Please select a file for upload.", {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+      return;
+    }
     try {
       if (
         formData.Upload_Report !== null &&

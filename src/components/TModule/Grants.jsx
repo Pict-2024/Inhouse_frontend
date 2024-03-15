@@ -60,25 +60,31 @@ export default function Grants() {
     });
   };
 
-  const handleFileUpload = async (file) => {
+  const handleFileUpload = async () => {
+    const formDataForUpload = new FormData();
+    // Append additional fields required by the server
+    formDataForUpload.append("username", currentUser?.Username);
+    formDataForUpload.append("role", currentUser?.Role);
+    formDataForUpload.append("tableName", "grants");
+    formDataForUpload.append("columnNames", "Upload_Evidence,Upload_Amount_deposited_to_PICT_account");
+
+    // Append files under the 'files' field name as expected by the server
+    if (formData.Upload_Evidence) {
+      formDataForUpload.append("files", formData.Upload_Evidence);
+    }
+    if (formData.Upload_Amount_deposited_to_PICT_account) {
+      formDataForUpload.append("files", formData.Upload_Amount_deposited_to_PICT_account);
+    }
+
+
     try {
-      console.log("file as:", file);
-
-      const formDataForFile = new FormData();
-      formDataForFile.append("file", file);
-      formDataForFile.append("username", currentUser?.Username);
-      formDataForFile.append("role", currentUser?.Role);
-      formDataForFile.append("tableName", "grants");
-      formDataForFile.append("columnName", [
-        "Upload_Evidence",
-        "Upload_Amount_deposited_to_PICT_account",
-      ]);
-
-      const response = await axios.post(uploadRecordsGrants, formDataForFile);
-      console.log(response);
-      // console.log("file response:", response.data.filePath);
-
-      return response.data.filePath;
+      const response = await axios.post(uploadRecordsGrants, formDataForUpload, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+      console.log(response?.data?.uploadResults);
+      return response?.data?.uploadResults;
     } catch (error) {
       console.error("Error uploading file:", error);
       // Handle error as needed
@@ -89,63 +95,43 @@ export default function Grants() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     console.log(formData);
-
-    let pathEvidence, pathReport;
+    if (formData.Upload_Evidence === null || formData.Upload_Amount_deposited_to_PICT_account === null) {
+      toast.error("Please select a file for upload.", {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+      return;
+    }
 
     try {
-      if (
-        formData.Upload_Amount_deposited_to_PICT_account !== null &&
-        formData.Upload_Evidence !== null
-      ) {
-        pathReport = await handleFileUpload(
-          formData.Upload_Amount_deposited_to_PICT_account
-        );
-        pathEvidence = await handleFileUpload(formData.Upload_Evidence);
+      const uploadResults = await handleFileUpload();
+      console.log("Upload results:", uploadResults);
 
-        // console.log("Upload path = ", pathUpload);
-      } else {
-        toast.error("Please select a file for upload", {
-          position: "top-right",
-          autoClose: 3000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
-        });
-        return;
-      }
-      // console.log("Evidence path:",pathEvidence);
-      // If file upload is successful, continue with the form submission
+      // Map the upload results to an object where the keys are columnNames and the values are filePaths
+      const filePaths = uploadResults.reduce((acc, curr) => {
+        acc[curr.columnName] = curr.filePath;
+        return acc;
+      }, {});
 
+      console.log("File paths:", filePaths);
+
+      // Update formData with the file paths
       const formDataWithFilePath = {
         ...formData,
-
-        Upload_Evidence: pathEvidence,
-        Upload_Amount_deposited_to_PICT_account: pathReport,
+        Upload_Evidence: filePaths["Upload_Evidence"],
+        Upload_Amount_deposited_to_PICT_account: filePaths["Upload_Amount_deposited_to_PICT_account"],
       };
-      if (pathEvidence === "" || pathReport === "") {
-        // If file is null, display a toast alert
-        toast.error("Some error occurred while uploading file", {
-          position: "top-right",
-          autoClose: 3000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
-        });
-        return;
-      }
+      console.log("Final data with file paths:", formDataWithFilePath);
 
-      console.log("Final data:", formDataWithFilePath);
-
-      // Send a POST request to the addRecordsBook API endpoint
       await axios.post(addRecordsGrants, formDataWithFilePath);
+      // Here you can use filePaths with another API call or further processing
 
-      // Display a success toast
       toast.success("Record Added Successfully", {
         position: "top-right",
         autoClose: 1500,
@@ -157,13 +143,9 @@ export default function Grants() {
         theme: "light",
       });
 
-      // Navigate to "/t/data" after successful submission
       navigate("/t/data");
     } catch (error) {
-      // Handle file upload error
       console.error("File upload error:", error);
-
-      // Display an error toast
       toast.error("File upload failed. Please try again.", {
         position: "top-right",
         autoClose: 3000,

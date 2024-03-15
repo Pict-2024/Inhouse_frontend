@@ -41,26 +41,33 @@ export default function BookPublication() {
     (_, index) => currentYear - index
   );
 
-  const handleFileUpload = async (file) => {
+  const handleFileUpload = async () => {
+
+    let formDataForUpload = new FormData();
+    formDataForUpload.append("username", currentUser?.Username);
+    formDataForUpload.append("role", currentUser?.Role);
+    formDataForUpload.append("tableName", "book_publication");
+    formDataForUpload.append("columnName", "Upload_Paper");
+    // console.log("file data",formDataForFile);
+
+    // Append files under the 'files' field name as expected by the server
+    if (formData.Upload_Paper != null) {
+      formDataForUpload.append("files", formData.Upload_Paper);
+    }
+
     try {
-      console.log("file as:", file);
-
-      let formDataForFile = new FormData();
-      formDataForFile.append("file", file);
-      formDataForFile.append("username", currentUser?.Username);
-      formDataForFile.append("role", currentUser?.Role);
-      formDataForFile.append("tableName", "book_publication");
-      formDataForFile.append("columnName", "Upload_Paper");
-
-      const response = await axios.post(uploadRecordsBook, formDataForFile);
-      console.log(response);
-      console.log("file response:", response?.data?.filePath);
-
-      return response?.data?.filePath;
+      const response = await axios.post(uploadRecordsBook, formDataForUpload, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+      console.log(response?.data?.uploadResults);
+      return response?.data?.uploadResults;
     } catch (error) {
       console.error("Error uploading file:", error);
       // Handle error as needed
     }
+
   };
 
   const handleOnChange = (e) => {
@@ -77,17 +84,10 @@ export default function BookPublication() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     console.log(formData);
-
-    let pathUpload;
-    console.log(formData.Upload_Paper);
     try {
-      if (formData.Upload_Paper !== null) {
-        // console.log("hello");
-        pathUpload = await handleFileUpload(formData.Upload_Paper);
-
-        console.log("Upload path = ", pathUpload);
-      } else {
-        toast.error("Please select a file for upload", {
+      if (formData.Upload_Paper === null) {
+        // Show an alert if no file is uploaded
+        toast.error("Please select a file for upload.", {
           position: "top-right",
           autoClose: 3000,
           hideProgressBar: false,
@@ -97,30 +97,26 @@ export default function BookPublication() {
           progress: undefined,
           theme: "light",
         });
-        return;
+        return; // Exit the function if no file is uploaded
       }
+      const uploadResults = await handleFileUpload();
+      console.log("Upload results:", uploadResults);
 
-      // If file upload is successful, continue with the form submission
+
+      // Map the upload results to an object where the keys are columnNames and the values are filePaths
+      const filePaths = uploadResults.reduce((acc, curr) => {
+        acc[curr.columnName] = curr.filePath;
+        return acc;
+      }, {});
+
+      console.log("File paths:", filePaths);
+
+      // Update formData with the file paths
       const formDataWithFilePath = {
         ...formData,
-        Upload_Paper: pathUpload, // Use an empty string as a default if fileUploadPath is undefined
+        Upload_Paper: filePaths["Upload_Paper"],
       };
-      if (pathUpload === "") {
-        // If file is null, display a toast alert
-        toast.error("Some error occurred while uploading file", {
-          position: "top-right",
-          autoClose: 3000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
-        });
-        return;
-      }
-
-      console.log("Final data:", formDataWithFilePath);
+      console.log("Final data with file paths:", formDataWithFilePath);
 
       // Send a POST request to the addRecordsBook API endpoint
       await axios.post(addRecordsBook, formDataWithFilePath);
@@ -188,7 +184,7 @@ export default function BookPublication() {
                     target: { id: "Department", value },
                   })
                 }
-                // onChange={handleOnChange}
+              // onChange={handleOnChange}
               >
                 <Option value="CS">CS</Option>
                 <Option value="IT">IT</Option>
@@ -240,7 +236,7 @@ export default function BookPublication() {
                     target: { id: "Level_International_National", value },
                   })
                 }
-                // onChange={handleOnChange}
+              // onChange={handleOnChange}
               >
                 <Option value="International">International</Option>
                 <Option value="National">National</Option>
@@ -276,7 +272,7 @@ export default function BookPublication() {
                     target: { id: "Year", value },
                   })
                 }
-                // onChange={handleOnChange}
+              // onChange={handleOnChange}
               >
                 {years.map((year) => (
                   <Option key={year} value={year}>
@@ -315,7 +311,7 @@ export default function BookPublication() {
           </div>
 
           <Button type="submit" className="mt-4" fullWidth>
-           Submit
+            Submit
           </Button>
         </form>
       </Card>
