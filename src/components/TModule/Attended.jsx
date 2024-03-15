@@ -18,6 +18,8 @@ import { addRecordsAttended, uploadRecordsAttended } from "./API_Routes";
 export default function Attended() {
   const { currentUser } = useSelector((state) => state.user);
   const [isFinancialSupport, setIsFinancialSupport] = useState(false);
+  const [uploadedFilePaths, setUploadedFilePaths] = useState({});
+
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
@@ -29,13 +31,13 @@ export default function Attended() {
     Type_Nature: "",
     Organizer_Institute_Name: "",
     Name_of_Coordinators: "",
-    Start_Date: "",
-    End_Date: "",
+    Start_Date: null,
+    End_Date: null,
     Mode_Online_Physical: "",
     Duration_in_Days: "",
     Finance_Support_By_PICT: "",
     Upload_Certificate: null,
-    Evidence: null,
+    Upload_Evidence: null,
   });
 
   const handleOnChange = (e) => {
@@ -48,23 +50,53 @@ export default function Attended() {
     });
   };
 
-  const handleFileUpload = async (file) => {
+  const handleFileUpload = async (files) => {
     try {
-      // console.log("file as:", file);
+      const queryParams = new URLSearchParams();
+      queryParams.append("username", currentUser?.Username);
+      queryParams.append("role", currentUser?.Role);
+      queryParams.append("tableName", "sttp_fdp_conference_attended");
+      // queryParams.append("columnNames", "Upload_Evidence,Upload_Paper,Upload_DOA");
 
-      const formDataForFile = new FormData();
-      formDataForFile.append("file", file);
-      formDataForFile.append("username", currentUser?.Username);
-      formDataForFile.append("role", currentUser?.Role);
-      formDataForFile.append("tableName", "sttp_fdp_conference_attended");
+      let formDataForUpload = new FormData();
+      const columnNames = [];
+      // Append files under the 'files' field name as expected by the server
+      if (formData.Upload_Certificate) {
+        formDataForUpload.append("files", formData.Upload_Certificate);
+        columnNames.push("Upload_Certificate");
+      }
+      if (formData.Upload_Evidence) {
+        formDataForUpload.append("files", formData.Upload_Evidence);
+        columnNames.push("Upload_Evidence");
+      }
 
-      const response = await axios.post(uploadRecordsAttended, formDataForFile);
-      console.log(response);
-      // console.log("file response:", response.data.filePath);
 
-      return response.data.filePath;
+      // Append column names to the query parameters
+      queryParams.append("columnNames", columnNames.join(","));
+      console.log('query: ', queryParams);
+      const url = `${uploadRecordsAttended}?${queryParams.toString()}`;
+      console.log("formdata", formDataForUpload)
+      const response = await axios.post(url, formDataForUpload, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+
+      console.log(response?.data?.uploadResults);
+      return response?.data?.uploadResults;
     } catch (error) {
       console.error("Error uploading file:", error);
+      toast.error(error?.response?.data?.message, {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+      return;
       // Handle error as needed
     }
   };
@@ -73,54 +105,48 @@ export default function Attended() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     console.log(formData);
-
-    var pathEvidence, pathStudent;
+    if (formData.Upload_Certificate === null) {
+      toast.error("Select file to upload", {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+      return;
+    }
+    if (isFinancialSupport && formData.Upload_Evidence === null) {
+      alert("Upload Evidence document");
+      return;
+    }
     // console.log(formData.Upload_Certificate);
     try {
-      if (formData.Evidence !== null && formData.Upload_Certificate !== null) {
-        // console.log("2");
-        pathEvidence = await handleFileUpload(formData.Evidence);
-        // console.log("3");
-        pathStudent = await handleFileUpload(formData.Upload_Certificate);
-        // console.log("4");
-
-        // console.log("Upload path = ", pathUpload);
-      } else {
-        toast.error("Please select a file for upload", {
-          position: "top-right",
-          autoClose: 3000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
-        });
-        return;
+      const filesToUpload = [];
+      if (isFinancialSupport && formData.Upload_Evidence) {
+        filesToUpload.push(formData.Upload_Evidence);
+      }
+      if (formData.Upload_Certificate !== null) {
+        filesToUpload.push(formData.Upload_Certificate);
       }
 
       // If file upload is successful, continue with the form submission
+      const uploadResults = await handleFileUpload(filesToUpload);
+
+      // Store the paths of uploaded files in the uploadedFilePaths object
+      const updatedUploadedFilePaths = { ...uploadedFilePaths };
+      uploadResults.forEach((result) => {
+        updatedUploadedFilePaths[result.columnName] = result.filePath;
+      });
+      setUploadedFilePaths(updatedUploadedFilePaths);
+
+      // Merge uploaded file paths with existing formData
       const formDataWithFilePath = {
         ...formData,
-
-        Evidence: pathEvidence,
-        Upload_Certificate: pathStudent,
+        ...updatedUploadedFilePaths,
       };
-      if (pathEvidence === "" && pathStudent === "") {
-        // If file is null, display a toast alert
-        toast.error("Some error occurred while uploading file", {
-          position: "top-right",
-          autoClose: 3000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
-        });
-        return;
-      }
-
       console.log("Final data:", formDataWithFilePath);
 
       // Send a POST request to the addRecordsBook API endpoint
@@ -145,7 +171,7 @@ export default function Attended() {
       console.error("File upload error:", error);
 
       // Display an error toast
-      toast.error("File upload failed. Please try again.", {
+      toast.error(error?.response?.data?.message, {
         position: "top-right",
         autoClose: 3000,
         hideProgressBar: false,
@@ -357,7 +383,7 @@ export default function Attended() {
                   </label>
                 </div>
               </div>
-              <div className="flex justify-between border-2">
+              <div className="flex justify-between ">
                 <div className="w-full md:w-1/2 px-4 mb-4">
                   <Input
                     size="lg"
@@ -373,7 +399,7 @@ export default function Attended() {
                   <Input
                     size="lg"
                     label="Evidence Document"
-                    id="Evidence"
+                    id="Upload_Evidence"
                     type="file"
                     onChange={handleOnChange}
                     disabled={!isFinancialSupport}
@@ -386,7 +412,7 @@ export default function Attended() {
           <div className="mb-4 flex flex-wrap -mx-4">
             <div className="w-full px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
-                Upload Certificate
+                Upload Certificate (Only Pdf)
               </Typography>
               <Input
                 id="Upload_Certificate"
@@ -399,7 +425,7 @@ export default function Attended() {
           </div>
 
           <Button type="submit" className="mt-4" fullWidth>
-            Add Changes
+            Submit
           </Button>
         </form>
       </Card>

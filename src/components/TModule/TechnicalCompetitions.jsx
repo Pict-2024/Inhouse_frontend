@@ -18,6 +18,7 @@ import { addRecordsTechnical, uploadRecordsTechnical } from "./API_Routes";
 export default function TechnicalCompetitions() {
   const { currentUser } = useSelector((state) => state.user);
   const [isFinancialSupport, setIsFinancialSupport] = useState(false);
+  const [uploadedFilePaths, setUploadedFilePaths] = useState({});
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
@@ -29,15 +30,15 @@ export default function TechnicalCompetitions() {
     Duration: "",
     Achievement_Obtained: "",
     Level: "",
-    Start_Date: "",
-    End_Date: "",
+    Start_Date: null,
+    End_Date: null,
     Names_of_Participants: "",
     Department: "",
     Sponsorship: "",
     Finance_Support_By_PICT: "",
-    List_of_Students: null,
-    Evidence: null,
-    Sponsorship_Document: null,
+    Upload_List_of_Students: null,
+    Upload_Evidence: null,
+    Upload_Sponsorship_Document: null,
   });
 
   const handleChange = (e) => {
@@ -50,26 +51,56 @@ export default function TechnicalCompetitions() {
     });
   };
 
-  const handleFileUpload = async (file) => {
+  const handleFileUpload = async (files) => {
     try {
-      console.log("file as:", file);
+      const queryParams = new URLSearchParams();
+      queryParams.append("username", currentUser?.Username);
+      queryParams.append("role", currentUser?.Role);
+      queryParams.append("tableName", "technical_competition_fest");
 
-      const formDataForFile = new FormData();
-      formDataForFile.append("file", file);
-      formDataForFile.append("username", currentUser?.Username);
-      formDataForFile.append("role", currentUser?.Role);
-      formDataForFile.append("tableName", "technical_competition_fest");
+      let formDataForUpload = new FormData();
+      const columnNames = [];
+      // Append files under the 'files' field name as expected by the server
+      if (formData.Upload_List_of_Students) {
+        formDataForUpload.append("files", formData.Upload_List_of_Students);
+        columnNames.push("Upload_List_of_Students");
+      }
+      if (formData.Upload_Evidence) {
+        formDataForUpload.append("files", formData.Upload_Evidence);
+        columnNames.push("Upload_Evidence");
+      }
+      if (formData.Upload_Sponsorship_Document) {
+        formDataForUpload.append("files", formData.Upload_Sponsorship_Document);
+        columnNames.push("Upload_Sponsorship_Document");
+      }
 
-      const response = await axios.post(
-        uploadRecordsTechnical,
-        formDataForFile
-      );
-      console.log(response);
-      // console.log("file response:", response.data.filePath);
 
-      return response.data.filePath;
+      // Append column names to the query parameters
+      queryParams.append("columnNames", columnNames.join(","));
+      console.log('query: ', queryParams);
+      const url = `${uploadRecordsTechnical}?${queryParams.toString()}`;
+      console.log("formdata", formDataForUpload)
+      const response = await axios.post(url, formDataForUpload, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+
+      console.log(response?.data?.uploadResults);
+      return response?.data?.uploadResults;
     } catch (error) {
       console.error("Error uploading file:", error);
+      toast.error(error?.response?.data?.message, {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+      return;
       // Handle error as needed
     }
   };
@@ -79,59 +110,53 @@ export default function TechnicalCompetitions() {
     e.preventDefault();
     console.log(formData);
 
-    var pathEvidence, pathReport, pathStudent;
-    // console.log(formData.Evidence);
-    try {
-      if (
-        formData.Evidence !== null &&
-        formData.Sponsorship_Document !== null &&
-        formData.List_of_Students !== null
-      ) {
-        // console.log("1");
-        pathEvidence = await handleFileUpload(formData.Evidence);
-        // console.log("2");
-        pathReport = await handleFileUpload(formData.Sponsorship_Document);
-        // console.log("3");
-        pathStudent = await handleFileUpload(formData.List_of_Students);
-        // console.log("4");
+    if (formData.Upload_List_of_Students === null ||
+      formData.Upload_Sponsorship_Document === null) {
+      toast.error("Select a file for upload", {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+      return;
+    }
 
-        // console.log("Upload path = ", pathUpload);
-      } else {
-        toast.error("Please select a file for upload", {
-          position: "top-right",
-          autoClose: 3000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
-        });
-        return;
+    // console.log(formData.Evidence);
+    if (isFinancialSupport && formData.Upload_Evidence === null) {
+      alert("Upload Evidence document");
+      return;
+    }
+    try {
+      const filesToUpload = [];
+      if (formData.Upload_List_of_Students !== null) {
+        filesToUpload.push(formData.Upload_List_of_Students);
+      }
+      if (isFinancialSupport && formData.Upload_Evidence) {
+        filesToUpload.push(formData.Upload_Evidence);
+      }
+      if (formData.Upload_Sponsorship_Document !== null) {
+        filesToUpload.push(formData.Upload_Sponsorship_Document);
       }
 
       // If file upload is successful, continue with the form submission
+      const uploadResults = await handleFileUpload(filesToUpload);
+
+      // Store the paths of uploaded files in the uploadedFilePaths object
+      const updatedUploadedFilePaths = { ...uploadedFilePaths };
+      uploadResults.forEach((result) => {
+        updatedUploadedFilePaths[result.columnName] = result.filePath;
+      });
+      setUploadedFilePaths(updatedUploadedFilePaths);
+
+      // Merge uploaded file paths with existing formData
       const formDataWithFilePath = {
         ...formData,
-        Evidence: pathEvidence,
-        Sponsorship_Document: pathReport,
-        List_of_Students: pathStudent,
+        ...updatedUploadedFilePaths,
       };
-      if (pathEvidence === "" && pathReport === "" && pathStudent === "") {
-        // If file is null, display a toast alert
-        toast.error("Some error occurred while uploading file", {
-          position: "top-right",
-          autoClose: 3000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
-        });
-        return;
-      }
-
       console.log("Final data:", formDataWithFilePath);
 
       // Send a POST request to the addRecordsBook API endpoint
@@ -156,7 +181,7 @@ export default function TechnicalCompetitions() {
       console.error("File upload error:", error);
 
       // Display an error toast
-      toast.error("File upload failed. Please try again.", {
+      toast.error(error?.response?.data?.message, {
         position: "top-right",
         autoClose: 3000,
         hideProgressBar: false,
@@ -166,6 +191,7 @@ export default function TechnicalCompetitions() {
         progress: undefined,
         theme: "light",
       });
+      return;
     }
   };
 
@@ -321,7 +347,7 @@ export default function TechnicalCompetitions() {
               </Typography>
               <Input
                 size="lg"
-                name="List_of_Students"
+                name="Upload_List_of_Students"
                 type="file"
                 label="List of Students"
                 onChange={handleChange}
@@ -376,7 +402,7 @@ export default function TechnicalCompetitions() {
                 size="lg"
                 label="Sponsorship Document"
                 type="file"
-                name="Sponsorship_Document"
+                name="Upload_Sponsorship_Document"
                 onChange={handleChange}
               />
             </div>
@@ -426,7 +452,7 @@ export default function TechnicalCompetitions() {
                   <Input
                     size="lg"
                     label="Evidence Document"
-                    name="Evidence"
+                    name="Upload_Evidence"
                     type="file"
                     onChange={handleChange}
                     disabled={!isFinancialSupport}
@@ -437,7 +463,7 @@ export default function TechnicalCompetitions() {
           </div>
 
           <Button type="submit" className="mt-4" fullWidth>
-            Add Changes
+            Submit
           </Button>
         </form>
       </Card>

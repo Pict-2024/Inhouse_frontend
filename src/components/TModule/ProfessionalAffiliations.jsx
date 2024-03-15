@@ -21,6 +21,7 @@ import {
 export default function ProfessionalAffiliations() {
   const { currentUser } = useSelector((state) => state.user);
   const [isFinancialSupport, setIsFinancialSupport] = useState(false);
+  const [uploadedFilePaths, setUploadedFilePaths] = useState({});
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     T_ID: null,
@@ -29,8 +30,8 @@ export default function ProfessionalAffiliations() {
     Professional_Affiliation: "",
     Membership_Number_ID: "",
     Finance_Support_By_PICT: "",
-    Membership_Evidence: null,
-    Evidence: null,
+    Upload_Membership_Evidence: null,
+    Upload_Evidence: null,
   });
 
   const handleChange = (e) => {
@@ -43,26 +44,52 @@ export default function ProfessionalAffiliations() {
     });
   };
 
-  const handleFileUpload = async (file) => {
+  const handleFileUpload = async (files) => {
     try {
-      console.log("file as:", file);
+      const queryParams = new URLSearchParams();
+      queryParams.append("username", currentUser?.Username);
+      queryParams.append("role", currentUser?.Role);
+      queryParams.append("tableName", "professional_affiliation");
 
-      const formDataForFile = new FormData();
-      formDataForFile.append("file", file);
-      formDataForFile.append("username", currentUser?.Username);
-      formDataForFile.append("role", currentUser?.Role);
-      formDataForFile.append("tableName", "professional_affiliation");
+      let formDataForUpload = new FormData();
+      const columnNames = [];
+      // Append files under the 'files' field name as expected by the server
+      if (formData.Upload_Membership_Evidence) {
+        formDataForUpload.append("files", formData.Upload_Membership_Evidence);
+        columnNames.push("Upload_Membership_Evidence");
+      }
+      if (formData.Upload_Evidence) {
+        formDataForUpload.append("files", formData.Upload_Evidence);
+        columnNames.push("Upload_Evidence");
+      }
 
-      const response = await axios.post(
-        uploadRecordsProfessional,
-        formDataForFile
-      );
-      console.log(response);
-      // console.log("file response:", response.data.filePath);
 
-      return response.data.filePath;
+      // Append column names to the query parameters
+      queryParams.append("columnNames", columnNames.join(","));
+      console.log('query: ', queryParams);
+      const url = `${uploadRecordsProfessional}?${queryParams.toString()}`;
+      console.log("formdata", formDataForUpload)
+      const response = await axios.post(url, formDataForUpload, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+
+      console.log(response?.data?.uploadResults);
+      return response?.data?.uploadResults;
     } catch (error) {
       console.error("Error uploading file:", error);
+      toast.error(error?.response?.data?.message, {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+      return;
       // Handle error as needed
     }
   };
@@ -71,54 +98,47 @@ export default function ProfessionalAffiliations() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     console.log(formData);
-
-    var pathReport, pathStudent;
-    // console.log(formData.Evidence);
+    if (formData.Upload_Membership_Evidence === null) {
+      toast.error('Select file for upload', {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+      return;
+    }
+    if (isFinancialSupport && formData.Upload_Evidence === null) {
+      alert("Upload Evidence document");
+      return;
+    }
     try {
-      if (formData.Membership_Evidence !== null && formData.Evidence !== null) {
-        // console.log("2");
-        pathReport = await handleFileUpload(formData.Membership_Evidence);
-        // console.log("3");
-        pathStudent = await handleFileUpload(formData.Evidence);
-        // console.log("4");
-
-        // console.log("Upload path = ", pathUpload);
-      } else {
-        toast.error("Please select a file for upload", {
-          position: "top-right",
-          autoClose: 3000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
-        });
-        return;
+      const filesToUpload = [];
+      if (isFinancialSupport && formData.Upload_Evidence) {
+        filesToUpload.push(formData.Upload_Evidence);
+      }
+      if (formData.Upload_Membership_Evidence !== null) {
+        filesToUpload.push(formData.Upload_Membership_Evidence);
       }
 
       // If file upload is successful, continue with the form submission
+      const uploadResults = await handleFileUpload(filesToUpload);
+
+      // Store the paths of uploaded files in the uploadedFilePaths object
+      const updatedUploadedFilePaths = { ...uploadedFilePaths };
+      uploadResults.forEach((result) => {
+        updatedUploadedFilePaths[result.columnName] = result.filePath;
+      });
+      setUploadedFilePaths(updatedUploadedFilePaths);
+
+      // Merge uploaded file paths with existing formData
       const formDataWithFilePath = {
         ...formData,
-
-        Membership_Evidence: pathReport,
-        Evidence: pathStudent,
+        ...updatedUploadedFilePaths,
       };
-      if (pathReport === "" && pathStudent === "") {
-        // If file is null, display a toast alert
-        toast.error("Some error occurred while uploading file", {
-          position: "top-right",
-          autoClose: 3000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
-        });
-        return;
-      }
-
       console.log("Final data:", formDataWithFilePath);
 
       // Send a POST request to the addRecordsBook API endpoint
@@ -142,8 +162,7 @@ export default function ProfessionalAffiliations() {
       // Handle file upload error
       console.error("File upload error:", error);
 
-      // Display an error toast
-      toast.error("File upload failed. Please try again.", {
+      toast.error(error?.response?.data?.message, {
         position: "top-right",
         autoClose: 3000,
         hideProgressBar: false,
@@ -153,6 +172,7 @@ export default function ProfessionalAffiliations() {
         progress: undefined,
         theme: "light",
       });
+      return;
     }
   };
 
@@ -217,7 +237,7 @@ export default function ProfessionalAffiliations() {
               </Typography>
               <Input
                 size="lg"
-                name="Membership_Evidence"
+                name="Upload_Membership_Evidence"
                 type="file"
                 label="Membership Evidence"
                 onChange={handleChange}
@@ -254,7 +274,7 @@ export default function ProfessionalAffiliations() {
                   </label>
                 </div>
               </div>
-              <div className="flex justify-between border-2">
+              <div className="flex justify-between">
                 <div className="w-full md:w-1/2 px-4 mb-4">
                   <Input
                     size="lg"
@@ -270,9 +290,8 @@ export default function ProfessionalAffiliations() {
                   <Input
                     size="lg"
                     label="Evidence Document"
-                    name="Evidence"
+                    name="Upload_Evidence"
                     type="file"
-                    value={formData.Evidence}
                     onChange={handleChange}
                     disabled={!isFinancialSupport}
                   />
@@ -281,7 +300,7 @@ export default function ProfessionalAffiliations() {
             </div>
           </div>
           <Button className="mt-4" fullWidth type="submit">
-            Add Changes
+            Submit
           </Button>
         </form>
       </Card>

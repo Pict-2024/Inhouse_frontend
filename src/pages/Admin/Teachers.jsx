@@ -12,6 +12,7 @@ import {
   Tooltip,
   Typography,
   Button,
+  Input,
 } from "@material-tailwind/react";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -19,6 +20,8 @@ import Select from "react-select";
 import TextField from "@mui/material/TextField";
 import SendIcon from "@mui/icons-material/Send";
 import { useNavigate } from "react-router-dom";
+import { removeSpecificColumns } from "./AdminApis";
+import { BASE_URL } from "../../api";
 
 const SimpleModal = ({
   teacherUsername,
@@ -123,7 +126,7 @@ export default function Teachers() {
 
   const getAllTeachers = async () => {
     try {
-      const apiurl = "http://localhost:5000/api/v1/auth/getAllTeacher";
+      const apiurl = `${BASE_URL}/auth/getAllTeacher`;
       const response = await axios.get(apiurl, {
         headers: {
           "Content-Type": "application/json",
@@ -139,7 +142,7 @@ export default function Teachers() {
   const getAllTables = async () => {
     try {
       const tablesUrl =
-        "http://localhost:5000/api/v1/teacher/gettables/tables-stud-fact";
+        `${BASE_URL}/teacher/gettables/tables-stud-fact`;
       const response = await axios.get(tablesUrl, {
         headers: {
           "Content-Type": "application/json",
@@ -179,7 +182,8 @@ export default function Teachers() {
 
   const handleSaveClick = async (Username) => {
     try {
-      const updateApiurl = `http://localhost:5000/api/v1/general/update-fields`;
+      const updateApiurl = `${BASE_URL}/general/update-fields`;
+      console.log(updateApiurl)
 
       // Modify the data to be sent to the backend
       const data = {
@@ -238,13 +242,14 @@ export default function Teachers() {
   const getTeacherAccess = async (Username) => {
     try {
       // Fetch the current special access for the user
-      const accessUrl = `http://localhost:5000/api/v1/general/get-spec-cols?username=${Username}`;
+      const accessUrl = `${BASE_URL}/general/get-spec-cols?username=${Username}`;
+      // console.log(accessUrl);
       const accessResponse = await axios.post(accessUrl, {
         headers: {
           "Content-Type": "application/json",
         },
       });
-      console.log("AccessReponse",accessResponse);
+      console.log("AccessReponse", accessResponse);
 
       // Set the special access tables in the removingAccess state
       setRemovingAccess({
@@ -268,7 +273,7 @@ export default function Teachers() {
         "Before removing access - Student Tables:",
         removingAccess.studentTables
       );
-      const removeAccessApiurl = `http://localhost:5000/api/v1/general/remove-spec-cols`;
+      const removeAccessApiurl = removeSpecificColumns;
 
       // Modify the data to be sent to the backend
       const data = {
@@ -307,13 +312,13 @@ export default function Teachers() {
   };
 
   return (
-    <div className="container mx-auto">
-      <div className="flex items-center justify-between gap-2 mx-2">
+    <div className="container ">
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between  mx-2">
         <div>
           <Header category="Page" title="Teacher" />
         </div>
-        <div className="flex items-center p-0 justify-between gap-2">
-          <TextField
+        <div className="flex flex-col md:flex-row justify-between items-center p-0  gap-4">
+          <Input
             label="Enter Teacher ID"
             variant="outlined"
             value={teacherId}
@@ -323,15 +328,15 @@ export default function Teachers() {
           <Button
             variant="contained"
             color="primary"
+            className="w-full"
             onClick={handleButtonClick}
-            style={{ marginLeft: "10px" }}
             endIcon={<SendIcon />}
           >
             View Teacher Data
           </Button>
         </div>
       </div>
-      <div className="overflow-x-auto mx-4">
+      <div className="overflow-x-auto mx-2">
         <table className="mt-4 w-full min-w-max table-auto text-left">
           <thead>
             <tr className="bg-gray-200">

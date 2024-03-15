@@ -17,6 +17,7 @@ import { addRecordsConference, uploadRecordsConference } from "./API_Routes";
 
 export default function ConfeSeminar() {
   const { currentUser } = useSelector((state) => state.user);
+  const [uploadedFilePaths, setUploadedFilePaths] = useState({});
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     T_ID: null,
@@ -28,20 +29,20 @@ export default function ConfeSeminar() {
     Level: "",
     Sponsoring_Authority: "",
     No_of_Participants: "",
-    Start_Date: "",
-    End_Date: "",
+    Start_Date: null,
+    End_Date: null,
     Mode: "",
     List_of_Resource_Persons: "",
     Name_of_the_Coordinators: "",
     Remarks: "",
     Sponsorship_Amount: "",
-    List_of_Students: null,
-    List_of_Students_Outside: null,
+    Upload_List_of_Students: null,
+    Upload_List_of_Students_Outside: null,
     NoOf_PICT_Participants: "",
     NoOf_Non_PICT_Participants: "",
-    Sample_Certificate: null,
-    Evidence: null,
-    Report: null,
+    Upload_Sample_Certificate: null,
+    Upload_Evidence: null,
+    Upload_Report: null,
   });
 
   const handleOnChange = (e) => {
@@ -53,26 +54,66 @@ export default function ConfeSeminar() {
         type === "file" ? (files && files.length > 0 ? files[0] : null) : value,
     });
   };
-  const handleFileUpload = async (file) => {
+
+  const handleFileUpload = async (files) => {
+    console.log("files = ", files);
     try {
-      // console.log("file as:", file);
+      const queryParams = new URLSearchParams();
+      queryParams.append("username", currentUser?.Username);
+      queryParams.append("role", currentUser?.Role);
+      queryParams.append("tableName", "conference_seminar_workshops");
 
-      const formDataForFile = new FormData();
-      formDataForFile.append("file", file);
-      formDataForFile.append("username", currentUser?.Username);
-      formDataForFile.append("role", currentUser?.Role);
-      formDataForFile.append("tableName", "conference_seminar_workshops");
+      let formDataForUpload = new FormData();
+      const columnNames = [];
+      // Append files under the 'files' field name as expected by the server
+      if (formData.Upload_List_of_Students) {
+        formDataForUpload.append("files", formData.Upload_List_of_Students);
+        columnNames.push("Upload_List_of_Students");
+      }
+      if (formData.Upload_Evidence) {
+        formDataForUpload.append("files", formData.Upload_Evidence);
+        columnNames.push("Upload_Evidence");
+      }
+      if (formData.Upload_List_of_Students_Outside) {
+        formDataForUpload.append("files", formData.Upload_List_of_Students_Outside);
+        columnNames.push("Upload_List_of_Students_Outside");
+      }
+      if (formData.Upload_Report) {
+        formDataForUpload.append("files", formData.Upload_Report);
+        columnNames.push("Upload_Report");
+      }
+      if (formData.Upload_Sample_Certificate) {
+        formDataForUpload.append("files", formData.Upload_Sample_Certificate);
+        columnNames.push("Upload_Sample_Certificate");
+      }
 
-      const response = await axios.post(
-        uploadRecordsConference,
-        formDataForFile
-      );
-      console.log(response);
-      // console.log("file response:", response.data.filePath);
 
-      return response.data.filePath;
+      // Append column names to the query parameters
+      queryParams.append("columnNames", columnNames.join(","));
+      console.log('query: ', queryParams);
+      const url = `${uploadRecordsConference}?${queryParams.toString()}`;
+      console.log("formdata", formDataForUpload)
+      const response = await axios.post(url, formDataForUpload, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+
+      console.log(response?.data?.uploadResults);
+      return response?.data?.uploadResults;
     } catch (error) {
       console.error("Error uploading file:", error);
+      toast.error(error?.response?.data?.message, {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+      return;
       // Handle error as needed
     }
   };
@@ -82,68 +123,55 @@ export default function ConfeSeminar() {
     e.preventDefault();
     console.log(formData);
 
-    var pathReport, pathCert, pathEvidence, pathOutside, pathPICT;
-    // console.log(formData.Sample_Certificate);
+    if (formData.Upload_Evidence === null || formData.Upload_List_of_Students === null
+      || formData.Upload_List_of_Students_Outside === null || formData.Upload_Report === null
+      || formData.Upload_Sample_Certificate === null) {
+      toast.error("Select a file for upload.", {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+      return;
+    }
     try {
-      if (
-        formData.Report !== null &&
-        formData.Sample_Certificate !== null &&
-        formData.Evidence !== null &&
-        formData.List_of_Students_Outside !== null &&
-        formData.List_of_Students !== null
-      ) {
-        // console.log("2");
-        pathReport = await handleFileUpload(formData.Report);
-        pathCert = await handleFileUpload(formData.Sample_Certificate);
-        pathEvidence = await handleFileUpload(formData.Evidence);
-        pathOutside = await handleFileUpload(formData.List_of_Students_Outside);
-        pathPICT = await handleFileUpload(formData.List_of_Students);
+      const filesToUpload = [];
 
-        // console.log("Upload path = ", pathUpload);
-      } else {
-        toast.error("Please select a file for upload", {
-          position: "top-right",
-          autoClose: 3000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
-        });
-        return;
+      if (formData.Upload_Evidence !== null) {
+        filesToUpload.push(formData.Upload_Evidence);
+      }
+      if (formData.Upload_List_of_Students !== null) {
+        filesToUpload.push(formData.Upload_List_of_Students);
+      }
+      if (formData.Upload_List_of_Students_Outside !== null) {
+        filesToUpload.push(formData.Upload_List_of_Students_Outside);
+      }
+      if (formData.Upload_Report !== null) {
+        filesToUpload.push(formData.Upload_Report);
+      }
+      if (formData.Upload_Sample_Certificate !== null) {
+        filesToUpload.push(formData.Upload_Sample_Certificate);
       }
 
       // If file upload is successful, continue with the form submission
+      const uploadResults = await handleFileUpload(filesToUpload);
+
+      // Store the paths of uploaded files in the uploadedFilePaths object
+      const updatedUploadedFilePaths = { ...uploadedFilePaths };
+      uploadResults.forEach((result) => {
+        updatedUploadedFilePaths[result.columnName] = result.filePath;
+      });
+      setUploadedFilePaths(updatedUploadedFilePaths);
+
+      // Merge uploaded file paths with existing formData
       const formDataWithFilePath = {
         ...formData,
-        Report: pathReport,
-        Sample_Certificate: pathCert,
-        Evidence: pathEvidence,
-        List_of_Students_Outside: pathOutside,
-        List_of_Students: pathPICT,
+        ...updatedUploadedFilePaths,
       };
-      if (
-        pathReport === "" &&
-        pathCert === "" &&
-        pathEvidence === "" &&
-        pathOutside === "" &&
-        pathPICT === ""
-      ) {
-        // If file is null, display a toast alert
-        toast.error("Some error occurred while uploading file", {
-          position: "top-right",
-          autoClose: 3000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
-        });
-        return;
-      }
-
       console.log("Final data:", formDataWithFilePath);
 
       // Send a POST request to the addRecordsBook API endpoint
@@ -167,8 +195,7 @@ export default function ConfeSeminar() {
       // Handle file upload error
       console.error("File upload error:", error);
 
-      // Display an error toast
-      toast.error("File upload failed. Please try again.", {
+      toast.error(error?.response?.data?.message, {
         position: "top-right",
         autoClose: 3000,
         hideProgressBar: false,
@@ -178,6 +205,7 @@ export default function ConfeSeminar() {
         progress: undefined,
         theme: "light",
       });
+      return;
     }
   };
 
@@ -275,7 +303,7 @@ export default function ConfeSeminar() {
                     },
                   })
                 }
-                // onChange={handleOnChange}
+              // onChange={handleOnChange}
               >
                 <Option value="International">International</Option>
                 <Option value="National">National</Option>
@@ -422,10 +450,10 @@ export default function ConfeSeminar() {
             </div>
             <div className="w-full md:w-1/2 px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
-                Evidence of sponsor amount
+                Evidence of sponsor amount (Only Pdf)
               </Typography>
               <Input
-                id="Evidence"
+                id="Upload_Evidence"
                 size="lg"
                 type="file"
                 label="Evidence of sponsor amount"
@@ -450,10 +478,10 @@ export default function ConfeSeminar() {
             </div>
             <div className="w-full md:w-1/2 px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
-                List of no of students from PICT
+                List of no of students from PICT (Only Pdf)
               </Typography>
               <Input
-                id="List_of_Students"
+                id="Upload_List_of_Students"
                 size="lg"
                 type="file"
                 label=" List of no of students"
@@ -478,13 +506,13 @@ export default function ConfeSeminar() {
             </div>
             <div className="w-full md:w-1/2 px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
-                List of no of students outside PICT
+                List of no of students outside PICT (Only Pdf)
               </Typography>
               <Input
-                id="List_of_Students_Outside"
+                id="Upload_List_of_Students_Outside"
                 size="lg"
                 type="file"
-                label=" List of no of students"
+                label="List of no of students"
                 onChange={handleOnChange}
               />
             </div>
@@ -496,7 +524,7 @@ export default function ConfeSeminar() {
                 Sample Certificate document
               </Typography>
               <Input
-                id="Sample_Certificate"
+                id="Upload_Sample_Certificate"
                 size="lg"
                 label="Sample Certificate document"
                 type="file"
@@ -505,10 +533,10 @@ export default function ConfeSeminar() {
             </div>
             <div className="w-full md:w-1/2 px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
-                Report
+                Report (Only Pdf)
               </Typography>
               <Input
-                id="Report"
+                id="Upload_Report"
                 size="lg"
                 type="file"
                 label="Complete Report"
@@ -518,7 +546,7 @@ export default function ConfeSeminar() {
           </div>
 
           <Button className="mt-4" type="submit" fullWidth>
-            Add Changes
+            Submit
           </Button>
         </form>
       </Card>

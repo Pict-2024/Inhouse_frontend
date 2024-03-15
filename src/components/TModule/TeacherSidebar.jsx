@@ -15,6 +15,7 @@ import { useSelector } from "react-redux";
 
 export default function TeacherSidebar() {
   const { currentUser } = useSelector((state) => state.user);
+  console.log("usersss",currentUser);
 
   return (
     <div className="h-[90vh] lg:max-w-[18rem] w-1/24 sm:w-2/5 p-4 shadow-blue-gray-900/5 hidden sm:block">
@@ -47,7 +48,7 @@ export default function TeacherSidebar() {
             <ListItemPrefix>
               <TrophyIcon className="h-5 w-5" />
             </ListItemPrefix>
-            Add Achievements
+            Add Details
           </ListItem>
         </Link>
         <Link to={"/t/data"}>
@@ -58,10 +59,10 @@ export default function TeacherSidebar() {
             View Uploads
           </ListItem>
         </Link>
-        {currentUser && currentUser.SpecialAccess !== null && (
-          <Link to={`/t/report/${currentUser.SpecialAccess}`}>
+        {currentUser && currentUser.SpecialAccess_Teacher !== null && (
+          <Link to={`/t/report/${currentUser.SpecialAccess_Teacher}`}>
             <ListItem>
-              <ListItemPrefix>
+              <ListItemPrefix>  
                 <DocumentChartBarIcon className="h-5 w-5" />
               </ListItemPrefix>
               Reports

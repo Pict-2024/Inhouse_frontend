@@ -13,12 +13,14 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-import { addRecordsFaculty } from "./API_Routes";
+import { addRecordsFaculty, uploadRecordsFaculty } from "./API_Routes";
 
 export default function FacultyConferencePublication() {
   const { currentUser } = useSelector((state) => state.user);
 
   const [isFinancialSupport, setIsFinancialSupport] = useState(false);
+  const [isAchievement, setIsAchievement] = useState("No");
+  const [uploadedFilePaths, setUploadedFilePaths] = useState({});
   const navigate = useNavigate();
   const currentYear = new Date().getFullYear();
   const years = Array.from(
@@ -28,52 +30,183 @@ export default function FacultyConferencePublication() {
 
   const [formData, setFormData] = useState({
     T_ID: null,
+    Name: currentUser?.Name,
     Username: currentUser?.Username,
-    Name:currentUser?.Name,
     Department: "",
     Title_of_the_Paper: "",
     Title_of_the_proceedings_of_the_conference: "",
     Name_of_the_conference: "",
     National_International: "",
-    Date_of_conference: "",
+    Date_of_conference: null,
     Conference_Venue_and_Organizer: "",
     Year_of_publication: "",
     ISSN_ISBN_number_of_the_proceeding: "",
     Affiliating_Institute_at_the_time_of_publication: "",
-    Link_to_paper: "",
+    Link_To_Paper: "",
     Upload_Paper: null,
     Financial_support_given_by_institute_in_INR: "",
-    Evidence:null,
+    Upload_Evidence: null,
     DOI: "",
     Presented_Yes_No: "",
     Any_Achievements: "",
-    Upload_DOA: "",
+    Upload_DOA: null,
   });
 
   const handleInputChange = (e) => {
-    const { name, value, type } = e.target;
+    const { name, value, type, files } = e.target;
 
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: type === "file" ? e.target.files[0] : value,
-    }));
+    setFormData({
+      ...formData,
+      [name]:
+        type === "file" ? (files && files.length > 0 ? files[0] : null) : value,
+    });
   };
+
+  const handleFileUpload = async (files) => {
+    try {
+      const queryParams = new URLSearchParams();
+      queryParams.append("username", currentUser?.Username);
+      queryParams.append("role", currentUser?.Role);
+      queryParams.append("tableName", "faculty_conference_publication");
+
+      let formDataForUpload = new FormData();
+      const columnNames = [];
+      // Append files under the 'files' field name as expected by the server
+      if (formData.Upload_Paper) {
+        formDataForUpload.append("files", formData.Upload_Paper);
+        columnNames.push("Upload_Paper");
+      }
+      if (formData.Upload_Evidence) {
+        formDataForUpload.append("files", formData.Upload_Evidence);
+        columnNames.push("Upload_Evidence");
+      }
+      if (formData.Upload_DOA) {
+        formDataForUpload.append("files", formData.Upload_DOA);
+        columnNames.push("Upload_DOA");
+      }
+
+
+      // Append column names to the query parameters
+      queryParams.append("columnNames", columnNames.join(","));
+      console.log('query: ', queryParams);
+      const url = `${uploadRecordsFaculty}?${queryParams.toString()}`;
+      console.log("formdata", formDataForUpload)
+      const response = await axios.post(url, formDataForUpload, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+
+      console.log(response?.data?.uploadResults);
+      return response?.data?.uploadResults;
+    } catch (error) {
+      console.error("Error uploading file:", error);
+      toast.error(error?.response?.data?.message, {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+      return;
+      // Handle error as needed
+    }
+  };
+
 
   //Add records
   const handleSubmit = async (e) => {
     e.preventDefault();
-    await axios.post(addRecordsFaculty, formData);
-    toast.success("Record Added Successfully", {
-      position: "top-right",
-      autoClose: 1500,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-      theme: "light",
-    });
-    navigate("/t/data");
+    console.log(formData);
+
+    if (formData.Upload_Paper === null) {
+      toast.error("Select file for upload", {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+      return;
+    }
+    // Check if evidence upload is required
+    if (isFinancialSupport && formData.Upload_Evidence === null) {
+      alert("Upload Evidence document");
+      return;
+    }
+    if (isAchievement === "Yes" && formData.Upload_DOA === null) {
+      alert("Upload Achievement document");
+      return;
+    }
+
+    try {
+      const filesToUpload = [];
+      if (isFinancialSupport && formData.Upload_Evidence) {
+        filesToUpload.push(formData.Upload_Evidence);
+      }
+      if (formData.Upload_DOA !== null) {
+        filesToUpload.push(formData.Upload_DOA);
+      }
+      if (formData.Upload_Paper !== null) {
+        filesToUpload.push(formData.Upload_Paper);
+      }
+
+      // If file upload is successful, continue with the form submission
+      const uploadResults = await handleFileUpload(filesToUpload);
+
+      // Store the paths of uploaded files in the uploadedFilePaths object
+      const updatedUploadedFilePaths = { ...uploadedFilePaths };
+      uploadResults.forEach((result) => {
+        updatedUploadedFilePaths[result.columnName] = result.filePath;
+      });
+      setUploadedFilePaths(updatedUploadedFilePaths);
+
+      // Merge uploaded file paths with existing formData
+      const formDataWithFilePath = {
+        ...formData,
+        ...updatedUploadedFilePaths,
+      };
+      console.log("Final data:", formDataWithFilePath);
+
+      // Send a POST request to the addRecordsBook API endpoint
+      await axios.post(addRecordsFaculty, formDataWithFilePath);
+
+      // Display a success toast
+      toast.success("Record Added Successfully", {
+        position: "top-right",
+        autoClose: 1500,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+
+      // Navigate to "/t/data" after successful submission
+      navigate("/t/data");
+    } catch (error) {
+      // Handle file upload error
+      console.error("File upload error:", error);
+
+      // Display an error toast
+      toast.error(error?.response?.data?.message, {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+    }
   };
 
   return (
@@ -267,17 +400,15 @@ export default function FacultyConferencePublication() {
               <Input
                 size="lg"
                 label="Link to paper"
-                type="file"
                 onChange={handleInputChange}
-                name="Link_to_paper"
-                value={formData.Link_to_paper}
+                name="Link_To_Paper"
               />
             </div>
           </div>
           <div className="mb-4 flex flex-wrap -mx-4">
             <div className="w-full px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
-                Upload Paper
+                Upload Paper (Only Pdf)
               </Typography>
               <Input
                 size="lg"
@@ -285,7 +416,6 @@ export default function FacultyConferencePublication() {
                 label="Upload Paper"
                 onChange={handleInputChange}
                 name="Upload_Paper"
-                value={formData.Upload_Paper}
               />
             </div>
           </div>
@@ -335,9 +465,8 @@ export default function FacultyConferencePublication() {
                   <Input
                     size="lg"
                     label="Evidence Document"
-                    name="Evidence"
+                    name="Upload_Evidence"
                     type="file"
-                    value={formData.Evidence}
                     onChange={handleInputChange}
                     disabled={!isFinancialSupport}
                   />
@@ -366,14 +495,14 @@ export default function FacultyConferencePublication() {
                 size="lg"
                 label="Select Yes/No"
                 color="light-gray"
+                name="Presented_Yes_No"
+                value={formData.Presented_Yes_No}
                 // onChange={handleInputChange}
                 onChange={(value) =>
                   handleInputChange({
                     target: { name: "Presented_Yes_No", value },
                   })
                 }
-                name="Presented_Yes_No"
-                value={formData.Presented_Yes_No}
               >
                 <Option value="Yes">Yes</Option>
                 <Option value="No">No</Option>
@@ -389,34 +518,31 @@ export default function FacultyConferencePublication() {
                 size="lg"
                 label="Any Achievements"
                 name="Any_Achievements"
-                value={formData.Any_Achievements}
-                onChange={(value) =>
-                  handleInputChange({
-                    target: { name: "Any_Achievements", value },
-                  })
-                }
+                value={isAchievement}
+                onChange={(value) => setIsAchievement(value)}
               >
                 <Option value="Yes">Yes</Option>
                 <Option value="No">No</Option>
               </Select>
             </div>
-            <div className="w-full md:w-1/2 px-4 mb-4">
-              <Typography variant="h6" color="blue-gray" className="mb-3">
-                Upload Achievement Document
-              </Typography>
-              <Input
-                size="lg"
-                type="file"
-                label="Upload Achievement Document"
-                onChange={handleInputChange}
-                name="Upload_DOA"
-                value={formData.Upload_DOA}
-              />
-            </div>
+            {isAchievement === "Yes" && (
+              <div className="w-full md:w-1/2 px-4 mb-4">
+                <Typography variant="h6" color="blue-gray" className="mb-3">
+                  Upload Achievement Document (Only Pdf)
+                </Typography>
+                <Input
+                  size="lg"
+                  type="file"
+                  label="Upload Achievement Document"
+                  onChange={handleInputChange}
+                  name="Upload_DOA"
+                />
+              </div>
+            )}
           </div>
 
           <Button type="submit" className="mt-4" fullWidth>
-            Add Changes
+            Submit
           </Button>
         </form>
       </Card>

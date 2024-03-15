@@ -20,6 +20,7 @@ import {
 
 export default function Contribution() {
   const { currentUser } = useSelector((state) => state.user);
+  const [uploadedFilePaths, setUploadedFilePaths] = useState({});
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     T_ID: null,
@@ -30,7 +31,7 @@ export default function Contribution() {
     Role: "",
     University_Institution: "",
     Body_Name: "",
-    Evidence: null,
+    Upload_Evidence: null,
   });
 
   const handleOnChange = (e) => {
@@ -59,27 +60,47 @@ export default function Contribution() {
     return Options;
   };
 
-  const handleFileUpload = async (file) => {
+  const handleFileUpload = async (files) => {
     try {
-      console.log("file as:", file);
-      // if (!file || !file.length) {
-      //   // If file is null, display a toast alert
+      const queryParams = new URLSearchParams();
+      queryParams.append("username", currentUser?.Username);
+      queryParams.append("role", currentUser?.Role);
+      queryParams.append("tableName", "contribution_to_bos");
 
-      // }
+      let formDataForUpload = new FormData();
+      const columnNames = [];
+      // Append files under the 'files' field name as expected by the server
+      if (formData.Upload_Evidence) {
+        formDataForUpload.append("files", formData.Upload_Evidence);
+        columnNames.push("Upload_Evidence");
+      }
 
-      const formDataForFile = new FormData();
-      formDataForFile.append("file", file);
-      formDataForFile.append("username", currentUser?.Username);
-      formDataForFile.append("role", currentUser?.Role);
-      formDataForFile.append("tableName", "contribution_to_bos");
+      // Append column names to the query parameters
+      queryParams.append("columnNames", columnNames.join(","));
+      console.log('query: ', queryParams);
+      const url = `${uploadRecordsContribution}?${queryParams.toString()}`;
+      console.log("formdata", formDataForUpload)
+      const response = await axios.post(url, formDataForUpload, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
 
-      const response = await axios.post(uploadRecordsContribution, formDataForFile);
-      // console.log(response);
-      // console.log("file response:", response.data.filePath);
-
-      return response.data.filePath;
+      console.log(response?.data?.uploadResults);
+      return response?.data?.uploadResults;
     } catch (error) {
       console.error("Error uploading file:", error);
+      toast.error(error?.response?.data?.message, {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+      return;
       // Handle error as needed
     }
   };
@@ -89,48 +110,43 @@ export default function Contribution() {
     e.preventDefault();
     console.log(formData);
 
-    var pathUpload;
-    console.log(formData.Evidence);
-    try {
-      if (formData.Evidence !== null) {
-        console.log("hello");
-        pathUpload = await handleFileUpload(formData.Evidence);
+    if (formData.Upload_Evidence === null) {
+      toast.error("Select a file for upload", {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+      return;
+    }
 
-        console.log("Upload path = ", pathUpload);
-      } else {
-        toast.error("Please select a file for upload", {
-          position: "top-right",
-          autoClose: 3000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
-        });
-        return;
+
+    try {
+      const filesToUpload = [];
+
+      if (formData.Upload_Evidence !== null) {
+        filesToUpload.push(formData.Upload_Evidence);
       }
 
       // If file upload is successful, continue with the form submission
+      const uploadResults = await handleFileUpload(filesToUpload);
+
+      // Store the paths of uploaded files in the uploadedFilePaths object
+      const updatedUploadedFilePaths = { ...uploadedFilePaths };
+      uploadResults.forEach((result) => {
+        updatedUploadedFilePaths[result.columnName] = result.filePath;
+      });
+      setUploadedFilePaths(updatedUploadedFilePaths);
+
+      // Merge uploaded file paths with existing formData
       const formDataWithFilePath = {
         ...formData,
-        Evidence: pathUpload, // Use an empty string as a default if fileUploadPath is undefined
+        ...updatedUploadedFilePaths,
       };
-      if (pathUpload === "") {
-        // If file is null, display a toast alert
-        toast.error("Some e rror occurred while uploading file", {
-          position: "top-right",
-          autoClose: 3000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
-        });
-        return;
-      }
-
       console.log("Final data:", formDataWithFilePath);
 
       // Send a POST request to the addRecordsBook API endpoint
@@ -154,8 +170,7 @@ export default function Contribution() {
       // Handle file upload error
       console.error("File upload error:", error);
 
-      // Display an error toast
-      toast.error("File upload failed. Please try again.", {
+      toast.error(error?.response?.data?.message, {
         position: "top-right",
         autoClose: 3000,
         hideProgressBar: false,
@@ -165,6 +180,7 @@ export default function Contribution() {
         progress: undefined,
         theme: "light",
       });
+      return;
     }
   };
 
@@ -286,7 +302,7 @@ export default function Contribution() {
                 Evidence document
               </Typography>
               <Input
-                name="Evidence"
+                name="Upload_Evidence"
                 size="lg"
                 type="file"
                 label="Evidence Document"
@@ -296,7 +312,7 @@ export default function Contribution() {
           </div>
 
           <Button type="submit" className="mt-4" fullWidth>
-            Add Changes
+            Submit
           </Button>
         </form>
       </Card>

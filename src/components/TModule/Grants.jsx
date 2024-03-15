@@ -1,3 +1,5 @@
+
+
 import { useState } from "react";
 import {
   Card,
@@ -13,10 +15,11 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-import { addRecordsGrants } from "./API_Routes";
+import { addRecordsGrants, uploadRecordsGrants } from "./API_Routes";
 
 export default function Grants() {
   const { currentUser } = useSelector((state) => state.user);
+  const [uploadedFilePaths, setUploadedFilePaths] = useState({});
   const navigate = useNavigate();
   const currentYear = new Date().getFullYear();
   const years = Array.from(
@@ -27,52 +30,166 @@ export default function Grants() {
   // Define state variables for form fields
   const [formData, setFormData] = useState({
     T_ID: null,
+    Name: currentUser?.Name,
     Username: currentUser?.Username,
-    Name:currentUser?.Name,
     Department: "",
     Principal_Investigator_Faculty_Name: "",
     Project_Title: "",
-    Number_of_CO_PI: "",
     Names_of_CO_PI: "",
+    Number_of_CO_PI: "",
     Department_of_CO_PI: "",
     Project_Type_Government_Non_Government: "",
     Name_of_Funding_Agency: "",
     Name_of_the_Scheme: "",
     Amount_Sanctioned: "",
+    Upload_Evidence: null,
     Year_of_grant_received: "",
-    Start_Date: "",
-    End_Date: "",
-    Amount_deposited_to_PICT_account: "",
-    Evidence_Document: null,
-    Transaction_date: "",
+    Start_Date: null,
+    End_Date: null,
+    Upload_Amount_deposited_to_PICT_account: null,
+    Transaction_date: null,
     Status_Ongoing_Completed: "",
     Duration: "",
     Outcome: "",
   });
 
   const handleChange = (e) => {
+    const { name, value, type, files } = e.target;
+
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value,
+      [name]:
+        type === "file" ? (files && files.length > 0 ? files[0] : null) : value,
     });
   };
 
-  // add new entry
+  const handleFileUpload = async (files) => {
+    try {
+      const queryParams = new URLSearchParams();
+      queryParams.append("username", currentUser?.Username);
+      queryParams.append("role", currentUser?.Role);
+      queryParams.append("tableName", "grants");
+      // queryParams.append("columnNames", "Upload_Evidence,Upload_Paper,Upload_DOA");
+
+      let formDataForUpload = new FormData();
+      const columnNames = [];
+      // Append files under the 'files' field name as expected by the server
+      if (formData.Upload_Amount_deposited_to_PICT_account) {
+        formDataForUpload.append("files", formData.Upload_Amount_deposited_to_PICT_account);
+        columnNames.push("Upload_Amount_deposited_to_PICT_account");
+      }
+      if (formData.Upload_Evidence) {
+        formDataForUpload.append("files", formData.Upload_Evidence);
+        columnNames.push("Upload_Evidence");
+      }
+
+
+      // Append column names to the query parameters
+      queryParams.append("columnNames", columnNames.join(","));
+      console.log('query: ', queryParams);
+      const url = `${uploadRecordsGrants}?${queryParams.toString()}`;
+      console.log("formdata", formDataForUpload)
+      const response = await axios.post(url, formDataForUpload, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+
+      console.log(response?.data?.uploadResults);
+      return response?.data?.uploadResults;
+    } catch (error) {
+      console.error("Error uploading file:", error);
+      toast.error(error?.response?.data?.message, {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+      return;
+      // Handle error as needed
+    }
+  };
+
+  //add new record
   const handleSubmit = async (e) => {
     e.preventDefault();
-    await axios.post(addRecordsGrants, formData);
-    toast.success("Record Added Successfully", {
-      position: "top-right",
-      autoClose: 1500,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-      theme: "light",
-    });
-    navigate("/t/data");
-  };
+    console.log(formData);
+    if (formData.Upload_Evidence === null || formData.Upload_Amount_deposited_to_PICT_account === null) {
+      toast.error("Select a file for upload.", {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+      return;
+    }
+
+    try {
+      const filesToUpload = [];
+
+      if (formData.Upload_Evidence !== null) {
+        filesToUpload.push(formData.Upload_Evidence);
+      }
+      if (formData.Upload_Amount_deposited_to_PICT_account !== null) {
+        filesToUpload.push(formData.Upload_Amount_deposited_to_PICT_account);
+      }
+
+      // If file upload is successful, continue with the form submission
+      const uploadResults = await handleFileUpload(filesToUpload);
+
+      // Store the paths of uploaded files in the uploadedFilePaths object
+      const updatedUploadedFilePaths = { ...uploadedFilePaths };
+      uploadResults.forEach((result) => {
+        updatedUploadedFilePaths[result.columnName] = result.filePath;
+      });
+      setUploadedFilePaths(updatedUploadedFilePaths);
+
+      // Merge uploaded file paths with existing formData
+      const formDataWithFilePath = {
+        ...formData,
+        ...updatedUploadedFilePaths,
+      };
+      console.log("Final data with file paths:", formDataWithFilePath);
+
+      await axios.post(addRecordsGrants, formDataWithFilePath);
+      // Here you can use filePaths with another API call or further processing
+
+      toast.success("Record Added Successfully", {
+        position: "top-right",
+        autoClose: 1500,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+
+      navigate("/t/data");
+    } catch (error) {
+      console.error("File upload error:", error);
+      toast.error(error?.response?.data?.message, {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+      return;
+    }
+  }
+
 
   return (
     <>
@@ -301,13 +418,12 @@ export default function Grants() {
             <div className="w-full px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
                 Document evidence for amount sanctioned from funding agency (for
-                current A.Y.)
+                current A.Y.) (Only Pdf)
               </Typography>
               <Input
                 size="lg"
-                name="Amount_deposited_to_PICT_account"
+                name="Upload_Amount_deposited_to_PICT_account"
                 type="file"
-                value={formData.Amount_deposited_to_PICT_account}
                 onChange={handleChange}
                 label="Amount deposited to PICT account"
               />
@@ -318,13 +434,12 @@ export default function Grants() {
             <div className="w-full px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
                 Document evidence for amount deposited in PICT account (bank
-                statement)
+                statement) (Only Pdf)
               </Typography>
               <Input
                 size="lg"
-                name="Evidence_Document"
+                name="Upload_Evidence"
                 type="file"
-                value={formData.Evidence_Document}
                 onChange={handleChange}
                 label="Document evidence for amount deposited in PICT account"
               />
@@ -375,7 +490,7 @@ export default function Grants() {
               <Input
                 size="lg"
                 name="Duration"
-                type="text"
+                type="number"
                 value={formData.Duration}
                 onChange={handleChange}
                 label="Duration"
@@ -400,10 +515,11 @@ export default function Grants() {
           </div>
 
           <Button type="submit" className="mt-4" fullWidth>
-            Add Changes
+            Submit
           </Button>
         </form>
       </Card>
     </>
   );
-}
+
+};

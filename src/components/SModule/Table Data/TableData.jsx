@@ -10,13 +10,24 @@ import {
   CardHeader,
   Typography,
   CardBody,
+  Button,
   IconButton,
   Tooltip,
   Input,
 } from "@material-tailwind/react";
+import {
+  Dialog,
+  DialogHeader,
+  DialogBody,
+  DialogFooter,
+} from "@material-tailwind/react";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import axios from "axios";
 import PropTypes from "prop-types";
 import { useSelector } from "react-redux";
+import moment from "moment";
+import ExcelJS from "exceljs";
 import {
   deleteRecordsCertificateStud,
   deleteRecordsConferenceStud,
@@ -52,6 +63,8 @@ export default function TableData({ tableName }) {
   const [tableHead, setTableHead] = useState([]);
   const [tableRows, setTableRows] = useState([]);
   const [editableFields, setEditableFields] = useState({});
+  const [showDialog, setShowDialog] = useState(false);
+  const [recordToDelete, setRecordToDelete] = useState(null);
 
   // getRecords by username apis
   const getApiRoute = (tableName) => {
@@ -60,9 +73,9 @@ export default function TableData({ tableName }) {
     const apiRoutes = {
       Internship: (username) => getOneRecordsInternship(username),
       Research: (username) => getOneRecordsResearchStud(username),
-      "Conference Publication": (username) =>
+      "Conference publication": (username) =>
         getOneRecordsConferenceStud(username),
-      "Certificate Courses": (username) =>
+      "Certificate Course Attended": (username) =>
         getOneRecordsCertificateStud(username),
       "Sport Data": (username) => getOneRecordsSport(username),
       "Event Participated": (username) => getOneRecordsParticipation(username),
@@ -84,9 +97,9 @@ export default function TableData({ tableName }) {
         `${deleteRecordsInternship}?username=${username}&S_ID=${S_ID}`,
       Research: (username, S_ID) =>
         `${deleteRecordsResearchStud}?username=${username}&S_ID=${S_ID}`,
-      "Conference Publication": (username, S_ID) =>
+      "Conference publication": (username, S_ID) =>
         `${deleteRecordsConferenceStud}?username=${username}&S_ID=${S_ID}`,
-      "Certificate Courses": (username, S_ID) =>
+      "Certificate Course Attended": (username, S_ID) =>
         `${deleteRecordsCertificateStud}?username=${username}&S_ID=${S_ID}`,
       "Sport Data": (username, S_ID) =>
         `${deleteRecordsSport}?username=${username}&S_ID=${S_ID}`,
@@ -111,9 +124,9 @@ export default function TableData({ tableName }) {
         `${updateRecordsInternship}?username=${username}&S_ID=${S_ID}`,
       Research: (username, S_ID) =>
         `${updateRecordsResearchStud}?username=${username}&S_ID=${S_ID}`,
-      "Conference Publication": (username, S_ID) =>
+      "Conference publication": (username, S_ID) =>
         `${updateRecordsConferenceStud}?username=${username}&S_ID=${S_ID}`,
-      "Certificate Courses": (username, S_ID) =>
+      "Certificate Course Attended": (username, S_ID) =>
         `${updateRecordsCertificateStud}?username=${username}&S_ID=${S_ID}`,
       "Sport Data": (username, S_ID) =>
         `${updateRecordsSport}?username=${username}&S_ID=${S_ID}`,
@@ -165,6 +178,17 @@ export default function TableData({ tableName }) {
     }
   };
 
+  const handleOpenDialog = (record) => {
+    setRecordToDelete(record);
+    setShowDialog(true);
+  };
+
+  // Function to handle closing the dialog
+  const handleCloseDialog = () => {
+    setShowDialog(false);
+    setRecordToDelete(null);
+  };
+
   //Handle delete records
   const onDelete = async (record) => {
     try {
@@ -172,10 +196,8 @@ export default function TableData({ tableName }) {
         currentUser.Username,
         record.S_ID
       );
-      // console.log("Deleting record with:", currentUser.Email, record.S_ID);
-      // console.log("Table:", tableName);
 
-      await axios.delete(apiurl, {
+      const response = await axios.delete(apiurl, {
         headers: {
           "Content-Type": "application/json",
         },
@@ -184,10 +206,32 @@ export default function TableData({ tableName }) {
           S_ID: record.S_ID,
         },
       });
+      if (response?.data.status == 200) {
+        toast.success("Record Deleted Successfully!", {
+          position: "top-left",
+          autoClose: 1500,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+        });
+      }
 
       const updatedRows = tableRows.filter((r) => r.S_ID !== record.S_ID);
       setTableRows(updatedRows);
     } catch (error) {
+      toast.error("Failed to delete Record!", {
+        position: "top-left",
+        autoClose: 1500,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
       console.error("Error deleting record:", error.response.data.message);
       // Handle error gracefully, e.g., show a user-friendly message
     }
@@ -216,11 +260,12 @@ export default function TableData({ tableName }) {
   const handleSave = async (tId) => {
     try {
       const updatedRecord = editableFields[tId];
-      // console.log("Updated:", updatedRecord);
+      console.log("Updated:", updatedRecord);
       // Send a PUT request to update the record in the backend
       const apiurl = updateAPIRoute(tableName)(currentUser.Username, tId);
-      // console.log("updating record with:", currentUser.Email, tId);
-      // console.log("Table:", tableName);
+      console.log(apiurl);
+      console.log("updating record with:", currentUser.Username, tId);
+      console.log("Table:", tableName);
       await axios.put(apiurl, updatedRecord, {
         headers: {
           "Content-Type": "application/json",
@@ -256,10 +301,50 @@ export default function TableData({ tableName }) {
   //link to uploaded document
   const handleLink = (link) => {
     console.log("Link of document is : ", link);
-    window.open(link, "_blank");
+    const IP = "http://10.10.15.150";
+    const PORT = 8081;
+    const pathParts = link.split('\\Uploads');
+    const newPath = `${IP}:${PORT}/Uploads${pathParts[1]}`;
+
+    console.log("New URL is : ", newPath);
+
+    window.open(newPath, "_blank");
+  };
+
+  const generateExcel = () => {
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet("Report");
+
+    // Add headers
+    const headerRow = worksheet.addRow(tableHead.map((head) => head));
+
+    // Add data rows
+    tableRows.forEach((row) => {
+      const dataRow = tableHead.map((head) => row[head]);
+      worksheet.addRow(dataRow);
+    });
+
+    // Save the workbook
+    workbook.xlsx.writeBuffer().then((buffer) => {
+      const blob = new Blob([buffer], {
+        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "report.xlsx";
+      a.click();
+      window.URL.revokeObjectURL(url);
+    });
+  };
+
+  // Add this function to handle the "Generate Excel" button click
+  const handleGenerateExcel = () => {
+    generateExcel();
   };
 
   return (
+    <>
     <Card className="h-full w-full p-3">
       <CardHeader floated={false} shadow={false} className="rounded-none">
         <div className="flex items-center justify-between gap-8 mt-2">
@@ -285,7 +370,7 @@ export default function TableData({ tableName }) {
                     <Typography
                       variant="small"
                       color="blue"
-                      className="flex items-center justify-between gap-2 font-normal leading-none opacity-70 font-bold text-blue-700"
+                      className="flex items-center justify-between gap-2 leading-none opacity-70 font-bold text-blue-700"
                     >
                       {head}{" "}
                       {index !== tableHead.length - 1 && (
@@ -326,13 +411,21 @@ export default function TableData({ tableName }) {
                           onChange={(e) =>
                             handleEditField(record.S_ID, head, e.target.value)
                           }
+                          disabled={head.startsWith("Upload")}
                         />
-                      ) : head.startsWith("Upload") ||
-                        head.startsWith("Link") ? (
+                      ) : head.includes("Upload") ? (
                         <DocumentIcon
                           onClick={() => handleLink(record[head])}
                           className="cursor-pointer w-6 h-6"
                         />
+                      ) : head.includes("Date") ? (
+                        <Typography
+                          variant="body"
+                          color="black"
+                          className="text-dark font-bold"
+                        >
+                          <p>{moment(record[head]).format("YYYY-MM-DD")}</p>
+                        </Typography>
                       ) : (
                         <Typography
                           variant="body"
@@ -366,7 +459,7 @@ export default function TableData({ tableName }) {
                         </Tooltip>
                         <Tooltip content="Delete data">
                           <IconButton
-                            onClick={() => onDelete(record)}
+                            onClick={() => handleOpenDialog(record)}
                             variant="text"
                           >
                             <TrashIcon className="h-4 w-4 text-red-500" />
@@ -381,7 +474,40 @@ export default function TableData({ tableName }) {
           </table>
         </div>
       </CardBody>
+      <div className="mt-4 text-right">
+        <Button
+          onClick={handleGenerateExcel}
+          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+        >
+          Generate Excel
+        </Button>
+      </div>
     </Card>
+    <Dialog open={showDialog} size="sm" handler={handleCloseDialog}>
+        <DialogHeader>Warning</DialogHeader>
+        <DialogBody>Are you sure you want to delete this record?</DialogBody>
+        <DialogFooter>
+          <Button
+            variant="text"
+            color="red"
+            onClick={handleCloseDialog}
+            className="mr-1"
+          >
+            <span>Cancel</span>
+          </Button>
+          <Button
+            variant="gradient"
+            color="green"
+            onClick={() => {
+              onDelete(recordToDelete);
+              handleCloseDialog();
+            }}
+          >
+            <span>Delete</span>
+          </Button>
+        </DialogFooter>
+      </Dialog>
+    </>
   );
 }
 

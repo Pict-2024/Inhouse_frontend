@@ -17,6 +17,7 @@ import { addRecordsExtension, uploadRecordsExtension } from "./API_Routes";
 
 export default function ExtensionActivity() {
   const { currentUser } = useSelector((state) => state.user);
+  const [uploadedFilePaths, setUploadedFilePaths] = useState({});
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     T_ID: null,
@@ -24,8 +25,8 @@ export default function ExtensionActivity() {
     Username: currentUser?.Username,
     Dept_Name: "",
     Title: "",
-    Start_Date: "",
-    End_Date: "",
+    Start_Date: null,
+    End_Date: null,
     Title_of_extension_activity: "",
     Scheme_Name: "",
     Role: "",
@@ -34,8 +35,8 @@ export default function ExtensionActivity() {
     NoOf_Faculty_Participants: "",
     PSOs_Attained: "",
     Place: "",
-    List_of_Students: null,
-    Report: null,
+    Upload_List_of_Students: null,
+    Upload_Report: null,
   });
   const handleChange = (e) => {
     const { name, value, type, files } = e.target;
@@ -47,26 +48,53 @@ export default function ExtensionActivity() {
     });
   };
 
-  const handleFileUpload = async (file) => {
+  const handleFileUpload = async (files) => {
     try {
-      console.log("file as:", file);
+      const queryParams = new URLSearchParams();
+      queryParams.append("username", currentUser?.Username);
+      queryParams.append("role", currentUser?.Role);
+      queryParams.append("tableName", "extension_activity");
+      // queryParams.append("columnNames", "Upload_Evidence,Upload_Paper,Upload_DOA");
 
-      const formDataForFile = new FormData();
-      formDataForFile.append("file", file);
-      formDataForFile.append("username", currentUser?.Username);
-      formDataForFile.append("role", currentUser?.Role);
-      formDataForFile.append("tableName", "extension_activity");
+      let formDataForUpload = new FormData();
+      const columnNames = [];
+      // Append files under the 'files' field name as expected by the server
+      if (formData.Upload_List_of_Students) {
+        formDataForUpload.append("files", formData.Upload_List_of_Students);
+        columnNames.push("Upload_List_of_Students");
+      }
+      if (formData.Upload_Report) {
+        formDataForUpload.append("files", formData.Upload_Report);
+        columnNames.push("Upload_Report");
+      }
 
-      const response = await axios.post(
-        uploadRecordsExtension,
-        formDataForFile
-      );
-      console.log(response);
-      // console.log("file response:", response.data.filePath);
 
-      return response.data.filePath;
+      // Append column names to the query parameters
+      queryParams.append("columnNames", columnNames.join(","));
+      console.log('query: ', queryParams);
+      const url = `${uploadRecordsExtension}?${queryParams.toString()}`;
+      console.log("formdata", formDataForUpload)
+      const response = await axios.post(url, formDataForUpload, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+
+      console.log(response?.data?.uploadResults);
+      return response?.data?.uploadResults;
     } catch (error) {
       console.error("Error uploading file:", error);
+      toast.error(error?.response?.data?.message, {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+      return;
       // Handle error as needed
     }
   };
@@ -75,54 +103,46 @@ export default function ExtensionActivity() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     console.log(formData);
+    if (formData.Upload_List_of_Students === null ||
+      formData.Upload_Report === null) {
+      toast.error('Select file for upload', {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+      return;
+    }
 
-    var pathReport, pathStudent;
-    // console.log(formData.Evidence);
     try {
-      if (formData.Report !== null && formData.List_of_Students !== null) {
-        // console.log("2");
-        pathReport = await handleFileUpload(formData.Report);
-        // console.log("3");
-        pathStudent = await handleFileUpload(formData.List_of_Students);
-        // console.log("4");
+      const filesToUpload = [];
 
-        // console.log("Upload path = ", pathUpload);
-      } else {
-        toast.error("Please select a file for upload", {
-          position: "top-right",
-          autoClose: 3000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
-        });
-        return;
+      if (formData.Upload_List_of_Students !== null) {
+        filesToUpload.push(formData.Upload_List_of_Students);
+      }
+      if (formData.Upload_Report !== null) {
+        filesToUpload.push(formData.Upload_Report);
       }
 
       // If file upload is successful, continue with the form submission
+      const uploadResults = await handleFileUpload(filesToUpload);
+
+      // Store the paths of uploaded files in the uploadedFilePaths object
+      const updatedUploadedFilePaths = { ...uploadedFilePaths };
+      uploadResults.forEach((result) => {
+        updatedUploadedFilePaths[result.columnName] = result.filePath;
+      });
+      setUploadedFilePaths(updatedUploadedFilePaths);
+
+      // Merge uploaded file paths with existing formData
       const formDataWithFilePath = {
         ...formData,
-
-        Report: pathReport,
-        List_of_Students: pathStudent,
+        ...updatedUploadedFilePaths,
       };
-      if (pathReport === "" && pathStudent === "") {
-        // If file is null, display a toast alert
-        toast.error("Some error occurred while uploading file", {
-          position: "top-right",
-          autoClose: 3000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
-        });
-        return;
-      }
-
       console.log("Final data:", formDataWithFilePath);
 
       // Send a POST request to the addRecordsBook API endpoint
@@ -146,8 +166,7 @@ export default function ExtensionActivity() {
       // Handle file upload error
       console.error("File upload error:", error);
 
-      // Display an error toast
-      toast.error("File upload failed. Please try again.", {
+      toast.error(error?.response?.data?.message, {
         position: "top-right",
         autoClose: 3000,
         hideProgressBar: false,
@@ -157,6 +176,7 @@ export default function ExtensionActivity() {
         progress: undefined,
         theme: "light",
       });
+      return;
     }
   };
 
@@ -321,7 +341,7 @@ export default function ExtensionActivity() {
               </Typography>
               <Input
                 size="lg"
-                name="List_of_Students"
+                name="Upload_List_of_Students"
                 type="file"
                 label="List of Students"
                 onChange={handleChange}
@@ -375,7 +395,7 @@ export default function ExtensionActivity() {
               </Typography>
               <Input
                 size="lg"
-                name="Report"
+                name="Upload_Report"
                 type="file"
                 label="Report"
                 onChange={handleChange}
@@ -383,7 +403,7 @@ export default function ExtensionActivity() {
             </div>
           </div>
           <Button type="submit" className="mt-4" fullWidth>
-            Add Changes
+            Submit
           </Button>
         </form>
       </Card>

@@ -13,12 +13,16 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-import { addRecordsConferenceStud, uploadRecordsConferenceStud } from "./API_Routes";
+import {
+  addRecordsConferenceStud,
+  uploadRecordsConferenceStud,
+} from "./API_Routes";
 
 export default function Conference() {
   const { currentUser } = useSelector((state) => state.user);
 
   const [isFinancialSupport, setIsFinancialSupport] = useState(false);
+  const [uploadedFilePaths, setUploadedFilePaths] = useState({});
 
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
@@ -27,7 +31,7 @@ export default function Conference() {
     Academic_Year: "",
     Student_Name: currentUser?.Name,
     Department: "",
-    Year_of_Study: "",
+    Class: "",
     Title_of_Paper: "",
     Title_of_proceedings_of_conference: "",
     Conference_Name: "",
@@ -37,10 +41,10 @@ export default function Conference() {
     Publication_Year: "",
     ISSN: "",
     Affiliating_Institute: "",
-    Paper_Link: null,
+    Paper_Link: "",
     Upload_Paper: null,
     Financial_support_given_by_institute_in_INR: "",
-    Evidence: null,
+    Upload_Evidence: null,
     DOI: "",
     Presented: "",
     Achievements: "",
@@ -48,11 +52,28 @@ export default function Conference() {
   });
 
   const currentYear = new Date().getFullYear();
+  const [isAchievements, setIsAchievements] = useState("No");
 
   const years = Array.from(
     { length: currentYear - 1999 },
     (_, index) => currentYear - index
   );
+
+  const generateAcademicYearOptions = () => {
+    const currentYear = new Date().getFullYear();
+    const Options = [];
+
+    for (let year = 2023; year <= currentYear; year++) {
+      const academicYearStart = `${year}-${year + 1}`;
+      Options.push(
+        <Option key={academicYearStart} value={academicYearStart}>
+          {academicYearStart}
+        </Option>
+      );
+    }
+
+    return Options;
+  };
 
   const handleOnChange = (e) => {
     const { id, value, type, files } = e.target;
@@ -64,21 +85,49 @@ export default function Conference() {
     });
   };
 
-  const handleFileUpload = async (file) => {
+  const handleFileUpload = async (files) => {
     try {
-      console.log("file as:", file);
+      console.log("file as:", files);
+      
+      const queryParams = new URLSearchParams();
+      queryParams.append("username", currentUser?.Username);
+      queryParams.append("role", currentUser?.Role);
+      queryParams.append("tableName", "student_conference_publication");
 
-      const formDataForFile = new FormData();
-      formDataForFile.append("file", file);
-      formDataForFile.append("username", currentUser?.Username);
-      formDataForFile.append("role", currentUser?.Role);
-      formDataForFile.append("tableName", "student_conference_publication");
+      let formDataForUpload = new FormData();
+      const columnNames = [];
 
-      const response = await axios.post(uploadRecordsConferenceStud, formDataForFile);
+      if(formData.Upload_Paper)
+      {
+        formDataForUpload.append("files", formData.Upload_Paper);
+        columnNames.push("Upload_Paper")
+      }
+      if(formData.Upload_Evidence)
+      {
+        formDataForUpload.append("files", formData.Upload_Evidence);
+        columnNames.push("Upload_Evidence");
+      }
+
+      if(formData.Upload_Achievement_Document)
+      {
+        formDataForUpload.append("files", formData.Upload_Achievement_Document);
+        columnNames.push("Upload_Achievement_Document");
+      }
+
+      queryParams.append("columnNames", columnNames.join(","));
+      console.log("query = ", queryParams);
+      const url = `${uploadRecordsConferenceStud}?${queryParams.toString()}`;
+      console.log("formdata", formDataForUpload);
+
+      const response = await axios.post( url, formDataForUpload, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
       console.log(response);
-      // console.log("file response:", response.data.filePath);
+      console.log(response?.data?.uploadResults);
+      return response?.data?.uploadResults;
 
-      return response.data.filePath;
     } catch (error) {
       console.error("Error uploading file:", error);
       // Handle error as needed
@@ -87,40 +136,35 @@ export default function Conference() {
 
   //Add records
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    console.log(formData);
 
-    var pathEvidence=null, pathReport, pathStudent,pathLink;
-    console.log(isFinancialSupport);
-    console.log(formData.Evidence);
+    e.preventDefault();
+
+    const requiredFields = ["Academic_Year", "Department", "Class", "Title_of_Paper", "Title_of_proceedings_of_conference", "Conference_Name", "Level", "Date_of_Conference", "Conference_Venue_and_Organizer", "Publication_Year", "ISSN", "Affiliating_Institute", "Paper_Link", "DOI"];
+
+    const emptyFields = requiredFields.filter(field => !formData[field]);
+
+    if (emptyFields.length > 0) {
+      const emptyFieldNames = emptyFields.join(", ");
+      alert(`Please fill in all required fields: ${emptyFieldNames}`);
+      return;
+    }
+
     // Check if evidence upload is required
-    if (isFinancialSupport && formData.Evidence === null) {
+    if (isFinancialSupport && formData.Upload_Evidence === null) 
+    {
       alert("Upload Evidence document");
+      return;
+    }
+    if (isAchievements === "Yes" && formData.Upload_Achievement_Document === null) 
+    {
+      alert("Upload Achievement document");
       return;
     }
 
     try {
-      if (isFinancialSupport ) {
-        console.log("hi");
-        // Handle evidence upload only if financial support is selected
-        pathEvidence = await handleFileUpload(formData.Evidence);
-      }
-      if (
-        formData.Upload_Paper !== null &&
-        formData.Upload_Achievement_Document !== null &&
-        formData.Paper_Link !== null
-      ) {
-        console.log("1");
 
-        console.log("2");
-        pathLink = await handleFileUpload(formData.Paper_Link)
-        pathReport = await handleFileUpload(formData.Upload_Paper);
-        console.log("3");
-        pathStudent = await handleFileUpload(formData.Upload_Achievement_Document);
-        console.log("4");
-
-        // console.log("Upload path = ", pathUpload);
-      } else {
+      if ( formData.Upload_Paper === null ) 
+      {
         toast.error("Please select a file for upload", {
           position: "top-right",
           autoClose: 3000,
@@ -133,30 +177,36 @@ export default function Conference() {
         });
         return;
       }
-      // console.log("Evidence path:",pathEvidence);
-      // If file upload is successful, continue with the form submission
-     
+
+      const filesToUpload = [];
+
+      if(formData.Upload_Paper)
+      {
+        filesToUpload.push(formData.Upload_Paper);
+      }
+      if(formData.Upload_Evidence)
+      {
+        filesToUpload.push(formData.Upload_Evidence);
+      }
+      if(formData.Upload_Achievement_Document)
+      {
+        filesToUpload.push(formData.Upload_Achievement_Document);
+      }
+
+      const uploadResults = await handleFileUpload(filesToUpload);
+
+      // Store the paths of uploaded files in the uploadedFilePaths object
+      const updatedUploadedFilePaths = { ...uploadedFilePaths };
+      uploadResults.forEach((result) => {
+        updatedUploadedFilePaths[result.columnName] = result.filePath;
+      });
+      setUploadedFilePaths(updatedUploadedFilePaths);
+      
+      // console.log("Upload_Evidence path:",pathUpload_Evidence);
       const formDataWithFilePath = {
         ...formData,
-        Paper_Link: pathLink,
-        Evidence: pathEvidence,
-        Upload_Paper: pathReport,
-        Upload_Achievement_Document: pathStudent,
+        ...updatedUploadedFilePaths,
       };
-      if (pathEvidence === "" && pathReport === "" && pathStudent === "" && pathLink === "") {
-        // If file is null, display a toast alert
-        toast.error("Some error occurred while uploading file", {
-          position: "top-right",
-          autoClose: 3000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
-        });
-        return;
-      }
 
       console.log("Final data:", formDataWithFilePath);
 
@@ -237,13 +287,19 @@ export default function Conference() {
               <Typography variant="h6" color="blue-gray" className="mb-3">
                 Academic Year
               </Typography>
-              <Input
-                id="Academic_Year"
+              <Select
                 size="lg"
-                label="Eg.2022-2023"
+                id="Academic_Year"
                 value={formData.Academic_Year}
-                onChange={handleOnChange}
-              />
+                label="Academic Year"
+                onChange={(value) =>
+                  handleOnChange({
+                    target: { id: "Academic_Year", value },
+                  })
+                }
+              >
+                {generateAcademicYearOptions()}
+              </Select>
             </div>
           </div>
 
@@ -255,11 +311,11 @@ export default function Conference() {
               <Select
                 id="Year"
                 size="lg"
-                label="Year"
-                value={formData.Year_of_Study}
+                label="Class"
+                value={formData.Class}
                 onChange={(value) =>
                   handleOnChange({
-                    target: { id: "Year_of_Study", value },
+                    target: { id: "Class", value },
                   })
                 }
               >
@@ -326,7 +382,7 @@ export default function Conference() {
                     target: { id: "Level", value },
                   })
                 }
-                // onChange={handleOnChange}
+              // onChange={handleOnChange}
               >
                 <Option value="International">International</Option>
                 <Option value="National">National</Option>
@@ -389,7 +445,7 @@ export default function Conference() {
                     target: { id: "Publication_Year", value },
                   })
                 }
-                // onChange={handleOnChange}
+              // onChange={handleOnChange}
               >
                 {years.map((year) => (
                   <Option key={year} value={year}>
@@ -420,14 +476,13 @@ export default function Conference() {
               <Input
                 id="Paper_Link"
                 size="lg"
-                type="file"
                 label="Paper Link"
                 onChange={handleOnChange}
               />
             </div>
             <div className="w-full md:w-1/2 px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
-                Upload_Paper
+                Upload_Paper (Pdf Only)
               </Typography>
               <Input
                 id="Upload_Paper"
@@ -440,65 +495,64 @@ export default function Conference() {
           </div>
 
           <div className="mb-4 flex flex-wrap -mx-4">
-          <div className="w-full">
-            <div className="px-4 mb-4 flex justify-start items-center gap-4">
-              <Typography variant="h6" color="blue-gray" className="mb-3">
-                Financial support from institute in INR
-              </Typography>
-              <div className="flex gap-3">
-                <label className="mx-2">
-                  <input
-                    type="radio"
-                    name="financialSupport"
-                    value="yes"
-                    checked={isFinancialSupport}
-                    onChange={() => setIsFinancialSupport(true)}
-                  />
-                  Yes
-                </label>
-                <label>
-                  <input
-                    type="radio"
-                    name="financialSupport"
-                    value="no"
-                    checked={!isFinancialSupport}
-                    onChange={() => setIsFinancialSupport(false)}
-                  />
-                  No
-                </label>
+            <div className="w-full">
+              <div className="px-4 mb-4 flex justify-start items-center gap-4">
+                <Typography variant="h6" color="blue-gray" className="mb-3">
+                  Financial support from institute in INR
+                </Typography>
+                <div className="flex gap-3">
+                  <label className="mx-2">
+                    <input
+                      type="radio"
+                      name="financialSupport"
+                      value="yes"
+                      checked={isFinancialSupport}
+                      onChange={() => setIsFinancialSupport(true)}
+                    />
+                    Yes
+                  </label>
+                  <label>
+                    <input
+                      type="radio"
+                      name="financialSupport"
+                      value="no"
+                      checked={!isFinancialSupport}
+                      onChange={() => setIsFinancialSupport(false)}
+                    />
+                    No
+                  </label>
+                </div>
               </div>
-            </div>
-            <div className="flex justify-between  flex-col md:flex-row">
-              <div className="w-full md:w-1/2 px-4 mb-4">
-                <Input
-                  size="lg"
-                  label="Amount in INR"
-                  id="Financial_support_given_by_institute_in_INR"
-                  type="number"
-                  value={formData.Financial_support_given_by_institute_in_INR}
-                  onChange={handleOnChange}
-                  disabled={!isFinancialSupport}
-                />
-              </div>
-              <div className="w-full md:w-1/2 px-4 mb-4">
-                <Input
-                  size="lg"
-                  label="Evidence Document"
-                  id="Evidence"
-                  type="file"
-                  onChange={handleOnChange}
-                  disabled={!isFinancialSupport}
-                />
+              <div className="flex justify-between  flex-col md:flex-row">
+                <div className="w-full md:w-1/2 px-4 mb-4">
+                  <Input
+                    size="lg"
+                    label="Amount in INR"
+                    id="Financial_support_given_by_institute_in_INR"
+                    type="number"
+                    value={formData.Financial_support_given_by_institute_in_INR}
+                    onChange={handleOnChange}
+                    disabled={!isFinancialSupport}
+                  />
+                </div>
+                <div className="w-full md:w-1/2 px-4 mb-4">
+                  <Input
+                    size="lg"
+                    label="Evidence Document"
+                    id="Upload_Evidence"
+                    type="file"
+                    onChange={handleOnChange}
+                    disabled={!isFinancialSupport}
+                  />
+                </div>
               </div>
             </div>
           </div>
-        </div>
-            
-            <div className="mb-4 flex flex-wrap -mx-4">
-            
+
+          <div className="mb-4 flex flex-wrap -mx-4">
             <div className="w-full md:w-1/2 px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
-              Date_of_Conference
+                Date_of_Conference
               </Typography>
               <Input
                 id="Date_of_Conference"
@@ -523,22 +577,26 @@ export default function Conference() {
               />
             </div>
           </div>
-            <div className="mb-4 flex flex-wrap -mx-4">
+          <div className="mb-4 flex flex-wrap -mx-4">
+            <div className="w-full md:w-1/2 px-4 mb-4">
+              <Typography variant="h6" color="blue-gray" className="mb-3">
+                Achievements
+              </Typography>
+              <Select
+                id="Achievements"
+                size="lg"
+                value={isAchievements}
+                label="Achievements"
+                onChange={(value) => setIsAchievements(value)}
+              >
+                <Option value="Yes">Yes</Option>
+                <Option value="No">No</Option>
+              </Select>
+            </div>
+            {isAchievements === "Yes" && (
               <div className="w-full md:w-1/2 px-4 mb-4">
                 <Typography variant="h6" color="blue-gray" className="mb-3">
-                  Achievements
-                </Typography>
-                <Input
-                  id="Achievements"
-                  size="lg"
-                  value={formData.Achievements}
-                  label="Achievements"
-                  onChange={handleOnChange}
-                />
-              </div>
-              <div className="w-full md:w-1/2 px-4 mb-4">
-                <Typography variant="h6" color="blue-gray" className="mb-3">
-                  Upload Achievement Document
+                  Upload Achievement Document (Pdf Only)
                 </Typography>
                 <Input
                   id="Upload_Achievement_Document"
@@ -548,10 +606,11 @@ export default function Conference() {
                   onChange={handleOnChange}
                 />
               </div>
-            </div>
+            )}
+          </div>
 
           <Button type="submit" className="mt-4" fullWidth>
-            Add Changes
+            Submit
           </Button>
         </form>
       </Card>

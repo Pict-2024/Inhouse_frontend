@@ -21,7 +21,7 @@ export default function Admin() {
   }
 
   return (
-    <div className="min-h-full  font-poppins ">
+    <div className="min-h-full  font-poppins">
       <div className="w-full h-full  font-poppins ">
         {currentUser && currentUser.Role == 0 ? (
           <>

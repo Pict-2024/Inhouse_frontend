@@ -13,23 +13,30 @@ import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-import { addRecordsParticipation, uploadRecordsParticipation } from "./API_Routes";
+import {
+  addRecordsParticipation,
+  uploadRecordsParticipation,
+} from "./API_Routes";
 
 export default function EventParticipated() {
   const navigate = useNavigate();
 
+  
+  const [errors, setErrors] = useState({});
   const [isFinancialSupport, setIsFinancialSupport] = useState(false);
   const { currentUser } = useSelector((state) => state.user);
+  
+  const [uploadedFilePaths, setUploadedFilePaths] = useState({});
   const [formData, setFormData] = useState({
     S_ID: null,
     Username: currentUser?.Username,
     Academic_Year: "",
     Student_Name: currentUser?.Name,
-    Roll_No: "",
+    Roll_No: null,
     Department: "",
     Email_ID: currentUser?.Username,
     Mobile_No: "",
-    Year: "",
+    Class: "",
     Participant_or_Organizer: "",
     Event_Name: "",
     Name_of_Sub_Event: "",
@@ -46,9 +53,25 @@ export default function EventParticipated() {
     Award_Prize_Money: "",
     Remarks: "",
     Geo_Tag_Photos: "",
-    Certificate: null,
-    Evidence: null,
+    Upload_Certificate: null,
+    Upload_Evidence: null,
   });
+
+  const generateAcademicYearOptions = () => {
+    const currentYear = new Date().getFullYear();
+    const Options = [];
+
+    for (let year = 2023; year <= currentYear; year++) {
+      const academicYearStart = `${year}-${year + 1}`;
+      Options.push(
+        <Option key={academicYearStart} value={academicYearStart}>
+          {academicYearStart}
+        </Option>
+      );
+    }
+
+    return Options;
+  };
 
   const handleOnChange = (e) => {
     const { id, value, type, files } = e.target;
@@ -60,59 +83,95 @@ export default function EventParticipated() {
     });
   };
 
-  const handleFileUpload = async (file) => {
+  const handleFileUpload = async (files) => {
+    console.log("file as:", files);
     try {
-      console.log("file as:", file);
+
+      
+      const queryParams = new URLSearchParams();
+      // formDataForFile.append("file", file);
+      queryParams.append("username", currentUser?.Username);
+      queryParams.append("role", currentUser?.Role);
+      queryParams.append("tableName", "student_event_participated");
+
 
       const formDataForFile = new FormData();
-      formDataForFile.append("file", file);
-      formDataForFile.append("username", currentUser?.Username);
-      formDataForFile.append("role", currentUser?.Role);
-      formDataForFile.append("tableName", "student_event_participated");
+      const columnNames = [];
+      // formDataForFile.append("columnName", ["Upload_Certificate", "Upload_Evidence"]);
 
-      const response = await axios.post(uploadRecordsParticipation, formDataForFile);
-      console.log(response);
-      // console.log("file response:", response.data.filePath);
+      if(formData.Upload_Certificates)
+      {
+        formDataForFile.append("files", formData.Upload_Certificate);
+        columnNames.push("Upload_Certificate");
+      }
+      if(formData.Upload_Evidence)
+      {
+        formDataForFile.append("files", formData.Upload_Evidence);
+        columnNames.push("Upload_Evidence");
+      }
 
-      return response.data.filePath;
+      queryParams.append("columnNames", columnNames.join(","));
+      console.log("query = ", queryParams);
+
+      const url = `${uploadRecordsParticipation}?${queryParams.toString()}`;
+
+      const response = await axios.post( url, formDataForFile, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+
+      console.log(response?.data);
+      return response?.data?.uploadResults;
+
     } catch (error) {
       console.error("Error uploading file:", error);
       // Handle error as needed
     }
   };
 
-
   //add new record
   const handleSubmit = async (e) => {
-    e.preventDefault();
+    
     console.log(formData);
+    e.preventDefault();
 
-    var pathEvidence=null, pathReport;
-    console.log(isFinancialSupport);
-    console.log(formData.Evidence);
+    // const requiredFields = ["Academic_Year", "Department", "Student_Name", "Roll_No", "Class", "Email_ID", "Mobile_No", "Participant_or_Organizer", "Event_Name", "Name_of_Sub_Event", "Type_of_Event", "Individual_Role", "Organizer_Name", "Organizer_Type", "Place", "Start_Date", "End_Date", "Award", "Award_Prize_Money", "Remarks", "Geo_Tag_Photos"];
+    
+    // const emptyFields = requiredFields.filter(field => !formData[field]);
+
+    // if (emptyFields.length > 0) {
+    //   const emptyFieldNames = emptyFields.join(", ");
+    //   alert(`Please fill in all required fields: ${emptyFieldNames}`);
+    //   return;
+    // }
+    // // Validate Roll No
+    // if (!(/^\d{5}$/.test(formData.Roll_No))) {
+    //   setErrors((prevErrors) => ({
+    //     ...prevErrors,
+    //     Roll_No: "Roll No must be a 5-digit number."
+    //   }));
+    //   return;
+    // }
+
     // Check if evidence upload is required
-    if (isFinancialSupport && formData.Evidence === null) {
+    if (isFinancialSupport && formData.Upload_Evidence === null) {
       alert("Upload Evidence document");
       return;
     }
 
     try {
-      if (isFinancialSupport ) {
-        console.log("hi");
-        // Handle evidence upload only if financial support is selected
-        pathEvidence = await handleFileUpload(formData.Evidence);
+      const filesToUpload = [];
+
+      if (isFinancialSupport) 
+      {
+        filesToUpload.push(formData.Upload_Evidence);
       }
-      if (
-        formData.Certificate !== null
-      ) {
-        console.log("1");
-
-        console.log("2");
-        pathReport = await handleFileUpload(formData.Certificate);
-        console.log("3");
-
-        // console.log("Upload path = ", pathUpload);
-      } else {
+      if (formData.Upload_Certificate !== null) 
+      {
+        filesToUpload.push(formData.Upload_Certificate);
+      } 
+      else {
         toast.error("Please select a file for upload", {
           position: "top-right",
           autoClose: 3000,
@@ -125,29 +184,21 @@ export default function EventParticipated() {
         });
         return;
       }
-      // console.log("Evidence path:",pathEvidence);
-      // If file upload is successful, continue with the form submission
-     
+
+      const uploadResults = await handleFileUpload(filesToUpload);
+
+      const updatedUploadedFilePaths = { ...uploadedFilePaths};
+
+      uploadResults.forEach((result) => {
+        updatedUploadedFilePaths[result.columnName] = result.filePath;
+      });
+
+      setUploadedFilePaths(updatedUploadedFilePaths);
+
       const formDataWithFilePath = {
         ...formData,
-
-        Evidence: pathEvidence,
-        Certificate: pathReport,
+        ...updatedUploadedFilePaths,
       };
-      if (pathEvidence === "" && pathReport === "") {
-        // If file is null, display a toast alert
-        toast.error("Some error occurred while uploading file", {
-          position: "top-right",
-          autoClose: 3000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
-        });
-        return;
-      }
 
       console.log("Final data:", formDataWithFilePath);
 
@@ -185,7 +236,6 @@ export default function EventParticipated() {
       });
     }
   };
-
 
   return (
     <>
@@ -229,13 +279,19 @@ export default function EventParticipated() {
               <Typography variant="h6" color="blue-gray" className="mb-3">
                 Academic Year
               </Typography>
-              <Input
-                id="Academic_Year"
+              <Select
                 size="lg"
-                label="Eg.2022-2023"
+                id="Academic_Year"
                 value={formData.Academic_Year}
-                onChange={handleOnChange}
-              />
+                label="Academic Year"
+                onChange={(value) =>
+                  handleOnChange({
+                    target: { id: "Academic_Year", value },
+                  })
+                }
+              >
+                {generateAcademicYearOptions()}
+              </Select>
             </div>
           </div>
 
@@ -245,13 +301,13 @@ export default function EventParticipated() {
                 Year of Study
               </Typography>
               <Select
-                id="Year"
+                id="Class"
                 size="lg"
-                label="Year"
+                label="Class"
                 value={formData.Year}
                 onChange={(value) =>
                   handleOnChange({
-                    target: { id: "Year", value },
+                    target: { id: "Class", value },
                   })
                 }
               >
@@ -268,6 +324,7 @@ export default function EventParticipated() {
               <Input
                 id="Roll_No"
                 size="lg"
+                type="number"
                 label="Roll No"
                 value={formData.Roll_No}
                 onChange={handleOnChange}
@@ -278,12 +335,12 @@ export default function EventParticipated() {
           <div className="mb-4 flex flex-wrap -mx-4">
             <div className="w-full md:w-1/2 px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
-                Sport Name
+                Event Name
               </Typography>
               <Input
                 id="Event_Name"
                 size="lg"
-                label="Organized Byr"
+                label="Event Name"
                 value={formData.Event_Name}
                 onChange={handleOnChange}
               />
@@ -295,7 +352,7 @@ export default function EventParticipated() {
               <Input
                 id="Participant_or_Organizer"
                 size="lg"
-                label="Certificate Course Title"
+                label="Participant or Organizer"
                 value={formData.Participant_or_Organizer}
                 onChange={handleOnChange}
               />
@@ -455,64 +512,62 @@ export default function EventParticipated() {
             </div>
           </div>
 
-
           <div className="mb-4 flex flex-wrap -mx-4">
-          <div className="w-full">
-            <div className="px-4 mb-4 flex justify-start items-center gap-4">
-              <Typography variant="h6" color="blue-gray" className="mb-3">
-                Financial support from institute in INR
-              </Typography>
-              <div className="flex gap-3">
-                <label className="mx-2">
-                  <input
-                    type="radio"
-                    name="financialSupport"
-                    value="yes"
-                    checked={isFinancialSupport}
-                    onChange={() => setIsFinancialSupport(true)}
-                  />
-                  Yes
-                </label>
-                <label>
-                  <input
-                    type="radio"
-                    name="financialSupport"
-                    value="no"
-                    checked={!isFinancialSupport}
-                    onChange={() => setIsFinancialSupport(false)}
-                  />
-                  No
-                </label>
+            <div className="w-full">
+              <div className="px-4 mb-4 flex justify-start items-center gap-4">
+                <Typography variant="h6" color="blue-gray" className="mb-3">
+                  Financial support from institute in INR
+                </Typography>
+                <div className="flex gap-3">
+                  <label className="mx-2">
+                    <input
+                      type="radio"
+                      name="financialSupport"
+                      value="yes"
+                      checked={isFinancialSupport}
+                      onChange={() => setIsFinancialSupport(true)}
+                    />
+                    Yes
+                  </label>
+                  <label>
+                    <input
+                      type="radio"
+                      name="financialSupport"
+                      value="no"
+                      checked={!isFinancialSupport}
+                      onChange={() => setIsFinancialSupport(false)}
+                    />
+                    No
+                  </label>
+                </div>
               </div>
-            </div>
-            <div className="flex justify-between  flex-col md:flex-row">
-              <div className="w-full md:w-1/2 px-4 mb-4">
-                <Input
-                  size="lg"
-                  label="Amount in INR"
-                  id="Financial_Support_given_by_institute_in_INR"
-                  type="number"
-                  value={formData.Financial_Support_given_by_institute_in_INR}
-                  onChange={handleOnChange}
-                  disabled={!isFinancialSupport}
-                />
-              </div>
-              <div className="w-full md:w-1/2 px-4 mb-4">
-                <Input
-                  size="lg"
-                  label="Evidence Document"
-                  id="Evidence"
-                  type="file"
-                  onChange={handleOnChange}
-                  disabled={!isFinancialSupport}
-                />
+              <div className="flex justify-between  flex-col md:flex-row">
+                <div className="w-full md:w-1/2 px-4 mb-4">
+                  <Input
+                    size="lg"
+                    label="Amount in INR"
+                    id="Financial_Support_given_by_institute_in_INR"
+                    type="number"
+                    value={formData.Financial_Support_given_by_institute_in_INR}
+                    onChange={handleOnChange}
+                    disabled={!isFinancialSupport}
+                  />
+                </div>
+                <div className="w-full md:w-1/2 px-4 mb-4">
+                  <Input
+                    size="lg"
+                    label="Evidence Document"
+                    id="Upload_Evidence"
+                    type="file"
+                    onChange={handleOnChange}
+                    disabled={!isFinancialSupport}
+                  />
+                </div>
               </div>
             </div>
           </div>
-        </div>
 
           <div className="mb-4 flex flex-wrap -mx-4">
-            
             <div className="w-full md:w-1/2 px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
                 Award
@@ -525,7 +580,7 @@ export default function EventParticipated() {
                 onChange={handleOnChange}
               />
             </div>
-            
+
             <div className="w-full md:w-1/2 px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
                 Award_Prize_Money
@@ -540,15 +595,13 @@ export default function EventParticipated() {
             </div>
           </div>
 
-
-
           <div className="mb-4 flex flex-wrap -mx-4">
             <div className="w-full md:w-1/2 px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
-                Completion Certificate
+                Upload Completion Certificate (Only Pdf)
               </Typography>
               <Input
-                id="Certificate"
+                id="Upload_Certificate"
                 size="lg"
                 label=""
                 type="file"
@@ -569,22 +622,22 @@ export default function EventParticipated() {
             </div>
           </div>
           <div className="mb-4 flex flex-wrap -mx-4">
-          <div className="w-full px-4 mb-4">
-            <Typography variant="h6" color="blue-gray" className="mb-3">
-              Remarks
-            </Typography>
-            <Input
-              id="Remarks"
-              size="lg"
-              label="Remarks"
-              value={formData.Remarks}
-              onChange={handleOnChange}
-            />
+            <div className="w-full px-4 mb-4">
+              <Typography variant="h6" color="blue-gray" className="mb-3">
+                Remarks
+              </Typography>
+              <Input
+                id="Remarks"
+                size="lg"
+                label="Remarks"
+                value={formData.Remarks}
+                onChange={handleOnChange}
+              />
+            </div>
           </div>
-        </div>
 
           <Button type="submit" className="mt-4" fullWidth>
-            Add Changes
+            Submit
           </Button>
         </form>
       </Card>

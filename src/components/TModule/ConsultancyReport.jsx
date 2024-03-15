@@ -13,15 +13,16 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-import { addRecordsConsultancy } from "./API_Routes";
+import { addRecordsConsultancy, uploadRecordsConsultancy } from "./API_Routes";
 
 export default function ConsultancyReport() {
   const { currentUser } = useSelector((state) => state.user);
+  const [uploadedFilePaths, setUploadedFilePaths] = useState({});
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     T_ID: null,
+    Name: currentUser?.Name,
     Username: currentUser?.Username,
-    Name:currentUser?.Name,
     Name_of_Department: "",
     Role: "",
     Client_Organisation: "",
@@ -29,39 +30,162 @@ export default function ConsultancyReport() {
     Title_of_Work_domain: "",
     Type_Paid_Unpaid: "",
     Amount: "",
-    Start_Date: "",
-    End_Date: "",
-    Amt_Deposited: "",
-    Date_of_Transaction: "",
-    Link_to_evidence: "",
+    Start_Date: null,
+    End_Date: null,
+    Upload_Amt_Deposited: null,
+    Date_of_Transaction: null,
+    Upload_Link_to_evidence: null,
     Status: "",
     Outcome: "",
-    Upload_Paper: "",
+    Upload_Paper: null,
   });
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
+    const { name, value, type, files } = e.target;
+
     setFormData({
       ...formData,
-      [name]: value,
+      [name]:
+        type === "file" ? (files && files.length > 0 ? files[0] : null) : value,
     });
+  };
+
+  const handleFileUpload = async (files) => {
+    try {
+      const queryParams = new URLSearchParams();
+      queryParams.append("username", currentUser?.Username);
+      queryParams.append("role", currentUser?.Role);
+      queryParams.append("tableName", "consultancy_report");
+
+      let formDataForUpload = new FormData();
+      const columnNames = [];
+      // Append files under the 'files' field name as expected by the server
+      if (formData.Upload_Amt_Deposited) {
+        formDataForUpload.append("files", formData.Upload_Amt_Deposited);
+        columnNames.push("Upload_Amt_Deposited");
+      }
+      if (formData.Upload_Link_to_evidence) {
+        formDataForUpload.append("files", formData.Upload_Link_to_evidence);
+        columnNames.push("Upload_Link_to_evidence");
+      }
+      if (formData.Upload_Paper) {
+        formDataForUpload.append("files", formData.Upload_Paper);
+        columnNames.push("Upload_Paper");
+      }
+
+
+      // Append column names to the query parameters
+      queryParams.append("columnNames", columnNames.join(","));
+      console.log('query: ', queryParams);
+      const url = `${uploadRecordsConsultancy}?${queryParams.toString()}`;
+      console.log("formdata", formDataForUpload)
+      const response = await axios.post(url, formDataForUpload, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+
+      console.log(response?.data?.uploadResults);
+      return response?.data?.uploadResults;
+    } catch (error) {
+      console.error("Error uploading file:", error);
+      toast.error(error?.response?.data?.message, {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+      return;
+      // Handle error as needed
+    }
   };
 
   //Add new records
   const handleSubmit = async (e) => {
     e.preventDefault();
-    await axios.post(addRecordsConsultancy, formData);
-    toast.success("Record Added Successfully", {
-      position: "top-right",
-      autoClose: 1500,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-      theme: "light",
-    });
-    navigate("/t/data");
+    console.log(formData);
+    if (formData.Upload_Amt_Deposited === null || formData.Upload_Link_to_evidence === null
+      || formData.Upload_Paper === null) {
+      toast.error("Select a file for upload.", {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+      return;
+    }
+    try {
+      const filesToUpload = [];
+
+      if (formData.Upload_Amt_Deposited !== null) {
+        filesToUpload.push(formData.Upload_Amt_Deposited);
+      }
+      if (formData.Upload_Link_to_evidence !== null) {
+        filesToUpload.push(formData.Upload_Link_to_evidence);
+      }
+      if (formData.Upload_Paper !== null) {
+        filesToUpload.push(formData.Upload_Paper);
+      }
+
+      // If file upload is successful, continue with the form submission
+      const uploadResults = await handleFileUpload(filesToUpload);
+
+      // Store the paths of uploaded files in the uploadedFilePaths object
+      const updatedUploadedFilePaths = { ...uploadedFilePaths };
+      uploadResults.forEach((result) => {
+        updatedUploadedFilePaths[result.columnName] = result.filePath;
+      });
+      setUploadedFilePaths(updatedUploadedFilePaths);
+
+      // Merge uploaded file paths with existing formData
+      const formDataWithFilePath = {
+        ...formData,
+        ...updatedUploadedFilePaths,
+      };
+      console.log("Final data:", formDataWithFilePath);
+
+      // Send a POST request to the addRecordsBook API endpoint
+      await axios.post(addRecordsConsultancy, formDataWithFilePath);
+
+      // Display a success toast
+      toast.success("Record Added Successfully", {
+        position: "top-right",
+        autoClose: 1500,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+
+      // Navigate to "/t/data" after successful submission
+      navigate("/t/data");
+    } catch (error) {
+      // Handle file upload error
+      console.error("File upload error:", error);
+
+      // Display an error toast
+      toast.error(error?.response?.data?.message, {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+      return;
+    }
   };
 
   return (
@@ -193,6 +317,27 @@ export default function ConsultancyReport() {
             </div>
           </div>
           <div className="mb-4 flex flex-wrap -mx-4">
+            <div className="w-full px-4 mb-4">
+              <Typography variant="h6" color="blue-gray" className="mb-3">
+                Status
+              </Typography>
+              <Select
+                size="lg"
+                name="Status"
+                value={formData.Status}
+                label="Select Type"
+                // onChange={handleChange}
+                onChange={(value) =>
+                  handleChange({ target: { name: "State", value } })
+                }
+              >
+                <Option value="Ongoing">Ongoing</Option>
+                <Option value="Completed">Completed</Option>
+              </Select>
+            </div>
+
+          </div>
+          <div className="mb-4 flex flex-wrap -mx-4">
             <div className="w-full md:w-1/2 px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
                 Start Date
@@ -227,8 +372,9 @@ export default function ConsultancyReport() {
               </Typography>
               <Input
                 size="lg"
-                name="Amt_Deposited"
-                value={formData.Amt_Deposited}
+                name="Amount"
+                type="number"
+                value={formData.Amount}
                 label="Amount Deposited to college account"
                 onChange={handleChange}
               />
@@ -251,29 +397,27 @@ export default function ConsultancyReport() {
             <div className="w-full px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
                 Document evidence for amount deposited in PICT account (bank
-                statement)
+                statement) (Only Pdf)
               </Typography>
               <Input
                 size="lg"
-                name="Amt_Deposited"
+                name="Upload_Amt_Deposited"
                 type="file"
-                value={formData.Amt_Deposited}
                 onChange={handleChange}
                 label="Document evidence for amount deposited in PICT account"
               />
             </div>
           </div>
-          <div className="mb-4 flex flex-wrap -mx-4"> 
+          <div className="mb-4 flex flex-wrap -mx-4">
             <div className="w-full px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
                 Document evidence for amount sanctioned from funding agency (for
-                current A.Y.)
+                current A.Y.) (Only Pdf)
               </Typography>
               <Input
                 size="lg"
-                name="Link_to_evidence"
+                name="Upload_Link_to_evidence"
                 type="file"
-                value={formData.Link_to_evidence}
                 onChange={handleChange}
                 label=" Document evidence for amount sanctioned "
               />
@@ -301,14 +445,13 @@ export default function ConsultancyReport() {
                 size="lg"
                 type="file"
                 name="Upload_Paper"
-                value={formData.Upload_Paper}
                 label="Upload PDF Documents"
                 onChange={handleChange}
               />
             </div>
           </div>
           <Button className="mt-4" fullWidth type="submit">
-            Add Changes
+            Submit
           </Button>
         </form>
       </Card>

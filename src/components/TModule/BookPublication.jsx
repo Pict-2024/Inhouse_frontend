@@ -17,6 +17,7 @@ import { addRecordsBook, uploadRecordsBook } from "./API_Routes";
 
 export default function BookPublication() {
   const { currentUser } = useSelector((state) => state.user);
+  const [uploadedFilePaths, setUploadedFilePaths] = useState({});
 
   const navigate = useNavigate();
 
@@ -29,7 +30,7 @@ export default function BookPublication() {
     Chapter_if_any: "",
     Level_International_National: "",
     Publisher: "",
-    Year_of_Publication: "",
+    Year: "",
     ISBN_ISSN_DOI_any_other: "",
     Upload_Paper: null,
   });
@@ -41,30 +42,52 @@ export default function BookPublication() {
     (_, index) => currentYear - index
   );
 
-  const handleFileUpload = async (file) => {
+  const handleFileUpload = async (files) => {
     try {
-      console.log("file as:", file);
-      // if (!file || !file.length) {
-      //   // If file is null, display a toast alert
+      const queryParams = new URLSearchParams();
+      queryParams.append("username", currentUser?.Username);
+      queryParams.append("role", currentUser?.Role);
+      queryParams.append("tableName", "book_publication");
 
-      // }
+      let formDataForUpload = new FormData();
+      const columnNames = [];
+      // Append files under the 'files' field name as expected by the server
+      if (formData.Upload_Paper) {
+        formDataForUpload.append("files", formData.Upload_Paper);
+        columnNames.push("Upload_Paper");
+      }
 
-      const formDataForFile = new FormData();
-      formDataForFile.append("file", file);
-      formDataForFile.append("username", currentUser?.Username);
-      formDataForFile.append("role", currentUser?.Role);
-      formDataForFile.append("tableName", "book_publication");
 
-      const response = await axios.post(uploadRecordsBook, formDataForFile);
-      // console.log(response);
-      // console.log("file response:", response.data.filePath);
+      // Append column names to the query parameters
+      queryParams.append("columnNames", columnNames.join(","));
+      console.log('query: ', queryParams);
+      const url = `${uploadRecordsBook}?${queryParams.toString()}`;
+      console.log("formdata", formDataForUpload)
+      const response = await axios.post(url, formDataForUpload, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
 
-      return response.data.filePath;
+      console.log(response?.data?.uploadResults);
+      return response?.data?.uploadResults;
     } catch (error) {
       console.error("Error uploading file:", error);
+      toast.error(error?.response?.data?.message, {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+      return;
       // Handle error as needed
     }
   };
+
 
   const handleOnChange = (e) => {
     const { id, value, type, files } = e.target;
@@ -80,50 +103,42 @@ export default function BookPublication() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     console.log(formData);
-
-    var pathUpload;
-    console.log(formData.Upload_Paper);
+    if (formData.Upload_Paper === null) {
+      toast.error("Select a file for upload.", {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+      return;
+    }
     try {
+      const filesToUpload = [];
+
       if (formData.Upload_Paper !== null) {
-        console.log("hello");
-        pathUpload = await handleFileUpload(formData.Upload_Paper);
-       
-        console.log("Upload path = ", pathUpload);
-      } else {
-        toast.error("Please select a file for upload", {
-          position: "top-right",
-          autoClose: 3000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
-        });
-        return;
+        filesToUpload.push(formData.Upload_Paper);
       }
 
       // If file upload is successful, continue with the form submission
+      const uploadResults = await handleFileUpload(filesToUpload);
+
+      // Store the paths of uploaded files in the uploadedFilePaths object
+      const updatedUploadedFilePaths = { ...uploadedFilePaths };
+      uploadResults.forEach((result) => {
+        updatedUploadedFilePaths[result.columnName] = result.filePath;
+      });
+      setUploadedFilePaths(updatedUploadedFilePaths);
+
+      // Merge uploaded file paths with existing formData
       const formDataWithFilePath = {
         ...formData,
-        Upload_Paper: pathUpload, // Use an empty string as a default if fileUploadPath is undefined
+        ...updatedUploadedFilePaths,
       };
-      if (pathUpload === "") {
-        // If file is null, display a toast alert
-        toast.error("Some error occurred while uploading file", {
-          position: "top-right",
-          autoClose: 3000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
-        });
-        return;
-      }
-
-      console.log("Final data:", formDataWithFilePath);
+      console.log("Final data with file paths:", formDataWithFilePath);
 
       // Send a POST request to the addRecordsBook API endpoint
       await axios.post(addRecordsBook, formDataWithFilePath);
@@ -147,7 +162,7 @@ export default function BookPublication() {
       console.error("File upload error:", error);
 
       // Display an error toast
-      toast.error("File upload failed. Please try again.", {
+      toast.error(error?.response?.data?.message, {
         position: "top-right",
         autoClose: 3000,
         hideProgressBar: false,
@@ -157,6 +172,7 @@ export default function BookPublication() {
         progress: undefined,
         theme: "light",
       });
+      return;
     }
   };
 
@@ -191,7 +207,7 @@ export default function BookPublication() {
                     target: { id: "Department", value },
                   })
                 }
-                // onChange={handleOnChange}
+              // onChange={handleOnChange}
               >
                 <Option value="CS">CS</Option>
                 <Option value="IT">IT</Option>
@@ -243,7 +259,7 @@ export default function BookPublication() {
                     target: { id: "Level_International_National", value },
                   })
                 }
-                // onChange={handleOnChange}
+              // onChange={handleOnChange}
               >
                 <Option value="International">International</Option>
                 <Option value="National">National</Option>
@@ -269,17 +285,17 @@ export default function BookPublication() {
                 Year_of_Publication
               </Typography>
               <Select
-                id="Year_of_Publication"
+                id="Year"
                 size="lg"
                 label="Select Year_of_Publication"
                 color="light-gray"
-                value={formData.Year_of_Publication}
+                value={formData.Year}
                 onChange={(value) =>
                   handleOnChange({
-                    target: { id: "Year_of_Publication", value },
+                    target: { id: "Year", value },
                   })
                 }
-                // onChange={handleOnChange}
+              // onChange={handleOnChange}
               >
                 {years.map((year) => (
                   <Option key={year} value={year}>
@@ -305,7 +321,7 @@ export default function BookPublication() {
           <div className="mb-4 flex flex-wrap -mx-4">
             <div className="w-full px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
-                Upload_Paper document
+                Upload_Paper document (Pdf Only)
               </Typography>
               <Input
                 id="Upload_Paper"
@@ -318,7 +334,7 @@ export default function BookPublication() {
           </div>
 
           <Button type="submit" className="mt-4" fullWidth>
-            Add Changes
+            Submit
           </Button>
         </form>
       </Card>

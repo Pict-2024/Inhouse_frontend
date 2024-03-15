@@ -17,6 +17,7 @@ import { addRecordsWebinar, uploadRecordsWebinar } from "./API_Routes";
 
 export default function WebinarConducted() {
   const { currentUser } = useSelector((state) => state.user);
+  const [uploadedFilePaths, setUploadedFilePaths] = useState({});
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     T_ID: null,
@@ -29,15 +30,15 @@ export default function WebinarConducted() {
     Resource_Person_Affiliation: "",
     No_of_Participants: "",
     Remarks: "",
-    Start_Date: "",
-    End_Date: "",
+    Start_Date: null,
+    End_Date: null,
     Name_of_Coordinators: "",
     Targeted_Audience: "",
     Duration_in_Hrs: "",
     Renumeration_Paid: "",
-    List_of_Students: "",
-    Evidence: null,
-    Report: null,
+    Upload_List_of_Students: "",
+    Upload_Evidence: null,
+    Upload_Report: null,
   });
 
   const handleInputChange = (e) => {
@@ -50,23 +51,56 @@ export default function WebinarConducted() {
     });
   };
 
-  const handleFileUpload = async (file) => {
+  const handleFileUpload = async (files) => {
     try {
-      // console.log("file as:", file);
+      const queryParams = new URLSearchParams();
+      queryParams.append("username", currentUser?.Username);
+      queryParams.append("role", currentUser?.Role);
+      queryParams.append("tableName", "webinar_guest_lectures");
 
-      const formDataForFile = new FormData();
-      formDataForFile.append("file", file);
-      formDataForFile.append("username", currentUser?.Username);
-      formDataForFile.append("role", currentUser?.Role);
-      formDataForFile.append("tableName", "webinar_guest_lectures");
+      let formDataForUpload = new FormData();
+      const columnNames = [];
+      // Append files under the 'files' field name as expected by the server
+      if (formData.Upload_List_of_Students) {
+        formDataForUpload.append("files", formData.Upload_List_of_Students);
+        columnNames.push("Upload_List_of_Students");
+      }
+      if (formData.Upload_Evidence) {
+        formDataForUpload.append("files", formData.Upload_Evidence);
+        columnNames.push("Upload_Evidence");
+      }
+      if (formData.Upload_Report) {
+        formDataForUpload.append("files", formData.Upload_Report);
+        columnNames.push("Upload_Report");
+      }
 
-      const response = await axios.post(uploadRecordsWebinar, formDataForFile);
-      console.log(response);
-      // console.log("file response:", response.data.filePath);
 
-      return response.data.filePath;
+      // Append column names to the query parameters
+      queryParams.append("columnNames", columnNames.join(","));
+      console.log('query: ', queryParams);
+      const url = `${uploadRecordsWebinar}?${queryParams.toString()}`;
+      console.log("formdata", formDataForUpload)
+      const response = await axios.post(url, formDataForUpload, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+
+      console.log(response?.data?.uploadResults);
+      return response?.data?.uploadResults;
     } catch (error) {
       console.error("Error uploading file:", error);
+      toast.error(error?.response?.data?.message, {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+      return;
       // Handle error as needed
     }
   };
@@ -75,59 +109,48 @@ export default function WebinarConducted() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     console.log(formData);
-
-    var pathReport, pathEvidence, pathStudent;
-    // console.log(formData.Sample_Certificate);
+    if (formData.Upload_Evidence === null || formData.Upload_List_of_Students === null ||
+      formData.Upload_Report === null) {
+      toast.error("Select file for upload", {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+      return;
+    }
     try {
-      if (
-        formData.Report !== null &&
-        formData.List_of_Students !== null &&
-        formData.Evidence !== null
-      ) {
-        // console.log("2");
-        pathReport = await handleFileUpload(formData.Report);
-        // console.log("3");
-        pathStudent = await handleFileUpload(formData.List_of_Students);
-        pathEvidence = await handleFileUpload(formData.Evidence);
-        // console.log("4");
+      const filesToUpload = [];
 
-        // console.log("Upload path = ", pathUpload);
-      } else {
-        toast.error("Please select a file for upload", {
-          position: "top-right",
-          autoClose: 3000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
-        });
-        return;
+      if (formData.Upload_List_of_Students !== null) {
+        filesToUpload.push(formData.Upload_List_of_Students);
+      }
+      if (formData.Upload_Evidence !== null) {
+        filesToUpload.push(formData.Upload_Evidence);
+      }
+      if (formData.Upload_Report !== null) {
+        filesToUpload.push(formData.Upload_Report);
       }
 
       // If file upload is successful, continue with the form submission
+      const uploadResults = await handleFileUpload(filesToUpload);
+
+      // Store the paths of uploaded files in the uploadedFilePaths object
+      const updatedUploadedFilePaths = { ...uploadedFilePaths };
+      uploadResults.forEach((result) => {
+        updatedUploadedFilePaths[result.columnName] = result.filePath;
+      });
+      setUploadedFilePaths(updatedUploadedFilePaths);
+
+      // Merge uploaded file paths with existing formData
       const formDataWithFilePath = {
         ...formData,
-
-        Report: pathReport,
-        List_of_Students: pathStudent,
-        Evidence: pathEvidence,
+        ...updatedUploadedFilePaths,
       };
-      if (pathReport === "" && pathStudent === ""  && formData.Evidence === "") {
-        // If file is null, display a toast alert
-        toast.error("Some error occurred while uploading file", {
-          position: "top-right",
-          autoClose: 3000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
-        });
-        return;
-      }
 
       console.log("Final data:", formDataWithFilePath);
 
@@ -153,7 +176,7 @@ export default function WebinarConducted() {
       console.error("File upload error:", error);
 
       // Display an error toast
-      toast.error("File upload failed. Please try again.", {
+      toast.error(error?.response?.data?.message, {
         position: "top-right",
         autoClose: 3000,
         hideProgressBar: false,
@@ -163,6 +186,7 @@ export default function WebinarConducted() {
         progress: undefined,
         theme: "light",
       });
+      return;
     }
   };
 
@@ -291,11 +315,11 @@ export default function WebinarConducted() {
             </div>
             <div className="w-full md:w-1/2 px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
-                List of Students
+                List of Students (Only pdf)
               </Typography>
               <Input
                 size="lg"
-                name="List_of_Students"
+                name="Upload_List_of_Students"
                 type="file"
                 label="List of Students"
                 onChange={handleInputChange}
@@ -397,24 +421,24 @@ export default function WebinarConducted() {
           <div className="mb-4 flex flex-wrap -mx-4">
             <div className="w-full md:w-1/2 px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
-                Evidence document
+                Upload Evidence document (Only Pdf)
               </Typography>
               <Input
                 size="lg"
                 label="Evidence document"
-                name="Evidence"
+                name="Upload_Evidence"
                 type="file"
                 onChange={handleInputChange}
               />
             </div>
             <div className="w-full md:w-1/2 px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
-                Report
+                Report (Only Pdf)
               </Typography>
               <Input
                 size="lg"
                 label="Report"
-                name="Report"
+                name="Upload_Report"
                 type="file"
                 onChange={handleInputChange}
               />
@@ -437,7 +461,7 @@ export default function WebinarConducted() {
           </div>
 
           <Button type="submit" className="mt-4" fullWidth>
-            Add Changes
+            Submit
           </Button>
         </form>
       </Card>

@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { useLocation } from "react-router";
 import axios from "axios";
-import { Card, Typography } from "@material-tailwind/react";
+import { Card, Typography, Button } from "@material-tailwind/react";
+import { BASE_URL } from "../../api";
 
 const ViewInfo = () => {
   const location = useLocation();
@@ -16,46 +17,51 @@ const ViewInfo = () => {
   const [userType, setUserType] = useState("");
   const [responseData, setResponseData] = useState(null);
   const [selectedTable, setSelectedTable] = useState(null);
+  // const [selectAll, setSelectAll] = useState(false);
 
   const teacherTables = {
-    'mous': "mous",
-    "certificate_courses": "professional_affiliation",
-    "professional_affiliation": "professional_affiliation",
-    "resource_person": "resource_person",
-    "extension_activity": "extension_activity",
-    "technical_competition_fest": "technical_competition_fest",
-    "faculty_achievements": "faculty_achievements",
-    "industrial_fields_tour": "industrial_fields_tour",
-    "contribution_to_bos": "contribution_to_bos",
-    "research_publication": "research_publication",
-    "book_publication": "book_publication",
-    "faculty_conference_publication": "faculty_conference_publication",
-    "grants": "grants",
-    "consultancy_report": "consultancy_report",
-    "patent_publication": "patent_publication",
-    "conference_seminar_workshops": "conference_seminar_workshops",
-    "sttp_fdp_conference_attended": "sttp_fdp_conference_attended",
-    "webinar_guest_lectures": "webinar_guest_lectures",
+    mous: "mous",
+    certificate_courses: "professional_affiliation",
+    professional_affiliation: "professional_affiliation",
+    resource_person: "resource_person",
+    extension_activity: "extension_activity",
+    technical_competition_fest: "technical_competition_fest",
+    faculty_achievements: "faculty_achievements",
+    industrial_fields_tour: "industrial_fields_tour",
+    contribution_to_bos: "contribution_to_bos",
+    research_publication: "research_publication",
+    book_publication: "book_publication",
+    faculty_conference_publication: "faculty_conference_publication",
+    grants: "grants",
+    consultancy_report: "consultancy_report",
+    patent_publication: "patent_publication",
+    conference_seminar_workshops: "conference_seminar_workshops",
+    sttp_fdp_conference_attended: "sttp_fdp_conference_attended",
+    webinar_guest_lectures: "webinar_guest_lectures",
     // Add more teacher tables if needed
   };
 
   const studentTables = {
-    "student_internship_details": "student_internship_details",
-    "student_research_publication": "student_research_publication",
-    "student_conference_publication": "student_conference_publication",
-    "student_certificate_course": "student_certificate_course",
-    "student_sports_data": "student_sports_data",
-    "student_event_participated": "student_event_participated",
-    "student_event_organized": "student_event_organized",
-    "student_technical_events": "student_technical_events",
-    "student_higher_education": "student_higher_education",
+    student_internship_details: "student_internship_details",
+    student_research_publication: "student_research_publication",
+    student_conference_publication: "student_conference_publication",
+    student_certificate_course: "student_certificate_course",
+    student_sports_data: "student_sports_data",
+    student_event_participated: "student_event_participated",
+    student_event_organized: "student_event_organized",
+    student_technical_events: "student_technical_events",
+    student_higher_education: "student_higher_education",
     // Add more student tables if needed
   };
 
   const openModal = (type) => {
-    setShowModal(true);
-    setUserType(type);
-  };
+  // Show the modal
+  setShowModal(true);
+  // Set the user type
+  setUserType(type);
+  // Initialize selectedTables as an empty object
+  setSelectedTables({});
+};
 
   const closeModal = () => {
     setShowModal(false);
@@ -63,16 +69,12 @@ const ViewInfo = () => {
 
   const handleCheckboxChange = (tableName) => {
     setSelectedTables((prevSelectedTables) => {
+      // Create a new object to avoid mutating state directly
       const newSelectedTables = { ...prevSelectedTables };
-
-      if (newSelectedTables[tableName]) {
-        // Remove table if it's already selected
-        delete newSelectedTables[tableName];
-      } else {
-        // Add table if it's not selected
-        newSelectedTables[tableName] = true;
-      }
-
+  
+      // Toggle the selection state for the clicked table
+      newSelectedTables[tableName] = !newSelectedTables[tableName];
+  
       return newSelectedTables;
     });
   };
@@ -83,7 +85,7 @@ const ViewInfo = () => {
     const userId = userType === "teacher" ? teacherId : studentId;
 
     try {
-      const apiUrl = `http://localhost:5000/api/v1/general/get-user-data?username=${userId}&selectedTables[]=${Object.keys(
+      const apiUrl = `${BASE_URL}/general/get-user-data?username=${userId}&selectedTables[]=${Object.keys(
         selectedTables
       ).join("&selectedTables[]=")}`;
       const response = await axios.post(apiUrl, {
@@ -178,6 +180,19 @@ const ViewInfo = () => {
     );
   };
 
+  const handleSelectAll = () => {
+    // If all tables are currently selected, deselect all; otherwise, select all
+    setSelectedTables(
+      Object.keys(selectedTables).length ===
+        Object.keys(userType === "teacher" ? teacherTables : studentTables)
+          .length
+        ? {}
+        : userType === "teacher"
+        ? teacherTables
+        : studentTables
+    );
+  };
+
   return (
     <div>
       <div className="flex justify-center w-full gap-2">
@@ -204,63 +219,86 @@ const ViewInfo = () => {
         )}
       </div>
       {showModal && (
-        <div className="fixed z-10 p-6 inset-0 w-full h-auto bg-gray-500 bg-opacity-75 flex items-center justify-center">
-          <div className="flex flex-col m-3 bg-white p-6 rounded-lg shadow-md w-full h-full max-w-lg overflow-y-auto">
+        <div className="fixed z-10 p-6 inset-0 w-full h-full bg-gray-500 bg-opacity-75 flex items-center justify-center">
+          <div className="flex flex-col m-3 bg-white p-6 rounded-lg shadow-md w-full max-w-lg overflow-y-auto">
             <h1 className="text-lg font-semibold mb-4">Select Tables</h1>
-            {userType === "teacher"
-              ? Object?.keys(teacherTables)?.map((tableName) => (
-                  <div key={tableName} className="mb-4 flex items-center ">
-                    <input
-                      type="checkbox"
-                      id={`checkbox-${tableName}`}
-                      value={tableName}
-                      className="mr-2 h-5 w-5"
-                      onChange={() => handleCheckboxChange(tableName)}
-                      checked={selectedTables[tableName]}
-                    />
-                    <label
-                      htmlFor={`checkbox-${tableName}`}
-                      className="block mb-2 cursor-pointer"
-                    >
-                      {teacherTables[tableName]}
-                    </label>
-                  </div>
-                ))
-              : userType === "student"
-              ? Object.keys(studentTables)?.map((tableName) => (
-                  <div key={tableName} className="mb-4 flex items-center">
-                    <input
-                      type="checkbox"
-                      id={`checkbox-${tableName}`}
-                      value={tableName}
-                      className="mr-2 h-5 w-5"
-                      onChange={() => handleCheckboxChange(tableName)}
-                      checked={selectedTables[tableName]}
-                    />
-                    <label
-                      htmlFor={`checkbox-${tableName}`}
-                      className="block mb-2 cursor-pointer"
-                    >
-                      {studentTables[tableName]}
-                    </label>
-                  </div>
-                ))
-              : null}
+
+            <div className="mb-4 flex items-center">
+              <input
+                type="checkbox"
+                id="checkbox-select-all"
+                className="mr-2 h-5 w-5 border-gray-300 focus:ring focus:border-blue-300"
+                onChange={handleSelectAll}
+                checked={
+                  Object.keys(selectedTables).length ===
+                  Object.keys(
+                    userType === "teacher" ? teacherTables : studentTables
+                  ).length
+                }
+              />
+              <label
+                htmlFor="checkbox-select-all"
+                className="block mb-2 cursor-pointer"
+              >
+                Select All
+              </label>
+            </div>
+            <div style={{ maxHeight: "300px", overflowY: "auto" }}>
+              {userType === "teacher"
+                ? Object.keys(teacherTables).map((tableName) => (
+                    <div key={tableName} className="mb-2 flex items-center">
+                      <input
+                        type="checkbox"
+                        id={`checkbox-${tableName}`}
+                        value={tableName}
+                        className="mr-2 h-5 w-5 border-gray-300 focus:ring focus:border-blue-300"
+                        onChange={() => handleCheckboxChange(tableName)}
+                        checked={selectedTables[tableName]}
+                      />
+                      <label
+                        htmlFor={`checkbox-${tableName}`}
+                        className="block mb-2 cursor-pointer"
+                      >
+                        {teacherTables[tableName]}
+                      </label>
+                    </div>
+                  ))
+                : userType === "student"
+                ? Object.keys(studentTables).map((tableName) => (
+                    <div key={tableName} className="mb-2 flex items-center">
+                      <input
+                        type="checkbox"
+                        id={`checkbox-${tableName}`}
+                        value={tableName}
+                        className="mr-2 h-5 w-5 border-gray-300 focus:ring focus:border-blue-300"
+                        onChange={() => handleCheckboxChange(tableName)}
+                        checked={selectedTables[tableName]}
+                      />
+                      <label
+                        htmlFor={`checkbox-${tableName}`}
+                        className="block mb-2 cursor-pointer"
+                      >
+                        {studentTables[tableName]}
+                      </label>
+                    </div>
+                  ))
+                : null}
+            </div>
 
             <div className="flex justify-end gap-3">
-              <button
+              <Button
                 className="bg-red-400 text-white rounded-md px-4 py-2"
                 onClick={closeModal}
               >
                 Cancel
-              </button>
-              <button
-                className=" rounded-md text-white px-4 py-2 mr-2"
+              </Button>
+              <Button
+                className="rounded-md text-white px-4 py-2"
                 onClick={applyChanges}
                 style={{ backgroundColor: "#1565C0" }}
               >
                 Apply
-              </button>
+              </Button>
             </div>
           </div>
         </div>

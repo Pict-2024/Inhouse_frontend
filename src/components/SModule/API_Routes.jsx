@@ -1,4 +1,5 @@
-const BASE_URL = "http://localhost:5000/api/v1";
+import { BASE_URL } from "../../api";
+
 
 // Internship Details Routes
 export const getAllRecordsInternship = `${BASE_URL}/student/internship-details/all`;

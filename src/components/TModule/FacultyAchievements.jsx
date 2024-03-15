@@ -20,6 +20,8 @@ import {
 
 export default function FacultyAchievements() {
   const { currentUser } = useSelector((state) => state.user);
+  const [uploadedFilePaths, setUploadedFilePaths] = useState({});
+
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     T_ID: null,
@@ -32,7 +34,7 @@ export default function FacultyAchievements() {
     Level: "",
     Award_Type: "",
     Award_Prize_Money: "",
-    Certificate: null,
+    Upload_Certificate: null,
   });
 
   const handleInputChange = (e) => {
@@ -45,81 +47,89 @@ export default function FacultyAchievements() {
     });
   };
 
-  const handleFileUpload = async (file) => {
+  const handleFileUpload = async (files) => {
     try {
-      console.log("file as:", file);
-      // if (!file || !file.length) {
-      //   // If file is null, display a toast alert
+      const queryParams = new URLSearchParams();
+      queryParams.append("username", currentUser?.Username);
+      queryParams.append("role", currentUser?.Role);
+      queryParams.append("tableName", "faculty_achievements");
 
-      // }
+      let formDataForUpload = new FormData();
+      const columnNames = [];
+      // Append files under the 'files' field name as expected by the server
+      if (formData.Upload_Certificate) {
+        formDataForUpload.append("files", formData.Upload_Certificate);
+        columnNames.push("Upload_Certificate");
+      }
 
-      const formDataForFile = new FormData();
-      formDataForFile.append("file", file);
-      formDataForFile.append("username", currentUser?.Username);
-      formDataForFile.append("role", currentUser?.Role);
-      formDataForFile.append("tableName", "faculty_achievements");
+      // Append column names to the query parameters
+      queryParams.append("columnNames", columnNames.join(","));
+      console.log('query: ', queryParams);
+      const url = `${uploadRecordsAchievements}?${queryParams.toString()}`;
+      console.log("formdata", formDataForUpload)
+      const response = await axios.post(url, formDataForUpload, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
 
-      const response = await axios.post(
-        uploadRecordsAchievements,
-        formDataForFile
-      );
-      // console.log(response);
-      // console.log("file response:", response.data.filePath);
-
-      return response.data.filePath;
+      console.log(response?.data?.uploadResults);
+      return response?.data?.uploadResults;
     } catch (error) {
       console.error("Error uploading file:", error);
+      toast.error(error?.response?.data?.message, {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+      return;
       // Handle error as needed
     }
   };
-
   //add new record
   const handleSubmit = async (e) => {
     e.preventDefault();
     console.log(formData);
 
-    var pathUpload;
-    console.log(formData.Certificate);
+    if (formData.Upload_Certificate === null) {
+      toast.error("Select file to upload", {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+      return;
+    }
     try {
-      if (formData.Certificate !== null) {
-        console.log("hello");
-        pathUpload = await handleFileUpload(formData.Certificate);
-
-        console.log("Upload path = ", pathUpload);
-      } else {
-        toast.error("Please select a file for upload", {
-          position: "top-right",
-          autoClose: 3000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
-        });
-        return;
+      const filesToUpload = [];
+      if (formData.Upload_Certificate !== null) {
+        filesToUpload.push(formData.Upload_Certificate);
       }
 
       // If file upload is successful, continue with the form submission
+      const uploadResults = await handleFileUpload(filesToUpload);
+
+      // Store the paths of uploaded files in the uploadedFilePaths object
+      const updatedUploadedFilePaths = { ...uploadedFilePaths };
+      uploadResults.forEach((result) => {
+        updatedUploadedFilePaths[result.columnName] = result.filePath;
+      });
+      setUploadedFilePaths(updatedUploadedFilePaths);
+
+      // Merge uploaded file paths with existing formData
       const formDataWithFilePath = {
         ...formData,
-        Certificate: pathUpload, // Use an empty string as a default if fileUploadPath is undefined
+        ...updatedUploadedFilePaths,
       };
-      if (pathUpload === "") {
-        // If file is null, display a toast alert
-        toast.error("Some e rror occurred while uploading file", {
-          position: "top-right",
-          autoClose: 3000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
-        });
-        return;
-      }
-
       console.log("Final data:", formDataWithFilePath);
 
       // Send a POST request to the addRecordsBook API endpoint
@@ -142,9 +152,7 @@ export default function FacultyAchievements() {
     } catch (error) {
       // Handle file upload error
       console.error("File upload error:", error);
-
-      // Display an error toast
-      toast.error("File upload failed. Please try again.", {
+      toast.error(error?.response?.data?.message, {
         position: "top-right",
         autoClose: 3000,
         hideProgressBar: false,
@@ -154,6 +162,7 @@ export default function FacultyAchievements() {
         progress: undefined,
         theme: "light",
       });
+      return;
     }
   };
 
@@ -254,7 +263,7 @@ export default function FacultyAchievements() {
                     target: { name: "Level", value },
                   })
                 }
-                // onChange={handleInputChange}
+              // onChange={handleInputChange}
               >
                 <Option value="International">International</Option>
                 <Option value="National">National</Option>
@@ -281,7 +290,7 @@ export default function FacultyAchievements() {
                     target: { name: "Award_Type", value },
                   })
                 }
-                // onChange={handleInputChange}
+              // onChange={handleInputChange}
               >
                 <Option value="Winner">Winner</Option>
                 <Option value="Runner">Runner</Option>
@@ -310,7 +319,7 @@ export default function FacultyAchievements() {
               </Typography>
               <Input
                 size="lg"
-                name="Certificate"
+                name="Upload_Certificate"
                 type="file"
                 label="Certificate"
                 onChange={handleInputChange}
@@ -319,7 +328,7 @@ export default function FacultyAchievements() {
           </div>
 
           <Button type="submit" className="mt-4" fullWidth>
-            Add Changes
+            Submit
           </Button>
         </form>
       </Card>

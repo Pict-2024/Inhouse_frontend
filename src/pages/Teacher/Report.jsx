@@ -54,6 +54,7 @@ import { Option, Select } from "@material-tailwind/react";
 import html2pdf from "html2pdf.js";
 import ExcelJS from "exceljs";
 import { useSelector } from "react-redux";
+import { BASE_URL } from "../../api";
 
 const Report = () => {
   const { currentUser } = useSelector((state) => state.user);
@@ -131,7 +132,7 @@ const Report = () => {
   const [columnNames, setColumnNames] = useState([]);
   const [formFilters, setFormFilters] = useState({});
   const [apiUrl, setApiUrl] = useState(
-    "http://localhost:5000/api/v1/general/allcolumns"
+    `${BASE_URL}/general/allcolumns`
   );
   const [tableRows, setTableRows] = useState([]);
   const [selectedColumns, setSelectedColumns] = useState([]); // New state to track selected columns
@@ -142,7 +143,7 @@ const Report = () => {
     (_, index) => currentYear - index
   );
 
-  
+
 
   //get all records
   const getAllRecords = async () => {
@@ -174,7 +175,7 @@ const Report = () => {
   const getAllTables = async () => {
     try {
       const response = await axios.post(
-        `http://localhost:5000/api/v1/general/get-spec-cols?username=${currentUser.Username}`
+        `${BASE_URL}/general/get-spec-cols?username=${currentUser.Username}`
       );
       // const fetchedTableNames = response.data.data;
 
@@ -201,7 +202,7 @@ const Report = () => {
   const getAllColumns = async () => {
     try {
       const response = await axios.post(
-        `http://localhost:5000/api/v1/general/allcolumns?tablename=${tablename}`
+        `${BASE_URL}/general/allcolumns?tablename=${tablename}`
       );
       return response.data; // Returning the data for further processing
     } catch (error) {
@@ -251,7 +252,7 @@ const Report = () => {
     }
 
     setApiUrl(
-      `http://localhost:5000/api/v1/teacher/${tableMapping[selectedTable]}/filter?${queryParameters}`
+      `${BASE_URL}/teacher/${tableMapping[selectedTable]}/filter?${queryParameters}`
     );
     console.log("form filter is : ", formFilters);
     console.log("Update api url is : ", apiUrl);
@@ -583,44 +584,44 @@ const Report = () => {
             ))}
           </select>
 
-          {selectedTable !== "" && 
-          <div>
-            <label className="block text-gray-700 text-md font-bold  m-2 px-4">Select Filters:</label>
-            
-            <div className="flex flex-col justify-end align-items-center m-2 p-4">
-              <div className="flex justify-start gap-4 flex-wrap  p-3 w-full">
-              {renderInputFields()}
+          {selectedTable !== "" &&
+            <div>
+              <label className="block text-gray-700 text-md font-bold  m-2 px-4">Select Filters:</label>
+
+              <div className="flex flex-col justify-end align-items-center m-2 p-4">
+                <div className="flex justify-start gap-4 flex-wrap  p-3 w-full">
+                  {renderInputFields()}
+                </div>
+                <Button
+                  variant="contained"
+                  className="w-25 p-3"
+                  onClick={handleSubmit}
+                  endIcon={<FilterAltIcon />}
+                >
+                  Filter
+                </Button>
               </div>
-              <Button
-              variant="contained"
-              className="w-25 p-3"
-              onClick={handleSubmit}
-              endIcon={<FilterAltIcon />}
-              >
-              Filter
-              </Button>
-            </div>
 
-            {/* New component for column selection */}
-            <div className="border">
-            <ColumnSelection
-            columns={columnNames}
-            onSelectColumns={handleColumnSelection}
-            />
-            
-            <div className="flex gap-4 px-4">
-              <Button variant="contained" onClick={generatePDF}>
-              Generate PDF
-              </Button>
-              
-              <Button variant="contained" onClick={generateExcel}>
-              Generate Excel
-              </Button>
-            </div>
-            </div>
+              {/* New component for column selection */}
+              <div className="border">
+                <ColumnSelection
+                  columns={columnNames}
+                  onSelectColumns={handleColumnSelection}
+                />
 
-          </div>
-      }
+                <div className="flex gap-4 px-4">
+                  <Button variant="contained" onClick={generatePDF}>
+                    Generate PDF
+                  </Button>
+
+                  <Button variant="contained" onClick={generateExcel}>
+                    Generate Excel
+                  </Button>
+                </div>
+              </div>
+
+            </div>
+          }
 
           <TableContainer id="table-container" component={Paper}>
             <Table>
@@ -649,7 +650,7 @@ const Report = () => {
             </Table>
           </TableContainer>
 
-          
+
 
           <TableContainer component={Paper}></TableContainer>
 

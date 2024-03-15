@@ -17,6 +17,7 @@ import { addRecordsMous, uploadRecordsMous } from "./API_Routes";
 
 export default function FacultyExchange() {
   const { currentUser } = useSelector((state) => state.user);
+  const [uploadedFilePaths, setUploadedFilePaths] = useState({});
   const navigate = useNavigate();
   const currentYear = new Date().getFullYear();
   const years = Array.from(
@@ -52,23 +53,48 @@ export default function FacultyExchange() {
     });
   };
 
-  const handleFileUpload = async (file) => {
+  const handleFileUpload = async (files) => {
     try {
-      // console.log("file as:", file);
+      const queryParams = new URLSearchParams();
+      queryParams.append("username", currentUser?.Username);
+      queryParams.append("role", currentUser?.Role);
+      queryParams.append("tableName", "mous");
 
-      const formDataForFile = new FormData();
-      formDataForFile.append("file", file);
-      formDataForFile.append("username", currentUser?.Username);
-      formDataForFile.append("role", currentUser?.Role);
-      formDataForFile.append("tableName", "mous");
+      let formDataForUpload = new FormData();
+      const columnNames = [];
+      // Append files under the 'files' field name as expected by the server
+      if (formData.Upload_Report) {
+        formDataForUpload.append("files", formData.Upload_Report);
+        columnNames.push("Upload_Report");
+      }
 
-      const response = await axios.post(uploadRecordsMous, formDataForFile);
-      console.log(response);
-      // console.log("file response:", response.data.filePath);
 
-      return response.data.filePath;
+      // Append column names to the query parameters
+      queryParams.append("columnNames", columnNames.join(","));
+      console.log('query: ', queryParams);
+      const url = `${uploadRecordsMous}?${queryParams.toString()}`;
+      console.log("formdata", formDataForUpload)
+      const response = await axios.post(url, formDataForUpload, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+
+      console.log(response?.data?.uploadResults);
+      return response?.data?.uploadResults;
     } catch (error) {
       console.error("Error uploading file:", error);
+      toast.error(error?.response?.data?.message, {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+      return;
       // Handle error as needed
     }
   };
@@ -77,49 +103,41 @@ export default function FacultyExchange() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     console.log(formData);
-
-    var pathUpload_Report;
-    // console.log(formData.Sample_Certificate);
+    if (formData.Upload_Report === null) {
+      toast.error("Select a file for upload", {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+      return;
+    }
     try {
-      if (formData.Upload_Report !== null) {
-        // console.log("2");
-        pathUpload_Report = await handleFileUpload(formData.Upload_Report);
+      const filesToUpload = [];
 
-        // console.log("Upload path = ", pathUpload);
-      } else {
-        toast.error("Please select a file for upload", {
-          position: "top-right",
-          autoClose: 3000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
-        });
-        return;
+      if (formData.Upload_Report !== null) {
+        filesToUpload.push(formData.Upload_Report);
       }
 
       // If file upload is successful, continue with the form submission
+      const uploadResults = await handleFileUpload(filesToUpload);
+
+      // Store the paths of uploaded files in the uploadedFilePaths object
+      const updatedUploadedFilePaths = { ...uploadedFilePaths };
+      uploadResults.forEach((result) => {
+        updatedUploadedFilePaths[result.columnName] = result.filePath;
+      });
+      setUploadedFilePaths(updatedUploadedFilePaths);
+
+      // Merge uploaded file paths with existing formData
       const formDataWithFilePath = {
         ...formData,
-
-        Upload_Report: pathUpload_Report,
+        ...updatedUploadedFilePaths,
       };
-      if (pathUpload_Report === "") {
-        // If file is null, display a toast alert
-        toast.error("Some error occurred while uploading file", {
-          position: "top-right",
-          autoClose: 3000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
-        });
-        return;
-      }
 
       console.log("Final data:", formDataWithFilePath);
 
@@ -145,7 +163,7 @@ export default function FacultyExchange() {
       console.error("File upload error:", error);
 
       // Display an error toast
-      toast.error("File upload failed. Please try again.", {
+      toast.error(error?.response?.data?.message, {
         position: "top-right",
         autoClose: 3000,
         hideProgressBar: false,
@@ -155,6 +173,7 @@ export default function FacultyExchange() {
         progress: undefined,
         theme: "light",
       });
+      return;
     }
   };
 
@@ -245,7 +264,9 @@ export default function FacultyExchange() {
                 size="lg"
                 name="Year_of_signing"
                 value={formData.Year_of_signing}
-                onChange={handleChange}
+                onChange={(value) =>
+                  handleChange({ target: { name: "Year_of_signing", value } })
+                }
                 label="Select Year"
                 color="light-gray"
               >
@@ -311,7 +332,7 @@ export default function FacultyExchange() {
             </div>
             <div className="w-full md:w-1/2 px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
-                Upload_Report
+                Upload Report (Only Pdf)
               </Typography>
               <Input
                 size="lg"
@@ -323,7 +344,7 @@ export default function FacultyExchange() {
           </div>
 
           <Button type="submit" className="mt-4" fullWidth>
-            Add Changes
+            Submit
           </Button>
         </form>
       </Card>

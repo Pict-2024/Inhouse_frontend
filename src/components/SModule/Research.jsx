@@ -13,12 +13,20 @@ import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-import { addRecordsResearchStud, uploadRecordsResearchStud } from "./API_Routes";
+import {
+  addRecordsResearchStud,
+  uploadRecordsResearchStud,
+} from "./API_Routes";
 
 export default function Research() {
   const navigate = useNavigate();
 
   const [isFinancialSupport, setIsFinancialSupport] = useState(false);
+  const [isAchievements, setIsAchievements] = useState("No");
+  const [errors, setErrors] = useState({});
+
+  //  TODO : extra useState added for use
+  const [uploadedFilePaths, setUploadedFilePaths] = useState({});
 
   const { currentUser } = useSelector((state) => state.user);
   const currentYear = new Date().getFullYear();
@@ -31,9 +39,9 @@ export default function Research() {
     Username: currentUser?.Username,
     Academic_Year: "",
     Student_Name: currentUser?.Name,
-    Roll_No: "",
+    Roll_No: null,
     Department: "",
-    Year_of_study: "",
+    Class: "",
     Research_Article_Title: "",
     Research_Type: "",
     Level: "",
@@ -56,11 +64,32 @@ export default function Research() {
     Upload_Paper: null,
     Achievements: "",
     Upload_Document_of_Achievement: null,
-    Evidence: null,
+    Upload_Evidence: null,
   });
 
+  const generateAcademicYearOptions = () => {
+    const currentYear = new Date().getFullYear();
+    const Options = [];
+
+    for (let year = 2023; year <= currentYear; year++) {
+      const academicYearStart = `${year}-${year + 1}`;
+      Options.push(
+        <Option key={academicYearStart} value={academicYearStart}>
+          {academicYearStart}
+        </Option>
+      );
+    }
+
+    return Options;
+  };
+
   const handleOnChange = (e) => {
-   const { id, value, type, files } = e.target;
+    const { id, value, type, files } = e.target;
+
+    setErrors((prevErrors) => ({
+      ...prevErrors,
+      [id]: ""
+    }));
 
     setFormData({
       ...formData,
@@ -69,100 +98,140 @@ export default function Research() {
     });
   };
 
-  const handleFileUpload = async (file) => {
+  const handleFileUpload = async (files) => {
     try {
-      console.log("file as:", file);
+      console.log("file as:", files);
 
-      const formDataForFile = new FormData();
-      formDataForFile.append("file", file);
-      formDataForFile.append("username", currentUser?.Username);
-      formDataForFile.append("role", currentUser?.Role);
-      formDataForFile.append("tableName", "student_research_publication");
+      const queryParams = new URLSearchParams();
 
-      const response = await axios.post(uploadRecordsResearchStud, formDataForFile);
-      console.log(response);
-      // console.log("file response:", response.data.filePath);
+      // formDataForFile.append("file", files);
+      queryParams.append("username", currentUser?.Username);
+      queryParams.append("role", currentUser?.Role);
+      queryParams.append("tableName", "student_research_publication");
 
-      return response.data.filePath;
+      // formDataForFile.append("columnName", [
+      //   "Upload_Paper",
+      //   "Upload_Document_of_Achievement",
+      //   "Upload_Evidence",
+      // ]);
+      
+      let formDataForUpload = new FormData();
+
+      const columnNames = [];
+
+      if(formData.Upload_Evidence)
+      {
+        formDataForUpload.append("files", formData.Upload_Evidence);
+        columnNames.push("Upload_Evidence")
+      }
+
+      if(formData.Upload_Document_of_Achievement)
+      {
+        formDataForUpload.append("files", formData.Upload_Document_of_Achievement);
+        columnNames.push("Upload_Document_of_Achievement");
+      }
+
+      if(formData.Upload_Paper)
+      {
+        formDataForUpload.append("files", formData.Upload_Paper);
+        columnNames.push("Upload_Paper");
+      }
+
+      queryParams.append("columnNames", columnNames.join(","));
+      console.log("query = ", queryParams);
+
+      const url = `${uploadRecordsResearchStud}?${queryParams.toString()}`;
+      console.log("Formdata = ", formDataForUpload);
+
+      const response = await axios.post( url, formDataForUpload, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+
+      console.log(response?.data?.uploadResults);
+      return response?.data?.uploadResults;
+
     } catch (error) {
       console.error("Error uploading file:", error);
       // Handle error as needed
     }
   };
 
-
   //add new record
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // Check for empty required fields
+    const requiredFields = ["Academic_Year", "Department", "Class", "Research_Article_Title", "Research_Type", "Level", "Indexed", "Date", "Author", "Affiliation", "Role_of_Authors", "Publisher", "Co_Author", "Journal_Name", "ISSN", "DOI","Article_Link"];
+
+    const emptyFields = requiredFields.filter(field => !formData[field]);
+
+    if (emptyFields.length > 0) {
+      const emptyFieldNames = emptyFields.join(", ");
+      alert(`Please fill in all required fields: ${emptyFieldNames}`);
+      return;
+    }
+
+    // Validate Roll No
+    if (!(/^\d{5}$/.test(formData.Roll_No))) {
+      setErrors((prevErrors) => ({
+        ...prevErrors,
+        Roll_No: "Roll No must be a 5-digit number."
+      }));
+      return;
+    }
+
+
+
     console.log(formData);
 
-    var pathEvidence=null, pathReport, pathStudent;
-    console.log(isFinancialSupport);
-    console.log(formData.Evidence);
     // Check if evidence upload is required
-    if (isFinancialSupport && formData.Evidence === null) {
+    if (isFinancialSupport && formData.Upload_Evidence === null) {
       alert("Upload Evidence document");
+      return;
+    }
+    if (isAchievements === "Yes" && formData.Upload_Document_of_Achievement === null) {
+      alert("Upload Achievement document");
       return;
     }
 
     try {
-      if (isFinancialSupport ) {
-        console.log("hi");
-        // Handle evidence upload only if financial support is selected
-        pathEvidence = await handleFileUpload(formData.Evidence);
-      }
-      if (
-        formData.Upload_Paper !== null &&
-        formData.Upload_Document_of_Achievement !== null
-      ) {
-        console.log("1");
 
-        console.log("2");
-        pathReport = await handleFileUpload(formData.Upload_Paper);
-        console.log("3");
-        pathStudent = await handleFileUpload(formData.Upload_Document_of_Achievement);
-        console.log("4");
+      const filesToUpload = [];
 
-        // console.log("Upload path = ", pathUpload);
-      } else {
-        toast.error("Please select a file for upload", {
-          position: "top-right",
-          autoClose: 3000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
-        });
-        return;
+      if (isFinancialSupport && formData.Upload_Evidence) {
+
+        filesToUpload.push(formData.Upload_Evidence);
+        // pathEvidence = await handleFileUpload(formData.Upload_Evidence);
       }
-      // console.log("Evidence path:",pathEvidence);
-      // If file upload is successful, continue with the form submission
-     
+      if (isAchievements === "Yes") {
+
+        filesToUpload.push(formData.Upload_Document_of_Achievement);
+        // pathStudent = await handleFileUpload(
+        //   formData.Upload_Document_of_Achievement
+        // );
+      }
+      if (formData.Upload_Paper !== null) {
+
+        filesToUpload.push(formData.Upload_Paper);
+        // pathReport = await handleFileUpload(formData.Upload_Paper);
+      }
+
+      const uploadedResults = await handleFileUpload(filesToUpload);
+
+      const updatedUploadedFilePaths = { ...uploadedFilePaths };
+      uploadedResults.forEach((result) => {
+        updatedUploadedFilePaths[result.columnName] = result.filePath;
+      });
+      setUploadedFilePaths(setUploadedFilePaths);
+
       const formDataWithFilePath = {
         ...formData,
-
-        Evidence: pathEvidence,
-        Upload_Paper: pathReport,
-        Upload_Document_of_Achievement: pathStudent,
+        ...updatedUploadedFilePaths,
       };
-      if (pathEvidence === "" && pathReport === "" && pathStudent === "") {
-        // If file is null, display a toast alert
-        toast.error("Some error occurred while uploading file", {
-          position: "top-right",
-          autoClose: 3000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
-        });
-        return;
-      }
 
-      console.log("Final data:", formDataWithFilePath);
+      console.log("Final data = ", formDataWithFilePath);
 
       // Send a POST request to the addRecordsBook API endpoint
       await axios.post(addRecordsResearchStud, formDataWithFilePath);
@@ -198,7 +267,6 @@ export default function Research() {
       });
     }
   };
-
 
   return (
     <>
@@ -242,13 +310,19 @@ export default function Research() {
               <Typography variant="h6" color="blue-gray" className="mb-3">
                 Academic Year
               </Typography>
-              <Input
-                id="Academic_Year"
+              <Select
                 size="lg"
-                label="Eg.2022-2023"
+                id="Academic_Year"
                 value={formData.Academic_Year}
-                onChange={handleOnChange}
-              />
+                label="Academic Year"
+                onChange={(value) =>
+                  handleOnChange({
+                    target: { id: "Academic_Year", value },
+                  })
+                }
+              >
+                {generateAcademicYearOptions()}
+              </Select>
             </div>
           </div>
 
@@ -272,10 +346,12 @@ export default function Research() {
               <Input
                 id="Roll_No"
                 size="lg"
+                type="number"
                 label="Roll No"
                 value={formData.Roll_No}
                 onChange={handleOnChange}
               />
+              {errors.Roll_No && <p className="text-red-500 text-sm">{errors.Roll_No}</p>}
             </div>
           </div>
 
@@ -285,13 +361,13 @@ export default function Research() {
                 Year of Study
               </Typography>
               <Select
-                id="Year_of_study"
+                id="Class"
                 size="lg"
-                label="Year"
-                value={formData.Year_of_study}
+                label="Class"
+                value={formData.Class}
                 onChange={(value) =>
                   handleOnChange({
-                    target: { id: "Year_of_study", value },
+                    target: { id: "Class", value },
                   })
                 }
               >
@@ -608,7 +684,7 @@ export default function Research() {
                   <Input
                     size="lg"
                     label="Evidence Document"
-                    id="Evidence"
+                    id="Upload_Evidence"
                     type="file"
                     onChange={handleOnChange}
                     disabled={!isFinancialSupport}
@@ -633,13 +709,13 @@ export default function Research() {
             </div>
             <div className="w-full md:w-1/2 px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
-                Upload the Paper
+                Upload the Paper (Pdf Only)
               </Typography>
               <Input
                 size="lg"
                 type="file"
                 label=""
-                className="border-t-blue-gray-200 focus:border-t-gray-900"
+
                 id="Upload_Paper"
                 onChange={handleOnChange}
               />
@@ -651,32 +727,37 @@ export default function Research() {
               <Typography variant="h6" color="blue-gray" className="mb-3">
                 Achievements
               </Typography>
-              <Input
+              <Select
                 size="lg"
                 label="Achievements"
-                className="border-t-blue-gray-200 focus:border-t-gray-900"
+
                 id="Achievements"
-                value={formData.Achievements}
-                onChange={handleOnChange}
-              />
+                value={isAchievements}
+                onChange={(value) => setIsAchievements(value)}
+              >
+                <Option value="Yes">Yes</Option>
+                <Option value="No">No</Option>
+              </Select>
             </div>
-            <div className="w-full md:w-1/2 px-4 mb-4">
-              <Typography variant="h6" color="blue-gray" className="mb-3">
-                Upload Document of Achievement
-              </Typography>
-              <Input
-                size="lg"
-                type="file"
-                label=""
-                className="border-t-blue-gray-200 focus:border-t-gray-900"
-                id="Upload_Document_of_Achievement"
-                onChange={handleOnChange}
-              />
-            </div>
+            {isAchievements === "Yes" && (
+              <div className="w-full md:w-1/2 px-4 mb-4">
+                <Typography variant="h6" color="blue-gray" className="mb-3">
+                  Upload Document of Achievement (Pdf Only)
+                </Typography>
+                <Input
+                  size="lg"
+                  type="file"
+                  label=""
+
+                  id="Upload_Document_of_Achievement"
+                  onChange={handleOnChange}
+                />
+              </div>
+            )}
           </div>
 
           <Button type="submit" className="mt-4" fullWidth>
-            Add Changes
+            Submit
           </Button>
         </form>
       </Card>
