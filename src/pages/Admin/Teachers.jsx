@@ -183,6 +183,7 @@ export default function Teachers() {
   const handleSaveClick = async (Username) => {
     try {
       const updateApiurl = `${BASE_URL}/general/update-fields`;
+      console.log(updateApiurl)
 
       // Modify the data to be sent to the backend
       const data = {
@@ -242,6 +243,7 @@ export default function Teachers() {
     try {
       // Fetch the current special access for the user
       const accessUrl = `${BASE_URL}/general/get-spec-cols?username=${Username}`;
+      // console.log(accessUrl);
       const accessResponse = await axios.post(accessUrl, {
         headers: {
           "Content-Type": "application/json",

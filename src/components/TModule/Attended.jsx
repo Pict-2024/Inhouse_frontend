@@ -51,19 +51,34 @@ export default function Attended() {
   const handleFileUpload = async (file) => {
     try {
       // console.log("file as:", file);
+      const queryParams = new URLSearchParams();
 
-      const formDataForFile = new FormData();
-      formDataForFile.append("file", file);
-      formDataForFile.append("username", currentUser?.Username);
-      formDataForFile.append("role", currentUser?.Role);
-      formDataForFile.append("tableName", "sttp_fdp_conference_attended");
-      formDataForFile.append("columnName", ["Upload_Evidence", "Upload_Certificate"]);
+      queryParams.append("username", currentUser?.Username);
+      queryParams.append("role", currentUser?.Role);
+      queryParams.append("tableName", "sttp_fdp_conference_attended");
+      // formDataForFile.append("columnName", ["Upload_Evidence", "Upload_Certificate"]);
+      let formDataForUpload = new FormData();
+      if (formData.Upload_Evidence) {
+        formDataForUpload.append("files", formData.Upload_Evidence);
+        queryParams.append("columnNames", formData.Upload_Evidence);
+      }
+      else if (formData.Upload_Certificate) {
+        formDataForUpload.append("files", formData.Upload_Certificate);
+        queryParams.append("columnNames", formData.Upload_Certificate);
+      }
 
-      const response = await axios.post(uploadRecordsAttended, formDataForFile);
-      console.log(response);
+      const url = `${uploadRecordsAttended}?${queryParams.toString()}`;
+      // console.log("url by om", url)
+      console.log("formdata", formDataForUpload)
+      const response = await axios.post(url, formDataForUpload, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+      console.log(response?.data);
       // console.log("file response:", response.data.filePath);
 
-      return response.data.filePath;
+      // return response.data.filePath;
     } catch (error) {
       console.error("Error uploading file:", error);
       // Handle error as needed
@@ -75,7 +90,7 @@ export default function Attended() {
     e.preventDefault();
     console.log(formData);
 
-    let pathEvidence=null, pathStudent;
+    let pathEvidence = null, pathStudent;
     if (isFinancialSupport && formData.Upload_Evidence === null) {
       alert("Upload Evidence document");
       return;
@@ -87,7 +102,7 @@ export default function Attended() {
         // Handle evidence upload only if financial support is selected
         pathEvidence = await handleFileUpload(formData.Upload_Evidence);
       }
-      if ( formData.Upload_Certificate !== null) {
+      if (formData.Upload_Certificate !== null) {
         // console.log("2");
         // console.log("3");
         pathStudent = await handleFileUpload(formData.Upload_Certificate);
