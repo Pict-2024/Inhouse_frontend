@@ -19,6 +19,7 @@ export default function EventOrganized() {
   const navigate = useNavigate();
 
   const [isFinancialSupport, setIsFinancialSupport] = useState(false);
+  const [uploadedFilePaths, setUploadedFilePaths] = useState({});
 
   const { currentUser } = useSelector((state) => state.user);
   const [formData, setFormData] = useState({
@@ -74,31 +75,56 @@ export default function EventOrganized() {
     });
   };
 
-  const handleFileUpload = async (file) => {
+  const handleFileUpload = async (files) => {
+
+    console.log("file as:", files);
     try {
-      console.log("file as:", file);
+
+      const queryParams = new URLSearchParams();
+
+      queryParams.append("username", currentUser?.Username);
+      queryParams.append("role", currentUser?.Role);
+      queryParams.append("tableName", "student_event_organized");
 
       const formDataForFile = new FormData();
-      formDataForFile.append("file", file);
-      formDataForFile.append("username", currentUser?.Username);
-      formDataForFile.append("role", currentUser?.Role);
-      formDataForFile.append("tableName", "student_event_organized");
-      formDataForFile.append("columnName", [
-        "Upload_Certificate_or_Letter_of_Appreciation",
-        "Upload_Evidence",
-      ]);
+      const columnNames = [];
+      if (formData.Upload_Certificate_or_Letter_of_Appreciation) {
+        formDataForFile.append("files", formData.Upload_Certificate_or_Letter_of_Appreciation);
+        columnNames.push("Upload_Certificate_or_Letter_of_Appreciation");
+      }
+      if (formData.Upload_Evidence) {
+        formDataForFile.append("files", formData.Upload_Evidence);
+        columnNames.push("Upload_Evidence");
+      }
 
-      const response = await axios.post(
-        uploadRecordsOrganized,
-        formDataForFile
-      );
-      console.log(response);
-      // console.log("file response:", response.data.filePath);
+      queryParams.append("columnNames", columnNames.join(","));
+      console.log("query = ", queryParams);
 
-      return response.data.filePath;
+      const url = `${uploadRecordsOrganized}?${queryParams.toString()}`;
+      console.log("formdata = ", formData);
+
+      const response = await axios.post(url, formDataForFile, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+
+      console.log(response?.data);
+      return response?.data?.uploadResults;
+
     } catch (error) {
       console.error("Error uploading file:", error);
       // Handle error as needed
+      toast.error(error?.response?.data?.message, {
+        position: "top-right",
+        autoClose: 1500,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
     }
   };
 
@@ -107,10 +133,6 @@ export default function EventOrganized() {
     e.preventDefault();
     console.log(formData);
 
-    var pathEvidence = null,
-      pathReport;
-    console.log(isFinancialSupport);
-    console.log(formData.Upload_Evidence);
     // Check if evidence upload is required
     if (isFinancialSupport && formData.Upload_Evidence === null) {
       alert("Upload Evidence document");
@@ -118,20 +140,16 @@ export default function EventOrganized() {
     }
 
     try {
+
+      const filesToUpload = [];
+
       if (isFinancialSupport) {
-        console.log("hi");
-        // Handle evidence upload only if financial support is selected
-        pathEvidence = await handleFileUpload(formData.Upload_Evidence);
+        filesToUpload.push(formData.Upload_Evidence);
       }
       if (formData.Upload_Certificate_or_Letter_of_Appreciation !== null) {
-        console.log("1");
-
-        pathReport = await handleFileUpload(
-          formData.Upload_Certificate_or_Letter_of_Appreciation
-        );
-
-        // console.log("Upload path = ", pathUpload);
-      } else {
+        filesToUpload.push(formData.Upload_Certificate_or_Letter_of_Appreciation);
+      }
+      else {
         toast.error("Please select a file for upload", {
           position: "top-right",
           autoClose: 3000,
@@ -144,29 +162,21 @@ export default function EventOrganized() {
         });
         return;
       }
-      // console.log("Evidence path:",pathEvidence);
-      // If file upload is successful, continue with the form submission
+
+      const uploadResults = await handleFileUpload(filesToUpload);
+
+      const updatedUploadedFilePaths = { ...uploadedFilePaths };
+
+      uploadResults.forEach((result) => {
+        updatedUploadedFilePaths[result.columnName] = result.filePath;
+      });
+
+      setUploadedFilePaths(updatedUploadedFilePaths);
 
       const formDataWithFilePath = {
         ...formData,
-
-        Upload_Evidence: pathEvidence,
-        Upload_Certificate_or_Letter_of_Appreciation: pathReport,
+        ...updatedUploadedFilePaths,
       };
-      if (pathEvidence === "" && pathReport === "") {
-        // If file is null, display a toast alert
-        toast.error("Some error occurred while uploading file", {
-          position: "top-right",
-          autoClose: 3000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
-        });
-        return;
-      }
 
       console.log("Final data:", formDataWithFilePath);
 
@@ -189,12 +199,12 @@ export default function EventOrganized() {
       navigate("/s/data");
     } catch (error) {
       // Handle file upload error
-      console.error("File upload error:", error);
+      // console.error("File upload error:", error);
 
       // Display an error toast
-      toast.error("File upload failed. Please try again.", {
+      toast.error(error?.response?.data?.message, {
         position: "top-right",
-        autoClose: 3000,
+        autoClose: 1500,
         hideProgressBar: false,
         closeOnClick: true,
         pauseOnHover: true,

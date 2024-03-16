@@ -88,7 +88,7 @@ export default function Conference() {
   const handleFileUpload = async (files) => {
     try {
       console.log("file as:", files);
-      
+
       const queryParams = new URLSearchParams();
       queryParams.append("username", currentUser?.Username);
       queryParams.append("role", currentUser?.Role);
@@ -97,19 +97,16 @@ export default function Conference() {
       let formDataForUpload = new FormData();
       const columnNames = [];
 
-      if(formData.Upload_Paper)
-      {
+      if (formData.Upload_Paper) {
         formDataForUpload.append("files", formData.Upload_Paper);
         columnNames.push("Upload_Paper")
       }
-      if(formData.Upload_Evidence)
-      {
+      if (formData.Upload_Evidence) {
         formDataForUpload.append("files", formData.Upload_Evidence);
         columnNames.push("Upload_Evidence");
       }
 
-      if(formData.Upload_Achievement_Document)
-      {
+      if (formData.Upload_Achievement_Document) {
         formDataForUpload.append("files", formData.Upload_Achievement_Document);
         columnNames.push("Upload_Achievement_Document");
       }
@@ -119,7 +116,7 @@ export default function Conference() {
       const url = `${uploadRecordsConferenceStud}?${queryParams.toString()}`;
       console.log("formdata", formDataForUpload);
 
-      const response = await axios.post( url, formDataForUpload, {
+      const response = await axios.post(url, formDataForUpload, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
@@ -131,6 +128,16 @@ export default function Conference() {
     } catch (error) {
       console.error("Error uploading file:", error);
       // Handle error as needed
+      toast.error(error?.response?.data?.message, {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
     }
   };
 
@@ -150,21 +157,18 @@ export default function Conference() {
     }
 
     // Check if evidence upload is required
-    if (isFinancialSupport && formData.Upload_Evidence === null) 
-    {
+    if (isFinancialSupport && formData.Upload_Evidence === null) {
       alert("Upload Evidence document");
       return;
     }
-    if (isAchievements === "Yes" && formData.Upload_Achievement_Document === null) 
-    {
+    if (isAchievements === "Yes" && formData.Upload_Achievement_Document === null) {
       alert("Upload Achievement document");
       return;
     }
 
     try {
 
-      if ( formData.Upload_Paper === null ) 
-      {
+      if (formData.Upload_Paper === null) {
         toast.error("Please select a file for upload", {
           position: "top-right",
           autoClose: 3000,
@@ -180,16 +184,13 @@ export default function Conference() {
 
       const filesToUpload = [];
 
-      if(formData.Upload_Paper)
-      {
+      if (formData.Upload_Paper) {
         filesToUpload.push(formData.Upload_Paper);
       }
-      if(formData.Upload_Evidence)
-      {
+      if (formData.Upload_Evidence) {
         filesToUpload.push(formData.Upload_Evidence);
       }
-      if(formData.Upload_Achievement_Document)
-      {
+      if (formData.Upload_Achievement_Document) {
         filesToUpload.push(formData.Upload_Achievement_Document);
       }
 
@@ -201,7 +202,7 @@ export default function Conference() {
         updatedUploadedFilePaths[result.columnName] = result.filePath;
       });
       setUploadedFilePaths(updatedUploadedFilePaths);
-      
+
       // console.log("Upload_Evidence path:",pathUpload_Evidence);
       const formDataWithFilePath = {
         ...formData,
@@ -232,7 +233,7 @@ export default function Conference() {
       console.error("File upload error:", error);
 
       // Display an error toast
-      toast.error("File upload failed. Please try again.", {
+      toast.error(error?.response?.data?.message, {
         position: "top-right",
         autoClose: 3000,
         hideProgressBar: false,

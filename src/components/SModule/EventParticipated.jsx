@@ -21,12 +21,13 @@ import {
 export default function EventParticipated() {
   const navigate = useNavigate();
 
-  
+
   const [errors, setErrors] = useState({});
   const [isFinancialSupport, setIsFinancialSupport] = useState(false);
   const { currentUser } = useSelector((state) => state.user);
-  
+
   const [uploadedFilePaths, setUploadedFilePaths] = useState({});
+
   const [formData, setFormData] = useState({
     S_ID: null,
     Username: currentUser?.Username,
@@ -87,7 +88,7 @@ export default function EventParticipated() {
     console.log("file as:", files);
     try {
 
-      
+
       const queryParams = new URLSearchParams();
       // formDataForFile.append("file", file);
       queryParams.append("username", currentUser?.Username);
@@ -99,13 +100,11 @@ export default function EventParticipated() {
       const columnNames = [];
       // formDataForFile.append("columnName", ["Upload_Certificate", "Upload_Evidence"]);
 
-      if(formData.Upload_Certificates)
-      {
+      if (formData.Upload_Certificate) {
         formDataForFile.append("files", formData.Upload_Certificate);
         columnNames.push("Upload_Certificate");
       }
-      if(formData.Upload_Evidence)
-      {
+      if (formData.Upload_Evidence) {
         formDataForFile.append("files", formData.Upload_Evidence);
         columnNames.push("Upload_Evidence");
       }
@@ -115,7 +114,7 @@ export default function EventParticipated() {
 
       const url = `${uploadRecordsParticipation}?${queryParams.toString()}`;
 
-      const response = await axios.post( url, formDataForFile, {
+      const response = await axios.post(url, formDataForFile, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
@@ -127,17 +126,27 @@ export default function EventParticipated() {
     } catch (error) {
       console.error("Error uploading file:", error);
       // Handle error as needed
+      toast.error(error?.response?.data?.message, {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
     }
   };
 
   //add new record
   const handleSubmit = async (e) => {
-    
+
     console.log(formData);
     e.preventDefault();
 
     // const requiredFields = ["Academic_Year", "Department", "Student_Name", "Roll_No", "Class", "Email_ID", "Mobile_No", "Participant_or_Organizer", "Event_Name", "Name_of_Sub_Event", "Type_of_Event", "Individual_Role", "Organizer_Name", "Organizer_Type", "Place", "Start_Date", "End_Date", "Award", "Award_Prize_Money", "Remarks", "Geo_Tag_Photos"];
-    
+
     // const emptyFields = requiredFields.filter(field => !formData[field]);
 
     // if (emptyFields.length > 0) {
@@ -163,14 +172,12 @@ export default function EventParticipated() {
     try {
       const filesToUpload = [];
 
-      if (isFinancialSupport) 
-      {
+      if (isFinancialSupport) {
         filesToUpload.push(formData.Upload_Evidence);
       }
-      if (formData.Upload_Certificate !== null) 
-      {
+      if (formData.Upload_Certificate !== null) {
         filesToUpload.push(formData.Upload_Certificate);
-      } 
+      }
       else {
         toast.error("Please select a file for upload", {
           position: "top-right",
@@ -187,7 +194,7 @@ export default function EventParticipated() {
 
       const uploadResults = await handleFileUpload(filesToUpload);
 
-      const updatedUploadedFilePaths = { ...uploadedFilePaths};
+      const updatedUploadedFilePaths = { ...uploadedFilePaths };
 
       uploadResults.forEach((result) => {
         updatedUploadedFilePaths[result.columnName] = result.filePath;
@@ -224,7 +231,7 @@ export default function EventParticipated() {
       console.error("File upload error:", error);
 
       // Display an error toast
-      toast.error("File upload failed. Please try again.", {
+      toast.error(error?.response?.data?.message, {
         position: "top-right",
         autoClose: 3000,
         hideProgressBar: false,

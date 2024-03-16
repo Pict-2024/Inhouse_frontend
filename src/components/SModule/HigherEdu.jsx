@@ -19,7 +19,7 @@ export default function HigherEdu() {
   const navigate = useNavigate();
   const { currentUser } = useSelector((state) => state.user);
   const [errors, setErrors] = useState({});
-  
+
   const [uploadedFilePaths, setUploadedFilePaths] = useState({});
 
   const options = Array.from({ length: 11 }, (_, index) => index + 1);
@@ -70,7 +70,7 @@ export default function HigherEdu() {
   };
 
   const handleFileUpload = async (files) => {
-    
+
     console.log("file as:", files);
     try {
 
@@ -83,18 +83,15 @@ export default function HigherEdu() {
       const formDataForFile = new FormData();
 
       const columnNames = [];
-      if(formData.Upload_Proof_of_Qualifying_Exam)
-      {
+      if (formData.Upload_Proof_of_Qualifying_Exam) {
         formDataForFile.append("files", formData.Upload_Proof_of_Qualifying_Exam);
         columnNames.push("Upload_Proof_of_Qualifying_Exam");
       }
-      if(formData.Upload_Score_Card_as_Evidence)
-      {
+      if (formData.Upload_Score_Card_as_Evidence) {
         formDataForFile.append("files", formData.Upload_Score_Card_as_Evidence);
         columnNames.push("Upload_Score_Card_as_Evidence");
       }
-      if(formData.Upload_ID_card_or_Proof_of_Admission)
-      {
+      if (formData.Upload_ID_card_or_Proof_of_Admission) {
         formDataForFile.append("files", formData.Upload_ID_card_or_Proof_of_Admission);
         columnNames.push("Upload_ID_card_or_Proof_of_Admission");
       }
@@ -104,18 +101,28 @@ export default function HigherEdu() {
 
       const url = `${uploadRecordsHigherEdu}?${queryParams.toString()}`;
 
-      const response = await axios.post( url, formDataForFile, {
+      const response = await axios.post(url, formDataForFile, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
       });
-      
+
       console.log(response?.data);
       return response?.data?.uploadResults;
 
     } catch (error) {
       console.error("Error uploading file:", error);
       // Handle error as needed
+      toast.error(error?.response?.data?.message, {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
     }
   };
 
@@ -126,7 +133,7 @@ export default function HigherEdu() {
     e.preventDefault();
 
     const requiredFields = ["Academic_Year", "Department", "Student_Name", "Roll_No"];
-    
+
     const emptyFields = requiredFields.filter(field => !formData[field]);
 
     if (emptyFields.length > 0) {
@@ -169,7 +176,7 @@ export default function HigherEdu() {
 
       const uploadResults = await handleFileUpload(filesToUpload);
 
-      const updatedUploadedFilePaths = { ...uploadedFilePaths};
+      const updatedUploadedFilePaths = { ...uploadedFilePaths };
 
       uploadResults.forEach((result) => {
         updatedUploadedFilePaths[result.columnName] = result.filePath;
@@ -204,7 +211,7 @@ export default function HigherEdu() {
       console.error("File upload error:", error);
 
       // Display an error toast
-      toast.error("File upload failed. Please try again.", {
+      toast.error(error?.response?.data?.message, {
         position: "top-right",
         autoClose: 3000,
         hideProgressBar: false,

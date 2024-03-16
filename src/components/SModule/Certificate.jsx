@@ -19,10 +19,10 @@ import {
 } from "./API_Routes";
 
 export default function Certificate() {
-  
+
   const [errors, setErrors] = useState({});
   const [isFinancialSupport, setIsFinancialSupport] = useState(false);
-  
+
   const [uploadedFilePaths, setUploadedFilePaths] = useState({});
 
   const navigate = useNavigate();
@@ -88,16 +88,14 @@ export default function Certificate() {
 
 
       // formDataForFile.append("columnName", ["Upload_Certificates", "Upload_Evidence"]);
-      
+
       const formDataForFile = new FormData();
       const columnNames = [];
-      if(formData.Upload_Certificates)
-      {
+      if (formData.Upload_Certificates) {
         formDataForFile.append("files", formData.Upload_Certificates);
         columnNames.push("Upload_Certificates");
       }
-      if(formData.Upload_Evidence)
-      {
+      if (formData.Upload_Evidence) {
         formDataForFile.append("files", formData.Upload_Evidence);
         columnNames.push("Upload_Evidence");
       }
@@ -108,18 +106,28 @@ export default function Certificate() {
       const url = `${uploadRecordsCertificateStud}?${queryParams.toString()}`;
       console.log("formdata = ", formData);
 
-      const response = await axios.post( url, formDataForFile, {
+      const response = await axios.post(url, formDataForFile, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
       });
-      
+
       console.log(response?.data);
       return response?.data?.uploadResults;
 
     } catch (error) {
       console.error("Error uploading file:", error);
       // Handle error as needed
+      toast.error(error?.response?.data?.message, {
+        position: "top-right",
+        autoClose: 1500,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
     }
   };
 
@@ -130,7 +138,7 @@ export default function Certificate() {
     // console.log(formData);
 
     const requiredFields = ["Academic_Year", "Department", "Student_Name", "Roll_No", "Class", "Certificate_Course_Title", "Organized_By", "Place", "Mode_of_Course", "Duration", "Start_Date", "End_Date", "Award", "Award_Prize_Money"];
-    
+
     const emptyFields = requiredFields.filter(field => !formData[field]);
 
     if (emptyFields.length > 0) {
@@ -157,14 +165,12 @@ export default function Certificate() {
 
       const filesToUpload = [];
 
-      if (isFinancialSupport) 
-      {
+      if (isFinancialSupport) {
         filesToUpload.push(formData.Upload_Evidence);
       }
-      if (formData.Upload_Certificates !== null) 
-      {
+      if (formData.Upload_Certificates !== null) {
         filesToUpload.push(formData.Upload_Certificates);
-      } 
+      }
       else {
         toast.error("Please select a file for upload", {
           position: "top-right",
@@ -181,7 +187,7 @@ export default function Certificate() {
 
       const uploadResults = await handleFileUpload(filesToUpload);
 
-      const updatedUploadedFilePaths = { ...uploadedFilePaths};
+      const updatedUploadedFilePaths = { ...uploadedFilePaths };
 
       uploadResults.forEach((result) => {
         updatedUploadedFilePaths[result.columnName] = result.filePath;
@@ -218,9 +224,9 @@ export default function Certificate() {
       // console.error("File upload error:", error);
 
       // Display an error toast
-      toast.error("File upload failed. Please try again.", {
+      toast.error(error?.response?.data?.message, {
         position: "top-right",
-        autoClose: 3000,
+        autoClose: 1500,
         hideProgressBar: false,
         closeOnClick: true,
         pauseOnHover: true,
