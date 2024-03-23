@@ -22,7 +22,7 @@ export const TeacherRoutes = {
       element: <Data />,
     },
     {
-      path: "report/:access",
+      path: "report",
       element: <Report/>
     }
   ],
