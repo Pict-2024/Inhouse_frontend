@@ -4,6 +4,7 @@ import {
   ChevronUpDownIcon,
   TrashIcon,
 } from "@heroicons/react/24/outline";
+
 import { DocumentIcon, PencilIcon } from "@heroicons/react/24/solid";
 import ExcelJS from "exceljs";
 import {
@@ -294,8 +295,8 @@ export default function TableData({ tableName }) {
           T_ID: record.T_ID,
         },
       });
-      // console.log("Delete", response?.data);
-      if (response?.data.status == 200) {
+      console.log("Delete", response);
+      if (response?.status === 200) {
         toast.success("Record Deleted Successfully!", {
           position: "top-left",
           autoClose: 1500,
@@ -307,6 +308,7 @@ export default function TableData({ tableName }) {
           theme: "light",
         });
       }
+
 
       const updatedRows = tableRows.filter((r) => r.T_ID !== record.T_ID);
       setTableRows(updatedRows);
@@ -354,7 +356,7 @@ export default function TableData({ tableName }) {
       const apiurl = updateAPIRoute(tableName)(currentUser.Email, tId);
       // console.log("updating record with:", currentUser.Email, tId);
       // console.log("Table:", tableName);
-      await axios.put(apiurl, updatedRecord, {
+      const response = await axios.put(apiurl, updatedRecord, {
         headers: {
           "Content-Type": "application/json",
         },
@@ -375,6 +377,19 @@ export default function TableData({ tableName }) {
         ...editableFields,
         [tId]: undefined,
       });
+      console.log("Update", response);
+      if (response?.status === 200) {
+        toast.success("Record Updated Successfully!", {
+          position: "top-left",
+          autoClose: 1500,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+        });
+      }
     } catch (error) {
       console.error("Error updating record:", error.response.data.message);
       // Handle error gracefully, e.g., show a user-friendly message
@@ -545,7 +560,7 @@ export default function TableData({ tableName }) {
                           </Tooltip>
                           <Tooltip content="Delete data">
                             <IconButton
-                        
+
                               onClick={() => handleOpenDialog(record)}
                               variant="text"
                             >

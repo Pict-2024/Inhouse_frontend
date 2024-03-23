@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import NotificationsActiveIcon from "@mui/icons-material/NotificationsActive";
 import CloseIcon from "@mui/icons-material/Close";
 import { Modal, Box } from "@mui/material";
+import MenuIcon from '@mui/icons-material/Menu';
 // import { MdMenu } from "react-icons/md";
 import moment from "moment";
 import axios from "axios";
@@ -46,6 +47,8 @@ import {
 import { resetUser } from "../redux/user/userSlice";
 import { BASE_URL } from "../api";
 import StudentSidebar from "./SModule/StudentSidebar";
+import TeacherSidebar from './TModule/TeacherSidebar';
+import AdminSidebar from "./AModule/AdminSidebar";
 
 const profileMenuItems = [
   {
@@ -362,17 +365,15 @@ export default function NavList() {
 
   return (
     <>
-
       <nav className=" block w-full rounded-xl border  border-white/80 bg-white bg-opacity-80 py-2 px-2 text-white shadow-md backdrop-blur-2xl backdrop-saturate-200 lg:px-2 lg:py-2">
         <div>
           <div className="w-full flex items-center px-2 gap-x-2 justify-between text-gray-900">
-            {/* <div className="block lg:hidden">
-              <MdMenu
-                className="text-dark-600 fw-bolder cursor-pointer"
-                size={24}
-                onClick={openSidebar}
-              />
-            </div> */}
+            {/* Burger Menu Button */}
+            <div className="block sm:hidden bg-white">
+              <IconButton onClick={openSidebar}>
+                <MenuIcon color="white" />
+              </IconButton>
+            </div>
 
             <img src={logo} className="w-16 h-16" />
             <Link
@@ -453,7 +454,7 @@ export default function NavList() {
                   className="z-50"
                 >
                   <Button
-                    className="text-white hover:bg-black"
+                    className="text-white hover:bg-black "
                     onClick={handleOpenSendModal}
                   >
                     Send Notification
@@ -533,7 +534,9 @@ export default function NavList() {
               top: "50%",
               left: "50%",
               transform: "translate(-50%, -50%)",
-              width: 700,
+
+              width: { sm: "90%", md: 700 }, // Adjust width for smaller screens
+              maxWidth: "90%",
               bgcolor: "background.paper",
               boxShadow: 24,
               p: 4,
@@ -603,9 +606,21 @@ export default function NavList() {
           </Box>
         </Modal>
       </nav>
+      {/* Sidebar */}
       {isSidebarOpen && (
-        <div className="fixed top-0 left-0 w-full h-full bg-gray-800 bg-opacity-60 z-50">
-          {currentUser?.Role == 2 ? <StudentSidebar /> : <></>}
+        <div className="fixed top-0 left-0 w-full h-full bg-gray-800 bg-opacity-40 
+        backdrop-filter backdrop-blur-lg z-50">
+          <div className="absolute top-2 right-2">
+            <IconButton onClick={closeSidebar} >
+              <CloseIcon />
+            </IconButton>
+          </div>
+          <div className="p-3 h-full ">
+            {/* Render appropriate sidebar based on user type */}
+            {currentUser?.Role === 1 && <TeacherSidebar closeSidebar={closeSidebar} />}
+            {currentUser?.Role === 2 && <StudentSidebar closeSidebar={closeSidebar} />}
+            {currentUser?.Role === 0 && <AdminSidebar closeSidebar={closeSidebar} />}
+          </div>
         </div>
       )}
     </>

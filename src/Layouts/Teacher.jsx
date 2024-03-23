@@ -20,25 +20,27 @@ export default function Teacher() {
     // If redirecting, return null or an empty div
     return null;
   }
-  
+
 
   return (
     <div className="h-full w-full font-poppins flex">
 
-    {currentUser && currentUser.Role == 1 ? (
-      <div className="flex flex-col  w-full">
-        <NavList />
-        <div className="w-full flex font-poppins ">
-          <TeacherSidebar />
-          <div className="border-l-2 w-full mx-0 px-0 overflow-x-auto  ">
-            <Outlet />
+      {currentUser && currentUser.Role == 1 ? (
+        <div className="flex flex-col  w-full">
+          <NavList />
+          <div className="w-full flex font-poppins">
+            <span className="hidden sm:block ">
+              <TeacherSidebar />
+            </span>
+            <div className="border-l-2 w-full mx-0 px-0 overflow-x-auto  ">
+              <Outlet />
+            </div>
           </div>
         </div>
-      </div>
-    ) : (
+      ) : (
         <></>
       )
-    }
+      }
     </div>
   );
 }

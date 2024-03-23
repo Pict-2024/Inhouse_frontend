@@ -28,7 +28,9 @@ export default function Admin() {
             <div className="flex flex-col  w-full">
               <NavList />
               <div className="w-full flex font-poppins ">
-                <AdminSidebar/>
+                <span className="hidden sm:block ">
+                  <AdminSidebar />
+                </span>
                 <div className="border-l-2 w-full mx-0 px-0 overflow-x-auto">
                   <Outlet />
                 </div>
