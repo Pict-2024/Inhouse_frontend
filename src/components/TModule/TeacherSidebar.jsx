@@ -60,7 +60,7 @@ export default function TeacherSidebar({ closeSidebar }) {
           </ListItem>
         </Link>
         {currentUser && currentUser.SpecialAccess_Teacher !== null && (
-          <Link to={`/t/report/${currentUser.SpecialAccess_Teacher}`} onClick={closeSidebar}>
+          <Link to={`/t/report`} onClick={closeSidebar}>
             <ListItem>
               <ListItemPrefix>
                 <DocumentChartBarIcon className="h-5 w-5" />

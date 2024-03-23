@@ -500,7 +500,7 @@ export default function EventOrganized() {
           </div>
 
           <div className="mb-4 flex flex-wrap -mx-4">
-            <div className="w-full md:w-1/2 px-4 mb-4">
+            <div className="w-full  px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
                 Award
               </Typography>
@@ -513,18 +513,7 @@ export default function EventOrganized() {
               />
             </div>
 
-            <div className="w-full md:w-1/2 px-4 mb-4">
-              <Typography variant="h6" color="blue-gray" className="mb-3">
-                Award_Prize_Money
-              </Typography>
-              <Input
-                id="Award_Prize_Money"
-                size="lg"
-                label="Award_Prize_Money"
-                value={formData.Award_Prize_Money}
-                onChange={handleOnChange}
-              />
-            </div>
+
           </div>
 
           <div className="mb-4 flex flex-wrap -mx-4">

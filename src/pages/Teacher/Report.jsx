@@ -2,8 +2,8 @@
 import Box from "@mui/material/Box";
 import Header from "../../components/AModule/Header";
 import { useState, useEffect } from "react";
-import { Checkbox, Input } from "@material-tailwind/react";
 import FilterAltIcon from "@mui/icons-material/FilterAlt";
+import { Select, Option, Checkbox, Input } from "@material-tailwind/react";
 import moment from "moment";
 import {
   Table,
@@ -50,48 +50,49 @@ import {
   getAllRecordsTechnicalStud,
   getAllRecordsHigherEdu,
 } from "./../../components/SModule/API_Routes";
-import { Option, Select } from "@material-tailwind/react";
 import html2pdf from "html2pdf.js";
 import ExcelJS from "exceljs";
-import { useSelector } from "react-redux";
 import { BASE_URL } from "../../api";
+import Spinner from "../../components/Spinner";
+import { useSelector } from "react-redux";
 
+// Define the Report component
 const Report = () => {
-  const { currentUser } = useSelector((state) => state.user);
 
+  const { currentUser } = useSelector((state) => state.user);
   let tablename = "";
+  const [loading, setLoading] = useState(false);
 
   const tableMapping = {
-    "10_mous": "number-of_mous",
-    "11_certcourses": "cert-courses",
-    "12_prof_affiliation": "prof-aff",
-    "13_resource_person": "facultyresource",
-    "14_extension_activity": "extension-act",
-    "15_tech_comp_fest": "techfest-org",
-    "16_faculty_achievements": "faculty-achievement",
-    "17_indusvisitstoursfieldtrip": "visit-tours",
-    "18_contribution_to_bos": "contribution-bos",
-    "1_student__internship_details": "",
-    "1_research_publication": "research-pb",
-    "2_student__research_publication": "",
-    "2_book_publication": "book-pb",
-    "3_student__conference_publication": "",
-    "3_faculty_conference_publication": "faculty-pb",
-    "4_student__certificate_course_attended": "",
-    "4_grants": "grants",
-    "5_students__sports_data": "",
-    "5_consultancy_report": "cons-rep",
-    "6_students__event_participated": "",
-    "6_patent_publication": "patent-pb",
-    "7_students__event_organized": "",
-    "7_confsemworkshops": "con-sem",
-    "8_students__technical_events": "",
-    "8_sttp_fdp_conf_attended": "sf-ws",
-    "9_student__higher_education": "",
-    "9_webinarguestlec": "web-guest",
-    login_details: "",
-    register: "",
+    'mous': "number-of_mous",
+    "certificate_courses": "cert-courses",
+    "professional_affiliation": "prof-aff",
+    "resource_person": "facultyresource",
+    "extension_activity": "extension-act",
+    "technical_competition_fest": "techfest-org",
+    "faculty_achievements": "faculty-achievement",
+    "industrial_fields_tour": "visit-tours",
+    "contribution_to_bos": "contribution-bos",
+    "student_internship_details": "internship-details",
+    "research_publication": "research-pb",
+    "student_research_publication": "research-pb",
+    "book_publication": "book-pb",
+    "student_conference_publication": "conference-pb",
+    "faculty_conference_publication": "faculty-pb",
+    "student_certificate_course": "certificate-courses",
+    "grants": "grants",
+    "student_sports_data": "sports-data",
+    "consultancy_report": "cons-rep",
+    "student_event_participated": "event-participation",
+    "patent_publication": "patent-pb",
+    "student_event_organized": "event-org",
+    "conference_seminar_workshops": "con-sem",
+    "student_technical_events": "tech-events",
+    "sttp_fdp_conference_attended": "sf-ws",
+    "student_higher_education": "higher-edu",
+    "webinar_guest_lectures": "web-guest",
   };
+
   const tableRoutesMapping = (table) => {
     const tableRoute = {
       "research_publication": getAllRecordsResearch,
@@ -135,7 +136,11 @@ const Report = () => {
     `${BASE_URL}/general/allcolumns`
   );
   const [tableRows, setTableRows] = useState([]);
+  const [alternativeTableNames, setAlternativeTableNames] = useState({});
+  // const [page, setPage] = useState(0);
+  // const [rowsPerPage, setRowsPerPage] = useState(5);
   const [selectedColumns, setSelectedColumns] = useState([]); // New state to track selected columns
+  const [selectedOption, setSelectedOption] = useState("Select Table");
 
   const currentYear = new Date().getFullYear();
   const years = Array.from(
@@ -143,14 +148,22 @@ const Report = () => {
     (_, index) => currentYear - index
   );
 
+  // const handleChangePage = (event, newPage) => {
+  //   setPage(newPage);
+  // };
 
+  // const handleChangeRowsPerPage = (event) => {
+  //   setRowsPerPage(+event.target.value);
+  //   setPage(0);
+  // };
 
   //get all records
   const getAllRecords = async () => {
     try {
+      setLoading(true);
       const apiurl = tableRoutesMapping(selectedTable);
-      console.log("Table Name: ", selectedTable);
-      console.log("apiRoute in getAllRecords:", apiurl);
+      // console.log("Table Name: ", selectedTable);
+      // console.log("apiRoute in getAllRecords:", apiurl);
 
       const response = await axios.get(apiurl, {
         headers: {
@@ -158,9 +171,11 @@ const Report = () => {
         },
       });
 
-      console.log(response.data.data);
+      // console.log(response.data.data);
       setTableRows(response.data.data);
+      setLoading(false);
     } catch (error) {
+      setLoading(false);
       console.error("Error fetching records:", error.message);
     }
   };
@@ -170,6 +185,45 @@ const Report = () => {
       getAllRecords();
     }
   }, [selectedTable]);
+
+  // const alternativeTableNames = {
+  //   // "19_student_dummy": "19_student_dummy",
+  //   // "alltables_stud_fact": "alltables_stud_fact",
+  //   "book_publication": "Book Publication",
+  //   "certificate_courses": "Certificate Courses",
+  //   "conference_seminar_workshops": "Conference Seminar Workshop",
+  //   "consultancy_report": "Consultancy Report",
+  //   "contribution_to_bos": "Contribution to BOS",
+  //   "extension_activity": "Extension Activity",
+  //   "faculty_achievements": "Faculty Achievements",
+  //   "faculty_conference_publication": "Faculty Conference Publication",
+  //   "grants": "Grants",
+  //   "industrial_fields_tour": "Industrial Fields Tour",
+  //   // "metadata_teacher": "metadata_teacher",
+  //   "mous": "MOUs",
+  //   // "notices": "Notices",
+  //   "patent_publication": "Patent Publication",
+  //   "professional_affiliation": "Professional Affiliation",
+  //   // "register": "register",
+  //   "research_publication": "Research Publication",
+  //   "resource_person": "Resource Person",
+  //   "sttp_fdp_conference_attended": "STTP/FDP/Conference Attended",
+  //   "student_certificate_course": "Student Certificate Course",
+  //   "student_conference_publication": "Student Conference Publication",
+  //   "student_event_organized": "Student Event Organized",
+  //   "student_event_participated": "Student Event Participated",
+  //   "student_higher_education": "Student Higher Education",
+  //   "student_internship_details": "Student Internship Details",
+  //   // "student_login": "student_login",
+  //   "student_research_publication": "Student Research Publication",
+  //   "student_sports_data": "Student Sports Data",
+  //   "student_technical_events": "Student Technical Events",
+  //   // "teacher_login": "teacher_login",
+  //   "technical_competition_fest": "Technical Competition Fest",
+  //   // "uploads": "uploads",
+  //   "webinar_guest_lectures": "Webinar Guest Lectures"
+  // };
+
 
   // Function to fetch all tables
   const getAllTables = async () => {
@@ -201,21 +255,27 @@ const Report = () => {
 
   const getAllColumns = async () => {
     try {
+      setLoading(true);
       const response = await axios.post(
         `${BASE_URL}/general/allcolumns?tablename=${tablename}`
       );
+      setLoading(false);
       return response.data; // Returning the data for further processing
     } catch (error) {
+      setLoading(false);
       console.log("error is: ", error.message);
     }
   };
 
   const fetchData = async () => {
     try {
+      setLoading(true);
       const columnsData = await getAllColumns();
       // console.log("Return value of columns: ", columnsData.data);
       setColumnNames(columnsData.data);
+      setLoading(false);
     } catch (error) {
+      setLoading(false);
       console.error("Error fetching columns data:", error.message);
     }
   };
@@ -250,12 +310,17 @@ const Report = () => {
         )}`;
       }
     }
+    // console.log(selectedTable);
+    const tablePrefix = selectedTable.startsWith("student")
+      ? "student"
+      : "teacher";
 
     setApiUrl(
-      `${BASE_URL}/teacher/${tableMapping[selectedTable]}/filter?${queryParameters}`
+      `${BASE_URL}/${tablePrefix}/${tableMapping[selectedTable]}/filter?${queryParameters}`
     );
-    console.log("form filter is : ", formFilters);
-    console.log("Update api url is : ", apiUrl);
+
+    // console.log("form filter is : ", formFilters);
+    // console.log("Update api url is : ", apiUrl);
   };
 
   useEffect(() => {
@@ -275,6 +340,62 @@ const Report = () => {
       jsPDF: { unit: "mm", format: "a4", orientation: "landscape" },
     });
   };
+
+
+  // const generatePDF = () => {
+  //   const doc = new jsPDF('landscape');
+
+  //   doc.setFont("helvetica", "bold");
+  //   doc.setFontSize(16);
+  //   doc.text("PUNE INSTITUTE OF COMPUTER TECHNOLOGY", 20, 20);
+
+  //   doc.setFontSize(14);
+  //   doc.text(`Report on ${selectedTable}`, 20, 30);
+
+  //   doc.setFontSize(10);
+
+  //   const tableRow = [];
+  //   let headersAdded = false;
+
+  //   tableRows.forEach((row) => {
+  //     const rowData = selectedColumns.map((column) => row[column.Field]);
+  //     tableRow.push(rowData);
+
+  //     if (!headersAdded) {
+  //       const tableHeader = selectedColumns.map((header) => {
+  //         const headerLines = doc.splitTextToSize(header.Field, 25);
+  //         return headerLines.join('\n');
+  //       });
+  //       tableRow.unshift(tableHeader);
+  //       headersAdded = true;
+  //     }
+  //   });
+
+  //   const columnWidths = selectedColumns.map(() => 25);
+
+  //   // Rotate headers
+  //   const rotatedHeaders = selectedColumns.map((header) => {
+  //     const headerLines = doc.splitTextToSize(header.Field, 15);
+  //     return headerLines.join('\n');
+  //   });
+
+  //   doc.autoTable({
+  //     head: [rotatedHeaders],
+  //     body: tableRow.slice(1),
+  //     startY: 40,
+  //     columnStyles: Object.fromEntries(columnWidths.map((width, index) => [index, { cellWidth: width }])),
+  //     headStyles: { fillColor: [200, 200, 200], textColor: [0, 0, 0], fontStyle: 'bold', angle: 90 },
+  //     theme: "striped",
+  //     styles: { overflow: "linebreak" },
+  //     didDrawPage: function (data) {
+  //       doc.setFontSize(8);
+  //       doc.text("Page " + data.pageNumber, data.settings.margin.left, doc.internal.pageSize.height - 5);
+  //     },
+  //   });
+
+  //   doc.save("report.pdf");
+  // };
+
 
   //Table format
   // const generatePDF = () => {
@@ -382,6 +503,7 @@ const Report = () => {
   //   // Save the PDF with a filename
   //   doc.save("report.pdf");
   // };
+
   const generateExcel = () => {
     const workbook = new ExcelJS.Workbook();
     const worksheet = workbook.addWorksheet("Report");
@@ -416,13 +538,15 @@ const Report = () => {
     console.log("Selected Table is: ", selectedTableName);
     tablename = selectedTableName;
     setSelectedTable(selectedTableName);
+    setFormFilters({});
     fetchData();
   };
 
   const handleSubmit = () => {
-    console.log("form filters are : ", formFilters);
-    console.log("API URL is : ", apiUrl);
+    // console.log("form filters are : ", formFilters);
+    // console.log("API URL is : ", apiUrl);
 
+    // setLoading(true);
     fetch(apiUrl, {
       method: "POST",
       headers: {
@@ -438,6 +562,7 @@ const Report = () => {
       .catch((error) => console.error("Error retrieving data", error));
   };
 
+  //render columns
   const renderInputFields = () => {
     return columnNames.map((column) => (
       <div key={column.Field}>
@@ -472,7 +597,7 @@ const Report = () => {
 
       return (
         <div key={Field} className="flex items-center gap-3 mt-3">
-          <div className="w-full md:w-1/2 ">
+          <div className="w-full md:w-1/2">
             <Select
               size="lg"
               // label="Start Year"
@@ -487,7 +612,7 @@ const Report = () => {
             </Select>
           </div>
 
-          <div className="w-full md:w-1/2 ">
+          <div className="w-full md:w-1/2  ">
             <Select
               size="lg"
               // label="End Year"
@@ -503,7 +628,8 @@ const Report = () => {
           </div>
         </div>
       );
-    } else if (
+    }
+    else if (
       Type.includes("varchar") &&
       Field.includes("Upload") == false &&
       Field.includes("Link") == false
@@ -516,11 +642,12 @@ const Report = () => {
             // label={`Enter ${Field}`}
             value={formFilters[Field] || ""}
             onChange={(e) => handleInputChange(Field, e.target.value)}
-            className="w-full  py-2 border border-black rounded-md "
+            className="w-full  py-2 border rounded-md "
           />
         </div>
       );
-    } else if (Type.includes("int")) {
+    }
+    else if (Type.includes("int")) {
       return (
         <div key={Field} className="mb-4 py-3 bg-white rounded-lg">
           {/* <label className="block mb-2">{Enter ${Field}}</label> */}
@@ -534,6 +661,7 @@ const Report = () => {
         </div>
       );
     } else if (Type === "date") {
+      //  setApiUrlapi + dateColumn=${Field}
       return (
         <div key={Field} className="mb-4 py-3 bg-white rounded-lg flex gap-3">
           {/* <label className="block mb-2">{${Field} Start Date}</label> */}
@@ -564,98 +692,109 @@ const Report = () => {
 
   return (
     <>
-      <Box sx={{}}>
-        <div className="flex flex-col justify-center items-center gap-4">
-          <label className="block text-gray-700 text-sm font-bold mb-2 m-2">
-            Select Table:
-          </label>
-          <select
-            onChange={(e) => setTable(e)}
-            className="border border-gray-300 rounded-md p-2 w-200 focus:outline-none focus:ring focus:border-blue-300 transition-all duration-300 ease-in-out"
-          >
-            {tableNames.map((table, index) => (
-              <option
-                className="py-2 hover:bg-blue-100"
-                key={index}
-                value={table}
+      {loading ? <Spinner /> :
+        <>
+          <Box>
+            <div className="flex justify-start mx-2 w-32 absolute">
+              <Header category="Page" title="Report" />
+            </div>
+            <div className="flex flex-col justify-center items-center gap-4 m-2 ">
+              <label className="block text-gray-700 text-md font-bold  m-2">
+                Select Table:
+              </label>
+              <select
+                onChange={(e) => setTable(e)}
+                value={selectedTable}
+                className="border border-gray-300 rounded-md p-2 w-96 focus:outline-none focus:ring focus:border-blue-300 transition-all duration-300 ease-in-out custom-select"
               >
-                {table}
-              </option>
-            ))}
-          </select>
+                <option value="" disabled selected>
+                  Select Table
+                </option>
+                {tableNames.map((tableName, index) => (
+                  <option key={index} value={tableName}>
+                    {tableName}
+                  </option>
+                ))}
+              </select>
 
-          {selectedTable !== "" &&
-            <div>
-              <label className="block text-gray-700 text-md font-bold  m-2 px-4">Select Filters:</label>
+              {selectedTable !== "" &&
+                <div>
+                  <label className="block text-gray-700 text-md font-bold  m-2">Select Filters:</label>
 
-              <div className="flex flex-col justify-end align-items-center m-2 p-4">
-                <div className="flex justify-start gap-4 flex-wrap  p-3 w-full">
-                  {renderInputFields()}
+                  <div className="flex flex-col justify-end align-items-center m-2 p-4">
+                    <div className="flex   gap-4 flex-wrap  p-3 w-full">
+                      {renderInputFields()}
+                    </div>
+                    <Button
+                      variant="contained"
+                      className="w-25 p-3"
+                      onClick={handleSubmit}
+                      endIcon={<FilterAltIcon />}
+                    >
+                      Filter
+                    </Button>
+                  </div>
+
+                  {/* New component for column selection */}
+                  <div className="border">
+                    <ColumnSelection
+                      columns={columnNames}
+                      onSelectColumns={handleColumnSelection}
+                    />
+
+                    <div className="flex gap-4 px-4">
+                      <Button variant="contained" onClick={generatePDF}>
+                        Generate PDF
+                      </Button>
+
+                      <Button variant="contained" onClick={generateExcel}>
+                        Generate Excel
+                      </Button>
+                    </div>
+                  </div>
+
                 </div>
-                <Button
-                  variant="contained"
-                  className="w-25 p-3"
-                  onClick={handleSubmit}
-                  endIcon={<FilterAltIcon />}
-                >
-                  Filter
-                </Button>
-              </div>
+              }
 
-              {/* New component for column selection */}
-              <div className="border">
-                <ColumnSelection
-                  columns={columnNames}
-                  onSelectColumns={handleColumnSelection}
-                />
 
-                <div className="flex gap-4 px-4">
-                  <Button variant="contained" onClick={generatePDF}>
-                    Generate PDF
-                  </Button>
 
-                  <Button variant="contained" onClick={generateExcel}>
-                    Generate Excel
-                  </Button>
-                </div>
-              </div>
+
+
+              <TableContainer id="table-container" component={Paper}>
+                <Table>
+                  <TableHead>
+                    <TableRow>
+                      {selectedColumns.map((column) => (
+                        <TableCell key={column.Field}>{column.Field}</TableCell>
+                      ))}
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {tableRows &&
+                      tableRows
+
+                        .map((row, rowIndex) => (
+                          <TableRow key={rowIndex}>
+                            {selectedColumns.map((column) => (
+                              <TableCell key={column.Field}>
+                                {column.Type === "date"
+                                  ? moment(row[column.Field]).format("DD-MM-YYYY")
+                                  : row[column.Field]}
+                              </TableCell>
+                            ))}
+                          </TableRow>
+                        ))}
+                  </TableBody>
+                </Table>
+              </TableContainer>
+
+
+
+              <TableContainer component={Paper}></TableContainer>
 
             </div>
-          }
-
-          <TableContainer id="table-container" component={Paper}>
-            <Table>
-              <TableHead>
-                <TableRow>
-                  {selectedColumns.map((column) => (
-                    <TableCell key={column.Field}>{column.Field}</TableCell>
-                  ))}
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {tableRows &&
-                  tableRows
-                    .map((row, rowIndex) => (
-                      <TableRow key={rowIndex}>
-                        {selectedColumns.map((column) => (
-                          <TableCell key={column.Field}>
-                            {column.Type === "date"
-                              ? moment(row[column.Field]).format("DD-MM-YYYY")
-                              : row[column.Field]}
-                          </TableCell>
-                        ))}
-                      </TableRow>
-                    ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
-
-
-
-          <TableContainer component={Paper}></TableContainer>
-
-        </div>
-      </Box>
+          </Box>
+        </>}
     </>
   );
 };
@@ -692,7 +831,7 @@ const ColumnSelection = ({ columns, onSelectColumns }) => {
 
   return (
     <div className="m-4">
-      <label className="block text-gray-700 text-sm font-bold mb-2">
+      <label className="block text-gray-700 text-md font-bold  m-2">
         Select Columns:
       </label>
       <div className="flex gap-4 flex-wrap justify-left">
@@ -703,7 +842,7 @@ const ColumnSelection = ({ columns, onSelectColumns }) => {
           label="Select All"
         />
 
-        {columns.map((column) => (
+        {columns?.map((column) => (
           <Checkbox
             key={column.Field}
             id={column.Field}
