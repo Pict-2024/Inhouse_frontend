@@ -13,18 +13,18 @@ import {
 } from "@heroicons/react/24/solid";
 import { useSelector } from "react-redux";
 
-export default function StudentSidebar() {
+export default function StudentSidebar({ closeSidebar }) {
   const { currentUser } = useSelector((state) => state.user);
 
   return (
-    <div className="h-auto lg:max-w-[18rem] w-1/24 sm:w-2/5 p-4 shadow-blue-gray-900/5  hidden sm:block">
+    <div className="h-auto lg:max-w-[18rem] w-1/24 sm:w-2/5 p-4 shadow-blue-gray-900/5">
       <div className="mb-2 p-4">
         <Typography
           variant="h5"
           color="blue-gray"
           className="flex justify-start items-center gap-4"
         >
-          <div className="rounded-full px-4 bg-gray-400 w-10 h-10 flex items-center justify-center text-dark font-bold">
+          <div className="rounded-full px-4 bg-gray-400 p-3 w-10 h-10 flex items-center justify-center text-dark font-bold">
             {currentUser.Name ? currentUser.Name[0] : "A"}
           </div>
           <div>
@@ -34,7 +34,7 @@ export default function StudentSidebar() {
         </Typography>
       </div>
       <List>
-        <Link to={"/s/dashboard"}>
+        <Link to={"/s/dashboard"} onClick={closeSidebar}>
           <ListItem>
             <ListItemPrefix>
               <PresentationChartBarIcon className="h-5 w-5" />
@@ -42,7 +42,7 @@ export default function StudentSidebar() {
             Dashboard
           </ListItem>
         </Link>
-        <Link to={"/s/general"} className="text-ellipsis">
+        <Link to={"/s/general"} className="text-ellipsis" onClick={closeSidebar}>
           <ListItem>
             <ListItemPrefix>
               <TrophyIcon className="h-5 w-5" />
@@ -50,7 +50,7 @@ export default function StudentSidebar() {
             Add Details
           </ListItem>
         </Link>
-        <Link to={"/s/data"}>
+        <Link to={"/s/data"} onClick={closeSidebar}>
           <ListItem>
             <ListItemPrefix>
               <DocumentIcon className="h-5 w-5" />
