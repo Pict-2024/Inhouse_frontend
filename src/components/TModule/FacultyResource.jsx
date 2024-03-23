@@ -20,7 +20,7 @@ export default function FacultyResource() {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     T_ID: null,
-    Name:currentUser?.Name,
+    Name: currentUser?.Name,
     Username: currentUser?.Username,
     Dept_Name: "",
     FDP_Workshop_Name: "",
@@ -104,11 +104,11 @@ export default function FacultyResource() {
               <Select
                 size="lg"
                 name="eventType"
-                value={formData.eventType}
+                value={formData.FDP_Workshop_Name}
                 label="Select Type"
                 onChange={(value) =>
                   handleChange({
-                    target: { name: "eventType", value },
+                    target: { name: "FDP_Workshop_Name", value },
                   })
                 }
               >
@@ -139,7 +139,7 @@ export default function FacultyResource() {
                     },
                   })
                 }
-                // onChange={handleOnChange}
+              // onChange={handleOnChange}
               >
                 <Option value="International">International</Option>
                 <Option value="National">National</Option>
