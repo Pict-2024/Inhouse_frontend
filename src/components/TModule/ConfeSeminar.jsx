@@ -36,12 +36,12 @@ export default function ConfeSeminar() {
     Name_of_the_Coordinators: "",
     Remarks: "",
     Sponsorship_Amount: "",
+    Upload_Evidence: null,
+    Upload_Sample_Certificate: null,
     Upload_List_of_Students: null,
     Upload_List_of_Students_Outside: null,
     NoOf_PICT_Participants: "",
     NoOf_Non_PICT_Participants: "",
-    Upload_Sample_Certificate: null,
-    Upload_Evidence: null,
     Upload_Report: null,
   });
 

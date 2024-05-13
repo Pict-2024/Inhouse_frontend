@@ -39,6 +39,7 @@ import {
   getAllRecordsTechnical,
   getAllRecordsWebinar,
 } from "../../components/TModule/API_Routes";
+import { DocumentIcon } from "@heroicons/react/24/solid";
 import {
   getAllRecordsInternship,
   getAllRecordsResearchStud,
@@ -769,7 +770,7 @@ const Report = () => {
                       ))}
                     </TableRow>
                   </TableHead>
-                  <TableBody>
+                  {/* <TableBody>
                     {tableRows &&
                       tableRows
 
@@ -784,6 +785,26 @@ const Report = () => {
                             ))}
                           </TableRow>
                         ))}
+                  </TableBody> */}
+                  <TableBody>
+                    {tableRows &&
+                      tableRows.map((row, rowIndex) => (
+                        <TableRow key={rowIndex}>
+                          {selectedColumns.map((column) => (
+                            <TableCell key={column.Field}>
+                              {column.Field.startsWith("Upload") ? (
+                                // Render document icon for fields starting with "Upload"
+                                <DocumentIcon className="h-6 w-6 text-blue-500" />
+                              ) : (
+                                // Render normal text for other fields
+                                column.Type === "date"
+                                  ? moment(row[column.Field]).format("DD-MM-YYYY")
+                                  : row[column.Field]
+                              )}
+                            </TableCell>
+                          ))}
+                        </TableRow>
+                      ))}
                   </TableBody>
                 </Table>
               </TableContainer>

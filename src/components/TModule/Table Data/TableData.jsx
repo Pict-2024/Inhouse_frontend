@@ -247,19 +247,25 @@ export default function TableData({ tableName }) {
           "Content-Type": "application/json", // Make sure this header is defined
         },
       });
-      // console.log("Rows : ", response.data.data);
-      const columnHeaders = Object.keys(response.data.data[0]);
-      console.log("Columns:", columnHeaders);
+      // console.log("Response : ", response);
+      if (response?.data?.data.length === 0) {
+        setTableHead([]);
+        setTableRows([]);
+      } else {
+        const columnHeaders = Object.keys(response.data.data[0]);
+        // console.log("Columns:", columnHeaders);
 
-      setTableHead(columnHeaders);
+        setTableHead(columnHeaders);
 
-      // Filter records based on currentUser's name
-      const userRecords = response.data.data.filter(
-        (record) => record.Username === currentUser.Username
-      );
-      // console.log("UserRecords:", userRecords);
-      setTableRows(userRecords);
-      // setTableRows(response.data.data);
+        // Filter records based on currentUser's name
+        const userRecords = response.data.data.filter(
+          (record) => record.Username === currentUser.Username
+        );
+        // console.log("UserRecords:", userRecords);
+        setTableRows(userRecords);
+        // setTableRows(response.data.data);
+      }
+
     } catch (error) {
       console.log(error);
     }
@@ -454,136 +460,150 @@ export default function TableData({ tableName }) {
       <Card className="h-full w-full p-3">
         <CardHeader floated={false} shadow={false} className="rounded-none">
           <div className="flex items-center justify-between gap-8 mt-2">
-            <div>
+            {tableRows.length > 0 && <div>
               <Typography variant="h5" color="blue-gray">
                 {tableName}
               </Typography>
-            </div>
+            </div>}
           </div>
         </CardHeader>
-        <CardBody className="px-0">
-          <div className="overflow-x-auto mx-4">
-            <table className="mt-4 w-full min-w-max table-auto text-left">
-              <thead>
-                <tr>
-                  {tableHead.map((head, index) => (
-                    <th
-                      key={head}
-                      className={`${index === 0 ? "hidden" : ""
-                        } cursor-pointer border-y border-blue-gray-100 bg-blue-gray-50/50 p-4 transition-colors hover:bg-blue-gray-50`}
-                    >
-                      <Typography
-                        variant="small"
-                        color="blue"
-                        className="flex items-center justify-between gap-2 font-normal leading-none opacity-70 text-blue-700"
-                      >
-                        {head}{" "}
-                        {index !== tableHead.length - 1 && (
-                          <ChevronUpDownIcon
-                            strokeWidth={2}
-                            className="h-4 w-4"
-                          />
-                        )}
-                      </Typography>
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {tableRows.map((record, index) => (
-                  <tr
-                    key={index}
-                    className={`border-b border-solid border-blue-gray-200 ${index % 2 === 0 ? "bg-blue-gray-50" : "bg-white"
-                      }`}
-                  >
-                    {tableHead.map((head, colIndex) => (
-                      <td
-                        key={head}
-                        className={`${colIndex === 0 ? "hidden" : ""
-                          } p-4 whitespace-normal border-r ${colIndex === tableHead.length - 1
-                            ? ""
-                            : "border-solid border-blue-gray-200"
+        {tableRows.length > 0 ?
+          <>
+            <CardBody className="px-0">
+              <div className="overflow-x-auto mx-4">
+                <table className="mt-4 w-full min-w-max table-auto text-left">
+                  <thead>
+                    <tr>
+                      {tableHead.map((head, index) => (
+                        <th
+                          key={head}
+                          className={`${index === 0 ? "hidden" : ""
+                            } cursor-pointer border-y border-blue-gray-100 bg-blue-gray-50/50 p-4 transition-colors hover:bg-blue-gray-50`}
+                        >
+                          <Typography
+                            variant="small"
+                            color="blue"
+                            className="flex items-center justify-between gap-2 font-normal leading-none opacity-70 text-blue-700"
+                          >
+                            {head}{" "}
+                            {index !== tableHead.length - 1 && (
+                              <ChevronUpDownIcon
+                                strokeWidth={2}
+                                className="h-4 w-4"
+                              />
+                            )}
+                          </Typography>
+                        </th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {tableRows.map((record, index) => (
+                      <tr
+                        key={index}
+                        className={`border-b border-solid border-blue-gray-200 ${index % 2 === 0 ? "bg-blue-gray-50" : "bg-white"
                           }`}
                       >
-                        {editableFields[record.T_ID] &&
-                          editableFields[record.T_ID][head] !== undefined ? (
-                          <Input
-                            value={editableFields[record.T_ID][head]}
-                            label={[head]}
-                            onChange={(e) =>
-                              handleEditField(record.T_ID, head, e.target.value)
-                            }
-                          />
-                        ) : head.startsWith("Upload") ? (
-                          <DocumentIcon
-                            onClick={() => handleLink(record[head])}
-                            className="cursor-pointer w-6 h-6"
-                          />
-                        ) : head.includes("Date") ? (
-                          <Typography
-                            variant="body"
-                            color="black"
-                            className="text-dark font-bold"
+                        {tableHead.map((head, colIndex) => (
+                          <td
+                            key={head}
+                            className={`${colIndex === 0 ? "hidden" : ""
+                              } p-4 whitespace-normal border-r ${colIndex === tableHead.length - 1
+                                ? ""
+                                : "border-solid border-blue-gray-200"
+                              }`}
                           >
-                            <p>{moment(record[head]).format("YYYY-MM-DD")}</p>
-                          </Typography>
-                        ) : (
-                          <Typography
-                            variant="body"
-                            color="black"
-                            className="text-dark font-bold"
-                          >
-                            <p>{record[head]}</p>
-                          </Typography>
-                        )}
-                      </td>
-                    ))}
-                    <td className="p-4 border-r border-solid border-blue-gray-200">
-                      {editableFields[record.T_ID] ? (
-                        <Tooltip content="Save Changes">
-                          <IconButton
-                            onClick={() => handleSave(record.T_ID)}
-                            variant="text"
-                          >
-                            <CheckCircleIcon className="h-4 w-4 text-green-500" />
-                          </IconButton>
-                        </Tooltip>
-                      ) : (
-                        <>
-                          <Tooltip content="Edit data">
-                            <IconButton
-                              onClick={() => handleEdit(record)}
-                              variant="text"
-                            >
-                              <PencilIcon className="h-4 w-4 text-blue-500" />
-                            </IconButton>
-                          </Tooltip>
-                          <Tooltip content="Delete data">
-                            <IconButton
+                            {editableFields[record.T_ID] &&
+                              editableFields[record.T_ID][head] !== undefined ? (
+                              <Input
+                                value={editableFields[record.T_ID][head]}
+                                label={[head]}
+                                onChange={(e) =>
+                                  handleEditField(record.T_ID, head, e.target.value)
+                                }
+                              />
+                            ) : head.startsWith("Upload") ? (
+                              <DocumentIcon
+                                onClick={() => handleLink(record[head])}
+                                className="cursor-pointer w-6 h-6"
+                              />
+                            ) : head.includes("Date") ? (
+                              <Typography
+                                variant="body"
+                                color="black"
+                                className="text-dark font-bold"
+                              >
+                                <p>{moment(record[head]).format("YYYY-MM-DD")}</p>
+                              </Typography>
+                            ) : head.includes("date") ? (
+                              <Typography
+                                variant="body"
+                                color="black"
+                                className="text-dark font-bold"
+                              >
+                                <p>{moment(record[head]).format("YYYY-MM-DD")}</p>
+                              </Typography>
+                            ) : (
+                              <Typography
+                                variant="body"
+                                color="black"
+                                className="text-dark font-bold"
+                              >
+                                <p>{record[head]}</p>
+                              </Typography>
+                            )}
+                          </td>
+                        ))}
+                        <td className="p-4 border-r border-solid border-blue-gray-200">
+                          {editableFields[record.T_ID] ? (
+                            <Tooltip content="Save Changes">
+                              <IconButton
+                                onClick={() => handleSave(record.T_ID)}
+                                variant="text"
+                              >
+                                <CheckCircleIcon className="h-4 w-4 text-green-500" />
+                              </IconButton>
+                            </Tooltip>
+                          ) : (
+                            <>
+                              <Tooltip content="Edit data">
+                                <IconButton
+                                  onClick={() => handleEdit(record)}
+                                  variant="text"
+                                >
+                                  <PencilIcon className="h-4 w-4 text-blue-500" />
+                                </IconButton>
+                              </Tooltip>
+                              <Tooltip content="Delete data">
+                                <IconButton
 
-                              onClick={() => handleOpenDialog(record)}
-                              variant="text"
-                            >
-                              <TrashIcon className="h-4 w-4 text-red-500" />
-                            </IconButton>
-                          </Tooltip>
-                        </>
-                      )}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </CardBody>
-        <div className="mt-4 text-right">
+                                  onClick={() => handleOpenDialog(record)}
+                                  variant="text"
+                                >
+                                  <TrashIcon className="h-4 w-4 text-red-500" />
+                                </IconButton>
+                              </Tooltip>
+                            </>
+                          )}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </CardBody>
+          </> :
+          <Typography variant="h5" color="blue-gray" className="text-center"  >
+            {tableName} has no Records!
+          </Typography>}
+        {tableRows.length > 0 && <div className="mt-4 text-right">
           <Button
             onClick={handleGenerateExcel}
             className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
           >
             Generate Excel
           </Button>
-        </div>
+        </div>}
 
       </Card>
       <Dialog open={showDialog} size="sm" handler={handleCloseDialog}>

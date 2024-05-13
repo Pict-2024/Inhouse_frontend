@@ -37,6 +37,8 @@ export default function FacultyConferencePublication() {
     Title_of_the_proceedings_of_the_conference: "",
     Name_of_the_conference: "",
     National_International: "",
+    Author: "",
+    Co_Authors:"",
     Date_of_conference: null,
     Conference_Venue_and_Organizer: "",
     Year_of_publication: "",
@@ -50,6 +52,7 @@ export default function FacultyConferencePublication() {
     Presented_Yes_No: "",
     Any_Achievements: "",
     Upload_DOA: null,
+   
   });
 
   const handleInputChange = (e) => {
@@ -311,6 +314,36 @@ export default function FacultyConferencePublication() {
               </Select>
             </div>
           </div>
+
+          <div className="mb-4 flex flex-wrap -mx-4">
+            <div className="w-full md:w-1/2 px-4 mb-4">
+              <Typography variant="h6" color="blue-gray" className="mb-3">
+                Author
+              </Typography>
+              <Input
+                size="lg"
+                type="text"
+                label="Author Name"
+                onChange={handleInputChange}
+                name="Author"
+                value={formData.Author}
+              />
+            </div>
+            <div className="w-full md:w-1/2 px-4 mb-4">
+              <Typography variant="h6" color="blue-gray" className="mb-3">
+                Co Authors
+              </Typography>
+              <Input
+                size="lg"
+                label="Co Authors Name"
+                onChange={handleInputChange}
+                type="text"
+                name="Co_Authors"
+                value={formData.Co_Authors}
+              />
+            </div>
+          </div>
+
           <div className="mb-4 flex flex-wrap -mx-4">
             <div className="w-full md:w-1/2 px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">

@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useLocation } from "react-router";
 import axios from "axios";
 import { Card, Typography, Button } from "@material-tailwind/react";
+import { DocumentIcon, PencilIcon } from "@heroicons/react/24/solid";
 import { BASE_URL } from "../../api";
 
 const ViewInfo = () => {
@@ -55,13 +56,13 @@ const ViewInfo = () => {
   };
 
   const openModal = (type) => {
-  // Show the modal
-  setShowModal(true);
-  // Set the user type
-  setUserType(type);
-  // Initialize selectedTables as an empty object
-  setSelectedTables({});
-};
+    // Show the modal
+    setShowModal(true);
+    // Set the user type
+    setUserType(type);
+    // Initialize selectedTables as an empty object
+    setSelectedTables({});
+  };
 
   const closeModal = () => {
     setShowModal(false);
@@ -71,10 +72,10 @@ const ViewInfo = () => {
     setSelectedTables((prevSelectedTables) => {
       // Create a new object to avoid mutating state directly
       const newSelectedTables = { ...prevSelectedTables };
-  
+
       // Toggle the selection state for the clicked table
       newSelectedTables[tableName] = !newSelectedTables[tableName];
-  
+
       return newSelectedTables;
     });
   };
@@ -151,11 +152,24 @@ const ViewInfo = () => {
               </tr>
             </thead>
             <tbody>
-              {tableData?.map((record, recordIndex) => (
+              {/* {tableData?.map((record, recordIndex) => (
                 <tr key={recordIndex} className="text-center border-t">
                   {Object.values(record)?.map((value, valueIndex) => (
                     <td key={valueIndex} className="py-2 px-4 border-r">
                       {value}
+                    </td>
+                  ))}
+                </tr>
+              ))} */}
+              {tableData.map((record, recordIndex) => (
+                <tr key={recordIndex} className="text-center border-t">
+                  {Object.entries(record).map(([key, value], valueIndex) => (
+                    <td key={valueIndex} className="py-2 px-4 border-r">
+                      {key.startsWith("Upload") ? (
+                        <DocumentIcon className="w-6 h-6 inline-block text-blue-500" />
+                      ) : (
+                        value
+                      )}
                     </td>
                   ))}
                 </tr>
@@ -188,8 +202,8 @@ const ViewInfo = () => {
           .length
         ? {}
         : userType === "teacher"
-        ? teacherTables
-        : studentTables
+          ? teacherTables
+          : studentTables
     );
   };
 
@@ -246,25 +260,25 @@ const ViewInfo = () => {
             <div style={{ maxHeight: "300px", overflowY: "auto" }}>
               {userType === "teacher"
                 ? Object.keys(teacherTables).map((tableName) => (
-                    <div key={tableName} className="mb-2 flex items-center">
-                      <input
-                        type="checkbox"
-                        id={`checkbox-${tableName}`}
-                        value={tableName}
-                        className="mr-2 h-5 w-5 border-gray-300 focus:ring focus:border-blue-300"
-                        onChange={() => handleCheckboxChange(tableName)}
-                        checked={selectedTables[tableName]}
-                      />
-                      <label
-                        htmlFor={`checkbox-${tableName}`}
-                        className="block mb-2 cursor-pointer"
-                      >
-                        {teacherTables[tableName]}
-                      </label>
-                    </div>
-                  ))
+                  <div key={tableName} className="mb-2 flex items-center">
+                    <input
+                      type="checkbox"
+                      id={`checkbox-${tableName}`}
+                      value={tableName}
+                      className="mr-2 h-5 w-5 border-gray-300 focus:ring focus:border-blue-300"
+                      onChange={() => handleCheckboxChange(tableName)}
+                      checked={selectedTables[tableName]}
+                    />
+                    <label
+                      htmlFor={`checkbox-${tableName}`}
+                      className="block mb-2 cursor-pointer"
+                    >
+                      {teacherTables[tableName]}
+                    </label>
+                  </div>
+                ))
                 : userType === "student"
-                ? Object.keys(studentTables).map((tableName) => (
+                  ? Object.keys(studentTables).map((tableName) => (
                     <div key={tableName} className="mb-2 flex items-center">
                       <input
                         type="checkbox"
@@ -282,7 +296,7 @@ const ViewInfo = () => {
                       </label>
                     </div>
                   ))
-                : null}
+                  : null}
             </div>
 
             <div className="flex justify-end gap-3">

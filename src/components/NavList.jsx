@@ -230,7 +230,7 @@ export default function NavList() {
     Description: "",
     Role: currentUser?.Role,
     DateTime: getCurrentDate(),
-    Receiver: currentUser?.Role === 1 ? "adminasg@gmail.com" : "",
+    Receiver: currentUser?.Role === 1 ? "hodit@pict.edu" : "",
   });
 
   // console.log("notification sender data", notificationData)

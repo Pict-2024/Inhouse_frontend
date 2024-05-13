@@ -6,6 +6,7 @@ import {
   Typography,
   Select,
   Option,
+  Textarea,
 } from "@material-tailwind/react";
 import { useSelector } from "react-redux";
 import axios from "axios";
@@ -20,8 +21,10 @@ export default function PatentPublication() {
   const { currentUser } = useSelector((state) => state.user);
   const [isFinancialSupport, setIsFinancialSupport] = useState(false);
   const [uploadedFilePaths, setUploadedFilePaths] = useState({});
+  const [showSummary, setShowSummary] = useState(false);
 
   const navigate = useNavigate();
+
 
   const [formData, setFormData] = useState({
     T_ID: null,
@@ -30,6 +33,7 @@ export default function PatentPublication() {
     Name_of_the_Department: "",
     Patent_Application_No: "",
     Status_of_Patent_Pub: "",
+    Summary: "",
     Inventor_Name: "",
     Title_of_the_Patent: "",
     Co_Inventors_Name: "",
@@ -50,6 +54,13 @@ export default function PatentPublication() {
 
   const handleChange = (e) => {
     const { name, value, type, files } = e.target;
+    if (name === "Status_of_Patent_Pub") {
+      if (value === "Granted") {
+        setShowSummary(true);
+      } else {
+        setShowSummary(false);
+      }
+    }
 
     setFormData({
       ...formData,
@@ -283,6 +294,22 @@ export default function PatentPublication() {
               </Select>
             </div>
           </div>
+          {showSummary &&
+            <div className="mb-4 flex flex-wrap -mx-4">
+              <div className="w-full  px-4 mb-4">
+                <Typography variant="h6" color="blue-gray" className="mb-3">
+                  Patent Summary
+                </Typography>
+                <Textarea
+                  size="lg"
+                  name="Summary"
+                  type="text"
+                  value={formData.Summary}
+                  onChange={handleChange}
+                  label="Patent Summary"
+                />
+              </div>
+            </div>}
           <div className="mb-4 flex flex-wrap -mx-4">
             <div className="w-full md:w-1/2 px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
