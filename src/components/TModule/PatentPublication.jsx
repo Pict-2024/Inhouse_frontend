@@ -20,6 +20,9 @@ import { addRecordsPatent, uploadRecordsPatent } from "./API_Routes";
 export default function PatentPublication() {
   const { currentUser } = useSelector((state) => state.user);
   const [isFinancialSupport, setIsFinancialSupport] = useState(false);
+  const [isPatentPublished, setIsPatentPublished] = useState(false);
+  const [isPatentGranted, setIsPatentGranted] = useState(false);
+  const [isApprovalLetter, setIsApprovalLetter] = useState(false);
   const [uploadedFilePaths, setUploadedFilePaths] = useState({});
   const [showSummary, setShowSummary] = useState(false);
 
@@ -71,6 +74,12 @@ export default function PatentPublication() {
 
   const handleFileUpload = async (files) => {
     try {
+
+      if (files.length === 0) {
+        // Handle the scenario where no files are provided
+        console.warn("No files to upload");
+        return []; // Return an empty array or appropriate response
+      }
       const queryParams = new URLSearchParams();
       queryParams.append("username", currentUser?.Username);
       queryParams.append("role", currentUser?.Role);
@@ -132,18 +141,17 @@ export default function PatentPublication() {
     e.preventDefault();
     console.log(formData);
 
-    if (formData.Upload_Approval_Letter === null || formData.Upload_Patent_Document === null ||
-      formData.Upload_Patent_Grant === null) {
-      toast.error('Select file for upload', {
-        position: "top-right",
-        autoClose: 3000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-      });
+   
+    if(isPatentGranted && formData.Upload_Patent_Grant === null) {
+      alert("Upload Patent Grant Document");
+      return;
+    }
+    if(isPatentPublished && formData.Upload_Patent_Document === null) {
+      alert("Upload Patent Published Document");
+      return;
+    }
+    if (isApprovalLetter && formData.Upload_Approval_Letter === null) {
+      alert("Upload Approval Letter");
       return;
     }
     if (isFinancialSupport && formData.Upload_Evidence === null) {
@@ -156,19 +164,19 @@ export default function PatentPublication() {
       if (isFinancialSupport && formData.Upload_Evidence) {
         filesToUpload.push(formData.Upload_Evidence);
       }
-      if (formData.Upload_Approval_Letter !== null) {
+      if (isApprovalLetter && formData.Upload_Approval_Letter) {
         filesToUpload.push(formData.Upload_Approval_Letter);
       }
-      if (formData.Upload_Patent_Document !== null) {
+      if (isPatentPublished && formData.Upload_Patent_Document) {
         filesToUpload.push(formData.Upload_Patent_Document);
       }
-      if (formData.Upload_Patent_Grant !== null) {
+      if (isPatentGranted && formData.Upload_Patent_Grant) {
         filesToUpload.push(formData.Upload_Patent_Grant);
       }
 
+      console.log("Files: ",filesToUpload);
       // If file upload is successful, continue with the form submission
       const uploadResults = await handleFileUpload(filesToUpload);
-
       // Store the paths of uploaded files in the uploadedFilePaths object
       const updatedUploadedFilePaths = { ...uploadedFilePaths };
       uploadResults.forEach((result) => {
@@ -405,7 +413,7 @@ export default function PatentPublication() {
                 type="text"
                 value={formData.Patent_Pub_Number}
                 onChange={handleChange}
-                label="Patent Publication Number / Patent Granted Number"
+                label="Patent Publication No / Patent Granted No"
               />
             </div>
             <div className="w-full md:w-1/2 px-4 mb-4">
@@ -504,19 +512,48 @@ export default function PatentPublication() {
             </div>
           </div>
           <div className="mb-4 flex flex-wrap -mx-4">
-            <div className="w-full md:w-1/2 px-4 mb-4">
-              <Typography variant="h6" color="blue-gray" className="mb-3">
-                Approval Letter for financial Support (Only Pdf)
-              </Typography>
-              <Input
-                size="lg"
-                name="Upload_Approval_Letter"
-                type="file"
-                onChange={handleChange}
-                label="Approval Letter for financial Support"
-              />
+            <div className="w-full">
+              <div className="px-4 mb-4 flex gap-40">
+                <Typography variant="h6" color="blue-gray" className="mb-3">
+                  Approval Letter for financial Support (Only Pdf)
+                </Typography>
+                <div className="flex gap-3">
+                  <label className="mx-2">
+                    <input
+                      type="radio"
+                      name="approvalLetter"
+                      value="yes"
+                      checked={isApprovalLetter}
+                      onChange={() => setIsApprovalLetter(true)}
+                    />
+                    Yes
+                  </label>
+                  <label>
+                    <input
+                      type="radio"
+                      name="approvalLetter"
+                      value="no"
+                      checked={!isApprovalLetter}
+                      onChange={() => setIsApprovalLetter(false)}
+                    />
+                    No
+                  </label>
+                </div>
+              </div>
+              <div className="flex justify-between">
+                <div className="w-full px-4 mb-4">
+                  <Input
+                    size="lg"
+                    name="Upload_Approval_Letter"
+                    type="file"
+                    onChange={handleChange}
+                    label="Approval Letter for financial Support"
+                    disabled={!isApprovalLetter}
+                  />
+                </div>
+              </div>
             </div>
-            <div className="w-full md:w-1/2 px-4 mb-4">
+            <div className="w-full  px-4 mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-3">
                 Country
               </Typography>
@@ -531,30 +568,89 @@ export default function PatentPublication() {
             </div>
           </div>
           <div className="mb-4 flex flex-wrap -mx-4">
-            <div className="w-full md:w-1/2 px-4 mb-4">
-              <Typography variant="h6" color="blue-gray" className="mb-3">
-                Upload Patent Publication document (Only Pdf)
-              </Typography>
-              <Input
-                size="lg"
-                name="Upload_Patent_Document"
-                onChange={handleChange}
-                type="file"
-                label="Upload Patent Document"
-              />
+            <div className="w-full">
+              <div className="px-4 mb-4 flex gap-40">
+                <Typography variant="h6" color="blue-gray" className="mb-3">
+                  Upload Patent Publication document (Only Pdf)
+                </Typography>
+                <div className="flex gap-3">
+                  <label className="mx-2">
+                    <input
+                      type="radio"
+                      name="patentPublication"
+                      value="yes"
+                      checked={isPatentPublished}
+                      onChange={() => setIsPatentPublished(true)}
+                    />
+                    Yes
+                  </label>
+                  <label>
+                    <input
+                      type="radio"
+                      name="patentPublication"
+                      value="no"
+                      checked={!isPatentPublished}
+                      onChange={() => setIsPatentPublished(false)}
+                    />
+                    No
+                  </label>
+                </div>
+              </div>
+              <div className="flex justify-between">
+                <div className="w-full px-4 mb-4">
+                  <Input
+                    size="lg"
+                    name="Upload_Patent_Document"
+                    onChange={handleChange}
+                    type="file"
+                    label="Upload Patent Document"
+                    disabled={!isPatentPublished}
+                  />
+                </div>
+              </div>
             </div>
-            <div className="w-full md:w-1/2 px-4 mb-4">
-              <Typography variant="h6" color="blue-gray" className="mb-3">
-                Upload Patent grant document (Only Pdf)
-              </Typography>
-
-              <Input
-                size="lg"
-                name="Upload_Patent_Grant"
-                onChange={handleChange}
-                type="file"
-                label="Upload Patent grant document"
-              />
+          </div>
+          <div className="mb-4 flex flex-wrap -mx-4">
+            <div className="w-full">
+              <div className="px-4 mb-4 flex gap-40">
+                <Typography variant="h6" color="blue-gray" className="mb-3">
+                  Upload Patent grant document (Only Pdf)
+                </Typography>
+                <div className="flex gap-3">
+                  <label className="mx-2">
+                    <input
+                      type="radio"
+                      name="patentGranted"
+                      value="yes"
+                      checked={isPatentGranted}
+                      onChange={() => setIsPatentGranted(true)}
+                    />
+                    Yes
+                  </label>
+                  <label>
+                    <input
+                      type="radio"
+                      name="patentGranted"
+                      value="no"
+                      checked={!isPatentGranted}
+                      onChange={() => setIsPatentGranted(false)}
+                    />
+                    No
+                  </label>
+                </div>
+              </div>
+              <div className="flex justify-between">
+                <div className="w-full px-4 mb-4">
+                  <Input
+                    size="lg"
+                    name="Upload_Patent_Grant"
+                    onChange={handleChange}
+                    type="file"
+                    label="Upload Patent grant document"
+                    disabled={!isPatentGranted}
+                  />
+                </div>
+              </div>
             </div>
           </div>
 

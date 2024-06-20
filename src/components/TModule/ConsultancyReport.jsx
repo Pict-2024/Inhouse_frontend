@@ -33,6 +33,7 @@ export default function ConsultancyReport() {
     Start_Date: null,
     End_Date: null,
     Upload_Amt_Deposited: null,
+    AmountCollege: "",
     Date_of_Transaction: null,
     Upload_Link_to_evidence: null,
     Status: "",
@@ -328,7 +329,7 @@ export default function ConsultancyReport() {
                 label="Select Type"
                 // onChange={handleChange}
                 onChange={(value) =>
-                  handleChange({ target: { name: "State", value } })
+                  handleChange({ target: { name: "States", value } })
                 }
               >
                 <Option value="Ongoing">Ongoing</Option>
@@ -372,9 +373,9 @@ export default function ConsultancyReport() {
               </Typography>
               <Input
                 size="lg"
-                name="Amount"
+                name="AmountCollege"
                 type="number"
-                value={formData.Amount}
+                value={formData.AmountCollege}
                 label="Amount Deposited to college account"
                 onChange={handleChange}
               />
