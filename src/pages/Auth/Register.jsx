@@ -30,10 +30,25 @@ export default function Register() {
 
   const handleVerify = async () => {
     try {
+      if(!formData.gmail){
+        toast.warning("Gmail is required", {
+          position: "top-left",
+          autoClose: 1500,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+        });
+        return;
+      }
       const response = await axios.post(verifyAPI, {
         gmail: formData.gmail,
         password: formData.password,
       });
+
+      
 
       if (response.data.success === true) {
         setRole(response.data.role);
