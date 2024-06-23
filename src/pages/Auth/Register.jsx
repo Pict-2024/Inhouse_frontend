@@ -30,8 +30,8 @@ export default function Register() {
 
   const handleVerify = async () => {
     try {
-      if(!formData.gmail){
-        toast.warning("Gmail is required", {
+      if(!formData.name||!formData.gmail || !formData.password){
+        toast.warning("Please enter all the required fields", {
           position: "top-left",
           autoClose: 1500,
           hideProgressBar: false,
@@ -82,7 +82,7 @@ export default function Register() {
       console.log(response.data);
     } catch (error) {
       // setError("Invalid Credentials");
-      toast.error("Invalid Credentials", {
+      toast.error(error.response.data.message, {
         position: "top-left",
         autoClose: 1500,
         hideProgressBar: false,
@@ -104,11 +104,12 @@ export default function Register() {
     });
   };
 
+  //need changes
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      if (!formData.gmail && !formData.password) {
-        toast.warning("Please enter your email and password", {
+      if (!formData.pro_email && !formData.newPassword) {
+        toast.warning("Please enter all the required fields", {
           position: "top-left",
           autoClose: 1500,
           hideProgressBar: false,
