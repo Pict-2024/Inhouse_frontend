@@ -28,7 +28,7 @@ export default function Login() {
     setShowPassword(prevState => !prevState);
   };
 
-  const { error, loading } = useSelector((state) => state.user);
+  const { loading } = useSelector((state) => state.user);
 
   const handleInputChange = (e) => {
     setFormData({
@@ -105,6 +105,7 @@ export default function Login() {
         pathLink = "/s/dashboard";
       }
 
+      console.log(response?.data);
       navigate(pathLink);
       toast.success(response?.data?.message, {
         position: "top-left",
