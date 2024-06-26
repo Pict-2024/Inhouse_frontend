@@ -121,6 +121,7 @@ export default function Register() {
         });
         return;
       } else if (!formData.gmail) {
+      } else if (!formData.gmail) {
         toast.warning("Please enter your email", {
           position: "top-left",
           autoClose: 1500,
@@ -146,6 +147,7 @@ export default function Register() {
         return;
       }
   
+  
       // Check if the user is already registered and verified
       if (verified) {
         // Proceed with registration
@@ -155,6 +157,7 @@ export default function Register() {
           password: formData.newPassword,
           gmail: formData.gmail,
         });
+  
   
         console.log(registerResponse?.data);
         setError(null);
@@ -185,6 +188,8 @@ export default function Register() {
     } catch (error) {
       const errorMessage = error.response?.data?.message || "Registration failed" ;
       toast.error(errorMessage, {
+      const errorMessage = error.response?.data?.message || "Registration failed";
+      toast.error(errorMessage, {
         position: "top-left",
         autoClose: 1500,
         hideProgressBar: false,
@@ -197,6 +202,7 @@ export default function Register() {
       console.error(error.response.data);
     }
   };
+  
   
   return (
     <div
