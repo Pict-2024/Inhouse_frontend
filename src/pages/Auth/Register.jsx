@@ -186,8 +186,6 @@ export default function Register() {
         });
       }
     } catch (error) {
-      const errorMessage = error.response?.data?.message || "Registration failed" ;
-      toast.error(errorMessage, {
       const errorMessage = error.response?.data?.message || "Registration failed";
       toast.error(errorMessage, {
         position: "top-left",
