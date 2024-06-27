@@ -30,8 +30,8 @@ export default function Register() {
 
   const handleVerify = async () => {
     try {
-      if(!formData.gmail){
-        toast.warning("Gmail is required", {
+      if(!formData.name||!formData.gmail || !formData.password){
+        toast.warning("Please enter all the required fields", {
           position: "top-left",
           autoClose: 1500,
           hideProgressBar: false,
@@ -82,7 +82,7 @@ export default function Register() {
       console.log(response.data);
     } catch (error) {
       // setError("Invalid Credentials");
-      toast.error("Invalid Credentials", {
+      toast.error(error.response.data.message, {
         position: "top-left",
         autoClose: 1500,
         hideProgressBar: false,
@@ -104,11 +104,12 @@ export default function Register() {
     });
   };
 
+  //need changes
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      if (!formData.gmail && !formData.password) {
-        toast.warning("Please enter your email and password", {
+      if (!formData.pro_email && !formData.newPassword) {
+        toast.warning("Please enter all the required fields", {
           position: "top-left",
           autoClose: 1500,
           hideProgressBar: false,
@@ -119,8 +120,8 @@ export default function Register() {
           theme: "light",
         });
         return;
-      }
-      else if (!formData.gmail) {
+      } else if (!formData.gmail) {
+      } else if (!formData.gmail) {
         toast.warning("Please enter your email", {
           position: "top-left",
           autoClose: 1500,
@@ -132,7 +133,7 @@ export default function Register() {
           theme: "light",
         });
         return;
-      } else if (!formData.password) {
+      } else if (!formData.newPassword) {
         toast.warning("Please enter your password", {
           position: "top-left",
           autoClose: 1500,
@@ -145,6 +146,8 @@ export default function Register() {
         });
         return;
       }
+  
+  
       // Check if the user is already registered and verified
       if (verified) {
         // Proceed with registration
@@ -154,8 +157,9 @@ export default function Register() {
           password: formData.newPassword,
           gmail: formData.gmail,
         });
+  
+  
         console.log(registerResponse?.data);
-
         setError(null);
         setRegister(true);
         toast.success("Registration Successful", {
@@ -170,7 +174,6 @@ export default function Register() {
         });
         navigate("/auth/login");
       } else {
-        // setError("Please verify your email and password first.");
         toast.warning("Please verify your email and password first.", {
           position: "top-left",
           autoClose: 1500,
@@ -183,8 +186,10 @@ export default function Register() {
         });
       }
     } catch (error) {
-      // setError("Registration failed");
-      toast.error("Registration failed", {
+      const errorMessage = error.response?.data?.message || "Registration failed" ;
+      toast.error(errorMessage, {
+      const errorMessage = error.response?.data?.message || "Registration failed";
+      toast.error(errorMessage, {
         position: "top-left",
         autoClose: 1500,
         hideProgressBar: false,
@@ -197,7 +202,8 @@ export default function Register() {
       console.error(error.response.data);
     }
   };
-
+  
+  
   return (
     <div
       className="flex justify-center items-center h-[100vh]"
