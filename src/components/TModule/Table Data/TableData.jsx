@@ -48,6 +48,7 @@ import {
   getOneRecordsResource,
   getOneRecordsTechnical,
   getOneRecordsWebinar,
+  
   deleteRecordsBook,
   deleteRecordsResearch,
   deleteRecordsFaculty,
@@ -85,6 +86,7 @@ import {
   updateRecordsIndustrial,
   updateRecordsContribution,
 } from "../API_Routes";
+import { useNavigate } from "react-router-dom";
 
 export default function TableData({ tableName }) {
   const { currentUser } = useSelector((state) => state.user);
@@ -93,6 +95,7 @@ export default function TableData({ tableName }) {
   const [editableFields, setEditableFields] = useState({});
   const [showDialog, setShowDialog] = useState(false);
   const [recordToDelete, setRecordToDelete] = useState(null);
+  const navigate = useNavigate();
 
 
   // getRecords by username apis
@@ -336,71 +339,12 @@ export default function TableData({ tableName }) {
 
   // Handle edit action
   const handleEdit = (record) => {
-    setEditableFields({
-      ...editableFields,
-      [record.T_ID]: { ...record },
-    });
+    const id = record.T_ID;
+    navigate(`/t/general?tableName=${tableName}&id=${id}`);
   };
 
-  // Handle editable field changes
-  const handleEditField = (tId, field, value) => {
-    setEditableFields({
-      ...editableFields,
-      [tId]: {
-        ...editableFields[tId],
-        [field]: value,
-      },
-    });
-  };
 
-  // Update modified changes
-  const handleSave = async (tId) => {
-    try {
-      const updatedRecord = editableFields[tId];
-      // console.log("Updated:", updatedRecord);
-      // Send a PUT request to update the record in the backend
-      const apiurl = updateAPIRoute(tableName)(currentUser.Email, tId);
-      // console.log("updating record with:", currentUser.Email, tId);
-      // console.log("Table:", tableName);
-      const response = await axios.put(apiurl, updatedRecord, {
-        headers: {
-          "Content-Type": "application/json",
-        },
-        data: {
-          username: currentUser.Username,
-          T_ID: tId,
-        },
-      });
-
-      // Update tableRows state
-      const updatedRows = tableRows.map((r) =>
-        r.T_ID === tId ? { ...r, ...updatedRecord } : r
-      );
-      setTableRows(updatedRows);
-
-      // Clear editable fields
-      setEditableFields({
-        ...editableFields,
-        [tId]: undefined,
-      });
-      console.log("Update", response);
-      if (response?.status === 200) {
-        toast.success("Record Updated Successfully!", {
-          position: "top-left",
-          autoClose: 1500,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
-        });
-      }
-    } catch (error) {
-      console.error("Error updating record:", error.response.data.message);
-      // Handle error gracefully, e.g., show a user-friendly message
-    }
-  };
+  
 
   //render all records
   useEffect(() => {
@@ -513,16 +457,7 @@ export default function TableData({ tableName }) {
                                 : "border-solid border-blue-gray-200"
                               }`}
                           >
-                            {editableFields[record.T_ID] &&
-                              editableFields[record.T_ID][head] !== undefined ? (
-                              <Input
-                                value={editableFields[record.T_ID][head]}
-                                label={[head]}
-                                onChange={(e) =>
-                                  handleEditField(record.T_ID, head, e.target.value)
-                                }
-                              />
-                            ) : head.startsWith("Upload") ? (
+                            { head.startsWith("Upload") ? (
                               <DocumentIcon
                                 onClick={() => handleLink(record[head])}
                                 className="cursor-pointer w-6 h-6"
@@ -555,17 +490,7 @@ export default function TableData({ tableName }) {
                           </td>
                         ))}
                         <td className="p-4 border-r border-solid border-blue-gray-200">
-                          {editableFields[record.T_ID] ? (
-                            <Tooltip content="Save Changes">
-                              <IconButton
-                                onClick={() => handleSave(record.T_ID)}
-                                variant="text"
-                              >
-                                <CheckCircleIcon className="h-4 w-4 text-green-500" />
-                              </IconButton>
-                            </Tooltip>
-                          ) : (
-                            <>
+                         
                               <Tooltip content="Edit data">
                                 <IconButton
                                   onClick={() => handleEdit(record)}
@@ -583,8 +508,7 @@ export default function TableData({ tableName }) {
                                   <TrashIcon className="h-4 w-4 text-red-500" />
                                 </IconButton>
                               </Tooltip>
-                            </>
-                          )}
+                          
                         </td>
                       </tr>
                     ))}

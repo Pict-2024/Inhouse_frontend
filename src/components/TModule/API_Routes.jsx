@@ -16,6 +16,7 @@ export const getAllRecordsBook = `${BASE_URL}/teacher/book-pb/all`;
 export const getOneRecordsBook = (username) => {
   return `${BASE_URL}/teacher/book-pb/${username}`;
 };
+export const getRecordBookByID = (T_ID,username) => `${BASE_URL}/teacher/book-pb/${T_ID}/${username}`
 export const addRecordsBook = `${BASE_URL}/teacher/book-pb/create-new`;
 export const deleteRecordsBook = `${BASE_URL}/teacher/book-pb/remove`;
 export const updateRecordsBook = `${BASE_URL}/teacher/book-pb/update`;
