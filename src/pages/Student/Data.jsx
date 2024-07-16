@@ -55,7 +55,7 @@ export default function Data() {
         </div>
 
         {selectedOption && optionComponents[selectedOption] ? (
-          <div className="w-full mt-4 ">
+          <div className="w-full mt-4 h-screen">
             {React.createElement(optionComponents[selectedOption], {
               tableName: selectedOption,
             })}

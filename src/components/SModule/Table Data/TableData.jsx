@@ -325,18 +325,42 @@ export default function TableData({ tableName }) {
     window.open(newPath, "_blank");
   };
 
+  // const generateExcel = () => {
+  //   const workbook = new ExcelJS.Workbook();
+  //   const worksheet = workbook.addWorksheet("Report");
+
+  //   // Add headers
+  //   const headerRow = worksheet.addRow(tableHead.map((head) => head));
+
+  //   // Add data rows
+  //   tableRows.forEach((row) => {
+  //     const dataRow = tableHead.map((head) => row[head]);
+  //     worksheet.addRow(dataRow);
+  //   });
+
+    //------------------------------------------------------------------------
+
   const generateExcel = () => {
     const workbook = new ExcelJS.Workbook();
     const worksheet = workbook.addWorksheet("Report");
-
+  
     // Add headers
     const headerRow = worksheet.addRow(tableHead.map((head) => head));
-
-    // Add data rows
+  
+    // Add data rows with proper date formatting
     tableRows.forEach((row) => {
-      const dataRow = tableHead.map((head) => row[head]);
+      const dataRow = tableHead.map((head) => {
+        if (head.includes("Date")) {
+          return moment(row[head]).format("YYYY-MM-DD"); // Format date only
+        } else {
+          return row[head];
+        }
+      });
       worksheet.addRow(dataRow);
     });
+
+    //------------------------------------------------------------------------
+
 
     // Save the workbook
     workbook.xlsx.writeBuffer().then((buffer) => {
